@@ -1,0 +1,29 @@
+using EvaGest.Models;
+
+namespace EvaGest.Services;
+
+public interface ICitaService
+{
+    Task<List<Cita>> ObtenirPerDia(DateOnly data);
+
+    /// <summary>Whole range in one query, used by the weekly agenda (RF-02)
+    /// so navigating between weeks does not need one round trip per day.</summary>
+    Task<List<Cita>> ObtenirPerRang(DateOnly des, DateOnly fins);
+    Task<List<Cita>> ObtenirPerClient(int clientId);
+    Task<Cita?> ObtenirPerId(int id);
+
+    /// <summary>Completed appointments with no sale yet, for manual association (RF-09).</summary>
+    Task<List<Cita>> ObtenirRealitzadesSenseVenda();
+
+    /// <summary>Counts appointments in one state over a range. Used by the dashboard
+    /// counters and by the day-scenario tests.</summary>
+    Task<int> ComptarPerEstat(DateOnly des, DateOnly fins, EstatCita estat);
+
+    Task<int> Crear(Cita cita);
+    Task Actualitzar(Cita cita);
+
+    /// <summary>Changes state. Cancelled and no-show can never carry a sale (RF-02).</summary>
+    Task CanviarEstat(int citaId, EstatCita nouEstat);
+
+    Task Eliminar(int citaId);
+}

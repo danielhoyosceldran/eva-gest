@@ -1,0 +1,50 @@
+<UserControl x:Class="EvaGest.Views.Dialegs.ClientDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Width="400">
+        <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
+
+        <TextBlock Text="Nom" Style="{StaticResource EtiquetaDada}" />
+        <TextBox Text="{Binding Nom, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+        <TextBlock Text="Mòbil" Style="{StaticResource EtiquetaDada}" />
+        <TextBox Text="{Binding Mobil, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+        <TextBlock Text="Correu electrònic (opcional)" Style="{StaticResource EtiquetaDada}" />
+        <TextBox Text="{Binding Correu, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+        <TextBlock Text="Data de naixement (opcional)" Style="{StaticResource EtiquetaDada}" />
+        <DatePicker SelectedDate="{Binding DataNaixement}" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" />
+
+        <TextBlock Text="Observacions (opcional)" Style="{StaticResource EtiquetaDada}" />
+        <TextBox Text="{Binding Observacions, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True" TextWrapping="Wrap" Height="60" Margin="0,0,0,12" />
+
+        <!-- Non-blocking duplicate warning (pantalles 3.3): saving stays possible either way -->
+        <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="12" Margin="0,0,0,12"
+                Visibility="{Binding DuplicatTrobat, Converter={StaticResource NullToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource InkBrush}">
+                    <Run Text="Sembla que aquest client ja existeix: " />
+                    <Run Text="{Binding DuplicatTrobat.Nom, Mode=OneWay}" FontWeight="SemiBold" />
+                    <Run Text=" (" /><Run Text="{Binding DuplicatTrobat.Mobil, Mode=OneWay}" /><Run Text=")." />
+                </TextBlock>
+                <Button Content="Guardar-lo igualment" Style="{StaticResource BotoSecundari}"
+                        HorizontalAlignment="Left" MinHeight="32" Margin="0,8,0,0"
+                        Command="{Binding GuardarIgualmentCommand}" />
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="{Binding ErrorValidacio}" Foreground="{StaticResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,0,0,12"
+                   Visibility="{Binding ErrorValidacio, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel·lar" Style="{StaticResource BotoSecundari}"
+                    Command="{Binding CancellarCommand}" IsCancel="True" />
+            <Button Content="Guardar" Style="{StaticResource BotoPrimari}"
+                    Command="{Binding GuardarCommand}" IsDefault="True" Margin="12,0,0,0" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

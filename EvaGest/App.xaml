@@ -1,0 +1,46 @@
+﻿<Application x:Class="EvaGest.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:EvaGest"
+             xmlns:h="clr-namespace:EvaGest.Helpers"
+             xmlns:dvm="clr-namespace:EvaGest.ViewModels.Dialegs"
+             xmlns:dv="clr-namespace:EvaGest.Views.Dialegs">
+    <!-- StartupUri removed on purpose: OnStartup creates the window after the
+         database is ready, so the UI never binds to an unmigrated database -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Typography.xaml" />
+                <ResourceDictionary Source="Resources/Metrics.xaml" />
+                <ResourceDictionary Source="Resources/Controls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <h:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <h:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <h:TancatAOpacitatConverter x:Key="TancatAOpacitatConverter" />
+            <h:ModeEditarAVisibilitatConverter x:Key="ModeEditarAVisibilitatConverter" />
+            <h:InversAVisibilitatConverter x:Key="InversAVisibilitatConverter" />
+            <h:PersonalitzatAHabilitatConverter x:Key="PersonalitzatAHabilitatConverter" />
+            <h:TipusCopiaConverter x:Key="TipusCopiaConverter" />
+            <h:BytesAMidaConverter x:Key="BytesAMidaConverter" />
+            <h:ZeroAVisibilitatConverter x:Key="ZeroAVisibilitatConverter" />
+            <h:ZeroAVisibilitatInversaConverter x:Key="ZeroAVisibilitatInversaConverter" />
+            <h:PendentAVisibilitatConverter x:Key="PendentAVisibilitatConverter" />
+
+            <!-- Dialog content templates: DialogWindow only knows DialegViewModelBase,
+                 the actual dialog layout is resolved from the ViewModel's runtime type. -->
+            <DataTemplate DataType="{x:Type dvm:ServeiDialogViewModel}"><dv:ServeiDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:ProducteDialogViewModel}"><dv:ProducteDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:MetodePagamentDialogViewModel}"><dv:MetodePagamentDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:ClientDialogViewModel}"><dv:ClientDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:FitxaClientViewModel}"><dv:FitxaClientView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:CitaDialogViewModel}"><dv:CitaDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:VendaDialogViewModel}"><dv:VendaDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:MovimentDialogViewModel}"><dv:MovimentDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:ExportDialogViewModel}"><dv:ExportDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:RestaurarDialogViewModel}"><dv:RestaurarDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:AjudaViewModel}"><dv:AjudaView /></DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

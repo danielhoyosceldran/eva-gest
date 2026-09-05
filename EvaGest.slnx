@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="EvaGest/EvaGest.csproj" />
+  <Project Path="EvaGest.Tests/EvaGest.Tests.csproj" />
+</Solution>

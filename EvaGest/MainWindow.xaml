@@ -1,0 +1,75 @@
+<Window x:Class="EvaGest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:EvaGest.ViewModels"
+        xmlns:pv="clr-namespace:EvaGest.ViewModels.Pagines"
+        xmlns:v="clr-namespace:EvaGest.Views.Pagines"
+        Title="EvaGest" Height="720" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource PaperBrush}">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type pv:IniciViewModel}"><v:IniciView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:AgendaViewModel}"><v:AgendaView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:ClientsViewModel}"><v:ClientsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:TreballadoresViewModel}"><v:TreballadoresView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:CatalegViewModel}"><v:CatalegView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:VendesViewModel}"><v:VendesView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:CaixaViewModel}"><v:CaixaView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:InformesViewModel}"><v:InformesView /></DataTemplate>
+        <DataTemplate DataType="{x:Type pv:ConfiguracioViewModel}"><v:ConfiguracioView /></DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Grid Grid.Column="0" Background="{StaticResource NavyBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" /> <!-- Franja del pal -->
+                <RowDefinition Height="Auto" /> <!-- Nom barberia -->
+                <RowDefinition Height="*" />    <!-- Navegació -->
+                <RowDefinition Height="Auto" /> <!-- Ajuda -->
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Style="{StaticResource FranjaPal}" />
+
+            <TextBlock Grid.Row="1" Text="EvaGest" Foreground="{StaticResource NavTextActiveBrush}"
+                       FontSize="{StaticResource FontSizeSubhead}" FontWeight="SemiBold"
+                       Margin="20,16,20,16" />
+
+            <StackPanel Grid.Row="2">
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Inici"
+                             IsChecked="True" Command="{Binding NavegarIniciCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Agenda"
+                             Command="{Binding NavegarAgendaCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Clients"
+                             Command="{Binding NavegarClientsCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Treballadores"
+                             Command="{Binding NavegarTreballadoresCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Catàleg"
+                             Command="{Binding NavegarCatalegCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Vendes"
+                             Command="{Binding NavegarVendesCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Caixa"
+                             Command="{Binding NavegarCaixaCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Informes"
+                             Command="{Binding NavegarInformesCommand}" />
+                <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Configuració"
+                             Command="{Binding NavegarConfiguracioCommand}" />
+            </StackPanel>
+
+            <Button Grid.Row="3" Content="? Ajuda" Foreground="{StaticResource NavTextBrush}"
+                    Background="Transparent" BorderThickness="0" Cursor="Hand"
+                    HorizontalAlignment="Left" HorizontalContentAlignment="Left"
+                    FontSize="{StaticResource FontSizeInput}" Margin="20,12,20,20"
+                    Command="{Binding ObrirAjudaCommand}" />
+        </Grid>
+
+        <!-- Content area -->
+        <ContentControl Grid.Column="1" Content="{Binding PaginaActual}" />
+    </Grid>
+</Window>

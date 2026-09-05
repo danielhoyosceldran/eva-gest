@@ -1,0 +1,91 @@
+<UserControl x:Class="EvaGest.Views.Pagines.AgendaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource PaperBrush}">
+    <Grid Margin="{StaticResource PadPagina}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
+
+        <!-- Week header -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="‹ Setmana anterior" Style="{StaticResource BotoSecundari}"
+                    Command="{Binding SetmanaAnteriorCommand}" />
+            <TextBlock Grid.Column="1" Text="{Binding RangText}" Style="{StaticResource Subtitol}"
+                       Margin="16,0" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <Button Grid.Column="2" Content="Setmana següent ›" Style="{StaticResource BotoSecundari}"
+                    Command="{Binding SetmanaSeguentCommand}" Margin="0,0,12,0" />
+            <Button Grid.Column="3" Content="Aquesta setmana" Style="{StaticResource BotoSecundari}"
+                    Command="{Binding AquestaSetmanaCommand}" Margin="0,0,12,0" />
+            <Button Grid.Column="4" Content="+ Nova cita" Style="{StaticResource BotoPrimari}"
+                    Command="{Binding NovaCitaCommand}" />
+        </Grid>
+
+        <!-- Weekly grid: 7 independent columns, each scrolling on its own -->
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Dies}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,1,0" Margin="0,0,4,0">
+                        <Grid Opacity="{Binding Tancat, Converter={StaticResource TancatAOpacitatConverter}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Button Grid.Row="0" Background="Transparent" BorderThickness="0" Padding="4"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding DataContext.SeleccionarDiaCommand,
+                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}">
+                                <TextBlock Text="{Binding CapcaleraText}" FontWeight="SemiBold"
+                                           Foreground="{StaticResource InkBrush}" />
+                            </Button>
+
+                            <TextBlock Grid.Row="1" Text="{Binding MotiuTancat, StringFormat=Tancat: {0}}"
+                                       Foreground="{StaticResource InkMutedBrush}" FontSize="{StaticResource FontSizeSmall}"
+                                       TextWrapping="Wrap" Margin="4,0,4,8"
+                                       Visibility="{Binding Tancat, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding Cites}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource TargetaDada}" Padding="8" Margin="0,0,0,6">
+                                                <StackPanel>
+                                                    <TextBlock FontWeight="SemiBold" Foreground="{StaticResource InkBrush}">
+                                                        <Run Text="{Binding Hora, Mode=OneWay}" />
+                                                        <Run Text=" · " />
+                                                        <Run Text="{Binding NomMostrat, Mode=OneWay}" />
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Servei.Nom}" Foreground="{StaticResource InkMutedBrush}"
+                                                               FontSize="{StaticResource FontSizeSmall}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

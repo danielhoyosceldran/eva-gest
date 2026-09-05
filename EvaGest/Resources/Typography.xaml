@@ -1,0 +1,64 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Segoe UI Variable ships with Windows 11; Segoe UI is the Windows 10 fallback -->
+    <FontFamily x:Key="FontUi">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="FontDisplay">Segoe UI Variable Display, Segoe UI</FontFamily>
+
+    <sys:Double x:Key="FontSizeSmall">14</sys:Double>
+    <sys:Double x:Key="FontSizeBody">16</sys:Double>
+    <sys:Double x:Key="FontSizeInput">18</sys:Double>
+    <sys:Double x:Key="FontSizeSubhead">20</sys:Double>
+    <sys:Double x:Key="FontSizeTitle">26</sys:Double>
+    <sys:Double x:Key="FontSizeFigure">30</sys:Double>
+    <sys:Double x:Key="FontSizeHero">44</sys:Double>
+
+    <!-- Page title -->
+    <Style x:Key="TitolPagina" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FontDisplay}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeTitle}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Margin" Value="0,0,0,20" />
+    </Style>
+
+    <!-- Block heading -->
+    <Style x:Key="Subtitol" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSubhead}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Margin" Value="0,20,0,10" />
+    </Style>
+
+    <!-- Small label above a figure. Sentence case, never spaced capitals. -->
+    <Style x:Key="EtiquetaDada" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+        <Setter Property="Margin" Value="0,0,0,4" />
+    </Style>
+
+    <!-- Money and counts. Tabular figures keep digits in a column so a wrong
+         amount is visible at a glance instead of hiding in ragged alignment. -->
+    <Style x:Key="Xifra" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FontDisplay}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeFigure}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+    </Style>
+
+    <!-- The single large figure per screen -->
+    <Style x:Key="XifraHero" TargetType="TextBlock" BasedOn="{StaticResource Xifra}">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeHero}" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <!-- Amounts inside tables: right-aligned and tabular -->
+    <Style x:Key="XifraTaula" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="TextAlignment" Value="Right" />
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+    </Style>
+</ResourceDictionary>

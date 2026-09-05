@@ -1,0 +1,135 @@
+<UserControl x:Class="EvaGest.Views.Pagines.CaixaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:EvaGest.Helpers"
+             xmlns:vm="clr-namespace:EvaGest.ViewModels.Pagines"
+             Background="{StaticResource PaperBrush}">
+    <UserControl.Resources>
+        <h:EnumStringConverter x:Key="PeriodeConverter" TipusEnum="{x:Type vm:PeriodeCaixa}" />
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource PadPagina}">
+            <TextBlock Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
+
+            <!-- Period selector (pantalles 2.7) -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <ComboBox SelectedValue="{Binding Periode, Converter={StaticResource PeriodeConverter}}"
+                          SelectedValuePath="Tag" Width="180" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}">
+                    <ComboBoxItem Content="Avui" Tag="Avui" />
+                    <ComboBoxItem Content="Ahir" Tag="Ahir" />
+                    <ComboBoxItem Content="Aquesta setmana" Tag="AquestaSetmana" />
+                    <ComboBoxItem Content="Aquest mes" Tag="AquestMes" />
+                    <ComboBoxItem Content="Mes anterior" Tag="MesAnterior" />
+                    <ComboBoxItem Content="Personalitzat" Tag="Personalitzat" />
+                </ComboBox>
+                <DatePicker SelectedDate="{Binding Des}" Margin="16,0,0,0" FontSize="{StaticResource FontSizeInput}"
+                            IsEnabled="{Binding Periode, Converter={StaticResource PersonalitzatAHabilitatConverter}}" />
+                <DatePicker SelectedDate="{Binding Fins}" Margin="8,0,0,0" FontSize="{StaticResource FontSizeInput}"
+                            IsEnabled="{Binding Periode, Converter={StaticResource PersonalitzatAHabilitatConverter}}" />
+                <Button Content="+ Entrada" Style="{StaticResource BotoSecundari}" Margin="24,0,0,0" Command="{Binding NovaEntradaCommand}" />
+                <Button Content="+ Sortida" Style="{StaticResource BotoSecundari}" Margin="8,0,0,0" Command="{Binding NovaSortidaCommand}" />
+            </StackPanel>
+
+            <!-- Summary cards: Vendes, Entrades, Sortides, Balanç (highlighted) -->
+            <UniformGrid Columns="4" Margin="0,0,0,16">
+                <Border Style="{StaticResource TargetaDada}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Vendes" Style="{StaticResource EtiquetaDada}" />
+                        <TextBlock Text="{Binding VendesText}" Style="{StaticResource Xifra}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource TargetaDada}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Entrades" Style="{StaticResource EtiquetaDada}" />
+                        <TextBlock Text="{Binding EntradesText}" Style="{StaticResource Xifra}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource TargetaDada}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Sortides" Style="{StaticResource EtiquetaDada}" />
+                        <TextBlock Text="{Binding SortidesText}" Style="{StaticResource Xifra}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource TargetaHero}">
+                    <StackPanel>
+                        <TextBlock Text="Balanç" Style="{StaticResource EtiquetaDada}" />
+                        <TextBlock Text="{Binding BalancText}" Style="{StaticResource XifraHero}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- VAT breakdown for the period -->
+            <TextBlock Text="Desglossament d'IVA del període" Style="{StaticResource Subtitol}" />
+            <Border Style="{StaticResource TargetaDada}">
+                <StackPanel>
+                    <Grid Visibility="{Binding MostrarDesglossamentPerTipus, Converter={StaticResource InversAVisibilitatConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Base" Style="{StaticResource EtiquetaDada}" />
+                            <TextBlock Text="{Binding BaseText}" Style="{StaticResource Xifra}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Quota" Style="{StaticResource EtiquetaDada}" />
+                            <TextBlock Text="{Binding IvaText}" Style="{StaticResource Xifra}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Total" Style="{StaticResource EtiquetaDada}" />
+                            <TextBlock Text="{Binding BalancText}" Style="{StaticResource Xifra}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding Resum.DesglossamentIva}"
+                                  Visibility="{Binding MostrarDesglossamentPerTipus, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding IvaBp, StringFormat={}{0} bp}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding BaseCents, StringFormat={}{0:0.00}}" Style="{StaticResource XifraTaula}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding IvaCents, StringFormat={}{0:0.00}}" Style="{StaticResource XifraTaula}" />
+                                    <TextBlock Grid.Column="3" Text="{Binding TotalCents, StringFormat={}{0:0.00}}" Style="{StaticResource XifraTaula}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Movements table -->
+            <TextBlock Text="Moviments" Style="{StaticResource Subtitol}" />
+            <Border Style="{StaticResource TargetaDada}" Padding="0">
+                <DataGrid ItemsSource="{Binding Moviments}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90" />
+                        <DataGridTextColumn Header="Tipus" Binding="{Binding Tipus}" Width="80" />
+                        <DataGridTextColumn Header="Concepte" Binding="{Binding Concepte}" Width="*" />
+                        <DataGridTextColumn Header="Mètode" Binding="{Binding MetodePagament.Nom}" Width="100" />
+                        <DataGridTextColumn Header="Import" Binding="{Binding ImportSignatCents, StringFormat={}{0:0.00}}" Width="90" />
+                        <DataGridTemplateColumn Header="" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Eliminar" Style="{StaticResource BotoSecundari}"
+                                            Padding="8,0" MinHeight="32"
+                                            Command="{Binding DataContext.EliminarCommand,
+                                                      RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

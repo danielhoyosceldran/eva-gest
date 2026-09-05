@@ -1,0 +1,80 @@
+<UserControl x:Class="EvaGest.Views.Pagines.ClientsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource PaperBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource PadPagina}">
+            <TextBlock Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding TextCerca, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="Cerca per nom o mòbil…" MaxWidth="360" HorizontalAlignment="Left" />
+                <Button Grid.Column="1" Content="+ Nou client" Style="{StaticResource BotoPrimari}"
+                        Command="{Binding NouClientCommand}" />
+            </Grid>
+
+            <Border Style="{StaticResource TargetaDada}" Padding="0">
+                <DataGrid ItemsSource="{Binding Actius}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
+                        <DataGridTextColumn Header="Mòbil" Binding="{Binding Mobil}" Width="130" />
+                        <!-- Visites / Total gastat / Última visita venen dels indicadors agregats
+                             (RF-17), que InformesService calcula a partir de Fase 8. Fins llavors
+                             no es mostren xifres inventades. -->
+                        <DataGridTemplateColumn Header="" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Fitxa" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.ObrirFitxaCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="Editar" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.EditarClientCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <ToggleButton x:Name="ToggleAdormits" Content="Clients adormits" IsChecked="{Binding MostrarAdormits}"
+                          HorizontalAlignment="Left" Margin="0,20,0,10" Background="Transparent" BorderThickness="0"
+                          Foreground="{StaticResource InkMutedBrush}" FontSize="{StaticResource FontSizeSubhead}" />
+
+            <Border Style="{StaticResource TargetaDada}" Padding="0"
+                    Visibility="{Binding MostrarAdormits, Converter={StaticResource BoolToVisibilityConverter}}">
+                <DataGrid ItemsSource="{Binding Adormits}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
+                        <DataGridTextColumn Header="Mòbil" Binding="{Binding Mobil}" Width="130" />
+                        <DataGridTemplateColumn Header="" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Despertar" Style="{StaticResource BotoSecundari}"
+                                            Padding="10,0" MinHeight="32"
+                                            Command="{Binding DataContext.DespertarCommand,
+                                                      RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,115 @@
+<UserControl x:Class="EvaGest.Views.Pagines.CatalegView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource PaperBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource PadPagina}">
+            <TextBlock Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
+
+            <!-- Serveis -->
+            <TextBlock Text="Serveis" Style="{StaticResource Subtitol}" />
+            <Button Content="+ Nou servei" Style="{StaticResource BotoSecundari}"
+                    HorizontalAlignment="Left" Command="{Binding NouServeiCommand}" Margin="0,0,0,12" />
+            <Border Style="{StaticResource TargetaDada}" Padding="0">
+                <DataGrid ItemsSource="{Binding Serveis}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
+                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuCents, StringFormat={}{0:0.00} €}" Width="100" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaBp}" Width="80" />
+                        <DataGridTextColumn Header="Durada" Binding="{Binding DuradaMin}" Width="80" />
+                        <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
+                        <DataGridTemplateColumn Header="" Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Editar" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditarServeiCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.CanviarEstatServeiCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Productes -->
+            <TextBlock Text="Productes" Style="{StaticResource Subtitol}" />
+            <Button Content="+ Nou producte" Style="{StaticResource BotoSecundari}"
+                    HorizontalAlignment="Left" Command="{Binding NouProducteCommand}" Margin="0,0,0,12" />
+            <Border Style="{StaticResource TargetaDada}" Padding="0">
+                <DataGrid ItemsSource="{Binding Productes}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
+                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuCents, StringFormat={}{0:0.00} €}" Width="100" />
+                        <DataGridTextColumn Header="Categoria" Binding="{Binding Categoria}" Width="120" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaBp}" Width="80" />
+                        <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
+                        <DataGridTemplateColumn Header="" Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Editar" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditarProducteCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.CanviarEstatProducteCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Mètodes de pagament -->
+            <TextBlock Text="Mètodes de pagament" Style="{StaticResource Subtitol}" />
+            <Button Content="+ Nou mètode" Style="{StaticResource BotoSecundari}"
+                    HorizontalAlignment="Left" Command="{Binding NouMetodeCommand}" Margin="0,0,0,12" />
+            <Border Style="{StaticResource TargetaDada}" Padding="0">
+                <DataGrid ItemsSource="{Binding Metodes}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
+                        <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
+                        <DataGridTemplateColumn Header="" Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Editar" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditarMetodeCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.CanviarEstatMetodeCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

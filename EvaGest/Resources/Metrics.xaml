@@ -1,0 +1,23 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Spacing scale: 4 / 8 / 12 / 20 / 32 -->
+    <Thickness x:Key="PadTight">8</Thickness>
+    <Thickness x:Key="PadBase">12</Thickness>
+    <Thickness x:Key="PadCard">20</Thickness>
+    <Thickness x:Key="PadPagina">32,24,32,24</Thickness>
+
+    <!-- Touch targets: generous, because this is used in a hurry (RNF-03) -->
+    <sys:Double x:Key="AlcadaBoto">44</sys:Double>
+    <sys:Double x:Key="AlcadaBotoGran">64</sys:Double>
+    <sys:Double x:Key="AlcadaCamp">40</sys:Double>
+    <sys:Double x:Key="AlcadaFila">44</sys:Double>
+    <sys:Double x:Key="AmpladaNav">200</sys:Double>
+
+    <!-- Two radii only: 4 for controls, 8 for surfaces. Not one value everywhere. -->
+    <CornerRadius x:Key="RadiControl">4</CornerRadius>
+    <CornerRadius x:Key="RadiSuperficie">8</CornerRadius>
+
+    <sys:Double x:Key="GruixRegla">3</sys:Double>
+</ResourceDictionary>

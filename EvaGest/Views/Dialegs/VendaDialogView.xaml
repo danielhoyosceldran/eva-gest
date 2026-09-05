@@ -1,0 +1,108 @@
+<UserControl x:Class="EvaGest.Views.Dialegs.VendaDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Width="520">
+        <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
+
+        <TextBlock Text="{Binding CitaAssociadaText}" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
+                   Visibility="{Binding CitaAssociadaText, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <TextBlock Text="Client registrat (o escriu un nom lliure a sota)" Style="{StaticResource EtiquetaDada}" />
+        <ComboBox ItemsSource="{Binding ClientsActius}" SelectedItem="{Binding ClientSeleccionat}"
+                  DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
+        <TextBox Text="{Binding TextClient, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+        <TextBlock Text="Treballadora (opcional)" Style="{StaticResource EtiquetaDada}" />
+        <ComboBox ItemsSource="{Binding TreballadoresActives}" SelectedItem="{Binding Treballadora}"
+                  DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
+
+        <TextBlock Text="Línies" Style="{StaticResource Subtitol}" />
+        <ItemsControl ItemsSource="{Binding Linies}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource TargetaDada}" Padding="10" Margin="0,0,0,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding Descripcio, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="2" Text="{Binding Quantitat, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="4" Text="{Binding PreuText, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="6" Text="{Binding IvaBp, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Column="8" Text="{Binding ImportCents}" VerticalAlignment="Center"
+                                       Style="{StaticResource XifraTaula}" />
+                            <Button Grid.Column="10" Content="Treure" Style="{StaticResource BotoSecundari}"
+                                    Padding="8,0" MinHeight="32"
+                                    Command="{Binding DataContext.TreureLiniaCommand,
+                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <ComboBox ItemsSource="{Binding ServeisActius}" DisplayMemberPath="Nom" Width="140" x:Name="ComboServei" />
+            <Button Content="+ Servei" Style="{StaticResource BotoSecundari}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
+                    Command="{Binding AfegirServeiCommand}" CommandParameter="{Binding ElementName=ComboServei, Path=SelectedItem}" />
+            <ComboBox ItemsSource="{Binding ProductesActius}" DisplayMemberPath="Nom" Width="140" Margin="16,0,0,0" x:Name="ComboProducte" />
+            <Button Content="+ Producte" Style="{StaticResource BotoSecundari}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
+                    Command="{Binding AfegirProducteCommand}" CommandParameter="{Binding ElementName=ComboProducte, Path=SelectedItem}" />
+            <Button Content="+ Concepte lliure" Style="{StaticResource BotoSecundari}" Padding="8,0" MinHeight="32" Margin="16,0,0,0"
+                    Command="{Binding AfegirConceptePersonalitzatCommand}" />
+        </StackPanel>
+
+        <TextBlock Text="Mètode de pagament" Style="{StaticResource EtiquetaDada}" />
+        <ComboBox ItemsSource="{Binding MetodesActius}" SelectedItem="{Binding MetodePagament}"
+                  DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
+
+        <TextBlock Text="Observacions (opcional)" Style="{StaticResource EtiquetaDada}" />
+        <TextBox Text="{Binding Observacions, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
+
+        <!-- Live totals footer (pantalles 3.2) -->
+        <Border Style="{StaticResource TargetaHero}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Base imposable" Style="{StaticResource EtiquetaDada}" />
+                    <TextBlock Text="{Binding BaseText}" Style="{StaticResource Xifra}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="IVA" Style="{StaticResource EtiquetaDada}" />
+                    <TextBlock Text="{Binding IvaText}" Style="{StaticResource Xifra}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="TOTAL" Style="{StaticResource EtiquetaDada}" />
+                    <TextBlock Text="{Binding TotalText}" Style="{StaticResource XifraHero}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <TextBlock Text="{Binding ErrorValidacio}" Foreground="{StaticResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,0,0,12"
+                   Visibility="{Binding ErrorValidacio, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel·lar" Style="{StaticResource BotoSecundari}" Command="{Binding CancellarCommand}" IsCancel="True" />
+            <Button Content="Anul·lar venda" Style="{StaticResource BotoDestructiu}" Command="{Binding AnullarVendaCommand}"
+                    Visibility="{Binding ModeActual, Converter={StaticResource ModeEditarAVisibilitatConverter}}" />
+            <Button Content="Cobrar" Style="{StaticResource BotoPrimari}" Command="{Binding CobrarCommand}" IsDefault="True" Margin="12,0,0,0" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
