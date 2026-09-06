@@ -1,0 +1,107 @@
+<UserControl x:Class="EvaGest.Views.Dialegs.TreballadoraDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Width="560">
+        <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
+
+        <TextBlock Text="Nom" Style="{StaticResource EtiquetaDada}" />
+        <TextBox Text="{Binding Nom, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+        <TextBlock Text="Color a l'agenda" Style="{StaticResource EtiquetaDada}" />
+        <ComboBox ItemsSource="{Binding ColorsDisponibles}" SelectedItem="{Binding Color}"
+                  Margin="0,0,0,12" MinHeight="{StaticResource AlcadaCamp}"
+                  FontSize="{StaticResource FontSizeInput}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="12" Height="12" VerticalAlignment="Center"
+                                 Fill="{Binding Hex}" />
+                        <TextBlock Text="{Binding Nom}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <CheckBox IsChecked="{Binding Activa}" Content="Activa" Margin="0,0,0,4" />
+        <TextBlock Text="Una treballadora inactiva conserva el seu horari i tot el seu historial, però no compta com a disponible als avisos de solapament. No es poden eliminar treballadores, precisament per no perdre'n l'historial de vendes."
+                   Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+        <TextBlock Text="Horari setmanal" Style="{StaticResource EtiquetaDada}" />
+        <TextBlock Text="Un dia sense hores vol dir que no treballa. Deixa la segona franja buida si fa horari seguit."
+                   Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap" Margin="0,0,0,8" />
+
+        <Grid Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" Text="Treballa" Style="{StaticResource EtiquetaDada}" />
+            <TextBlock Grid.Column="2" Text="Primera franja" Style="{StaticResource EtiquetaDada}" Width="170" />
+            <TextBlock Grid.Column="3" Text="Segona franja (opcional)" Style="{StaticResource EtiquetaDada}" Width="170" />
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding DiesHorari}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,0,4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding NomDia}" VerticalAlignment="Center"
+                                       FontFamily="{StaticResource FontUi}"
+                                       FontSize="{StaticResource FontSizeBody}"
+                                       Foreground="{StaticResource InkBrush}" />
+
+                            <CheckBox Grid.Column="1" IsChecked="{Binding Obert}" VerticalAlignment="Center" />
+
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" IsEnabled="{Binding Obert}">
+                                <TextBox Text="{Binding MatiInici, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="70" TextAlignment="Center" />
+                                <TextBlock Text="–" Margin="8,0" VerticalAlignment="Center"
+                                           Foreground="{StaticResource InkMutedBrush}" />
+                                <TextBox Text="{Binding MatiFi, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="70" TextAlignment="Center" Margin="0,0,20,0" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3" Orientation="Horizontal" IsEnabled="{Binding Obert}">
+                                <TextBox Text="{Binding TardaInici, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="70" TextAlignment="Center" />
+                                <TextBlock Text="–" Margin="8,0" VerticalAlignment="Center"
+                                           Foreground="{StaticResource InkMutedBrush}" />
+                                <TextBox Text="{Binding TardaFi, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="70" TextAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="{Binding Error}" Foreground="{StaticResource DangerBrush}"
+                                   FontSize="{StaticResource FontSizeSmall}" Margin="100,2,0,4"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding Error, Converter={StaticResource NullToVisibilityConverter}}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Content="Copiar dilluns a dimarts–divendres" Style="{StaticResource BotoSecundari}"
+                HorizontalAlignment="Left" Margin="0,8,0,12"
+                Command="{Binding CopiarADiesLaborablesCommand}" />
+
+        <TextBlock Text="{Binding ErrorValidacio}" Foreground="{StaticResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,0,0,12"
+                   Visibility="{Binding ErrorValidacio, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel·lar" Style="{StaticResource BotoSecundari}"
+                    Command="{Binding CancellarCommand}" IsCancel="True" />
+            <Button Content="Guardar" Style="{StaticResource BotoPrimari}"
+                    Command="{Binding GuardarCommand}" IsDefault="True" Margin="12,0,0,0" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

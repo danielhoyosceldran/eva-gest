@@ -31,7 +31,7 @@ public partial class AjudaViewModel : DialegViewModelBase
     private void TancarAjuda() => SolicitarTancar(true);
 }
 
-/// <summary>The 14 questions from RF-19, grouped by the section they belong to.</summary>
+/// <summary>The FAQ entries from RF-19, grouped by the section they belong to.</summary>
 public static class ContingutFaq
 {
     public static readonly List<PreguntaFaq> Totes =
@@ -74,8 +74,19 @@ public static class ContingutFaq
             "A Configuració, prem «Restaurar còpia», tria-la de la llista i confirma. Abans de " +
             "restaurar, l'estat actual es guarda igualment per si cal desfer-ho."),
         new("Treballadores", "Com afegeixo una treballadora?",
-            "Des de la pàgina Treballadores. De moment aquesta pantalla només mostra la llista; " +
-            "el formulari per afegir-ne una de nova és a punt de completar-se."),
+            "A Treballadores, prem «+ Nova treballadora». Indica el nom, tria-li un color per " +
+            "distingir-la a l'agenda i marca els dies i les hores que treballa. Cal com a mínim " +
+            "un dia amb horari."),
+        new("Treballadores", "Què passa si una treballadora se'n va de vacances?",
+            "Prem «Marcar inactiva». Conserva l'horari i tot l'historial, però deixa de comptar " +
+            "quan l'agenda mira si queda algú lliure. Quan torni, «Reactivar» ho desfà. No es " +
+            "poden eliminar treballadores, perquè es perdria l'historial de vendes que tenen."),
+        new("Configuració", "Què vol dir «preus amb IVA inclòs»?",
+            "Que el preu que escrius al catàleg és el que cobres. Si tries «preus sense IVA», " +
+            "l'IVA se suma a sobre en cobrar. Canviar-ho no toca cap venda ja registrada."),
+        new("Configuració", "Com marco un festiu o unes vacances?",
+            "A Configuració, bloc «Dies tancats», tria la data, escriu el motiu i prem «Marcar " +
+            "tancat». L'agenda mostrarà el dia atenuat, però et deixarà apuntar-hi cites igualment."),
         new("Vendes", "Com exporto les dades per a l'assessoria?",
             "A Vendes, Caixa o Configuració, prem «Exportar període», indica les dates i tria la " +
             "carpeta on desar els dos fitxers (vendes i IVA)."),

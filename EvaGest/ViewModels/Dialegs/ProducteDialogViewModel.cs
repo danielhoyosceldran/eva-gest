@@ -16,14 +16,19 @@ public partial class ProducteDialogViewModel : DialegViewModelBase
 
     public override string Titol => _id is null ? "Nou producte" : "Editar producte";
 
-    public ProducteDialogViewModel() { }
+    /// <summary>New entry: the VAT rate starts at whatever Configuració proposes,
+    /// but stays editable per item (RF-07/RF-08).</summary>
+    public ProducteDialogViewModel(int ivaBpPerDefecte = 2100)
+    {
+        IvaText = Percentatges.FormatSenseUnitat(ivaBpPerDefecte);
+    }
 
     public ProducteDialogViewModel(Producte producte)
     {
         _id = producte.Id;
         Nom = producte.Nom;
         PreuText = Diners.FormatExport(producte.PreuCents);
-        IvaText = Percentatges.Format(producte.IvaBp).Replace(" %", "");
+        IvaText = Percentatges.FormatSenseUnitat(producte.IvaBp);
         Categoria = producte.Categoria;
     }
 
@@ -40,6 +45,11 @@ public partial class ProducteDialogViewModel : DialegViewModelBase
             ErrorValidacio = "El preu no és vàlid.";
             return;
         }
+        if (!Percentatges.TryParse(IvaText, out _))
+        {
+            ErrorValidacio = "L'IVA ha de ser un percentatge entre 0 i 100.";
+            return;
+        }
 
         ErrorValidacio = null;
         SolicitarTancar(true);
@@ -51,8 +61,7 @@ public partial class ProducteDialogViewModel : DialegViewModelBase
     public Producte AModel()
     {
         Diners.TryParse(PreuText, out int preuCents);
-        int ivaBp = (int)Math.Round(decimal.Parse(IvaText.Replace(",", ".").Replace("%", ""),
-            System.Globalization.CultureInfo.InvariantCulture) * 100);
+        Percentatges.TryParse(IvaText, out int ivaBp);
 
         return new Producte
         {

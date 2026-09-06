@@ -2,7 +2,9 @@ using System.Windows;
 using AwesomeAssertions;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
+using EvaGest.Models;
 using EvaGest.ViewModels.Elements;
+using EvaGest.ViewModels.Pagines;
 using Xunit;
 
 namespace EvaGest.Tests.Vistes;
@@ -71,6 +73,99 @@ public class XamlCarregaTests(AplicacioWpf app)
         => app.Executa(() =>
         {
             var vista = new EvaGest.Views.Pagines.ConfiguracioView();
+            vista.Measure(new Size(1200, 800));
+            vista.Arrange(new Rect(0, 0, 1200, 800));
+        });
+
+    [Fact] // X-06
+    public async Task La_vista_de_treballadores_es_construeix_amb_dades_reals()
+    {
+        await using var bd = new BaseDadesProva();
+        var servei = new TreballadoraService(new FabricaDeProva(bd.Opcions));
+        await servei.Crear(Fes.Treballadora(), new Dictionary<DiaSetmana, List<(TimeOnly, TimeOnly)>>
+        {
+            [DiaSetmana.Dl] = [(new TimeOnly(9, 0), new TimeOnly(14, 0))]
+        });
+
+        var vm = new TreballadoresViewModel(servei, new DialogServiceDeProva());
+        await vm.Carregar();
+
+        app.Executa(() =>
+        {
+            var vista = new EvaGest.Views.Pagines.TreballadoresView { DataContext = vm };
+            vista.Measure(new Size(1200, 800));
+            vista.Arrange(new Rect(0, 0, 1200, 800));
+            vista.ActualWidth.Should().BeGreaterThan(0);
+        });
+    }
+
+    [Fact] // X-08
+    public async Task La_vista_de_vendes_es_construeix_amb_filtres_i_peu()
+    {
+        await using var bd = new BaseDadesProva();
+        var factory = new FabricaDeProva(bd.Opcions);
+        var config = new ConfiguracioService(factory);
+        await new SeedService(factory, config).Sembrar();
+
+        var vm = new VendesViewModel(
+            new VendaService(factory, config), new ClientService(factory), new CatalegService(factory),
+            new TreballadoraService(factory), new SoundServiceDeProva(), config,
+            new ExportService(factory), new DialogServiceDeProva());
+        await vm.Carregar();
+
+        app.Executa(() =>
+        {
+            var vista = new EvaGest.Views.Pagines.VendesView { DataContext = vm };
+            vista.Measure(new Size(1400, 800));
+            vista.Arrange(new Rect(0, 0, 1400, 800));
+            vista.ActualWidth.Should().BeGreaterThan(0);
+        });
+    }
+
+    [Fact] // X-09
+    public async Task La_vista_de_l_agenda_dibuixa_el_detall_del_dia()
+    {
+        await using var bd = new BaseDadesProva();
+        var factory = new FabricaDeProva(bd.Opcions);
+        var config = new ConfiguracioService(factory);
+        await new SeedService(factory, config).Sembrar();
+
+        var dia = new DateOnly(2026, 9, 7);
+        await using (var db = bd.Context())
+        {
+            db.Cites.Add(new Cita
+            {
+                Data = dia, Hora = new TimeOnly(10, 0), DuradaMin = 30,
+                NomConvidat = "Pere", Estat = EstatCita.Pendent
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var vm = new AgendaViewModel(
+            new CitaService(factory), new VendaService(factory, config),
+            new DisponibilitatService(factory), new ClientService(factory),
+            new CatalegService(factory), new TreballadoraService(factory), config,
+            new SoundServiceDeProva(), new DialogServiceDeProva());
+        await vm.Graella.CarregarSetmana(dia);
+        await vm.SeleccionarDiaCommand.ExecuteAsync(dia);
+
+        app.Executa(() =>
+        {
+            var vista = new EvaGest.Views.Pagines.AgendaView { DataContext = vm };
+            vista.Measure(new Size(1400, 800));
+            vista.Arrange(new Rect(0, 0, 1400, 800));
+            vista.ActualWidth.Should().BeGreaterThan(0);
+        });
+    }
+
+    [Fact] // X-07
+    public void El_dialeg_de_treballadora_es_construeix()
+        => app.Executa(() =>
+        {
+            var vista = new EvaGest.Views.Dialegs.TreballadoraDialogView
+            {
+                DataContext = new EvaGest.ViewModels.Dialegs.TreballadoraDialogViewModel([])
+            };
             vista.Measure(new Size(1200, 800));
             vista.Arrange(new Rect(0, 0, 1200, 800));
         });

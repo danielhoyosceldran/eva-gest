@@ -41,6 +41,13 @@ public static class Etiquetes
         _ => tipus.ToString()
     };
 
+    public static string Text(IvaMode mode) => mode switch
+    {
+        IvaMode.Inclos   => "Preus amb IVA inclòs",
+        IvaMode.NoInclos => "Preus sense IVA",
+        _ => mode.ToString()
+    };
+
     public static string Text(TipusLinia tipus) => tipus switch
     {
         TipusLinia.Servei   => "Servei",

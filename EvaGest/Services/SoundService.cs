@@ -1,3 +1,5 @@
+using EvaGest.Models;
+
 namespace EvaGest.Services;
 
 /// <summary>
@@ -5,14 +7,13 @@ namespace EvaGest.Services;
 /// audio asset pipeline exists yet in this codebase, so this substitutes the nearest
 /// built-in equivalent (a short system chime) rather than block Fase 10 on asset
 /// production. Swapping in the real .wav later only touches this one class.
-///
-/// TODO: read SoConfirmacio from ConfiguracioService once it exists, to honour the
-/// "desactivable des de la configuració" requirement (RF-22). Always on for now.
 /// </summary>
-public class SoundService : ISoundService
+public class SoundService(IConfiguracioService configuracio) : ISoundService
 {
-    public void ReproduirConfirmacio()
+    public async Task ReproduirConfirmacio()
     {
+        if (!await configuracio.ObtenirBool(ClausConfig.SoConfirmacio, perDefecte: true)) return;
+
         try
         {
             System.Media.SystemSounds.Asterisk.Play();

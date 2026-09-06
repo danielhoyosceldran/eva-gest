@@ -23,11 +23,13 @@ public class CitaDialogViewModelTests
             new ConfiguracioService(factory));
     }
 
-    private static CitaDialogViewModel Nova(Serveis s, DateOnly? data = null)
-        => new(s.Cites, s.Disponibilitat, s.Clients, s.Cataleg, s.Treballadores, s.Configuracio, data ?? Avui);
+    private static CitaDialogViewModel Nova(Serveis s, DateOnly? data = null, IDialogService? dialegs = null)
+        => new(s.Cites, s.Disponibilitat, s.Clients, s.Cataleg, s.Treballadores, s.Configuracio,
+               dialegs ?? new DialogServiceDeProva(), data ?? Avui);
 
     private static CitaDialogViewModel Editar(Serveis s, Cita cita)
-        => new(s.Cites, s.Disponibilitat, s.Clients, s.Cataleg, s.Treballadores, s.Configuracio, cita);
+        => new(s.Cites, s.Disponibilitat, s.Clients, s.Cataleg, s.Treballadores, s.Configuracio,
+               new DialogServiceDeProva(), cita);
 
     [Fact] // F-07
     public async Task Durada_surt_del_servei_si_en_te()
@@ -209,7 +211,7 @@ public class CitaDialogViewModelTests
         var s = Muntar(bd);
 
         var vm = new CitaDialogViewModel(s.Cites, s.Disponibilitat, s.Clients, s.Cataleg,
-            s.Treballadores, s.Configuracio, Avui, new TimeOnly(16, 30));
+            s.Treballadores, s.Configuracio, new DialogServiceDeProva(), Avui, new TimeOnly(16, 30));
 
         vm.Hora.Should().Be(new TimeOnly(16, 30));
     }
@@ -220,7 +222,7 @@ public class CitaDialogViewModelTests
         await using var bd = new BaseDadesProva();
         var s = Muntar(bd);
         var vm = new CitaDialogViewModel(s.Cites, s.Disponibilitat, s.Clients, s.Cataleg,
-            s.Treballadores, s.Configuracio, Avui, new TimeOnly(11, 0));
+            s.Treballadores, s.Configuracio, new DialogServiceDeProva(), Avui, new TimeOnly(11, 0));
         await vm.Inicialitzacio;
 
         vm.Graella.Should().NotBeNull();

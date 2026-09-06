@@ -31,6 +31,7 @@
             <h:ZeroAVisibilitatInversaConverter x:Key="ZeroAVisibilitatInversaConverter" />
             <h:PendentAVisibilitatConverter x:Key="PendentAVisibilitatConverter" />
             <h:DateOnlyConverter x:Key="DateOnlyConverter" />
+            <h:EtiquetaConverter x:Key="EtiquetaConverter" />
 
             <!-- Dialog content templates: DialogWindow only knows DialegViewModelBase,
                  the actual dialog layout is resolved from the ViewModel's runtime type. -->
@@ -45,6 +46,7 @@
             <DataTemplate DataType="{x:Type dvm:ExportDialogViewModel}"><dv:ExportDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:RestaurarDialogViewModel}"><dv:RestaurarDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:AjudaViewModel}"><dv:AjudaView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:TreballadoraDialogViewModel}"><dv:TreballadoraDialogView /></DataTemplate>
 
             <!-- The weekly grid is hosted both by the Agenda page and by the cita dialog -->
             <DataTemplate DataType="{x:Type evm:GraellaSetmanaViewModel}"><ev:GraellaSetmanaView /></DataTemplate>

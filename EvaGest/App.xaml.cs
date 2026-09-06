@@ -118,11 +118,13 @@ public partial class App : Application
         // Singleton so the settings table is read once and kept in memory: the agenda
         // grid asks for the slot granularity on every week load.
         s.AddSingleton<IConfiguracioService, ConfiguracioService>();
+        s.AddTransient<ISeedService, SeedService>();
 
         s.AddSingleton<MainWindowViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pagines.IniciViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pagines.CatalegViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pagines.ClientsViewModel>();
+        s.AddTransient<EvaGest.ViewModels.Pagines.TreballadoresViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pagines.AgendaViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pagines.VendesViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pagines.CaixaViewModel>();
@@ -138,6 +140,10 @@ public partial class App : Application
 
         await using var db = await factory.CreateDbContextAsync();
         await db.Database.MigrateAsync();
+
+        // Runs after every migration, not only on a fresh file: later versions add
+        // settings keys that an existing database still has to pick up (CU-12, step E).
+        await Serveis.GetRequiredService<ISeedService>().Sembrar();
     }
 
     protected override void OnExit(ExitEventArgs e)

@@ -11,6 +11,9 @@ public interface IConfiguracioService
     Task<bool> ObtenirBool(string clau, bool perDefecte);
     Task Guardar(string clau, string valor);
 
+    /// <summary>Stores a flag as "0"/"1", the shape the seed and the schema doc use.</summary>
+    Task GuardarBool(string clau, bool valor);
+
     /// <summary>Drops the in-memory cache. Needed after restoring a backup.</summary>
     void InvalidarCache();
 }

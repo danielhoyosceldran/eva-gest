@@ -76,6 +76,17 @@
                         Visibility="{Binding AvisDiaTancat, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="{Binding MotiuDiaTancat, StringFormat=Dia tancat: {0}}" TextWrapping="Wrap" />
                 </Border>
+                <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,6,0,0"
+                        Visibility="{Binding AvisClientNoRegistrat, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="Aquest client no està registrat. Pots apuntar la cita igualment, però no en quedarà historial." />
+                        <Button Content="Registrar-lo ara" Style="{StaticResource BotoSecundari}"
+                                HorizontalAlignment="Left" Margin="0,8,0,0"
+                                Command="{Binding RegistrarClientAraCommand}" />
+                    </StackPanel>
+                </Border>
             </StackPanel>
 
             <TextBlock Text="{Binding ErrorValidacio}" Foreground="{StaticResource DangerBrush}"

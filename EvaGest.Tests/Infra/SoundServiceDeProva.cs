@@ -2,8 +2,14 @@ using EvaGest.Services;
 
 namespace EvaGest.Tests.Infra;
 
-/// <summary>No-op stand-in: tests must never depend on an actual audio device.</summary>
+/// <summary>Silent stand-in that records whether the chime would have played.</summary>
 public class SoundServiceDeProva : ISoundService
 {
-    public void ReproduirConfirmacio() { }
+    public int Reproduccions { get; private set; }
+
+    public Task ReproduirConfirmacio()
+    {
+        Reproduccions++;
+        return Task.CompletedTask;
+    }
 }

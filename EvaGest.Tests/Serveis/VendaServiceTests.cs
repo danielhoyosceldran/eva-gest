@@ -12,7 +12,8 @@ public class VendaServiceTests
 {
     private static readonly DateOnly Avui = new(2026, 9, 7);
 
-    private static VendaService CreaServei(BaseDadesProva bd) => new(new FabricaDeProva(bd.Opcions));
+    private static VendaService CreaServei(BaseDadesProva bd)
+        => new(new FabricaDeProva(bd.Opcions), new ConfiguracioDeProva());
 
     private static async Task<int> AfegeixMetode(BaseDadesProva bd)
     {

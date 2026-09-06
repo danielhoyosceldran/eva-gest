@@ -1,0 +1,11 @@
+# Test-project analyzer settings.
+
+[*.cs]
+
+# xUnit1051: pass TestContext.Current.CancellationToken to methods that take one.
+#
+# The rule exists so a cancelled test run stops promptly. Every test here runs
+# against an in-memory SQLite database or a temp folder and finishes in
+# milliseconds, so there is nothing to cancel, while threading the token through
+# every EF call would add noise to ~180 call sites without changing behaviour.
+dotnet_diagnostic.xUnit1051.severity = none

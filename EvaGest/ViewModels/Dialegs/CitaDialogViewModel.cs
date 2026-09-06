@@ -28,7 +28,14 @@ public partial class CitaDialogViewModel : DialegViewModelBase
 {
     private readonly ICitaService _cites;
     private readonly IDisponibilitatService _disponibilitat;
+    private readonly IClientService _clients;
+    private readonly IDialogService _dialegs;
     private readonly int? _id;
+
+    /// <summary>Whether the guest reminder is switched on (RF-05bis). Read once when
+    /// the dialog opens; off by default until the settings have loaded, so the warning
+    /// never flashes up before it is known to be wanted.</summary>
+    private bool _avisConvidatActivat;
     private readonly int? _clientIdOriginal;
     private readonly int? _serveiIdOriginal;
     private readonly int? _treballadoraIdOriginal;
@@ -51,6 +58,7 @@ public partial class CitaDialogViewModel : DialegViewModelBase
     [ObservableProperty] private bool _avisForaHorari;
     [ObservableProperty] private bool _avisDiaTancat;
     [ObservableProperty] private string? _motiuDiaTancat;
+    [ObservableProperty] private bool _avisClientNoRegistrat;
 
     [ObservableProperty] private GraellaSetmanaViewModel? _graella;
 
@@ -70,15 +78,15 @@ public partial class CitaDialogViewModel : DialegViewModelBase
 
     public CitaDialogViewModel(ICitaService cites, IDisponibilitatService disponibilitat,
         IClientService clients, ICatalegService cataleg, ITreballadoraService treballadores,
-        IConfiguracioService configuracio,
+        IConfiguracioService configuracio, IDialogService dialegs,
         DateOnly dataInicial, TimeOnly? horaInicial = null)
-        : this(cites, disponibilitat, clients, cataleg, treballadores, configuracio,
+        : this(cites, disponibilitat, clients, cataleg, treballadores, configuracio, dialegs,
                null, dataInicial, horaInicial) { }
 
     public CitaDialogViewModel(ICitaService cites, IDisponibilitatService disponibilitat,
         IClientService clients, ICatalegService cataleg, ITreballadoraService treballadores,
-        IConfiguracioService configuracio, Cita cita)
-        : this(cites, disponibilitat, clients, cataleg, treballadores, configuracio,
+        IConfiguracioService configuracio, IDialogService dialegs, Cita cita)
+        : this(cites, disponibilitat, clients, cataleg, treballadores, configuracio, dialegs,
                cita, cita.Data, cita.Hora) { }
 
     /// <summary>
@@ -88,10 +96,13 @@ public partial class CitaDialogViewModel : DialegViewModelBase
     /// </summary>
     private CitaDialogViewModel(ICitaService cites, IDisponibilitatService disponibilitat,
         IClientService clients, ICatalegService cataleg, ITreballadoraService treballadores,
-        IConfiguracioService configuracio, Cita? cita, DateOnly dataInicial, TimeOnly? horaInicial)
+        IConfiguracioService configuracio, IDialogService dialegs,
+        Cita? cita, DateOnly dataInicial, TimeOnly? horaInicial)
     {
         _cites = cites;
         _disponibilitat = disponibilitat;
+        _clients = clients;
+        _dialegs = dialegs;
         Data = dataInicial;
         Hora = horaInicial ?? new TimeOnly(10, 0);
 
@@ -119,6 +130,13 @@ public partial class CitaDialogViewModel : DialegViewModelBase
     private async Task Inicialitzar(IClientService clients, ICatalegService cataleg,
         ITreballadoraService treballadores, IConfiguracioService configuracio)
     {
+        _avisConvidatActivat = await configuracio.ObtenirBool(ClausConfig.MostrarAvisConvidat, true);
+
+        // A new appointment starts at the configured default; an edited one keeps the
+        // duration it was saved with, and a service overrides both further down.
+        if (_id is null)
+            DuradaMin = await configuracio.ObtenirInt(ClausConfig.DuradaDefecteCitaMin, 30);
+
         foreach (var c in await clients.ObtenirActius()) OpcionsClient.Add(new OpcioClient(c));
         foreach (var s in await cataleg.ObtenirServeis(nomesActius: true)) ServeisActius.Add(s);
         foreach (var t in await treballadores.ObtenirTotes(nomesActives: true)) TreballadoresActives.Add(t);
@@ -145,7 +163,41 @@ public partial class CitaDialogViewModel : DialegViewModelBase
         await Graella.CarregarSetmana(SetmanaHelper.DilluIrsDeLaSetmana(Data));
         Graella.MostrarFantasma(Data, Hora, DuradaMin);
 
+        RevisarAvisConvidat();
         await RevisarAvisos();
+    }
+
+    /// <summary>
+    /// Shown only while a free-text name is actually typed: an empty guest field is not
+    /// a guest yet. Never blocks saving — it offers to register, nothing more (CU-01).
+    /// </summary>
+    private void RevisarAvisConvidat()
+        => AvisClientNoRegistrat = _avisConvidatActivat
+            && ClientSeleccionat is null
+            && !string.IsNullOrWhiteSpace(TextClient);
+
+    partial void OnTextClientChanged(string value) => RevisarAvisConvidat();
+
+    /// <summary>
+    /// Registers the guest without losing the half-filled appointment, and selects the
+    /// new client straight away, so the reminder does not simply reappear.
+    /// </summary>
+    [RelayCommand]
+    private async Task RegistrarClientAra()
+    {
+        var dialeg = new ClientDialogViewModel(_clients) { Nom = TextClient.Trim() };
+        if (TelefonConvidat is { Length: > 0 } telefon) dialeg.Mobil = telefon;
+
+        if (!await _dialegs.MostrarDialeg(dialeg)) return;
+
+        var creat = dialeg.AModel();
+        creat.Id = await _clients.Crear(creat);
+
+        var opcio = new OpcioClient(creat);
+        OpcionsClient.Add(opcio);
+        OpcioSeleccionada = opcio;
+        TextClient = string.Empty;
+        RevisarAvisConvidat();
     }
 
     partial void OnServeiChanged(Servei? value)
@@ -169,6 +221,7 @@ public partial class CitaDialogViewModel : DialegViewModelBase
         ClientSeleccionatAbans = value?.Client;
         OnPropertyChanged(nameof(PotEscriureConvidat));
         OnPropertyChanged(nameof(ClientSeleccionat));
+        RevisarAvisConvidat();
     }
 
     private Client? ClientSeleccionatAbans { get; set; }

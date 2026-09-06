@@ -16,14 +16,19 @@ public partial class ServeiDialogViewModel : DialegViewModelBase
 
     public override string Titol => _id is null ? "Nou servei" : "Editar servei";
 
-    public ServeiDialogViewModel() { }
+    /// <summary>New entry: the VAT rate starts at whatever Configuració proposes,
+    /// but stays editable per item (RF-07/RF-08).</summary>
+    public ServeiDialogViewModel(int ivaBpPerDefecte = 2100)
+    {
+        IvaText = Percentatges.FormatSenseUnitat(ivaBpPerDefecte);
+    }
 
     public ServeiDialogViewModel(Servei servei)
     {
         _id = servei.Id;
         Nom = servei.Nom;
         PreuText = Diners.FormatExport(servei.PreuCents);
-        IvaText = Percentatges.Format(servei.IvaBp).Replace(" %", "");
+        IvaText = Percentatges.FormatSenseUnitat(servei.IvaBp);
         DuradaMinText = servei.DuradaMin?.ToString();
     }
 
@@ -40,6 +45,11 @@ public partial class ServeiDialogViewModel : DialegViewModelBase
             ErrorValidacio = "El preu no és vàlid.";
             return;
         }
+        if (!Percentatges.TryParse(IvaText, out _))
+        {
+            ErrorValidacio = "L'IVA ha de ser un percentatge entre 0 i 100.";
+            return;
+        }
 
         ErrorValidacio = null;
         SolicitarTancar(true);
@@ -52,8 +62,7 @@ public partial class ServeiDialogViewModel : DialegViewModelBase
     public Servei AModel()
     {
         Diners.TryParse(PreuText, out int preuCents);
-        int ivaBp = (int)Math.Round(decimal.Parse(IvaText.Replace(",", ".").Replace("%", ""),
-            System.Globalization.CultureInfo.InvariantCulture) * 100);
+        Percentatges.TryParse(IvaText, out int ivaBp);
         int? duradaMin = int.TryParse(DuradaMinText, out int d) ? d : null;
 
         return new Servei

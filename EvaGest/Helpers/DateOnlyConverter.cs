@@ -17,8 +17,14 @@ public class DateOnlyConverter : IValueConverter
             _ => null
         };
 
-    /// <summary>Clearing the picker leaves the appointment's date untouched: an appointment
-    /// with no date makes no sense, so DoNothing beats writing a null into a DateOnly.</summary>
-    public object ConvertBack(object? valor, Type tipus, object? parametre, CultureInfo cultura)
-        => valor is DateTime moment ? DateOnly.FromDateTime(moment) : Binding.DoNothing;
+    /// <summary>
+    /// Clearing the picker means "no filter" when the target is a DateOnly?, and means
+    /// nothing at all when it is a plain DateOnly: an appointment with no date makes no
+    /// sense, so there DoNothing beats writing a null the property cannot hold.
+    /// </summary>
+    public object? ConvertBack(object? valor, Type tipus, object? parametre, CultureInfo cultura)
+    {
+        if (valor is DateTime moment) return DateOnly.FromDateTime(moment);
+        return Nullable.GetUnderlyingType(tipus) is not null ? null : Binding.DoNothing;
+    }
 }

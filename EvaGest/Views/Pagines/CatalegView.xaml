@@ -15,11 +15,11 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
-                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuCents, StringFormat={}{0:0.00} €}" Width="100" />
-                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaBp}" Width="80" />
-                        <DataGridTextColumn Header="Durada" Binding="{Binding DuradaMin}" Width="80" />
-                        <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Servei.Nom}" Width="*" />
+                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
+                        <DataGridTextColumn Header="Durada" Binding="{Binding DuradaText}" Width="80" />
+                        <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Servei.Actiu}" Width="60" />
                         <DataGridTemplateColumn Header="" Width="180">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -28,12 +28,12 @@
                                                 Padding="10,0" MinHeight="32"
                                                 Command="{Binding DataContext.EditarServeiCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
+                                                CommandParameter="{Binding Servei}" />
                                         <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.CanviarEstatServeiCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
+                                                CommandParameter="{Binding Servei}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -51,11 +51,11 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
-                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuCents, StringFormat={}{0:0.00} €}" Width="100" />
-                        <DataGridTextColumn Header="Categoria" Binding="{Binding Categoria}" Width="120" />
-                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaBp}" Width="80" />
-                        <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Producte.Nom}" Width="*" />
+                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" />
+                        <DataGridTextColumn Header="Categoria" Binding="{Binding Producte.Categoria}" Width="120" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
+                        <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Producte.Actiu}" Width="60" />
                         <DataGridTemplateColumn Header="" Width="180">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -64,12 +64,12 @@
                                                 Padding="10,0" MinHeight="32"
                                                 Command="{Binding DataContext.EditarProducteCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
+                                                CommandParameter="{Binding Producte}" />
                                         <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.CanviarEstatProducteCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
+                                                CommandParameter="{Binding Producte}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

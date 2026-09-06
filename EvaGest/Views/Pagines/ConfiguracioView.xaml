@@ -6,6 +6,71 @@
     <StackPanel Margin="{StaticResource PadPagina}">
         <TextBlock Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
 
+        <TextBlock Text="Dades de la barberia" Style="{StaticResource Subtitol}" />
+        <Border Style="{StaticResource TargetaDada}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Nom" Style="{StaticResource EtiquetaDada}" />
+                <TextBox Text="{Binding BarberiaNom, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,12" MaxWidth="420" HorizontalAlignment="Left" MinWidth="320" />
+
+                <TextBlock Text="Adreça" Style="{StaticResource EtiquetaDada}" />
+                <TextBox Text="{Binding BarberiaAdreca, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,12" MaxWidth="420" HorizontalAlignment="Left" MinWidth="320" />
+
+                <TextBlock Text="Telèfon" Style="{StaticResource EtiquetaDada}" />
+                <TextBox Text="{Binding BarberiaTelefon, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,12" MaxWidth="220" HorizontalAlignment="Left" MinWidth="200" />
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Desar dades" Style="{StaticResource BotoPrimari}"
+                            Command="{Binding GuardarDadesBarberiaCommand}" />
+                    <TextBlock Text="{Binding ConfirmacioBarberia}" VerticalAlignment="Center" Margin="12,0,0,0"
+                               Foreground="{StaticResource InkMutedBrush}"
+                               Visibility="{Binding ConfirmacioBarberia, Converter={StaticResource NullToVisibilityConverter}}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="IVA" Style="{StaticResource Subtitol}" />
+        <Border Style="{StaticResource TargetaDada}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Percentatge per defecte (%)" Style="{StaticResource EtiquetaDada}" />
+                <TextBlock Text="És el que es proposa en crear un servei o un producte nou. Cada element pot tenir-ne un de diferent."
+                           Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                    <TextBox Text="{Binding IvaDefecteText, UpdateSourceTrigger=PropertyChanged}"
+                             Width="90" TextAlignment="Center" />
+                    <Button Content="Desar" Style="{StaticResource BotoSecundari}" Margin="12,0,0,0"
+                            Command="{Binding GuardarIvaDefecteCommand}" />
+                </StackPanel>
+
+                <TextBlock Text="Mode de càlcul" Style="{StaticResource EtiquetaDada}" />
+                <ComboBox ItemsSource="{Binding ModesIva}" SelectedItem="{Binding ModeIva}"
+                          HorizontalAlignment="Left" MinWidth="220" Margin="0,0,0,6"
+                          FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EtiquetaConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Text="{Binding ModeIvaExplicacio}" Style="{StaticResource EtiquetaDada}"
+                           TextWrapping="Wrap" Margin="0,0,0,16" />
+
+                <CheckBox IsChecked="{Binding AplicarIvaCaixa}"
+                          Content="Poder desglossar l'IVA als moviments de caixa" Margin="0,0,0,4" />
+                <TextBlock Text="Desactivat, un moviment d'entrada o sortida guarda només l'import final."
+                           Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap" />
+
+                <TextBlock Text="{Binding ErrorIva}" Foreground="{StaticResource DangerBrush}"
+                           TextWrapping="Wrap" Margin="0,8,0,0"
+                           Visibility="{Binding ErrorIva, Converter={StaticResource NullToVisibilityConverter}}" />
+                <TextBlock Text="{Binding ConfirmacioIva}" Foreground="{StaticResource InkMutedBrush}"
+                           TextWrapping="Wrap" Margin="0,8,0,0"
+                           Visibility="{Binding ConfirmacioIva, Converter={StaticResource NullToVisibilityConverter}}" />
+            </StackPanel>
+        </Border>
+
         <TextBlock Text="Horari d'obertura" Style="{StaticResource Subtitol}" />
         <Border Style="{StaticResource TargetaDada}" Margin="0,0,0,16">
             <StackPanel>
@@ -87,13 +152,63 @@
             </StackPanel>
         </Border>
 
+        <TextBlock Text="Dies tancats" Style="{StaticResource Subtitol}" />
+        <Border Style="{StaticResource TargetaDada}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Festius i vacances. L'agenda mostra el dia atenuat amb el motiu, però et deixa apuntar-hi cites igualment."
+                           Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap" Margin="0,0,0,12" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <DatePicker SelectedDate="{Binding NovaDataTancada, Converter={StaticResource DateOnlyConverter}}"
+                                Width="150" />
+                    <TextBox Text="{Binding NouMotiuTancat, UpdateSourceTrigger=PropertyChanged}"
+                             Width="240" Margin="12,0,0,0" />
+                    <Button Content="+ Marcar tancat" Style="{StaticResource BotoSecundari}" Margin="12,0,0,0"
+                            Command="{Binding AfegirDiaTancatCommand}" />
+                </StackPanel>
+
+                <TextBlock Text="Encara no has marcat cap dia com a tancat."
+                           Style="{StaticResource EtiquetaDada}"
+                           Visibility="{Binding NoHiHaDiesTancats, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                <ItemsControl ItemsSource="{Binding DiesTancats}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                                           Text="{Binding Data, StringFormat={}{0:dd/MM/yyyy}}"
+                                           FontFamily="{StaticResource FontUi}"
+                                           FontSize="{StaticResource FontSizeBody}"
+                                           Foreground="{StaticResource InkBrush}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Motiu}" VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{StaticResource InkMutedBrush}"
+                                           FontFamily="{StaticResource FontUi}"
+                                           FontSize="{StaticResource FontSizeBody}" />
+                                <Button Grid.Column="2" Content="Treure" Style="{StaticResource BotoSecundari}"
+                                        Padding="10,0" MinHeight="32"
+                                        Command="{Binding DataContext.TreureDiaTancatCommand,
+                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
         <TextBlock Text="Agenda" Style="{StaticResource Subtitol}" />
         <Border Style="{StaticResource TargetaDada}" Margin="0,0,0,16">
             <StackPanel>
                 <TextBlock Text="Alçada de cada franja de la graella setmanal. Com més petita, més precisió en triar l'hora."
                            Style="{StaticResource EtiquetaDada}" Margin="0,0,0,12" TextWrapping="Wrap" />
                 <ComboBox ItemsSource="{Binding OpcionsMinutsSlot}" SelectedItem="{Binding MinutsSlot}"
-                          HorizontalAlignment="Left" MinWidth="160"
+                          HorizontalAlignment="Left" MinWidth="160" Margin="0,0,0,16"
                           FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -101,6 +216,18 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+
+                <TextBlock Text="Durada d'una cita sense servei (minuts)" Style="{StaticResource EtiquetaDada}" />
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <TextBox Text="{Binding DuradaDefecteCitaText, UpdateSourceTrigger=PropertyChanged}"
+                             Width="90" TextAlignment="Center" />
+                    <Button Content="Desar" Style="{StaticResource BotoSecundari}" Margin="12,0,0,0"
+                            Command="{Binding GuardarDuradaDefecteCommand}" />
+                </StackPanel>
+
+                <TextBlock Text="{Binding ErrorAgenda}" Foreground="{StaticResource DangerBrush}"
+                           TextWrapping="Wrap" Margin="0,8,0,0"
+                           Visibility="{Binding ErrorAgenda, Converter={StaticResource NullToVisibilityConverter}}" />
             </StackPanel>
         </Border>
 
@@ -108,11 +235,52 @@
         <Border Style="{StaticResource TargetaDada}" Margin="0,0,0,16">
             <StackPanel>
                 <TextBlock Text="{Binding UltimaCopiaText}" Style="{StaticResource EtiquetaDada}" Margin="0,0,0,12" />
+
+                <Grid Margin="0,0,0,12" HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,24,0">
+                        <TextBlock Text="Hora de la còpia automàtica" Style="{StaticResource EtiquetaDada}" />
+                        <TextBox Text="{Binding HoraBackupText, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="90" TextAlignment="Center" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Còpies a conservar" Style="{StaticResource EtiquetaDada}" />
+                        <TextBox Text="{Binding BackupsAConservarText, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="90" TextAlignment="Center" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="La còpia es fa en obrir l'aplicació, si ja ha passat aquesta hora i encara no se n'havia fet cap avui."
+                           Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap" Margin="0,0,0,12" />
+
+                <TextBlock Text="{Binding ErrorBackup}" Foreground="{StaticResource DangerBrush}"
+                           TextWrapping="Wrap" Margin="0,0,0,12"
+                           Visibility="{Binding ErrorBackup, Converter={StaticResource NullToVisibilityConverter}}" />
+
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Fer còpia ara" Style="{StaticResource BotoPrimari}" Command="{Binding FerCopiaAraCommand}" />
+                    <Button Content="Desar opcions" Style="{StaticResource BotoSecundari}"
+                            Command="{Binding GuardarOpcionsBackupCommand}" />
+                    <Button Content="Fer còpia ara" Style="{StaticResource BotoPrimari}" Margin="12,0,0,0"
+                            Command="{Binding FerCopiaAraCommand}" />
                     <Button Content="Restaurar còpia" Style="{StaticResource BotoSecundari}" Margin="12,0,0,0"
                             Command="{Binding RestaurarCopiaCommand}" />
                 </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="Avisos i sons" Style="{StaticResource Subtitol}" />
+        <Border Style="{StaticResource TargetaDada}" Margin="0,0,0,16">
+            <StackPanel>
+                <CheckBox IsChecked="{Binding MostrarAvisConvidat}"
+                          Content="Avisar quan una cita o venda és per a un client no registrat" Margin="0,0,0,4" />
+                <TextBlock Text="L'avís ofereix registrar-lo al moment, però mai impedeix guardar."
+                           Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap" Margin="0,0,0,12" />
+
+                <CheckBox IsChecked="{Binding SoConfirmacio}"
+                          Content="So curt de confirmació en cobrar una venda" />
             </StackPanel>
         </Border>
 

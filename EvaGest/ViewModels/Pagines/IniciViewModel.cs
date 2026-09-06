@@ -59,7 +59,24 @@ public partial class IniciViewModel(
         finally { Carregant = false; }
     }
 
-    [RelayCommand] private Task MarcarRealitzada(Cita cita) => CanviarEstatCita(cita, EstatCita.Realitzada);
+    /// <summary>
+    /// Marking an appointment as done is where the agenda meets the till (CU-02): the
+    /// sale dialog opens straight away with the appointment's client, service and
+    /// worker filled in. Closing it without charging is a valid outcome — the client
+    /// came but has not paid yet — so the appointment stays Realitzada either way.
+    /// </summary>
+    [RelayCommand]
+    private async Task MarcarRealitzada(Cita cita)
+    {
+        await cites.CanviarEstat(cita.Id, EstatCita.Realitzada);
+
+        var vm = await VendaDialogViewModel.DesDeCita(
+            vendes, clients, cataleg, treballadores, so, configuracio, dialegs, cita);
+        await dialegs.MostrarDialeg(vm);
+
+        await Carregar();
+    }
+
     [RelayCommand] private Task MarcarCancellada(Cita cita) => CanviarEstatCita(cita, EstatCita.Cancellada);
     [RelayCommand] private Task MarcarNoAssistida(Cita cita) => CanviarEstatCita(cita, EstatCita.NoAssistida);
 
@@ -73,14 +90,14 @@ public partial class IniciViewModel(
     private async Task NovaCita()
     {
         var vm = new CitaDialogViewModel(cites, disponibilitat, clients, cataleg, treballadores,
-            configuracio, DateOnly.FromDateTime(DateTime.Today));
+            configuracio, dialegs, DateOnly.FromDateTime(DateTime.Today));
         if (await dialegs.MostrarDialeg(vm)) await Carregar();
     }
 
     [RelayCommand]
     private async Task NovaVenda()
     {
-        var vm = await VendaDialogViewModel.Nova(vendes, clients, cataleg, treballadores, so);
+        var vm = await VendaDialogViewModel.Nova(vendes, clients, cataleg, treballadores, so, configuracio, dialegs);
         if (await dialegs.MostrarDialeg(vm)) await Carregar();
     }
 

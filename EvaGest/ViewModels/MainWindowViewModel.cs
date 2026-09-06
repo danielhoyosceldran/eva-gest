@@ -17,7 +17,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly IniciViewModel _inici;
     private readonly AgendaViewModel _agenda;
     private readonly ClientsViewModel _clients;
-    private readonly TreballadoresViewModel _treballadores = new();
+    private readonly TreballadoresViewModel _treballadores;
     private readonly CatalegViewModel _cataleg;
     private readonly VendesViewModel _vendes;
     private readonly CaixaViewModel _caixa;
@@ -25,12 +25,14 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly ConfiguracioViewModel _configuracio;
 
     public MainWindowViewModel(IniciViewModel inici, CatalegViewModel cataleg, ClientsViewModel clients,
-        AgendaViewModel agenda, VendesViewModel vendes, CaixaViewModel caixa,
-        InformesViewModel informes, ConfiguracioViewModel configuracio, IDialogService dialegs)
+        TreballadoresViewModel treballadores, AgendaViewModel agenda, VendesViewModel vendes,
+        CaixaViewModel caixa, InformesViewModel informes, ConfiguracioViewModel configuracio,
+        IDialogService dialegs)
     {
         _inici = inici;
         _cataleg = cataleg;
         _clients = clients;
+        _treballadores = treballadores;
         _agenda = agenda;
         _vendes = vendes;
         _caixa = caixa;

@@ -15,7 +15,7 @@ public class HorariBarberiaTests
         var factory = new FabricaDeProva(bd.Opcions);
         var rutes = new RutesApp(Path.Combine(Path.GetTempPath(), "eva-prova.db"), Path.GetTempPath());
         return new ConfiguracioViewModel(
-            new BackupService(rutes), new ExportService(factory),
+            new BackupService(rutes, new ConfiguracioService(factory)), new ExportService(factory),
             new ConfiguracioService(factory), new DisponibilitatService(factory),
             new DialogServiceDeProva());
     }

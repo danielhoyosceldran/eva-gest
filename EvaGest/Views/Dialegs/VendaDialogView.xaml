@@ -12,6 +12,19 @@
                   DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
         <TextBox Text="{Binding TextClient, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
+        <!-- Non-blocking guest reminder (RF-05bis): offers to register, never requires it -->
+        <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,12"
+                Visibility="{Binding AvisClientNoRegistrat, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock TextWrapping="Wrap"
+                           Text="Aquest client no està registrat. Pots cobrar igualment, però la venda no comptarà al seu historial." />
+                <Button Content="Registrar-lo ara" Style="{StaticResource BotoSecundari}"
+                        HorizontalAlignment="Left" Margin="0,8,0,0"
+                        Command="{Binding RegistrarClientAraCommand}" />
+            </StackPanel>
+        </Border>
+
         <TextBlock Text="Treballadora (opcional)" Style="{StaticResource EtiquetaDada}" />
         <ComboBox ItemsSource="{Binding TreballadoresActives}" SelectedItem="{Binding Treballadora}"
                   DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />

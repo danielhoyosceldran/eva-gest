@@ -11,12 +11,20 @@ namespace EvaGest.ViewModels.Pagines;
 /// The first CRUD page (Fase 3, capa-mvvm 4.7): deliberately the most boring module,
 /// so it fixes the View -> ViewModel -> Service pattern that Clients/Agenda/Vendes repeat.
 /// </summary>
-public partial class CatalegViewModel(ICatalegService cataleg, IDialogService dialegs) : PaginaViewModelBase
+public partial class CatalegViewModel(
+    ICatalegService cataleg, IConfiguracioService configuracio, IDialogService dialegs)
+    : PaginaViewModelBase
 {
     public override string Titol => "Catàleg";
 
-    public ObservableCollection<Servei> Serveis { get; } = [];
-    public ObservableCollection<Producte> Productes { get; } = [];
+    // Prices are stored in cents and VAT in basis points. Bound raw to a {0:0.00}
+    // format string, a 15,00 € service showed up as "1500,00 €" and 21 % as "2100",
+    // so both are formatted here instead.
+    public record FilaServei(Servei Servei, string PreuText, string IvaText, string DuradaText);
+    public record FilaProducte(Producte Producte, string PreuText, string IvaText);
+
+    public ObservableCollection<FilaServei> Serveis { get; } = [];
+    public ObservableCollection<FilaProducte> Productes { get; } = [];
     public ObservableCollection<MetodePagament> Metodes { get; } = [];
 
     public async Task Carregar()
@@ -25,10 +33,13 @@ public partial class CatalegViewModel(ICatalegService cataleg, IDialogService di
         try
         {
             Serveis.Clear();
-            foreach (var s in await cataleg.ObtenirServeis()) Serveis.Add(s);
+            foreach (var s in await cataleg.ObtenirServeis())
+                Serveis.Add(new FilaServei(s, Diners.Format(s.PreuCents), Percentatges.Format(s.IvaBp),
+                    s.DuradaMin is int d ? $"{d} min" : "—"));
 
             Productes.Clear();
-            foreach (var p in await cataleg.ObtenirProductes()) Productes.Add(p);
+            foreach (var p in await cataleg.ObtenirProductes())
+                Productes.Add(new FilaProducte(p, Diners.Format(p.PreuCents), Percentatges.Format(p.IvaBp)));
 
             Metodes.Clear();
             foreach (var m in await cataleg.ObtenirMetodes()) Metodes.Add(m);
@@ -36,12 +47,16 @@ public partial class CatalegViewModel(ICatalegService cataleg, IDialogService di
         finally { Carregant = false; }
     }
 
+    /// <summary>The rate proposed for a new catalogue entry (RF-23).</summary>
+    private async Task<int> IvaPerDefecte()
+        => await configuracio.ObtenirInt(ClausConfig.IvaBpDefecte, 2100);
+
     // --- Serveis ---
 
     [RelayCommand]
     private async Task NouServei()
     {
-        var vm = new ServeiDialogViewModel();
+        var vm = new ServeiDialogViewModel(await IvaPerDefecte());
         if (await dialegs.MostrarDialeg(vm))
         {
             await cataleg.CrearServei(vm.AModel());
@@ -74,7 +89,7 @@ public partial class CatalegViewModel(ICatalegService cataleg, IDialogService di
     [RelayCommand]
     private async Task NouProducte()
     {
-        var vm = new ProducteDialogViewModel();
+        var vm = new ProducteDialogViewModel(await IvaPerDefecte());
         if (await dialegs.MostrarDialeg(vm))
         {
             await cataleg.CrearProducte(vm.AModel());

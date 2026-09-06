@@ -40,4 +40,15 @@ public interface IDisponibilitatService
     /// <summary>Closed dates within a range, with their reason. Used by the weekly
     /// agenda to dim whole columns without one query per day.</summary>
     Task<Dictionary<DateOnly, string?>> DiesTancatsA(DateOnly des, DateOnly fins);
+
+    /// <summary>Every closed date on record, soonest first. The settings screen lists
+    /// them all rather than only the future ones: last year's holidays are what the
+    /// user copies from when filling in this year's.</summary>
+    Task<List<DiaTancat>> DiesTancats();
+
+    /// <summary>Marks a date as closed. Setting the same date twice updates its reason
+    /// instead of failing on the unique index.</summary>
+    Task AfegirDiaTancat(DateOnly data, string? motiu);
+
+    Task EliminarDiaTancat(int id);
 }

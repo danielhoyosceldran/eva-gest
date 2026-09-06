@@ -22,8 +22,22 @@ public class ConfiguracioService(IDbContextFactory<BarberiaDbContext> factory) :
     public async Task<int> ObtenirInt(string clau, int perDefecte)
         => int.TryParse(await Obtenir(clau), out int valor) ? valor : perDefecte;
 
+    /// <summary>Booleans are seeded as "0"/"1" (esquema-bbdd 2.14), which bool.TryParse
+    /// rejects outright — reading them with it alone silently returned the default for
+    /// every stored setting.</summary>
     public async Task<bool> ObtenirBool(string clau, bool perDefecte)
-        => bool.TryParse(await Obtenir(clau), out bool valor) ? valor : perDefecte;
+    {
+        string? valor = (await Obtenir(clau))?.Trim();
+        if (string.IsNullOrEmpty(valor)) return perDefecte;
+
+        if (valor is "1") return true;
+        if (valor is "0") return false;
+
+        return bool.TryParse(valor, out bool resultat) ? resultat : perDefecte;
+    }
+
+    /// <summary>Writes in the same 0/1 shape the seed uses, so the table stays uniform.</summary>
+    public Task GuardarBool(string clau, bool valor) => Guardar(clau, valor ? "1" : "0");
 
     public async Task Guardar(string clau, string valor)
     {

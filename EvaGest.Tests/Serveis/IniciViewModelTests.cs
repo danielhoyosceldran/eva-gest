@@ -16,7 +16,7 @@ public class IniciViewModelTests
     {
         var factory = new FabricaDeProva(bd.Opcions);
         return new IniciViewModel(
-            new CitaService(factory), new VendaService(factory), new CaixaService(factory),
+            new CitaService(factory), new VendaService(factory, new ConfiguracioService(factory)), new CaixaService(factory),
             new ClientService(factory), new DisponibilitatService(factory), new CatalegService(factory),
             new TreballadoraService(factory), new ConfiguracioService(factory),
             new SoundServiceDeProva(), new DialogServiceDeProva());

@@ -133,7 +133,7 @@ public class GraellaLayoutTests(AplicacioWpf app)
         var vm = new EvaGest.ViewModels.Dialegs.CitaDialogViewModel(
             new CitaService(factory), new DisponibilitatService(factory), new ClientService(factory),
             new CatalegService(factory), new TreballadoraService(factory), new ConfiguracioService(factory),
-            Dilluns);
+            new DialogServiceDeProva(), Dilluns);
 
         app.Executa(() =>
         {
@@ -156,7 +156,7 @@ public class GraellaLayoutTests(AplicacioWpf app)
         var vm = new EvaGest.ViewModels.Dialegs.CitaDialogViewModel(
             new CitaService(factory), new DisponibilitatService(factory), new ClientService(factory),
             new CatalegService(factory), new TreballadoraService(factory), new ConfiguracioService(factory),
-            Dilluns);
+            new DialogServiceDeProva(), Dilluns);
         await vm.Inicialitzacio;
 
         var graella = vm.Graella!;

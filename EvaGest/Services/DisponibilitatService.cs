@@ -131,6 +131,36 @@ public class DisponibilitatService(IDbContextFactory<BarberiaDbContext> factory)
         return tancats.ToDictionary(d => d.Data, d => d.Motiu);
     }
 
+    public async Task<List<DiaTancat>> DiesTancats()
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        return await db.DiesTancats.AsNoTracking().OrderBy(d => d.Data).ToListAsync();
+    }
+
+    public async Task AfegirDiaTancat(DateOnly data, string? motiu)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        string? netejat = string.IsNullOrWhiteSpace(motiu) ? null : motiu.Trim();
+        var existent = await db.DiesTancats.FirstOrDefaultAsync(d => d.Data == data);
+
+        if (existent is null) db.DiesTancats.Add(new DiaTancat { Data = data, Motiu = netejat });
+        else existent.Motiu = netejat;
+
+        await db.SaveChangesAsync();
+    }
+
+    public async Task EliminarDiaTancat(int id)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        var dia = await db.DiesTancats.FirstOrDefaultAsync(d => d.Id == id);
+        if (dia is null) return;
+
+        db.DiesTancats.Remove(dia);
+        await db.SaveChangesAsync();
+    }
+
     private async Task<bool> EsDinsHorari(BarberiaDbContext db, DateOnly data, TimeOnly hora, int duradaMin)
     {
         var dia = ADiaSetmana(data);

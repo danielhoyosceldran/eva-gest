@@ -25,6 +25,7 @@ public partial class GraellaSetmanaViewModel : ObservableObject
     private readonly IConfiguracioService _configuracio;
     private readonly Action<DateOnly, TimeOnly> _alClicarSlot;
     private readonly Action<Cita>? _alClicarCita;
+    private readonly Action<DateOnly>? _alSeleccionarDia;
 
     private CitaGraellaViewModel? _fantasma;
     private DateOnly? _dataFantasma;
@@ -32,13 +33,15 @@ public partial class GraellaSetmanaViewModel : ObservableObject
     public GraellaSetmanaViewModel(
         ICitaService cites, IDisponibilitatService disponibilitat, IConfiguracioService configuracio,
         ModeGraella mode,
-        Action<DateOnly, TimeOnly> alClicarSlot, Action<Cita>? alClicarCita = null)
+        Action<DateOnly, TimeOnly> alClicarSlot, Action<Cita>? alClicarCita = null,
+        Action<DateOnly>? alSeleccionarDia = null)
     {
         _cites = cites;
         _disponibilitat = disponibilitat;
         _configuracio = configuracio;
         _alClicarSlot = alClicarSlot;
         _alClicarCita = alClicarCita;
+        _alSeleccionarDia = alSeleccionarDia;
 
         Mode = mode;
         AlcadaSlotPx = mode is ModeGraella.Agenda ? 44 : 26;
@@ -92,10 +95,17 @@ public partial class GraellaSetmanaViewModel : ObservableObject
 
     /// <summary>The whole day header books on that day, at its first opening slot.</summary>
     [RelayCommand]
+    /// <summary>
+    /// The day header opens that day's detail when the host offers one (pantalles 2.2).
+    /// Without a handler — the cita dialog's picker — it keeps its older meaning of
+    /// "book at this day's first open slot", which is the only useful action there.
+    /// </summary>
     private void ClicCapcalera(DiaGraellaViewModel? dia)
     {
         if (dia is null) return;
-        ActivarSlot(dia.Data, GraellaHelper.AHora(PrimerSlotDe(dia.Data)));
+
+        if (_alSeleccionarDia is { } seleccionar) seleccionar(dia.Data);
+        else ActivarSlot(dia.Data, GraellaHelper.AHora(PrimerSlotDe(dia.Data)));
     }
 
     /// <summary>Entry point for a click on empty grid space, from DiaGraellaViewModel.</summary>

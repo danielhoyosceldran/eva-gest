@@ -35,9 +35,104 @@
         <!-- The week itself is the shared time grid: full size here, embedded in the
              cita dialog as the hour picker. Click an empty slot to book there, click an
              appointment to edit it. -->
-        <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
-                CornerRadius="{StaticResource RadiSuperficie}" ClipToBounds="True">
-            <ContentControl Content="{Binding Graella}" />
-        </Border>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                    CornerRadius="{StaticResource RadiSuperficie}" ClipToBounds="True">
+                <ContentControl Content="{Binding Graella}" />
+            </Border>
+
+            <!-- Day detail (pantalles 2.2): opens from a column header, and shows the
+                 status buttons the compact grid cards keep hidden until hover. -->
+            <Border Grid.Column="1" Width="400" Margin="16,0,0,0"
+                    Style="{StaticResource TargetaDada}"
+                    Visibility="{Binding HiHaDiaSeleccionat, Converter={StaticResource BoolToVisibilityConverter}}">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding DiaSeleccionatText}"
+                                   Style="{StaticResource Subtitol}" TextWrapping="Wrap" />
+                        <Button Grid.Column="1" Content="Tancar" Style="{StaticResource BotoSecundari}"
+                                Padding="10,0" MinHeight="32" VerticalAlignment="Top"
+                                Command="{Binding TancarDetallCommand}" />
+                    </Grid>
+
+                    <TextBlock DockPanel.Dock="Top" Text="Aquest dia no té cap cita apuntada."
+                               Style="{StaticResource EtiquetaDada}" TextWrapping="Wrap"
+                               Visibility="{Binding DiaSenseCites, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding CitesDelDia}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,0,1"
+                                            Padding="0,10">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding HoraText}" FontWeight="SemiBold"
+                                                           FontFamily="{StaticResource FontUi}"
+                                                           FontSize="{StaticResource FontSizeBody}"
+                                                           Foreground="{StaticResource InkBrush}" />
+                                                <TextBlock Text="{Binding DuradaText}" Margin="8,0,0,0"
+                                                           Style="{StaticResource EtiquetaDada}"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding EstatText}" Margin="12,0,0,0"
+                                                           Style="{StaticResource EtiquetaDada}"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding ClientText}"
+                                                           FontFamily="{StaticResource FontUi}"
+                                                           FontSize="{StaticResource FontSizeBody}"
+                                                           Foreground="{StaticResource InkBrush}" />
+                                                <TextBlock Text="(no registrat)" Margin="6,0,0,0"
+                                                           Style="{StaticResource EtiquetaDada}"
+                                                           VerticalAlignment="Center"
+                                                           Visibility="{Binding EsConvidat, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                <TextBlock Text="{Binding ServeiText}" Style="{StaticResource EtiquetaDada}" />
+                                                <Ellipse Width="8" Height="8" Margin="12,0,6,0"
+                                                         VerticalAlignment="Center" Fill="{Binding ColorHex}" />
+                                                <TextBlock Text="{Binding TreballadoraText}" Style="{StaticResource EtiquetaDada}" />
+                                            </StackPanel>
+
+                                            <!-- Only a pending appointment still has a state to move to -->
+                                            <WrapPanel Margin="0,8,0,0"
+                                                       Visibility="{Binding EsPendent, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Button Content="Realitzada" Style="{StaticResource BotoSecundari}"
+                                                        Padding="10,0" MinHeight="32" Margin="0,0,8,4"
+                                                        Command="{Binding DataContext.MarcarRealitzadaCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding Cita}" />
+                                                <Button Content="Cancel·lada" Style="{StaticResource BotoSecundari}"
+                                                        Padding="10,0" MinHeight="32" Margin="0,0,8,4"
+                                                        Command="{Binding DataContext.MarcarCancelladaCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding Cita}" />
+                                                <Button Content="No assistida" Style="{StaticResource BotoSecundari}"
+                                                        Padding="10,0" MinHeight="32" Margin="0,0,0,4"
+                                                        Command="{Binding DataContext.MarcarNoAssistidaCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding Cita}" />
+                                            </WrapPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

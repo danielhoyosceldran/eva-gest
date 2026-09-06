@@ -56,4 +56,28 @@ public static class Percentatges
 {
     public static string Format(int bp)
         => (bp / 100m).ToString("0.##", new CultureInfo("ca-ES")) + " %";
+
+    /// <summary>Same value without the unit, for a text box the user edits: 2100 -> "21".</summary>
+    public static string FormatSenseUnitat(int bp)
+        => (bp / 100m).ToString("0.##", new CultureInfo("ca-ES"));
+
+    /// <summary>
+    /// Parses a typed percentage into basis points. Accepts "21", "21 %", "5,2" and
+    /// "5.2". Negative rates and anything above 100 % are rejected rather than stored:
+    /// a mistyped rate would be frozen onto every sale taken afterwards.
+    /// </summary>
+    public static bool TryParse(string? text, out int bp)
+    {
+        bp = 0;
+        if (string.IsNullOrWhiteSpace(text)) return false;
+
+        string net = text.Replace("%", "").Replace(" ", "").Replace(",", ".").Trim();
+
+        if (!decimal.TryParse(net, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal percent))
+            return false;
+        if (percent < 0 || percent > 100) return false;
+
+        bp = (int)Math.Round(percent * 100m, MidpointRounding.AwayFromZero);
+        return true;
+    }
 }

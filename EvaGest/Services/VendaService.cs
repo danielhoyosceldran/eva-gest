@@ -9,11 +9,23 @@ namespace EvaGest.Services;
 /// force onto every line and breakdown row at save time (decision 6.4): past sales
 /// must never move when the catalogue or the global VAT mode changes later.
 /// </summary>
-public class VendaService(IDbContextFactory<BarberiaDbContext> factory) : IVendaService
+public class VendaService(
+    IDbContextFactory<BarberiaDbContext> factory,
+    IConfiguracioService configuracio) : IVendaService
 {
-    // TODO: read from ConfiguracioService once it exists (Fase 9+). Hardcoded default
-    // matches the documented default (esquema-bbdd 2.13) so behaviour is correct meanwhile.
-    private const IvaMode ModeIvaPerDefecte = IvaMode.Inclos;
+    /// <summary>Used only if the setting is missing or unreadable; matches the seeded
+    /// default (esquema-bbdd 2.14).</summary>
+    private const IvaMode ModeIvaDeReserva = IvaMode.Inclos;
+
+    /// <summary>
+    /// The mode in force right now, read at save time and then frozen onto the sale.
+    /// Changing it in Configuració must never move a sale that is already recorded
+    /// (decision 6.4), which is exactly why this is read per save and stored per row.
+    /// </summary>
+    private async Task<IvaMode> ModeIvaVigent()
+        => Enum.TryParse<IvaMode>(await configuracio.Obtenir(ClausConfig.IvaModeActual), out var mode)
+            ? mode
+            : ModeIvaDeReserva;
 
     public async Task<List<Venda>> Cercar(FiltreVendes filtre)
     {
@@ -49,7 +61,7 @@ public class VendaService(IDbContextFactory<BarberiaDbContext> factory) : IVenda
 
     public async Task<int> Crear(Venda venda, List<VendaLinia> linies)
     {
-        CongelarTotals(venda, linies);
+        CongelarTotals(venda, linies, await ModeIvaVigent());
 
         await using var db = await factory.CreateDbContextAsync();
         venda.Linies = linies;
@@ -68,14 +80,17 @@ public class VendaService(IDbContextFactory<BarberiaDbContext> factory) : IVenda
 
     public async Task Actualitzar(Venda venda, List<VendaLinia> linies)
     {
-        CongelarTotals(venda, linies);
-
         await using var db = await factory.CreateDbContextAsync();
 
         var existent = await db.Vendes
             .Include(v => v.Linies)
             .Include(v => v.Desglossaments)
             .FirstAsync(v => v.Id == venda.Id);
+
+        // Recompute in the mode this sale was taken in, not the one in force today:
+        // correcting a typo on an old ticket must not silently reinterpret its prices
+        // because the shop switched to VAT-exclusive since (decision 6.4).
+        CongelarTotals(venda, linies, existent.IvaMode);
 
         db.VendaLinies.RemoveRange(existent.Linies);
         db.VendaDesglossaments.RemoveRange(existent.Desglossaments);
@@ -134,14 +149,14 @@ public class VendaService(IDbContextFactory<BarberiaDbContext> factory) : IVenda
 
     /// <summary>Computes the VAT breakdown and freezes it onto the sale and its lines.
     /// Never recomputed later: this is the one place BaseCents/IvaCents/TotalCents are set.</summary>
-    private static void CongelarTotals(Venda venda, List<VendaLinia> linies)
+    private static void CongelarTotals(Venda venda, List<VendaLinia> linies, IvaMode mode)
     {
-        var desglossat = IvaCalculator.Calcular(linies, ModeIvaPerDefecte);
+        var desglossat = IvaCalculator.Calcular(linies, mode);
         venda.BaseCents = desglossat.BaseCents;
         venda.IvaCents = desglossat.IvaCents;
         venda.TotalCents = desglossat.TotalCents;
-        venda.IvaMode = ModeIvaPerDefecte;
-        venda.Desglossaments = IvaCalculator.ARegistres(linies, ModeIvaPerDefecte);
+        venda.IvaMode = mode;
+        venda.Desglossaments = IvaCalculator.ARegistres(linies, mode);
     }
 
     private static IQueryable<Venda> Consulta(BarberiaDbContext db)

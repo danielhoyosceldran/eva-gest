@@ -1,5 +1,7 @@
 using AwesomeAssertions;
+using EvaGest.Models;
 using EvaGest.Services;
+using EvaGest.Tests.Infra;
 using Xunit;
 
 namespace EvaGest.Tests.Serveis;
@@ -19,7 +21,11 @@ public class BackupServiceTests : IDisposable
 
     public void Dispose() => Directory.Delete(_carpeta, recursive: true);
 
-    private BackupService CreaServei() => new(new RutesApp(_rutaBd, _carpeta));
+    /// <summary>Defaults to an hour already past, so the tests that are not about the
+    /// schedule do not depend on what time of day they happen to run.</summary>
+    private BackupService CreaServei(ConfiguracioDeProva? config = null)
+        => new(new RutesApp(_rutaBd, _carpeta),
+               config ?? new ConfiguracioDeProva((ClausConfig.HoraBackup, "00:00")));
 
     [Fact] // L-01
     public async Task Copia_manual_crea_un_fitxer()
@@ -98,5 +104,59 @@ public class BackupServiceTests : IDisposable
         int despres = (await backup.Llistar()).Count;
 
         despres.Should().Be(abans + 1); // the pre-restore safety copy
+    }
+
+    [Fact] // L-07
+    public async Task La_retencio_configurada_mana_sobre_el_valor_per_defecte()
+    {
+        var backup = CreaServei(new ConfiguracioDeProva(
+            (ClausConfig.HoraBackup, "00:00"),
+            (ClausConfig.BackupsAConservar, "3")));
+
+        Directory.CreateDirectory(Path.Combine(_carpeta, "Backups"));
+        for (int i = 0; i < 10; i++)
+            File.WriteAllText(
+                Path.Combine(_carpeta, "Backups", $"202601{i + 1:00}_120000000_manual.db"), "x");
+
+        await backup.NetejarAntigues();
+
+        (await backup.Llistar()).Should().HaveCount(3);
+    }
+
+    [Fact] // L-08
+    public async Task Abans_de_l_hora_configurada_la_copia_automatica_espera()
+    {
+        // An hour that cannot have passed yet today, whatever time the suite runs at
+        var backup = CreaServei(new ConfiguracioDeProva((ClausConfig.HoraBackup, "23:59")));
+
+        var resultat = await backup.FerCopiaAutomaticaSiCal();
+
+        resultat.Should().BeNull("la còpia diària es fa a partir de l'hora configurada");
+    }
+
+    [Fact] // L-09
+    public async Task La_copia_automatica_desa_la_data_a_la_configuracio()
+    {
+        var config = new ConfiguracioDeProva((ClausConfig.HoraBackup, "00:00"));
+        var backup = CreaServei(config);
+
+        await backup.FerCopiaAutomaticaSiCal();
+
+        (await config.Obtenir(ClausConfig.UltimaCopiaAutomatica))
+            .Should().Be(DateTime.Today.ToString("yyyy-MM-dd"));
+    }
+
+    [Fact] // L-10
+    public async Task Restaurar_invalida_la_configuracio_en_memoria()
+    {
+        var config = new ConfiguracioDeProva((ClausConfig.HoraBackup, "00:00"));
+        var backup = CreaServei(config);
+        var copia = await backup.FerCopiaManual();
+
+        await backup.Restaurar(copia.Ruta);
+
+        // The settings table lives inside the file that was just overwritten, so keeping
+        // the old cache would describe a database that no longer exists.
+        config.VegadesInvalidada.Should().Be(1);
     }
 }
