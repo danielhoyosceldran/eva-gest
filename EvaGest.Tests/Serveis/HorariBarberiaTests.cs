@@ -28,7 +28,8 @@ public class HorariBarberiaTests
         await vm.Carregar();
 
         var dilluns = vm.DiesHorari[0];
-        dilluns.Obert = true;
+        dilluns.TreballaMati = true;
+        dilluns.TreballaTarda = true;
         dilluns.MatiInici = "09:00";
         dilluns.MatiFi = "13:00";
         dilluns.TardaInici = "16:00";
@@ -50,7 +51,7 @@ public class HorariBarberiaTests
         await using var bd = new BaseDadesProva();
         var vm = Muntar(bd);
         await vm.Carregar();
-        vm.DiesHorari[2].Obert = true;
+        vm.DiesHorari[2].TreballaMati = true;
         vm.DiesHorari[2].MatiInici = "10";
         vm.DiesHorari[2].MatiFi = "18";
         await vm.GuardarHorariCommand.ExecuteAsync(null);
@@ -72,7 +73,7 @@ public class HorariBarberiaTests
         await using var bd = new BaseDadesProva();
         var vm = Muntar(bd);
         await vm.Carregar();
-        vm.DiesHorari[0].Obert = true;
+        vm.DiesHorari[0].TreballaMati = true;
         vm.DiesHorari[0].MatiInici = "20:00";
         vm.DiesHorari[0].MatiFi = "09:00";
 
@@ -90,7 +91,7 @@ public class HorariBarberiaTests
         await using var bd = new BaseDadesProva();
         var vm = Muntar(bd);
         await vm.Carregar();
-        vm.DiesHorari[0].Obert = true;
+        vm.DiesHorari[0].TreballaMati = true;
         vm.DiesHorari[0].MatiInici = "09:00";
         vm.DiesHorari[0].MatiFi = "20:00";
         await vm.GuardarHorariCommand.ExecuteAsync(null);
@@ -109,12 +110,12 @@ public class HorariBarberiaTests
         await using var bd = new BaseDadesProva();
         var vm = Muntar(bd);
         await vm.Carregar();
-        vm.DiesHorari[0].Obert = true;
+        vm.DiesHorari[0].TreballaMati = true;
         vm.DiesHorari[0].MatiInici = "09:00";
         vm.DiesHorari[0].MatiFi = "20:00";
         await vm.GuardarHorariCommand.ExecuteAsync(null);
 
-        vm.DiesHorari[0].Obert = false;
+        vm.DiesHorari[0].TreballaMati = false;
         await vm.GuardarHorariCommand.ExecuteAsync(null);
 
         vm.ErrorHorari.Should().BeNull();
@@ -129,7 +130,7 @@ public class HorariBarberiaTests
         await using var bd = new BaseDadesProva();
         var vm = Muntar(bd);
         await vm.Carregar();
-        vm.DiesHorari[0].Obert = true;
+        vm.DiesHorari[0].TreballaMati = true;
         vm.DiesHorari[0].MatiInici = "09:00";
         vm.DiesHorari[0].MatiFi = "20:00";
 
@@ -148,7 +149,7 @@ public class HorariBarberiaTests
         await vm.Carregar();
         foreach (var dia in vm.DiesHorari.Take(5))
         {
-            dia.Obert = true;
+            dia.TreballaMati = true;
             dia.MatiInici = "10:00";
             dia.MatiFi = "18:00";
         }
@@ -163,5 +164,61 @@ public class HorariBarberiaTests
         (graella.MinutIniciGraella, graella.MinutFiGraella).Should().Be((10 * 60, 18 * 60));
         graella.Dies[0].Bandes.Should().BeEmpty("dilluns obre tot el rang visible");
         graella.Dies[6].Bandes.Should().ContainSingle("diumenge està tancat tot el dia");
+    }
+
+    [Fact] // N-08
+    public async Task Marcar_un_torn_ja_proposa_les_hores_habituals()
+    {
+        await using var bd = new BaseDadesProva();
+        var vm = Muntar(bd);
+        await vm.Carregar();
+
+        var dilluns = vm.DiesHorari[0];
+        dilluns.TreballaTarda = true;
+
+        dilluns.TardaInici.Should().Be("16:00");
+        dilluns.TardaFi.Should().Be("20:00");
+        dilluns.MatiInici.Should().BeEmpty("el matí no s'ha marcat");
+    }
+
+    [Fact] // N-09
+    public async Task Un_dia_nomes_de_tarda_es_desa_i_torna_a_la_fila_de_tarda()
+    {
+        await using var bd = new BaseDadesProva();
+        var vm = Muntar(bd);
+        await vm.Carregar();
+        vm.DiesHorari[1].TreballaTarda = true;
+        vm.DiesHorari[1].TardaInici = "16:00";
+        vm.DiesHorari[1].TardaFi = "20:00";
+        await vm.GuardarHorariCommand.ExecuteAsync(null);
+
+        var altre = Muntar(bd);
+        await altre.Carregar();
+
+        var dimarts = altre.DiesHorari[1];
+        dimarts.TreballaTarda.Should().BeTrue();
+        dimarts.TreballaMati.Should().BeFalse();
+        dimarts.TardaInici.Should().Be("16:00");
+        dimarts.MatiInici.Should().BeEmpty();
+    }
+
+    [Fact] // N-10
+    public async Task Desmarcar_un_torn_no_obliga_a_esborrar_ne_les_hores()
+    {
+        await using var bd = new BaseDadesProva();
+        var vm = Muntar(bd);
+        await vm.Carregar();
+        var dilluns = vm.DiesHorari[0];
+        dilluns.TreballaMati = true;
+        dilluns.TreballaTarda = true;
+        dilluns.TardaInici = "16:00";
+        dilluns.TardaFi = "14:00"; // invalid, but about to be switched off
+        dilluns.TreballaTarda = false;
+
+        await vm.GuardarHorariCommand.ExecuteAsync(null);
+
+        vm.ErrorHorari.Should().BeNull();
+        var franges = await new DisponibilitatService(new FabricaDeProva(bd.Opcions)).FranjesSetmanals();
+        franges[DiaSetmana.Dl].Should().ContainSingle();
     }
 }

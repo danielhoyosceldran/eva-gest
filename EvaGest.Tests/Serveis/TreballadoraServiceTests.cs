@@ -133,7 +133,7 @@ public class TreballadoraServiceTests
             {
                 var dialeg = (TreballadoraDialogViewModel)d;
                 dialeg.Nom = "Berta";
-                dialeg.DiesHorari[0].Obert = true;
+                dialeg.DiesHorari[0].TreballaMati = true;
                 dialeg.DiesHorari[0].MatiInici = "09:00";
                 dialeg.DiesHorari[0].MatiFi = "14:00";
                 dialeg.GuardarCommand.Execute(null);
@@ -164,7 +164,7 @@ public class TreballadoraServiceTests
     public void El_dialeg_no_deixa_guardar_sense_nom()
     {
         var dialeg = new TreballadoraDialogViewModel([]);
-        dialeg.DiesHorari[0].Obert = true;
+        dialeg.DiesHorari[0].TreballaMati = true;
         dialeg.DiesHorari[0].MatiInici = "09:00";
         dialeg.DiesHorari[0].MatiFi = "14:00";
 
@@ -177,7 +177,7 @@ public class TreballadoraServiceTests
     public void El_dialeg_marca_el_dia_que_te_les_hores_al_reves()
     {
         var dialeg = new TreballadoraDialogViewModel([]) { Nom = "Berta" };
-        dialeg.DiesHorari[0].Obert = true;
+        dialeg.DiesHorari[0].TreballaMati = true;
         dialeg.DiesHorari[0].MatiInici = "20:00";
         dialeg.DiesHorari[0].MatiFi = "09:00";
 
@@ -191,7 +191,7 @@ public class TreballadoraServiceTests
     public void Copiar_dilluns_omple_de_dimarts_a_divendres_i_no_el_cap_de_setmana()
     {
         var dialeg = new TreballadoraDialogViewModel([]) { Nom = "Berta" };
-        dialeg.DiesHorari[0].Obert = true;
+        dialeg.DiesHorari[0].TreballaMati = true;
         dialeg.DiesHorari[0].MatiInici = "09:00";
         dialeg.DiesHorari[0].MatiFi = "14:00";
 
