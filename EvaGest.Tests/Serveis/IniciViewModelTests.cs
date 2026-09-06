@@ -18,7 +18,8 @@ public class IniciViewModelTests
         return new IniciViewModel(
             new CitaService(factory), new VendaService(factory), new CaixaService(factory),
             new ClientService(factory), new DisponibilitatService(factory), new CatalegService(factory),
-            new TreballadoraService(factory), new SoundServiceDeProva(), new DialogServiceDeProva());
+            new TreballadoraService(factory), new ConfiguracioService(factory),
+            new SoundServiceDeProva(), new DialogServiceDeProva());
     }
 
     private static async Task<int> AfegeixMetode(BaseDadesProva bd)

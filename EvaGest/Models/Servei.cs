@@ -15,4 +15,6 @@ public class Servei
     public int? DuradaMin { get; set; }
 
     public bool Actiu { get; set; } = true;
+
+    public override string ToString() => Nom;
 }

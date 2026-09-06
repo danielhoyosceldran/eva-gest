@@ -26,6 +26,17 @@ public interface IDisponibilitatService
     Task<bool> EsDiaObert(DateOnly data);
     Task<List<(TimeOnly inici, TimeOnly fi)>> FranjesObertura(DateOnly data);
 
+    /// <summary>All weekly opening ranges in a single query, so the weekly grid does
+    /// not issue one round trip per day. Days with no schedule are absent.</summary>
+    Task<Dictionary<DiaSetmana, List<(TimeOnly inici, TimeOnly fi)>>> FranjesSetmanals();
+
+    /// <summary>
+    /// Replaces the whole weekly opening schedule in one go. The settings screen edits
+    /// all seven days as a single form, so a partial update would leave the week in a
+    /// state the user never asked for. Days absent from the dictionary are closed.
+    /// </summary>
+    Task GuardarHorariSetmanal(IReadOnlyDictionary<DiaSetmana, List<(TimeOnly inici, TimeOnly fi)>> horari);
+
     /// <summary>Closed dates within a range, with their reason. Used by the weekly
     /// agenda to dim whole columns without one query per day.</summary>
     Task<Dictionary<DateOnly, string?>> DiesTancatsA(DateOnly des, DateOnly fins);

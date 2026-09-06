@@ -20,4 +20,8 @@ public class Client
 
     public List<Cita> Cites { get; set; } = [];
     public List<Venda> Vendes { get; set; } = [];
+
+    /// <summary>Defence in depth: any picker that forgets DisplayMemberPath would
+    /// otherwise render the type name instead of the person.</summary>
+    public override string ToString() => Nom;
 }

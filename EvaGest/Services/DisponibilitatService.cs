@@ -84,6 +84,43 @@ public class DisponibilitatService(IDbContextFactory<BarberiaDbContext> factory)
         return franges.Select(f => (f.HoraObertura, f.HoraTancament)).ToList();
     }
 
+    public async Task<Dictionary<DiaSetmana, List<(TimeOnly inici, TimeOnly fi)>>> FranjesSetmanals()
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        var files = await db.HorariBarberia.AsNoTracking()
+            .OrderBy(h => h.DiaSetmana).ThenBy(h => h.HoraObertura)
+            .Select(h => new { h.DiaSetmana, h.HoraObertura, h.HoraTancament })
+            .ToListAsync();
+
+        return files
+            .GroupBy(h => h.DiaSetmana)
+            .ToDictionary(g => g.Key, g => g.Select(h => (h.HoraObertura, h.HoraTancament)).ToList());
+    }
+
+    public async Task GuardarHorariSetmanal(
+        IReadOnlyDictionary<DiaSetmana, List<(TimeOnly inici, TimeOnly fi)>> horari)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        await using var transaccio = await db.Database.BeginTransactionAsync();
+
+        // Replace rather than reconcile: the rows carry no identity of their own beyond
+        // the day and the times, so there is nothing worth preserving.
+        db.HorariBarberia.RemoveRange(await db.HorariBarberia.ToListAsync());
+        await db.SaveChangesAsync();
+
+        foreach (var (dia, franges) in horari)
+            foreach (var (inici, fi) in franges)
+                db.HorariBarberia.Add(new HorariBarberia
+                {
+                    DiaSetmana = dia,
+                    HoraObertura = inici,
+                    HoraTancament = fi
+                });
+
+        await db.SaveChangesAsync();
+        await transaccio.CommitAsync();
+    }
+
     public async Task<Dictionary<DateOnly, string?>> DiesTancatsA(DateOnly des, DateOnly fins)
     {
         await using var db = await factory.CreateDbContextAsync();

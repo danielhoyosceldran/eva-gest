@@ -15,6 +15,18 @@ public static class Etiquetes
         _ => estat.ToString()
     };
 
+    public static string Text(DiaSetmana dia) => dia switch
+    {
+        DiaSetmana.Dl => "Dilluns",
+        DiaSetmana.Dt => "Dimarts",
+        DiaSetmana.Dc => "Dimecres",
+        DiaSetmana.Dj => "Dijous",
+        DiaSetmana.Dv => "Divendres",
+        DiaSetmana.Ds => "Dissabte",
+        DiaSetmana.Dg => "Diumenge",
+        _ => dia.ToString()
+    };
+
     public static string Text(EstatVenda estat) => estat switch
     {
         EstatVenda.Activa   => "Activa",

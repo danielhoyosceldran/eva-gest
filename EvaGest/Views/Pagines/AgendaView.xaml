@@ -21,71 +21,23 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="‹ Setmana anterior" Style="{StaticResource BotoSecundari}"
-                    Command="{Binding SetmanaAnteriorCommand}" />
-            <TextBlock Grid.Column="1" Text="{Binding RangText}" Style="{StaticResource Subtitol}"
+                    Command="{Binding Graella.SetmanaAnteriorCommand}" />
+            <TextBlock Grid.Column="1" Text="{Binding Graella.RangText}" Style="{StaticResource Subtitol}"
                        Margin="16,0" VerticalAlignment="Center" HorizontalAlignment="Center" />
             <Button Grid.Column="2" Content="Setmana següent ›" Style="{StaticResource BotoSecundari}"
-                    Command="{Binding SetmanaSeguentCommand}" Margin="0,0,12,0" />
+                    Command="{Binding Graella.SetmanaSeguentCommand}" Margin="0,0,12,0" />
             <Button Grid.Column="3" Content="Aquesta setmana" Style="{StaticResource BotoSecundari}"
-                    Command="{Binding AquestaSetmanaCommand}" Margin="0,0,12,0" />
+                    Command="{Binding Graella.AquestaSetmanaCommand}" Margin="0,0,12,0" />
             <Button Grid.Column="4" Content="+ Nova cita" Style="{StaticResource BotoPrimari}"
                     Command="{Binding NovaCitaCommand}" />
         </Grid>
 
-        <!-- Weekly grid: 7 independent columns, each scrolling on its own -->
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding Dies}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,1,0" Margin="0,0,4,0">
-                        <Grid Opacity="{Binding Tancat, Converter={StaticResource TancatAOpacitatConverter}}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <Button Grid.Row="0" Background="Transparent" BorderThickness="0" Padding="4"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{Binding DataContext.SeleccionarDiaCommand,
-                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    CommandParameter="{Binding}">
-                                <TextBlock Text="{Binding CapcaleraText}" FontWeight="SemiBold"
-                                           Foreground="{StaticResource InkBrush}" />
-                            </Button>
-
-                            <TextBlock Grid.Row="1" Text="{Binding MotiuTancat, StringFormat=Tancat: {0}}"
-                                       Foreground="{StaticResource InkMutedBrush}" FontSize="{StaticResource FontSizeSmall}"
-                                       TextWrapping="Wrap" Margin="4,0,4,8"
-                                       Visibility="{Binding Tancat, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding Cites}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Style="{StaticResource TargetaDada}" Padding="8" Margin="0,0,0,6">
-                                                <StackPanel>
-                                                    <TextBlock FontWeight="SemiBold" Foreground="{StaticResource InkBrush}">
-                                                        <Run Text="{Binding Hora, Mode=OneWay}" />
-                                                        <Run Text=" · " />
-                                                        <Run Text="{Binding NomMostrat, Mode=OneWay}" />
-                                                    </TextBlock>
-                                                    <TextBlock Text="{Binding Servei.Nom}" Foreground="{StaticResource InkMutedBrush}"
-                                                               FontSize="{StaticResource FontSizeSmall}" />
-                                                </StackPanel>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <!-- The week itself is the shared time grid: full size here, embedded in the
+             cita dialog as the hour picker. Click an empty slot to book there, click an
+             appointment to edit it. -->
+        <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                CornerRadius="{StaticResource RadiSuperficie}" ClipToBounds="True">
+            <ContentControl Content="{Binding Graella}" />
+        </Border>
     </Grid>
 </UserControl>

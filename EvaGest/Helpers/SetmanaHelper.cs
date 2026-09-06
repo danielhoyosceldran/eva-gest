@@ -1,3 +1,5 @@
+using EvaGest.Models;
+
 namespace EvaGest.Helpers;
 
 public static class SetmanaHelper {
@@ -8,4 +10,7 @@ public static class SetmanaHelper {
         int offset = ((int)data.DayOfWeek + 6) % 7; // Monday = 0, ..., Sunday = 6
         return data.AddDays(-offset);
     }
+
+    /// <summary>Monday = Dl, ..., Sunday = Dg, matching the enum declared in models-domini.</summary>
+    public static DiaSetmana ADiaSetmana(DateOnly data) => (DiaSetmana)(((int)data.DayOfWeek + 6) % 7);
 }

@@ -15,7 +15,7 @@ namespace EvaGest.ViewModels.Pagines;
 public partial class IniciViewModel(
     ICitaService cites, IVendaService vendes, ICaixaService caixa, IClientService clients,
     IDisponibilitatService disponibilitat, ICatalegService cataleg, ITreballadoraService treballadores,
-    ISoundService so, IDialogService dialegs) : PaginaViewModelBase
+    IConfiguracioService configuracio, ISoundService so, IDialogService dialegs) : PaginaViewModelBase
 {
     public override string Titol => "Inici";
 
@@ -73,7 +73,7 @@ public partial class IniciViewModel(
     private async Task NovaCita()
     {
         var vm = new CitaDialogViewModel(cites, disponibilitat, clients, cataleg, treballadores,
-            DateOnly.FromDateTime(DateTime.Today));
+            configuracio, DateOnly.FromDateTime(DateTime.Today));
         if (await dialegs.MostrarDialeg(vm)) await Carregar();
     }
 

@@ -32,7 +32,6 @@
                 <RowDefinition Height="Auto" /> <!-- Franja del pal -->
                 <RowDefinition Height="Auto" /> <!-- Nom barberia -->
                 <RowDefinition Height="*" />    <!-- Navegació -->
-                <RowDefinition Height="Auto" /> <!-- Ajuda -->
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Style="{StaticResource FranjaPal}" />
@@ -60,13 +59,9 @@
                              Command="{Binding NavegarInformesCommand}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="Configuració"
                              Command="{Binding NavegarConfiguracioCommand}" />
+                <Button Style="{StaticResource ItemNavAccio}" Content="Ajuda"
+                        Command="{Binding ObrirAjudaCommand}" />
             </StackPanel>
-
-            <Button Grid.Row="3" Content="? Ajuda" Foreground="{StaticResource NavTextBrush}"
-                    Background="Transparent" BorderThickness="0" Cursor="Hand"
-                    HorizontalAlignment="Left" HorizontalContentAlignment="Left"
-                    FontSize="{StaticResource FontSizeInput}" Margin="20,12,20,20"
-                    Command="{Binding ObrirAjudaCommand}" />
         </Grid>
 
         <!-- Content area -->

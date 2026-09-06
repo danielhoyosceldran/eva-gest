@@ -21,4 +21,7 @@ public static class ClausConfig
     public const string UltimaCopiaAutomatica = "ultima_copia_automatica";
     public const string MostrarAvisConvidat  = "mostrar_avis_convidat";
     public const string SoConfirmacio        = "so_confirmacio";
+
+    /// <summary>Row granularity of the weekly agenda grid: 15, 30 or 60 minutes.</summary>
+    public const string MinutsSlotAgenda     = "minuts_slot_agenda";
 }

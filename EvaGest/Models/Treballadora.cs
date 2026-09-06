@@ -15,4 +15,6 @@ public class Treballadora
     public List<HorariTreballadora> Horaris { get; set; } = [];
     public List<Cita> Cites { get; set; } = [];
     public List<Venda> Vendes { get; set; } = [];
+
+    public override string ToString() => Nom;
 }

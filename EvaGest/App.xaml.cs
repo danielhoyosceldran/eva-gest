@@ -115,6 +115,9 @@ public partial class App : Application
         s.AddTransient<ICaixaService, CaixaService>();
         s.AddTransient<IInformesService, InformesService>();
         s.AddSingleton<ISoundService, SoundService>();
+        // Singleton so the settings table is read once and kept in memory: the agenda
+        // grid asks for the slot granularity on every week load.
+        s.AddSingleton<IConfiguracioService, ConfiguracioService>();
 
         s.AddSingleton<MainWindowViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pagines.IniciViewModel>();

@@ -1,78 +1,135 @@
 <UserControl x:Class="EvaGest.Views.Dialegs.CitaDialogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel Width="420">
-        <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="420" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Client registrat (opcional si escrius un nom)" Style="{StaticResource EtiquetaDada}" />
-        <ComboBox ItemsSource="{Binding ClientsActius}" SelectedItem="{Binding ClientSeleccionat}"
-                  DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
+        <StackPanel Grid.Column="0">
+            <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
 
-        <TextBlock Text="Nom del convidat (si no és client registrat)" Style="{StaticResource EtiquetaDada}" />
-        <TextBox Text="{Binding TextClient, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <TextBlock Text="Client" Style="{StaticResource EtiquetaDada}" />
+            <ComboBox ItemsSource="{Binding OpcionsClient}" SelectedItem="{Binding OpcioSeleccionada}"
+                      DisplayMemberPath="Nom" IsTextSearchEnabled="True" TextSearch.TextPath="Nom"
+                      Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}"
+                      MinHeight="{StaticResource AlcadaCamp}" />
 
-        <TextBlock Text="Telèfon del convidat (opcional)" Style="{StaticResource EtiquetaDada}" />
-        <TextBox Text="{Binding TelefonConvidat, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <!-- Disabled rather than hidden for a registered client: the dialog window is
+                 SizeToContent, so collapsing these made the whole window jump every time
+                 the client type changed. -->
+            <StackPanel IsEnabled="{Binding PotEscriureConvidat}">
+                <TextBlock Text="Nom del convidat" Style="{StaticResource EtiquetaDada}" />
+                <TextBox Text="{Binding TextClient, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
-        <Grid Margin="0,0,0,12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="12" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="Data" Style="{StaticResource EtiquetaDada}" />
-                <DatePicker SelectedDate="{Binding Data}" FontSize="{StaticResource FontSizeInput}" />
+                <TextBlock Text="Telèfon (opcional)" Style="{StaticResource EtiquetaDada}" />
+                <TextBox Text="{Binding TelefonConvidat, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
             </StackPanel>
-            <StackPanel Grid.Column="2">
-                <TextBlock Text="Hora" Style="{StaticResource EtiquetaDada}" />
-                <TextBox Text="{Binding Hora, StringFormat=HH\\:mm}" />
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Data" Style="{StaticResource EtiquetaDada}" />
+                    <DatePicker SelectedDate="{Binding Data, Converter={StaticResource DateOnlyConverter}}"
+                                FontSize="{StaticResource FontSizeInput}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Hora" Style="{StaticResource EtiquetaDada}" />
+                    <TextBox Text="{Binding Hora, StringFormat=HH\\:mm, ValidatesOnExceptions=True}" />
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="Durada (minuts)" Style="{StaticResource EtiquetaDada}" />
+            <TextBox Text="{Binding DuradaMin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+            <TextBlock Text="Servei (opcional)" Style="{StaticResource EtiquetaDada}" />
+            <ComboBox ItemsSource="{Binding ServeisActius}" SelectedItem="{Binding Servei}"
+                      DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
+
+            <TextBlock Text="Treballadora (opcional)" Style="{StaticResource EtiquetaDada}" />
+            <ComboBox ItemsSource="{Binding TreballadoresActives}" SelectedItem="{Binding Treballadora}"
+                      DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
+
+            <TextBlock Text="Observacions (opcional)" Style="{StaticResource EtiquetaDada}" />
+            <TextBox Text="{Binding Observacions, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
+
+            <!-- Non-blocking inline warnings (pantalles 3.1) -->
+            <StackPanel Margin="0,0,0,12">
+                <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,6"
+                        Visibility="{Binding AvisSolapament, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Possible solapament: no queda capacitat en aquesta franja." TextWrapping="Wrap" />
+                </Border>
+                <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,6"
+                        Visibility="{Binding AvisForaHorari, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="L'hora cau fora de l'horari de la barberia." TextWrapping="Wrap" />
+                </Border>
+                <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                        BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10"
+                        Visibility="{Binding AvisDiaTancat, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding MotiuDiaTancat, StringFormat=Dia tancat: {0}}" TextWrapping="Wrap" />
+                </Border>
             </StackPanel>
+
+            <TextBlock Text="{Binding ErrorValidacio}" Foreground="{StaticResource DangerBrush}"
+                       TextWrapping="Wrap" Margin="0,0,0,12"
+                       Visibility="{Binding ErrorValidacio, Converter={StaticResource NullToVisibilityConverter}}" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Cancel·lar" Style="{StaticResource BotoSecundari}"
+                        Command="{Binding CancellarCommand}" IsCancel="True" />
+                <Button Content="Guardar" Style="{StaticResource BotoPrimari}"
+                        Command="{Binding GuardarCommand}" IsDefault="True" Margin="12,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- The same weekly grid as the Agenda page. Clicking a slot sets the date and
+             hour; the dashed ghost block shows the duration colliding with its neighbours
+             before the warnings on the left even fire.
+             The size is fixed and the panel is never collapsed: the dialog window is
+             SizeToContent, so it measures itself once while the grid is still loading and
+             would otherwise open too narrow to show the week. -->
+        <Grid Grid.Column="1" Width="700" Margin="20,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Tria l'hora a l'agenda" Style="{StaticResource EtiquetaDada}"
+                       Margin="0,4,0,4" />
+
+            <Grid Grid.Row="1" Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="‹" Style="{StaticResource BotoSecundari}" MinWidth="44"
+                        Command="{Binding Graella.SetmanaAnteriorCommand}" />
+                <TextBlock Grid.Column="1" Text="{Binding Graella.RangText}" Margin="12,0"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource FontUi}" FontWeight="SemiBold"
+                           Foreground="{StaticResource InkBrush}" />
+                <Button Grid.Column="2" Content="›" Style="{StaticResource BotoSecundari}" MinWidth="44"
+                        Command="{Binding Graella.SetmanaSeguentCommand}" Margin="0,0,8,0" />
+                <Button Grid.Column="3" Content="Avui" Style="{StaticResource BotoSecundari}"
+                        Command="{Binding Graella.AquestaSetmanaCommand}" />
+            </Grid>
+
+            <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                    CornerRadius="{StaticResource RadiSuperficie}" ClipToBounds="True"
+                    Height="400" VerticalAlignment="Top">
+                <ContentControl Content="{Binding Graella}" />
+            </Border>
         </Grid>
-
-        <TextBlock Text="Durada (minuts)" Style="{StaticResource EtiquetaDada}" />
-        <TextBox Text="{Binding DuradaMin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
-
-        <TextBlock Text="Servei (opcional)" Style="{StaticResource EtiquetaDada}" />
-        <ComboBox ItemsSource="{Binding ServeisActius}" SelectedItem="{Binding Servei}"
-                  DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
-
-        <TextBlock Text="Treballadora (opcional)" Style="{StaticResource EtiquetaDada}" />
-        <ComboBox ItemsSource="{Binding TreballadoresActives}" SelectedItem="{Binding Treballadora}"
-                  DisplayMemberPath="Nom" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource AlcadaCamp}" />
-
-        <TextBlock Text="Observacions (opcional)" Style="{StaticResource EtiquetaDada}" />
-        <TextBox Text="{Binding Observacions, UpdateSourceTrigger=PropertyChanged}"
-                 AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
-
-        <!-- Non-blocking inline warnings (pantalles 3.1) -->
-        <StackPanel Margin="0,0,0,12">
-            <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
-                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,6"
-                    Visibility="{Binding AvisSolapament, Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="Possible solapament: no queda capacitat en aquesta franja." TextWrapping="Wrap" />
-            </Border>
-            <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
-                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,6"
-                    Visibility="{Binding AvisForaHorari, Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="L'hora cau fora de l'horari de la barberia." TextWrapping="Wrap" />
-            </Border>
-            <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
-                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10"
-                    Visibility="{Binding AvisDiaTancat, Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="{Binding MotiuDiaTancat, StringFormat=Dia tancat: {0}}" TextWrapping="Wrap" />
-            </Border>
-        </StackPanel>
-
-        <TextBlock Text="{Binding ErrorValidacio}" Foreground="{StaticResource DangerBrush}"
-                   TextWrapping="Wrap" Margin="0,0,0,12"
-                   Visibility="{Binding ErrorValidacio, Converter={StaticResource NullToVisibilityConverter}}" />
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Cancel·lar" Style="{StaticResource BotoSecundari}"
-                    Command="{Binding CancellarCommand}" IsCancel="True" />
-            <Button Content="Guardar" Style="{StaticResource BotoPrimari}"
-                    Command="{Binding GuardarCommand}" IsDefault="True" Margin="12,0,0,0" />
-        </StackPanel>
-    </StackPanel>
+    </Grid>
 </UserControl>
