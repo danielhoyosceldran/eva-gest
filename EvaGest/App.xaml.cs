@@ -21,6 +21,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        Helpers.ScrollSuau.Activar();
+
         // Any exception that escapes a command handler would otherwise crash to the
         // default WPF dialog, which shows a raw stack trace (disseny-ui 9: "sense
         // disculpes ni tecnicismes"). Log the real cause, tell the user something plain.

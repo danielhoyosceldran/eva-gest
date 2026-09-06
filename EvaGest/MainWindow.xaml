@@ -5,6 +5,7 @@
         xmlns:pv="clr-namespace:EvaGest.ViewModels.Pagines"
         xmlns:v="clr-namespace:EvaGest.Views.Pagines"
         Title="EvaGest" Height="720" Width="1200"
+        WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource PaperBrush}">
 
