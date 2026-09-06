@@ -25,6 +25,14 @@ public interface IVendaService
     /// <summary>Marks the sale as cancelled. Never deletes it (RF-10).</summary>
     Task Anullar(int vendaId);
 
+    /// <summary>
+    /// An active sale is the history, so deleting it only cancels it (RF-10) and reports
+    /// <see cref="ResultatEsborrat.Desactivat"/>. Asking again on an already cancelled
+    /// sale removes it for good, together with its lines and VAT breakdown: by then the
+    /// user has seen it excluded from the totals and asked twice.
+    /// </summary>
+    Task<ResultatEsborrat> Eliminar(int vendaId);
+
     /// <summary>Builds an unsaved sale prefilled from an appointment (RF-09).
     /// Rejects appointments that cannot carry a sale (cancelled or no-show, F-05).</summary>
     Task<Venda> PreparaDesDeCita(int citaId);

@@ -14,6 +14,14 @@
                         Command="{Binding NovaTreballadoraCommand}" VerticalAlignment="Top" />
             </Grid>
 
+            <!-- Quiet note: says when a delete became a deactivation because she already
+                 has appointments or sales (RF-10) -->
+            <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding Avis, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Avis}" TextWrapping="Wrap" Style="{StaticResource EtiquetaDada}" />
+            </Border>
+
             <!-- Empty state: a bare table would not say what to do next (pantalles 1) -->
             <Border Style="{StaticResource TargetaDada}"
                     Visibility="{Binding NoHiHaCap, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -47,7 +55,7 @@
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Horari" Binding="{Binding HorariResum}" Width="2*" />
                         <DataGridTextColumn Header="Estat" Binding="{Binding EstatText}" Width="90" />
-                        <DataGridTemplateColumn Header="" Width="240">
+                        <DataGridTemplateColumn Header="" Width="330">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -59,6 +67,11 @@
                                         <Button Content="{Binding AccioEstatText}" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.CanviarEstatCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Treballadora}" />
+                                        <Button Content="Eliminar" Style="{StaticResource BotoDestructiu}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.EliminarTreballadoraCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Treballadora}" />
                                     </StackPanel>

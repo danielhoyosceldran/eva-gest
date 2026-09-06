@@ -88,6 +88,33 @@ public partial class TreballadoresViewModel(ITreballadoraService treballadores, 
         await Carregar();
     }
 
+    /// <summary>
+    /// Deleting a worker who has never been booked or charged removes her outright; one
+    /// who appears in the history is deactivated instead, because the appointments and
+    /// sales that name her are what the per-worker reports are built from.
+    /// </summary>
+    [RelayCommand]
+    private async Task EliminarTreballadora(Treballadora treballadora)
+    {
+        bool confirmat = await dialegs.Confirmar(
+            "Eliminar treballadora?",
+            $"S'eliminarà «{treballadora.Nom}» i el seu horari.\n\n"
+            + "Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, "
+            + "per no perdre l'historial. En tots dos casos deixarà de sortir a l'hora "
+            + "d'assignar cites i vendes.",
+            "Eliminar");
+
+        if (!confirmat) return;
+
+        var resultat = await treballadores.Eliminar(treballadora.Id);
+        await Carregar();
+
+        MostrarAvis(resultat == ResultatEsborrat.Desactivat
+            ? $"«{treballadora.Nom}» té cites o vendes registrades, així que s'ha marcat com a inactiva "
+              + "en lloc d'eliminar-se. L'historial es manté i ja no es podrà assignar."
+            : $"«{treballadora.Nom}» s'ha eliminat.");
+    }
+
     private static Dictionary<DiaSetmana, List<HorariTreballadora>> AgrupatPerDia(Treballadora t)
         => t.Horaris
             .GroupBy(h => h.DiaSetmana)

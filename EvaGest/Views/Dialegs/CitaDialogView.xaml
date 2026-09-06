@@ -7,7 +7,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0">
+        <StackPanel x:Name="ColumnaFormulari" Grid.Column="0">
             <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
 
             <TextBlock Text="Client" Style="{StaticResource EtiquetaDada}" />
@@ -93,21 +93,38 @@
                        TextWrapping="Wrap" Margin="0,0,0,12"
                        Visibility="{Binding ErrorValidacio, Converter={StaticResource NullToVisibilityConverter}}" />
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Cancel·lar" Style="{StaticResource BotoSecundari}"
-                        Command="{Binding CancellarCommand}" IsCancel="True" />
-                <Button Content="Guardar" Style="{StaticResource BotoPrimari}"
-                        Command="{Binding GuardarCommand}" IsDefault="True" Margin="12,0,0,0" />
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Kept away from Guardar and hidden on a new appointment, which has
+                     nothing to delete: Cancel·lar already discards it -->
+                <Button Grid.Column="0" Content="Eliminar" Style="{StaticResource BotoDestructiu}"
+                        HorizontalAlignment="Left" Command="{Binding EliminarCommand}"
+                        Visibility="{Binding PotEliminar, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Cancel·lar" Style="{StaticResource BotoSecundari}"
+                            Command="{Binding CancellarCommand}" IsCancel="True" />
+                    <Button Content="Guardar" Style="{StaticResource BotoPrimari}"
+                            Command="{Binding GuardarCommand}" IsDefault="True" Margin="12,0,0,0" />
+                </StackPanel>
+            </Grid>
         </StackPanel>
 
         <!-- The same weekly grid as the Agenda page. Clicking a slot sets the date and
              hour; the dashed ghost block shows the duration colliding with its neighbours
              before the warnings on the left even fire.
-             The size is fixed and the panel is never collapsed: the dialog window is
+             The width is fixed and the panel is never collapsed: the dialog window is
              SizeToContent, so it measures itself once while the grid is still loading and
-             would otherwise open too narrow to show the week. -->
-        <Grid Grid.Column="1" Width="700" Margin="20,0,0,0">
+             would otherwise open too narrow to show the week.
+             The height is capped to the form column instead: the grid is a ScrollViewer
+             over the whole opening day, so with SizeToContent measuring at infinity it
+             would otherwise ask for the full day and push the window past the screen. -->
+        <Grid Grid.Column="1" Width="700" Margin="20,0,0,0"
+              MaxHeight="{Binding ActualHeight, ElementName=ColumnaFormulari}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -138,7 +155,7 @@
 
             <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
                     CornerRadius="{StaticResource RadiSuperficie}" ClipToBounds="True"
-                    Height="400" VerticalAlignment="Top">
+                    VerticalAlignment="Stretch">
                 <ContentControl Content="{Binding Graella}" />
             </Border>
         </Grid>

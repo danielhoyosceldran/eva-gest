@@ -25,5 +25,10 @@ public interface ICitaService
     /// <summary>Changes state. Cancelled and no-show can never carry a sale (RF-02).</summary>
     Task CanviarEstat(int citaId, EstatCita nouEstat);
 
-    Task Eliminar(int citaId);
+    /// <summary>
+    /// Removes the appointment. Returns <see cref="ResultatEsborrat.Bloquejat"/> when a
+    /// sale was taken from it: the sale would survive but lose the appointment it names,
+    /// so the sale has to be dealt with first.
+    /// </summary>
+    Task<ResultatEsborrat> Eliminar(int citaId);
 }

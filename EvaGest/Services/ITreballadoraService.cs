@@ -22,7 +22,13 @@ public interface ITreballadoraService
         Treballadora treballadora,
         IReadOnlyDictionary<DiaSetmana, List<(TimeOnly inici, TimeOnly fi)>> horari);
 
-    /// <summary>Holidays and departures. There is deliberately no delete: removing a
-    /// worker would orphan the sales history attached to her (pantalles 3.6).</summary>
+    /// <summary>Holidays and departures (pantalles 3.6).</summary>
     Task CanviarEstat(int treballadoraId, bool actiu);
+
+    /// <summary>
+    /// Removes the worker and her schedule, or just deactivates her when an appointment
+    /// or a sale is attached: those rows name her, and the per-worker reports are built
+    /// from them. A deactivated worker stops being offered when booking or charging.
+    /// </summary>
+    Task<ResultatEsborrat> Eliminar(int treballadoraId);
 }

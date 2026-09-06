@@ -9,7 +9,16 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
+
+            <!-- Quiet note: mostly why an appointment with a sale was not deleted -->
+            <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding Avis, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Avis}" TextWrapping="Wrap" Style="{StaticResource EtiquetaDada}" />
+            </Border>
+        </StackPanel>
 
         <!-- Week header -->
         <Grid Grid.Row="1" Margin="0,0,0,16">
@@ -125,6 +134,16 @@
                                                                   RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                         CommandParameter="{Binding Cita}" />
                                             </WrapPanel>
+
+                                            <!-- For the entries that should never have been
+                                                 booked. Available whatever the state: a wrong
+                                                 appointment is wrong once it is done too. -->
+                                            <Button Content="Eliminar" Style="{StaticResource BotoDestructiu}"
+                                                    Padding="10,0" MinHeight="32" Margin="0,8,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Command="{Binding DataContext.EliminarCitaCommand,
+                                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Cita}" />
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>

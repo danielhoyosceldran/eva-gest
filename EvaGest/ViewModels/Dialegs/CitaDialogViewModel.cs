@@ -141,6 +141,20 @@ public partial class CitaDialogViewModel : DialegViewModelBase
         foreach (var s in await cataleg.ObtenirServeis(nomesActius: true)) ServeisActius.Add(s);
         foreach (var t in await treballadores.ObtenirTotes(nomesActives: true)) TreballadoresActives.Add(t);
 
+        // Deleting a used catalogue entry deactivates it, so an appointment booked before
+        // that must still show what it was booked with: leaving it out of the lists would
+        // blank the combo box and drop the reference on the next save.
+        if (_serveiIdOriginal is int idServeiOriginal
+            && ServeisActius.All(s => s.Id != idServeiOriginal)
+            && await cataleg.ObtenirServei(idServeiOriginal) is { } serveiInactiu)
+            ServeisActius.Add(serveiInactiu);
+
+        if (_treballadoraIdOriginal is int idTreballadoraOriginal
+            && TreballadoresActives.All(t => t.Id != idTreballadoraOriginal)
+            && (await treballadores.ObtenirTotes())
+                .FirstOrDefault(t => t.Id == idTreballadoraOriginal) is { } treballadoraInactiva)
+            TreballadoresActives.Add(treballadoraInactiva);
+
         // Resolve every selection by id, never by reference: the appointment's related
         // entities come from a different AsNoTracking query than these lists, so the
         // instances are not equal and the combo boxes would render empty.
@@ -298,6 +312,33 @@ public partial class CitaDialogViewModel : DialegViewModelBase
 
         if (_id is null) await _cites.Crear(cita);
         else await _cites.Actualitzar(cita);
+
+        SolicitarTancar(true);
+    }
+
+    /// <summary>Only an appointment that exists can be deleted; a half-filled new one is
+    /// discarded with Cancel·lar.</summary>
+    public bool PotEliminar => _id is not null;
+
+    [RelayCommand]
+    private async Task Eliminar()
+    {
+        if (_id is not int id) return;
+
+        bool confirmat = await _dialegs.Confirmar(
+            "Eliminar cita?",
+            "La cita s'esborrarà de l'agenda. Això no es pot desfer.\n\n"
+            + "Si vols conservar-la a l'historial, marca-la com a cancel·lada o no assistida.",
+            "Eliminar");
+
+        if (!confirmat) return;
+
+        if (await _cites.Eliminar(id) == ResultatEsborrat.Bloquejat)
+        {
+            ErrorValidacio = "Aquesta cita té una venda associada i no es pot esborrar. "
+                             + "Anul·la o elimina primer la venda.";
+            return;
+        }
 
         SolicitarTancar(true);
     }

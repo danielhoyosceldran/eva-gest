@@ -90,6 +90,33 @@ public class TreballadoraService(IDbContextFactory<BarberiaDbContext> factory) :
         await db.SaveChangesAsync();
     }
 
+    public async Task<ResultatEsborrat> Eliminar(int treballadoraId)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        var treballadora = await db.Treballadores
+            .Include(t => t.Horaris)
+            .FirstOrDefaultAsync(t => t.Id == treballadoraId);
+        if (treballadora is null) return ResultatEsborrat.Eliminat;
+
+        bool usada = await db.Cites.AnyAsync(c => c.TreballadoraId == treballadoraId)
+                     || await db.Vendes.AnyAsync(v => v.TreballadoraId == treballadoraId);
+
+        if (usada)
+        {
+            treballadora.Actiu = false;
+            await db.SaveChangesAsync();
+            return ResultatEsborrat.Desactivat;
+        }
+
+        // Her schedule has no life of its own, so it goes with her rather than being
+        // left behind pointing at nobody.
+        db.HorarisTreballadora.RemoveRange(treballadora.Horaris);
+        db.Treballadores.Remove(treballadora);
+        await db.SaveChangesAsync();
+        return ResultatEsborrat.Eliminat;
+    }
+
     private static List<HorariTreballadora> AFiles(
         IReadOnlyDictionary<DiaSetmana, List<(TimeOnly inici, TimeOnly fi)>> horari)
         => [.. horari

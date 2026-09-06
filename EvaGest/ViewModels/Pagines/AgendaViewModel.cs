@@ -150,6 +150,31 @@ public partial class AgendaViewModel : PaginaViewModelBase
         await CarregarSetmana(InicSetmana);
     }
 
+    /// <summary>
+    /// Straight delete from the day detail, for the wrong entries that should never have
+    /// been booked. An appointment that already carries a sale is refused, because the
+    /// sale names it (F-05); cancelling is the way to keep it on the record instead.
+    /// </summary>
+    [RelayCommand]
+    private async Task EliminarCita(Cita cita)
+    {
+        bool confirmat = await _dialegs.Confirmar(
+            "Eliminar cita?",
+            $"S'esborrarà la cita de {cita.NomMostrat} del {cita.Data:dd/MM/yyyy} "
+            + $"a les {cita.Hora:HH\\:mm}. Això no es pot desfer.\n\n"
+            + "Si la vols conservar a l'historial, marca-la com a cancel·lada o no assistida.",
+            "Eliminar");
+
+        if (!confirmat) return;
+
+        var resultat = await _cites.Eliminar(cita.Id);
+        await CarregarSetmana(InicSetmana);
+
+        MostrarAvis(resultat == ResultatEsborrat.Bloquejat
+            ? "La cita té una venda associada i no s'ha esborrat. Anul·la o elimina primer la venda."
+            : "La cita s'ha eliminat.");
+    }
+
     private async Task CarregarDetallDelDia()
     {
         CitesDelDia.Clear();

@@ -15,6 +15,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <TextBlock Grid.Column="0" Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
                 <Button Content="Exportar període" Style="{StaticResource BotoSecundari}"
@@ -22,6 +26,14 @@
                 <Button Content="+ Nova venda" Style="{StaticResource BotoPrimari}" Margin="12,0,0,0"
                         Command="{Binding NovaVendaCommand}" />
             </StackPanel>
+
+            <!-- Quiet note under the title: says when "eliminar" only cancelled the sale (RF-10) -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2"
+                    Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,8,0,0"
+                    Visibility="{Binding Avis, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Avis}" TextWrapping="Wrap" Style="{StaticResource EtiquetaDada}" />
+            </Border>
         </Grid>
 
         <!-- Filtres (RF-15). Every picker allows an empty selection, which means "totes" -->
@@ -94,7 +106,7 @@
                         <DataGridTextColumn Header="Total" Binding="{Binding TotalText}" Width="100" />
                         <DataGridTextColumn Header="Pagament" Binding="{Binding MetodeText}" Width="110" />
                         <DataGridTextColumn Header="Estat" Binding="{Binding EstatText}" Width="90" />
-                        <DataGridTemplateColumn Header="" Width="180">
+                        <DataGridTemplateColumn Header="" Width="280">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -110,6 +122,13 @@
                                                 Foreground="{StaticResource DangerBrush}"
                                                 Visibility="{Binding PotAnullar, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Command="{Binding DataContext.AnullarVendaCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Venda}" />
+                                        <!-- On an active sale this only cancels it and says so;
+                                             on an already cancelled one it wipes it for good -->
+                                        <Button Content="Eliminar" Style="{StaticResource BotoDestructiu}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.EliminarVendaCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Venda}" />
                                     </StackPanel>

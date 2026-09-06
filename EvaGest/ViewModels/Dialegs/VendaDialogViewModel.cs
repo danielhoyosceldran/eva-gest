@@ -171,6 +171,19 @@ public partial class VendaDialogViewModel : DialegViewModelBase
         vm._modeIva = venda.IvaMode;
         await vm.CarregarOpcions(clients, cataleg, treballadores, configuracio);
 
+        // Deleting a used worker or payment method deactivates it, and the pickers only
+        // carry active ones. Without putting this sale's own back, reopening it would
+        // show an empty method and refuse to save, or quietly lose the worker.
+        if (venda.TreballadoraId is int tidVenda
+            && vm.TreballadoresActives.All(t => t.Id != tidVenda)
+            && (await treballadores.ObtenirTotes()).FirstOrDefault(t => t.Id == tidVenda) is { } inactiva)
+            vm.TreballadoresActives.Add(inactiva);
+
+        if (vm.MetodesActius.All(m => m.Id != venda.MetodePagamentId)
+            && (await cataleg.ObtenirMetodes())
+                .FirstOrDefault(m => m.Id == venda.MetodePagamentId) is { } metodeInactiu)
+            vm.MetodesActius.Add(metodeInactiu);
+
         vm.ClientSeleccionat = venda.ClientId is int cid ? vm.ClientsActius.FirstOrDefault(c => c.Id == cid) : null;
         vm.TextClient = venda.NomConvidat ?? string.Empty;
         vm.TelefonConvidat = venda.TelefonConvidat;

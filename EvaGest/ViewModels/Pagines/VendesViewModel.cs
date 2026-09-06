@@ -169,6 +169,38 @@ public partial class VendesViewModel(
         await Carregar();
     }
 
+    /// <summary>
+    /// An active sale is the accounting record, so "eliminar" cancels it and says so
+    /// (RF-10). Repeating it on an already cancelled sale wipes it for good: by then the
+    /// user has seen it sitting outside the totals and confirmed twice.
+    /// </summary>
+    [RelayCommand]
+    private async Task EliminarVenda(Venda venda)
+    {
+        bool anullada = venda.Estat == EstatVenda.Anullada;
+
+        bool confirmat = await dialegs.Confirmar(
+            anullada ? "Esborrar definitivament?" : "Eliminar venda?",
+            anullada
+                ? $"La venda de {Diners.Format(venda.TotalCents)} ja està anul·lada. "
+                  + "S'esborrarà del tot, amb les seves línies i el desglossament d'IVA. "
+                  + "Això no es pot desfer."
+                : $"La venda de {Diners.Format(venda.TotalCents)} forma part de l'historial, "
+                  + "així que passarà a Anul·lada en lloc d'esborrar-se: es manté visible "
+                  + "però queda fora dels totals.",
+            anullada ? "Esborrar" : "Anul·lar");
+
+        if (!confirmat) return;
+
+        var resultat = await vendes.Eliminar(venda.Id);
+        await Carregar();
+
+        MostrarAvis(resultat == ResultatEsborrat.Desactivat
+            ? "La venda s'ha anul·lat en lloc d'esborrar-se, per no perdre l'historial. "
+              + "Si la vols treure del tot, torna a eliminar-la ara que està anul·lada."
+            : "La venda s'ha esborrat definitivament.");
+    }
+
     [RelayCommand]
     private async Task ExportarPeriode()
     {

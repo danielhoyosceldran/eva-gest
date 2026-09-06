@@ -84,6 +84,16 @@ public partial class CatalegViewModel(
         await Carregar();
     }
 
+    [RelayCommand]
+    private async Task EliminarServei(Servei servei)
+    {
+        if (!await ConfirmarEsborrat("servei", servei.Nom)) return;
+
+        var resultat = await cataleg.EliminarServei(servei.Id);
+        await Carregar();
+        MostrarAvis(TextResultat(resultat, "El servei", servei.Nom, "cites o vendes"));
+    }
+
     // --- Productes ---
 
     [RelayCommand]
@@ -115,6 +125,16 @@ public partial class CatalegViewModel(
     {
         await cataleg.CanviarEstatProducte(producte.Id, !producte.Actiu);
         await Carregar();
+    }
+
+    [RelayCommand]
+    private async Task EliminarProducte(Producte producte)
+    {
+        if (!await ConfirmarEsborrat("producte", producte.Nom)) return;
+
+        var resultat = await cataleg.EliminarProducte(producte.Id);
+        await Carregar();
+        MostrarAvis(TextResultat(resultat, "El producte", producte.Nom, "vendes"));
     }
 
     // --- Mètodes de pagament ---
@@ -158,4 +178,38 @@ public partial class CatalegViewModel(
         await cataleg.CanviarEstatMetode(metode.Id, !metode.Actiu);
         await Carregar();
     }
+
+    [RelayCommand]
+    private async Task EliminarMetode(MetodePagament metode)
+    {
+        if (!await ConfirmarEsborrat("mètode de pagament", metode.Nom)) return;
+
+        var resultat = await cataleg.EliminarMetode(metode.Id);
+        await Carregar();
+
+        MostrarAvis(resultat == ResultatEsborrat.Bloquejat
+            ? $"«{metode.Nom}» no s'ha eliminat: cal mantenir almenys un mètode de pagament actiu per poder cobrar."
+            : TextResultat(resultat, "El mètode", metode.Nom, "vendes o moviments de caixa"));
+    }
+
+    // --- Esborrat ---
+
+    /// <summary>
+    /// One confirmation for the three lists. It says up front that a used entry will be
+    /// deactivated instead of deleted, so the note afterwards confirms what was announced
+    /// rather than surprising the user with it.
+    /// </summary>
+    private Task<bool> ConfirmarEsborrat(string tipus, string nom)
+        => dialegs.Confirmar(
+            $"Eliminar {tipus}?",
+            $"S'eliminarà «{nom}» del catàleg.\n\n"
+            + "Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'historial. "
+            + "En tots dos casos deixarà de sortir a l'hora de registrar cites i vendes.",
+            "Eliminar");
+
+    private static string TextResultat(ResultatEsborrat resultat, string article, string nom, string on)
+        => resultat == ResultatEsborrat.Desactivat
+            ? $"{article} «{nom}» ja apareix en {on}, així que s'ha desactivat en lloc d'eliminar-se. "
+              + "L'historial es manté i ja no es podrà triar de nou."
+            : $"{article} «{nom}» s'ha eliminat.";
 }

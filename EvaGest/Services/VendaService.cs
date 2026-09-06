@@ -120,6 +120,32 @@ public class VendaService(
         await db.SaveChangesAsync();
     }
 
+    public async Task<ResultatEsborrat> Eliminar(int vendaId)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        var venda = await db.Vendes
+            .Include(v => v.Linies)
+            .Include(v => v.Desglossaments)
+            .FirstOrDefaultAsync(v => v.Id == vendaId);
+        if (venda is null) return ResultatEsborrat.Eliminat;
+
+        if (venda.Estat == EstatVenda.Activa)
+        {
+            venda.Estat = EstatVenda.Anullada;
+            await db.SaveChangesAsync();
+            return ResultatEsborrat.Desactivat;
+        }
+
+        // Lines and breakdown cascade in the schema; removing them here as well keeps
+        // the intent visible and does not depend on the provider honouring it.
+        db.VendaLinies.RemoveRange(venda.Linies);
+        db.VendaDesglossaments.RemoveRange(venda.Desglossaments);
+        db.Vendes.Remove(venda);
+        await db.SaveChangesAsync();
+        return ResultatEsborrat.Eliminat;
+    }
+
     public async Task<Venda> PreparaDesDeCita(int citaId)
     {
         await using var db = await factory.CreateDbContextAsync();

@@ -6,6 +6,14 @@
         <StackPanel Margin="{StaticResource PadPagina}">
             <TextBlock Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
 
+            <!-- Quiet note, not a dialog: the delete did happen, it just turned into a
+                 deactivation because the history points at the entry (RF-10) -->
+            <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding Avis, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Avis}" TextWrapping="Wrap" Style="{StaticResource EtiquetaDada}" />
+            </Border>
+
             <!-- Serveis -->
             <TextBlock Text="Serveis" Style="{StaticResource Subtitol}" />
             <Button Content="+ Nou servei" Style="{StaticResource BotoSecundari}"
@@ -20,7 +28,7 @@
                         <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
                         <DataGridTextColumn Header="Durada" Binding="{Binding DuradaText}" Width="80" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Servei.Actiu}" Width="60" />
-                        <DataGridTemplateColumn Header="" Width="180">
+                        <DataGridTemplateColumn Header="" Width="280">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -32,6 +40,11 @@
                                         <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.CanviarEstatServeiCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Servei}" />
+                                        <Button Content="Eliminar" Style="{StaticResource BotoDestructiu}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.EliminarServeiCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Servei}" />
                                     </StackPanel>
@@ -56,7 +69,7 @@
                         <DataGridTextColumn Header="Categoria" Binding="{Binding Producte.Categoria}" Width="120" />
                         <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Producte.Actiu}" Width="60" />
-                        <DataGridTemplateColumn Header="" Width="180">
+                        <DataGridTemplateColumn Header="" Width="280">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -68,6 +81,11 @@
                                         <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.CanviarEstatProducteCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Producte}" />
+                                        <Button Content="Eliminar" Style="{StaticResource BotoDestructiu}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.EliminarProducteCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Producte}" />
                                     </StackPanel>
@@ -89,7 +107,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
-                        <DataGridTemplateColumn Header="" Width="180">
+                        <DataGridTemplateColumn Header="" Width="280">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -101,6 +119,11 @@
                                         <Button Content="Activar/Desactivar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.CanviarEstatMetodeCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="Eliminar" Style="{StaticResource BotoDestructiu}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.EliminarMetodeCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}" />
                                     </StackPanel>

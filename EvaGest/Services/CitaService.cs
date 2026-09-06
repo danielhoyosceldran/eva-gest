@@ -74,12 +74,21 @@ public class CitaService(IDbContextFactory<BarberiaDbContext> factory) : ICitaSe
         await db.SaveChangesAsync();
     }
 
-    public async Task Eliminar(int citaId)
+    public async Task<ResultatEsborrat> Eliminar(int citaId)
     {
         await using var db = await factory.CreateDbContextAsync();
-        var cita = await db.Cites.FirstAsync(c => c.Id == citaId);
+
+        var cita = await db.Cites.FirstOrDefaultAsync(c => c.Id == citaId);
+        if (cita is null) return ResultatEsborrat.Eliminat;
+
+        // The sale's cita_id is SET NULL, so this would succeed and quietly cut the sale
+        // loose from the appointment it was charged for. Refuse instead and say why.
+        if (await db.Vendes.AnyAsync(v => v.CitaId == citaId))
+            return ResultatEsborrat.Bloquejat;
+
         db.Cites.Remove(cita);
         await db.SaveChangesAsync();
+        return ResultatEsborrat.Eliminat;
     }
 
     private static IQueryable<Cita> Consulta(BarberiaDbContext db)
