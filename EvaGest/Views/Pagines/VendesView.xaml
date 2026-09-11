@@ -36,47 +36,49 @@
             </Border>
         </Grid>
 
-        <!-- Filtres (RF-15). Every picker allows an empty selection, which means "totes" -->
+        <!-- Filtres (RF-15). Every picker allows an empty selection, which means "totes".
+             One row of equal cells that stretches to the page width -->
         <Border Grid.Row="1" Style="{StaticResource TargetaDada}" Margin="0,0,0,12">
-            <WrapPanel>
-                <StackPanel Margin="0,0,12,8">
+            <UniformGrid Rows="1">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Des de" Style="{StaticResource EtiquetaDada}" />
-                    <DatePicker Width="130"
+                    <DatePicker HorizontalAlignment="Stretch"
                                 SelectedDate="{Binding Des, Converter={StaticResource DateOnlyConverter}}" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,8">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Fins a" Style="{StaticResource EtiquetaDada}" />
-                    <DatePicker Width="130"
+                    <DatePicker HorizontalAlignment="Stretch"
                                 SelectedDate="{Binding Fins, Converter={StaticResource DateOnlyConverter}}" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,8">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Client" Style="{StaticResource EtiquetaDada}" />
-                    <ComboBox Width="160" ItemsSource="{Binding ClientsFiltre}" SelectedItem="{Binding Client}"
-                              DisplayMemberPath="Nom" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding ClientsFiltre}"
+                              SelectedItem="{Binding Client}" DisplayMemberPath="Nom" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,8">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Servei" Style="{StaticResource EtiquetaDada}" />
-                    <ComboBox Width="140" ItemsSource="{Binding ServeisFiltre}" SelectedItem="{Binding Servei}"
-                              DisplayMemberPath="Nom" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding ServeisFiltre}"
+                              SelectedItem="{Binding Servei}" DisplayMemberPath="Nom" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,8">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Producte" Style="{StaticResource EtiquetaDada}" />
-                    <ComboBox Width="140" ItemsSource="{Binding ProductesFiltre}" SelectedItem="{Binding Producte}"
-                              DisplayMemberPath="Nom" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding ProductesFiltre}"
+                              SelectedItem="{Binding Producte}" DisplayMemberPath="Nom" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,8">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Pagament" Style="{StaticResource EtiquetaDada}" />
-                    <ComboBox Width="120" ItemsSource="{Binding MetodesFiltre}"
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding MetodesFiltre}"
                               SelectedItem="{Binding MetodePagament}" DisplayMemberPath="Nom" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,8">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Treballadora" Style="{StaticResource EtiquetaDada}" />
-                    <ComboBox Width="140" ItemsSource="{Binding TreballadoresFiltre}"
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding TreballadoresFiltre}"
                               SelectedItem="{Binding Treballadora}" DisplayMemberPath="Nom" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,8">
+                <StackPanel Margin="0,0,12,0">
                     <TextBlock Text="Estat" Style="{StaticResource EtiquetaDada}" />
-                    <ComboBox Width="120" ItemsSource="{Binding EstatsFiltre}" SelectedItem="{Binding Estat}">
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding EstatsFiltre}"
+                              SelectedItem="{Binding Estat}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={StaticResource EtiquetaConverter}}" />
@@ -85,9 +87,9 @@
                     </ComboBox>
                 </StackPanel>
                 <Button Content="Netejar filtres" Style="{StaticResource BotoSecundari}"
-                        VerticalAlignment="Bottom" Margin="0,0,0,8"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Padding="8,0"
                         Command="{Binding NetejarFiltresCommand}" />
-            </WrapPanel>
+            </UniformGrid>
         </Border>
 
         <Border Grid.Row="2" Style="{StaticResource TargetaDada}" Padding="0">
