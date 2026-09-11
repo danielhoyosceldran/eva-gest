@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:helpers="clr-namespace:EvaGest.Helpers">
+                    xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework">
 
     <!-- Primary button: one main action per dialog (Guardar, Cobrar) -->
     <Style x:Key="BotoPrimari" TargetType="Button">
@@ -368,6 +368,301 @@
         </Setter>
     </Style>
 
+    <!-- The calendar popup (the DatePicker drop-down), retemplated end to end: day cell,
+         month/year cell, header and the surrounding card. Property Setters alone are not
+         enough — the OS theme templates paint their own visual states on top, which is what
+         left the selected day unreadable. Owning the templates also fixes the framing: the
+         month view is a plain 7x7 grid of AlcadaCamp cells, so every number sits centred in
+         a square of the same size instead of being squeezed by the theme's own metrics.
+         Note that Calendar ignores Width/Height (documented), so size comes from the cells.
+
+         The popup is reached through DatePicker.CalendarStyle, wired further down: DatePicker
+         builds its Calendar in code and binds that property to Calendar.Style, so an implicit
+         `Style TargetType="Calendar"` never applies on its own. Same reasoning for the inner
+         parts, hence the explicit CalendarItemStyle / CalendarButtonStyle /
+         CalendarDayButtonStyle setters. -->
+
+    <!-- One day. Trigger order is the design: selection comes last so a selected "today"
+         reads as a solid blue cell instead of keeping the outline of an unselected one. -->
+    <Style TargetType="CalendarDayButton">
+        <Setter Property="Width" Value="{StaticResource AlcadaCamp}" />
+        <Setter Property="Height" Value="{StaticResource AlcadaCamp}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarDayButton">
+                    <Border x:Name="Fons" Margin="1"
+                            Background="Transparent" BorderThickness="0"
+                            CornerRadius="{StaticResource RadiControl}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsBlackedOut" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                        <Trigger Property="IsToday" Value="True">
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Fons" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauFoscBrush}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource InkBrush}" />
+                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- One month (year view) or year (decade view). Stretches to fill its cell so the
+         card keeps the same size in every display mode. -->
+    <Style TargetType="CalendarButton">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarButton">
+                    <Border x:Name="Fons" Margin="2"
+                            Background="Transparent" BorderThickness="0"
+                            CornerRadius="{StaticResource RadiControl}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                        </Trigger>
+                        <Trigger Property="HasSelectedDays" Value="True">
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource InkBrush}" />
+                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Header: the month/year toggle and the ‹ / › arrows, same glyphs as the week
+         navigator in CitaDialogView. -->
+    <Style x:Key="EvaGest.CalendariBotoCapcalera" TargetType="Button">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSubhead}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Fons" Background="{TemplateBinding Background}"
+                            Padding="10,4" CornerRadius="{StaticResource RadiControl}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="EvaGest.CalendariBotoNavegacioBase" TargetType="Button">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource FontUi}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSubhead}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Fons" Background="{TemplateBinding Background}"
+                            CornerRadius="{StaticResource RadiControl}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="EvaGest.CalendariBotoAnterior" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendariBotoNavegacioBase}">
+        <Setter Property="Content" Value="‹" />
+    </Style>
+    <Style x:Key="EvaGest.CalendariBotoSeguent" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendariBotoNavegacioBase}">
+        <Setter Property="Content" Value="›" />
+    </Style>
+
+    <!-- The card itself. CalendarItem owns the whole layout: header row, the 7x7 month
+         grid and the 4x3 year grid, both in the same cell so the card never changes size
+         when the header button switches between month, year and decade. -->
+    <Style TargetType="primitives:CalendarItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="primitives:CalendarItem">
+                    <ControlTemplate.Resources>
+                        <!-- Column headings (dl, dt, dc…), taken from the current culture -->
+                        <DataTemplate x:Key="{x:Static primitives:CalendarItem.DayTitleTemplateResourceKey}">
+                            <TextBlock Text="{Binding}"
+                                       FontSize="{StaticResource FontSizeSmall}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource InkMutedBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Margin="0,0,0,6" />
+                        </DataTemplate>
+                    </ControlTemplate.Resources>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource RadiSuperficie}"
+                            Padding="{StaticResource PadCard}">
+                        <Grid x:Name="PART_Root">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="PART_PreviousButton" Grid.Column="0"
+                                        Style="{StaticResource EvaGest.CalendariBotoAnterior}" />
+                                <Button x:Name="PART_HeaderButton" Grid.Column="1"
+                                        Style="{StaticResource EvaGest.CalendariBotoCapcalera}" />
+                                <Button x:Name="PART_NextButton" Grid.Column="2"
+                                        Style="{StaticResource EvaGest.CalendariBotoSeguent}" />
+                            </Grid>
+
+                            <!-- Filled by CalendarItem: row 0 holds the day headings,
+                                 rows 1-6 the six possible weeks of a month -->
+                            <Grid x:Name="PART_MonthView" Grid.Row="1" HorizontalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                            </Grid>
+
+                            <Grid x:Name="PART_YearView" Grid.Row="1" Visibility="Hidden">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                            </Grid>
+
+                            <Rectangle x:Name="PART_DisabledVisual" Grid.RowSpan="2"
+                                       Fill="{StaticResource SurfaceBrush}" Opacity="0.5"
+                                       IsHitTestVisible="False" Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}" Value="Year">
+                            <Setter TargetName="PART_MonthView" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="PART_YearView" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}" Value="Decade">
+                            <Setter TargetName="PART_MonthView" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="PART_YearView" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_DisabledVisual" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Calendar">
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="CalendarItemStyle" Value="{StaticResource {x:Type primitives:CalendarItem}}" />
+        <Setter Property="CalendarButtonStyle" Value="{StaticResource {x:Type CalendarButton}}" />
+        <Setter Property="CalendarDayButtonStyle" Value="{StaticResource {x:Type CalendarDayButton}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Calendar">
+                    <StackPanel x:Name="PART_Root">
+                        <primitives:CalendarItem x:Name="PART_CalendarItem"
+                                                 Background="{TemplateBinding Background}"
+                                                 BorderBrush="{TemplateBinding BorderBrush}"
+                                                 BorderThickness="{TemplateBinding BorderThickness}"
+                                                 Style="{TemplateBinding CalendarItemStyle}" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <!-- DatePicker: text/colours matched to TextBox; calendar popup uses the same accent.
          The whole control is given a custom template so the calendar-toggle button can be
          made a plain square docked to the right edge, exactly as tall as the text part —
@@ -392,6 +687,10 @@
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <!-- DatePicker builds its popup Calendar in code and assigns it via this
+             CalendarStyle property — implicit `Style TargetType="Calendar"` lookup
+             never reaches it, so it must be wired explicitly (see comment above). -->
+        <Setter Property="CalendarStyle" Value="{StaticResource {x:Type Calendar}}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DatePicker">
@@ -442,104 +741,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-    <!-- The calendar popup itself: flat surface, square day cells, the app's own
-         ‹ / › arrows (same glyphs as the week navigator in CitaDialogView) instead of
-         the OS chrome, so it reads as part of this app rather than a Windows control. -->
-    <Style TargetType="Calendar">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-        <Setter Property="helpers:CalendarEstilHelper.Aplica" Value="True" />
-    </Style>
-    <!-- Header (month/year toggle) and prev/next arrows found by CalendarEstilHelper
-         at runtime, since their real style keys live on the internal CalendarItem type. -->
-    <Style x:Key="EvaGest.CalendariBotoCapcalera" TargetType="Button">
-        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="Fons" Background="{TemplateBinding Background}" Padding="6,4">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style x:Key="EvaGest.CalendariBotoNavegacioBase" TargetType="Button">
-        <Setter Property="Width" Value="28" />
-        <Setter Property="Height" Value="28" />
-        <Setter Property="Margin" Value="0" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-        <Setter Property="FontFamily" Value="{StaticResource FontUi}" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="Fons" Background="{TemplateBinding Background}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style x:Key="EvaGest.CalendariBotoAnterior" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendariBotoNavegacioBase}">
-        <Setter Property="Content" Value="‹" />
-    </Style>
-    <Style x:Key="EvaGest.CalendariBotoSeguent" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendariBotoNavegacioBase}">
-        <Setter Property="Content" Value="›" />
-    </Style>
-    <Style TargetType="CalendarDayButton">
-        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource PaperBrush}" />
-            </Trigger>
-            <Trigger Property="IsToday" Value="True">
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="BorderBrush" Value="{StaticResource BlauBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-            </Trigger>
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{StaticResource BlauBrush}" />
-                <Setter Property="Foreground" Value="White" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    <Style TargetType="CalendarButton">
-        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource PaperBrush}" />
-            </Trigger>
-        </Style.Triggers>
     </Style>
     <!-- DataGrid: flat surfaces and the app accent instead of the OS default blue/grey -->
     <Style TargetType="DataGridColumnHeader">

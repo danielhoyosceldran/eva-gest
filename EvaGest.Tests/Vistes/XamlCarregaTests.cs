@@ -1,4 +1,7 @@
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using AwesomeAssertions;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
@@ -156,6 +159,40 @@ public class XamlCarregaTests(AplicacioWpf app)
             vista.Arrange(new Rect(0, 0, 1400, 800));
             vista.ActualWidth.Should().BeGreaterThan(0);
         });
+    }
+
+    [Fact] // X-10
+    public void El_calendari_del_datepicker_usa_les_plantilles_de_l_app()
+        => app.Executa(() =>
+        {
+            var vista = new EvaGest.Views.Dialegs.CitaDialogView();
+            vista.Measure(new Size(1200, 800));
+            vista.Arrange(new Rect(0, 0, 1200, 800));
+
+            // DatePicker builds its popup Calendar in code and binds Calendar.Style to this
+            // property, so an implicit Style TargetType="Calendar" never reaches it.
+            var picker = Descendents<DatePicker>(vista).First();
+            picker.CalendarStyle.Should().NotBeNull();
+
+            // Expanding the calendar's own templates is what resolves every StaticResource
+            // and the day/month cell templates inside them.
+            var calendari = new Calendar { Style = picker.CalendarStyle };
+            calendari.Measure(new Size(600, 600));
+            calendari.Arrange(new Rect(0, 0, 600, 600));
+
+            var dies = Descendents<CalendarDayButton>(calendari).ToList();
+            dies.Should().HaveCount(42);
+            dies.Should().AllSatisfy(d => d.ActualWidth.Should().Be(40));
+        });
+
+    private static IEnumerable<T> Descendents<T>(DependencyObject arrel) where T : DependencyObject
+    {
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(arrel); i++)
+        {
+            var fill = VisualTreeHelper.GetChild(arrel, i);
+            if (fill is T trobat) yield return trobat;
+            foreach (var net in Descendents<T>(fill)) yield return net;
+        }
     }
 
     [Fact] // X-07

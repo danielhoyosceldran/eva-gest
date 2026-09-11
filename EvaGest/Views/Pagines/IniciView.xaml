@@ -70,13 +70,13 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" Width="70" />
+                        <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" Width="*" />
                         <DataGridTextColumn Header="Durada" Binding="{Binding DuradaMin, StringFormat={}{0} min}" Width="80" />
                         <DataGridTextColumn Header="Client" Binding="{Binding NomMostrat}" Width="*" />
-                        <DataGridTextColumn Header="Servei" Binding="{Binding Servei.Nom, TargetNullValue=Sense servei}" Width="120" />
-                        <DataGridTextColumn Header="Treballadora" Binding="{Binding Treballadora.Nom, TargetNullValue=Sense assignar}" Width="120" />
+                        <DataGridTextColumn Header="Servei" Binding="{Binding Servei.Nom, TargetNullValue=Sense servei}" Width="*" />
+                        <DataGridTextColumn Header="Treballadora" Binding="{Binding Treballadora.Nom, TargetNullValue=Sense assignar}" Width="*" />
                         <DataGridTextColumn Header="Estat" Binding="{Binding Estat}" Width="90" />
-                        <DataGridTemplateColumn Header="" Width="300">
+                        <DataGridTemplateColumn Header="" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
