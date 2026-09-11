@@ -11,7 +11,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding Titol}" Style="{StaticResource TitolPagina}" />
                 <Button Grid.Column="1" Content="+ Nova treballadora" Style="{StaticResource BotoPrimari}"
-                        Command="{Binding NovaTreballadoraCommand}" VerticalAlignment="Top" />
+                        Command="{Binding NovaTreballadoraCommand}" VerticalAlignment="Top" Cursor="" />
             </Grid>
 
             <!-- Quiet note: says when a delete became a deactivation because she already
