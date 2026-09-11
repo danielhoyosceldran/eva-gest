@@ -5,10 +5,10 @@
         <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
 
         <TextBlock Text="Des de" Style="{StaticResource EtiquetaDada}" />
-        <DatePicker SelectedDate="{Binding Des}" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" />
+        <DatePicker SelectedDate="{Binding Des}" Margin="0,0,0,12" />
 
         <TextBlock Text="Fins a" Style="{StaticResource EtiquetaDada}" />
-        <DatePicker SelectedDate="{Binding Fins}" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" />
+        <DatePicker SelectedDate="{Binding Fins}" Margin="0,0,0,12" />
 
         <TextBlock TextWrapping="Wrap" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
                    Text="Es generaran dos fitxers: el llistat de vendes i el desglossament d'IVA per a la gestoria." />

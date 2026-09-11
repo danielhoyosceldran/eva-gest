@@ -14,7 +14,7 @@
         <TextBox Text="{Binding Correu, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
         <TextBlock Text="Data de naixement (opcional)" Style="{StaticResource EtiquetaDada}" />
-        <DatePicker SelectedDate="{Binding DataNaixement}" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" />
+        <DatePicker SelectedDate="{Binding DataNaixement}" Margin="0,0,0,12" />
 
         <TextBlock Text="Observacions (opcional)" Style="{StaticResource EtiquetaDada}" />
         <TextBox Text="{Binding Observacions, UpdateSourceTrigger=PropertyChanged}"

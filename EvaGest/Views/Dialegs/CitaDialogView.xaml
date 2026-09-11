@@ -35,8 +35,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Data" Style="{StaticResource EtiquetaDada}" />
-                    <DatePicker SelectedDate="{Binding Data, Converter={StaticResource DateOnlyConverter}}"
-                                FontSize="{StaticResource FontSizeInput}" />
+                    <DatePicker SelectedDate="{Binding Data, Converter={StaticResource DateOnlyConverter}}" />
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Hora" Style="{StaticResource EtiquetaDada}" />
