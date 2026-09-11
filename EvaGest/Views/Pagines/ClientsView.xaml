@@ -49,9 +49,40 @@
                 </DataGrid>
             </Border>
 
-            <ToggleButton x:Name="ToggleAdormits" Content="Clients adormits" IsChecked="{Binding MostrarAdormits}"
-                          HorizontalAlignment="Left" Margin="0,20,0,10" Background="Transparent" BorderThickness="0"
-                          Foreground="{StaticResource InkMutedBrush}" FontSize="{StaticResource FontSizeSubhead}" />
+            <ToggleButton x:Name="ToggleAdormits" IsChecked="{Binding MostrarAdormits}"
+                          HorizontalAlignment="Left" Margin="0,20,0,10" Cursor="Hand">
+                <ToggleButton.Template>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="Transparent" Padding="0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <Path x:Name="Fletxa" Data="M0,0 L4,4 L8,0" Stretch="None"
+                                      Stroke="{StaticResource InkMutedBrush}" StrokeThickness="1.5"
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                      VerticalAlignment="Center" Margin="0,0,8,0"
+                                      RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="0" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <TextBlock x:Name="Text" Text="Mostrar clients adormits"
+                                           Foreground="{StaticResource InkMutedBrush}"
+                                           FontSize="{StaticResource FontSizeSubhead}"
+                                           TextDecorations="Underline" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Text" Property="Text" Value="Amagar clients adormits" />
+                                <Setter TargetName="Fletxa" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </ToggleButton.Template>
+            </ToggleButton>
 
             <Border Style="{StaticResource TargetaDada}" Padding="0"
                     Visibility="{Binding MostrarAdormits, Converter={StaticResource BoolToVisibilityConverter}}">
