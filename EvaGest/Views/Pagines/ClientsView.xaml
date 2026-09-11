@@ -12,7 +12,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Text="{Binding TextCerca, UpdateSourceTrigger=PropertyChanged}"
-                         Tag="Cerca per nom o mòbil…" MaxWidth="360" HorizontalAlignment="Left" Width="200" />
+                         Tag="Cerca per nom o mòbil…" Margin="0,0,12,0" />
                 <Button Grid.Column="1" Content="+ Nou client" Style="{StaticResource BotoPrimari}"
                         Command="{Binding NouClientCommand}" />
             </Grid>

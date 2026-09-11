@@ -126,7 +126,8 @@
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
-    <!-- Text field -->
+    <!-- Text field. Tag doubles as placeholder text, shown via the template
+         below when Text is empty; it disappears the moment typing starts -->
     <Style TargetType="TextBox">
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
         <Setter Property="MinHeight" Value="{StaticResource AlcadaCamp}" />
@@ -134,14 +135,37 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-        <Style.Triggers>
-            <!-- Focus is shown with the accent, 2 DIP thick: visible without being loud -->
-            <Trigger Property="IsKeyboardFocused" Value="True">
-                <Setter Property="BorderBrush" Value="{StaticResource BlauBrush}" />
-                <Setter Property="BorderThickness" Value="2" />
-            </Trigger>
-        </Style.Triggers>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Contorn" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource RadiControl}">
+                        <Grid>
+                            <TextBlock x:Name="Placeholder" Text="{TemplateBinding Tag}"
+                                       Foreground="{StaticResource InkMutedBrush}"
+                                       Margin="{TemplateBinding Padding}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       IsHitTestVisible="False" Visibility="Collapsed" />
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!-- Focus is shown with the accent, 2 DIP thick: visible without being loud -->
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Contorn" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Contorn" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Large figure surface — the only place with the blue rule -->
