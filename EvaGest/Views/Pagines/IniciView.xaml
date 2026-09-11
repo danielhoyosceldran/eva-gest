@@ -76,10 +76,10 @@
                         <DataGridTextColumn Header="Servei" Binding="{Binding Servei.Nom, TargetNullValue=Sense servei}" Width="120" />
                         <DataGridTextColumn Header="Treballadora" Binding="{Binding Treballadora.Nom, TargetNullValue=Sense assignar}" Width="120" />
                         <DataGridTextColumn Header="Estat" Binding="{Binding Estat}" Width="90" />
-                        <DataGridTemplateColumn Header="" Width="260">
+                        <DataGridTemplateColumn Header="" Width="300">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal"
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                                                 Visibility="{Binding Estat, Converter={StaticResource PendentAVisibilitatConverter}}">
                                         <Button Content="Realitzada" Style="{StaticResource BotoSecundari}"
                                                 Padding="8,0" MinHeight="32"

@@ -12,7 +12,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Text="{Binding TextCerca, UpdateSourceTrigger=PropertyChanged}"
-                         Tag="Cerca per nom o mòbil…" MaxWidth="360" HorizontalAlignment="Left" />
+                         Tag="Cerca per nom o mòbil…" MaxWidth="360" HorizontalAlignment="Left" Width="200" />
                 <Button Grid.Column="1" Content="+ Nou client" Style="{StaticResource BotoPrimari}"
                         Command="{Binding NouClientCommand}" />
             </Grid>
@@ -22,15 +22,15 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" />
                         <DataGridTextColumn Header="Mòbil" Binding="{Binding Mobil}" Width="130" />
                         <!-- Visites / Total gastat / Última visita venen dels indicadors agregats
                              (RF-17), que InformesService calcula a partir de Fase 8. Fins llavors
                              no es mostren xifres inventades. -->
-                        <DataGridTemplateColumn Header="" Width="150">
+                        <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <Button Content="Fitxa" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32"
                                                 Command="{Binding DataContext.ObrirFitxaCommand,
@@ -65,7 +65,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Despertar" Style="{StaticResource BotoSecundari}"
-                                            Padding="10,0" MinHeight="32"
+                                            HorizontalAlignment="Right" Padding="10,0" MinHeight="32"
                                             Command="{Binding DataContext.DespertarCommand,
                                                       RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}" />

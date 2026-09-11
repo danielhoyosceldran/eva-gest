@@ -23,15 +23,15 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Servei.Nom}" Width="*" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Servei.Nom}" />
                         <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" />
                         <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
                         <DataGridTextColumn Header="Durada" Binding="{Binding DuradaText}" Width="80" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Servei.Actiu}" Width="60" />
-                        <DataGridTemplateColumn Header="" Width="280">
+                        <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <Button Content="Editar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32"
                                                 Command="{Binding DataContext.EditarServeiCommand,
@@ -64,15 +64,15 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Producte.Nom}" Width="*" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Producte.Nom}" />
                         <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" />
                         <DataGridTextColumn Header="Categoria" Binding="{Binding Producte.Categoria}" Width="120" />
                         <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Producte.Actiu}" Width="60" />
-                        <DataGridTemplateColumn Header="" Width="280">
+                        <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <Button Content="Editar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32"
                                                 Command="{Binding DataContext.EditarProducteCommand,
@@ -105,12 +105,12 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
-                        <DataGridTemplateColumn Header="" Width="280">
+                        <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <Button Content="Editar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32"
                                                 Command="{Binding DataContext.EditarMetodeCommand,

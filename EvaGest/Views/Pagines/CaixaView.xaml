@@ -120,7 +120,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Eliminar" Style="{StaticResource BotoSecundari}"
-                                            Padding="8,0" MinHeight="32"
+                                            HorizontalAlignment="Right" Padding="8,0" MinHeight="32"
                                             Command="{Binding DataContext.EliminarCommand,
                                                       RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}" />

@@ -106,10 +106,10 @@
                         <DataGridTextColumn Header="Total" Binding="{Binding TotalText}" Width="100" />
                         <DataGridTextColumn Header="Pagament" Binding="{Binding MetodeText}" Width="110" />
                         <DataGridTextColumn Header="Estat" Binding="{Binding EstatText}" Width="90" />
-                        <DataGridTemplateColumn Header="" Width="280">
+                        <DataGridTemplateColumn Header="" Width="300">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <Button Content="Editar" Style="{StaticResource BotoSecundari}"
                                                 Padding="10,0" MinHeight="32"
                                                 Command="{Binding DataContext.EditarVendaCommand,

@@ -401,7 +401,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridCell">
-                    <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                    <!-- ClipToBounds: a cell's content (long text, a row of action
+                         buttons) must never paint past the table's own edges -->
+                    <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"
+                            ClipToBounds="True">
                         <ContentPresenter VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
