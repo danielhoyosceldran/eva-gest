@@ -1,0 +1,148 @@
+erDiagram
+    CLIENTS ||--o{ CITES : "te"
+    CLIENTS ||--o{ VENDES : "te"
+    TREBALLADORES ||--o{ HORARIS_TREBALLADORA : "te"
+    TREBALLADORES ||--o{ CITES : "atén"
+    TREBALLADORES ||--o{ VENDES : "atén"
+    SERVEIS ||--o{ CITES : "s'assigna a"
+    SERVEIS ||--o{ VENDA_LINIES : "s'inclou a"
+    PRODUCTES ||--o{ VENDA_LINIES : "s'inclou a"
+    METODES_PAGAMENT ||--o{ VENDES : "es paga amb"
+    METODES_PAGAMENT ||--o{ MOVIMENTS_CAIXA : "es paga amb"
+    CITES ||--o| VENDES : "genera"
+    VENDES ||--o{ VENDA_LINIES : "conte"
+    VENDES ||--o{ VENDA_DESGLOSSAMENTS : "desglossa"
+
+    CLIENTS {
+        int id PK
+        text client_key UK
+        text nom
+        text mobil
+        text correu
+        text data_naixement
+        text observacions
+        int adormit
+    }
+
+    TREBALLADORES {
+        int id PK
+        text nom
+        int actiu
+        text color
+    }
+
+    HORARIS_TREBALLADORA {
+        int id PK
+        int treballadora_id FK
+        text dia_setmana
+        text hora_inici
+        text hora_fi
+    }
+
+    SERVEIS {
+        int id PK
+        text nom
+        int preu_cents
+        int iva_bp
+        int durada_min
+        int actiu
+    }
+
+    PRODUCTES {
+        int id PK
+        text nom
+        int preu_cents
+        text categoria
+        int iva_bp
+        int actiu
+    }
+
+    METODES_PAGAMENT {
+        int id PK
+        text nom UK
+        int actiu
+    }
+
+    CITES {
+        int id PK
+        text data
+        text hora
+        int durada_min
+        int client_id FK
+        text nom_convidat
+        text telefon_convidat
+        int servei_id FK
+        int treballadora_id FK
+        text estat
+        text observacions
+    }
+
+    VENDES {
+        int id PK
+        text data
+        text hora
+        int client_id FK
+        text nom_convidat
+        text telefon_convidat
+        int cita_id FK
+        int treballadora_id FK
+        int metode_pagament_id FK
+        int base_cents
+        int iva_cents
+        int total_cents
+        text iva_mode
+        text estat
+        text observacions
+    }
+
+    VENDA_LINIES {
+        int id PK
+        int venda_id FK
+        int servei_id FK
+        int producte_id FK
+        text descripcio
+        int quantitat
+        int preu_unitari_cents
+        int iva_bp
+        int import_cents
+    }
+
+    VENDA_DESGLOSSAMENTS {
+        int id PK
+        int venda_id FK
+        int iva_bp
+        int base_cents
+        int iva_cents
+        int total_cents
+    }
+
+    MOVIMENTS_CAIXA {
+        int id PK
+        text data
+        text tipus
+        int import_cents
+        int base_cents
+        int iva_cents
+        int iva_bp
+        int metode_pagament_id FK
+        text concepte
+        text observacions
+    }
+
+    HORARI_BARBERIA {
+        int id PK
+        text dia_setmana
+        text hora_obertura
+        text hora_tancament
+    }
+
+    DIES_TANCATS {
+        int id PK
+        text data UK
+        text motiu
+    }
+
+    CONFIGURACIO {
+        text clau PK
+        text valor
+    }
