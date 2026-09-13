@@ -64,6 +64,94 @@ public class CitaServiceTests
         (await cites.ObtenirPerId(id))!.Estat.Should().Be(EstatCita.NoAssistida);
     }
 
+    [Fact] // F-05
+    public async Task Cancellada_es_pot_tornar_a_pendent()
+    {
+        await using var bd = new BaseDadesProva();
+        var cites = CreaServei(bd);
+        int id = await cites.Crear(new Cita { Data = Avui, Hora = new TimeOnly(10, 0), DuradaMin = 30, NomConvidat = "C" });
+        await cites.CanviarEstat(id, EstatCita.Cancellada);
+
+        bool canviat = await cites.CanviarEstat(id, EstatCita.Pendent);
+
+        canviat.Should().BeTrue();
+        (await cites.ObtenirPerId(id))!.Estat.Should().Be(EstatCita.Pendent);
+    }
+
+    [Fact] // F-05
+    public async Task Realitzada_amb_venda_activa_no_es_pot_tornar_a_pendent()
+    {
+        await using var bd = new BaseDadesProva();
+        var cites = CreaServei(bd);
+
+        int metodeId, citaId;
+        await using (var db = bd.Context())
+        {
+            var metode = Fes.Metode();
+            db.MetodesPagament.Add(metode);
+            var cita = new Cita { Data = Avui, Hora = new TimeOnly(10, 0), DuradaMin = 30, NomConvidat = "C" };
+            db.Cites.Add(cita);
+            await db.SaveChangesAsync();
+            metodeId = metode.Id;
+            citaId = cita.Id;
+        }
+
+        await using (var db = bd.Context())
+        {
+            db.Vendes.Add(new Venda
+            {
+                Data = Avui, Hora = new TimeOnly(10, 0), NomConvidat = "C", CitaId = citaId,
+                MetodePagamentId = metodeId, BaseCents = 100, IvaCents = 21, TotalCents = 121, IvaMode = IvaMode.Inclos
+            });
+            await db.SaveChangesAsync();
+        }
+        await cites.CanviarEstat(citaId, EstatCita.Realitzada);
+
+        bool canviat = await cites.CanviarEstat(citaId, EstatCita.Pendent);
+
+        canviat.Should().BeFalse();
+        (await cites.ObtenirPerId(citaId))!.Estat.Should().Be(EstatCita.Realitzada);
+    }
+
+    [Fact] // F-05
+    public async Task Realitzada_amb_venda_anullada_es_pot_tornar_a_pendent()
+    {
+        await using var bd = new BaseDadesProva();
+        var cites = CreaServei(bd);
+        var vendes = new VendaService(new FabricaDeProva(bd.Opcions), new ConfiguracioService(new FabricaDeProva(bd.Opcions)));
+
+        int metodeId, citaId, vendaId;
+        await using (var db = bd.Context())
+        {
+            var metode = Fes.Metode();
+            db.MetodesPagament.Add(metode);
+            var cita = new Cita { Data = Avui, Hora = new TimeOnly(10, 0), DuradaMin = 30, NomConvidat = "C" };
+            db.Cites.Add(cita);
+            await db.SaveChangesAsync();
+            metodeId = metode.Id;
+            citaId = cita.Id;
+        }
+
+        await using (var db = bd.Context())
+        {
+            var venda = new Venda
+            {
+                Data = Avui, Hora = new TimeOnly(10, 0), NomConvidat = "C", CitaId = citaId,
+                MetodePagamentId = metodeId, BaseCents = 100, IvaCents = 21, TotalCents = 121, IvaMode = IvaMode.Inclos
+            };
+            db.Vendes.Add(venda);
+            await db.SaveChangesAsync();
+            vendaId = venda.Id;
+        }
+        await cites.CanviarEstat(citaId, EstatCita.Realitzada);
+        await vendes.Anullar(vendaId);
+
+        bool canviat = await cites.CanviarEstat(citaId, EstatCita.Pendent);
+
+        canviat.Should().BeTrue();
+        (await cites.ObtenirPerId(citaId))!.Estat.Should().Be(EstatCita.Pendent);
+    }
+
     [Fact] // F-06
     public async Task Cita_realitzada_sense_venda_es_valida()
     {

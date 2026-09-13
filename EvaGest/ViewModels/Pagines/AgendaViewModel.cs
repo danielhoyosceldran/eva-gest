@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -126,14 +126,13 @@ public partial class AgendaViewModel : PaginaViewModelBase
 
     /// <summary>
     /// Same as the Inici page: marking an appointment as done opens the sale dialog
-    /// prefilled from it (CU-02). Closing that without charging leaves the appointment
-    /// Realitzada and unpaid, which is a state the business really has.
+    /// prefilled from it (CU-02), and it is saving that sale which moves the
+    /// appointment to Realitzada. Closing the dialog without charging leaves it
+    /// Pendent, so the charge can be started again.
     /// </summary>
     [RelayCommand]
     private async Task MarcarRealitzada(Cita cita)
     {
-        await _cites.CanviarEstat(cita.Id, EstatCita.Realitzada);
-
         var vm = await VendaDialogViewModel.DesDeCita(
             _vendes, _clients, _cataleg, _treballadores, _so, _configuracio, _dialegs, cita);
         await _dialegs.MostrarDialeg(vm);

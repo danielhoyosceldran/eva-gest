@@ -30,6 +30,7 @@
             <h:ZeroAVisibilitatConverter x:Key="ZeroAVisibilitatConverter" />
             <h:ZeroAVisibilitatInversaConverter x:Key="ZeroAVisibilitatInversaConverter" />
             <h:PendentAVisibilitatConverter x:Key="PendentAVisibilitatConverter" />
+            <h:PendentAVisibilitatInversaConverter x:Key="PendentAVisibilitatInversaConverter" />
             <h:DateOnlyConverter x:Key="DateOnlyConverter" />
             <h:EtiquetaConverter x:Key="EtiquetaConverter" />
 

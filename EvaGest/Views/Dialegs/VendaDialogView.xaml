@@ -1,7 +1,7 @@
 <UserControl x:Class="EvaGest.Views.Dialegs.VendaDialogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel Width="520">
+    <StackPanel Width="700">
         <TextBlock Text="{Binding Titol}" Style="{StaticResource Subtitol}" Margin="0,0,0,16" />
 
         <TextBlock Text="{Binding CitaAssociadaText}" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"

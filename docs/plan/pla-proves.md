@@ -261,7 +261,7 @@ Els 6 casos límit dels casos d'ús, més les vores del càlcul horari.
 | Id | Prova | Resultat esperat |
 |---|---|---|
 | F-01 | Cita nova neix en estat `Pendent` | Per defecte |
-| F-02 | Marcar `Realitzada` | L'estat canvia |
+| F-02 | Marcar `Realitzada` i cobrar | L'estat canvia en guardar la venda; si es cancel·la el cobrament es queda `Pendent` |
 | F-03 | Marcar `Cancellada` | L'estat canvia i no admet venda |
 | F-04 | Marcar `NoAssistida` | L'estat canvia i no admet venda |
 | F-05 | Intentar associar una venda a una cita cancel·lada | El servei ho rebutja |

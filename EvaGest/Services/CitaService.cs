@@ -66,12 +66,17 @@ public class CitaService(IDbContextFactory<BarberiaDbContext> factory) : ICitaSe
         await db.SaveChangesAsync();
     }
 
-    public async Task CanviarEstat(int citaId, EstatCita nouEstat)
+    public async Task<bool> CanviarEstat(int citaId, EstatCita nouEstat)
     {
         await using var db = await factory.CreateDbContextAsync();
-        var cita = await db.Cites.FirstAsync(c => c.Id == citaId);
+        var cita = await db.Cites.Include(c => c.Venda).FirstAsync(c => c.Id == citaId);
+
+        if (nouEstat == EstatCita.Pendent && cita.Venda is { Estat: EstatVenda.Activa })
+            return false;
+
         cita.Estat = nouEstat;
         await db.SaveChangesAsync();
+        return true;
     }
 
     public async Task<ResultatEsborrat> Eliminar(int citaId)

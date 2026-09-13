@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -62,14 +62,14 @@ public partial class IniciViewModel(
     /// <summary>
     /// Marking an appointment as done is where the agenda meets the till (CU-02): the
     /// sale dialog opens straight away with the appointment's client, service and
-    /// worker filled in. Closing it without charging is a valid outcome — the client
-    /// came but has not paid yet — so the appointment stays Realitzada either way.
+    /// worker filled in. The state change is the sale's, not this command's:
+    /// VendaService.Crear moves the appointment to Realitzada when the sale that names
+    /// it is saved, so closing the dialog without charging leaves the appointment
+    /// Pendent and it can be charged again later.
     /// </summary>
     [RelayCommand]
     private async Task MarcarRealitzada(Cita cita)
     {
-        await cites.CanviarEstat(cita.Id, EstatCita.Realitzada);
-
         var vm = await VendaDialogViewModel.DesDeCita(
             vendes, clients, cataleg, treballadores, so, configuracio, dialegs, cita);
         await dialegs.MostrarDialeg(vm);
@@ -79,6 +79,21 @@ public partial class IniciViewModel(
 
     [RelayCommand] private Task MarcarCancellada(Cita cita) => CanviarEstatCita(cita, EstatCita.Cancellada);
     [RelayCommand] private Task MarcarNoAssistida(Cita cita) => CanviarEstatCita(cita, EstatCita.NoAssistida);
+
+    /// <summary>
+    /// Undoes a Cancel·lada, No assistida or Realitzada mark so the appointment goes
+    /// back to Pendent. Blocked when it still carries an active sale: the sale names
+    /// the appointment and already moved money, so it has to be voided first (Vendes).
+    /// </summary>
+    [RelayCommand]
+    private async Task MarcarPendent(Cita cita)
+    {
+        bool canviat = await cites.CanviarEstat(cita.Id, EstatCita.Pendent);
+        await Carregar();
+
+        if (!canviat)
+            MostrarAvis("La cita té una venda associada i no s'ha pogut tornar a pendent. Anul·la primer la venda.");
+    }
 
     private async Task CanviarEstatCita(Cita cita, EstatCita nouEstat)
     {

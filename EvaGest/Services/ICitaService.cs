@@ -22,8 +22,13 @@ public interface ICitaService
     Task<int> Crear(Cita cita);
     Task Actualitzar(Cita cita);
 
-    /// <summary>Changes state. Cancelled and no-show can never carry a sale (RF-02).</summary>
-    Task CanviarEstat(int citaId, EstatCita nouEstat);
+    /// <summary>
+    /// Changes state. Cancelled and no-show can never carry a sale (RF-02). Resetting a
+    /// Realitzada appointment back to Pendent is refused when it still carries an active
+    /// sale (returns <c>false</c>): the sale names the appointment and already moved
+    /// money, so it has to be voided first.
+    /// </summary>
+    Task<bool> CanviarEstat(int citaId, EstatCita nouEstat);
 
     /// <summary>
     /// Removes the appointment. Returns <see cref="ResultatEsborrat.Bloquejat"/> when a

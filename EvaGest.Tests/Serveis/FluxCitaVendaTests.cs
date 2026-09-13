@@ -1,4 +1,4 @@
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
@@ -84,7 +84,7 @@ public class FluxCitaVendaTests
     }
 
     [Fact] // R-02
-    public async Task Tancar_el_cobrament_sense_cobrar_deixa_la_cita_realitzada_i_sense_venda()
+    public async Task Tancar_el_cobrament_sense_cobrar_deixa_la_cita_pendent_i_sense_venda()
     {
         await using var bd = new BaseDadesProva();
         var m = await Muntar(bd); // DialogServiceDeProva cancels by default
@@ -94,9 +94,9 @@ public class FluxCitaVendaTests
         await m.Inici.MarcarRealitzadaCommand.ExecuteAsync(m.Inici.CitesDelDia.Single());
 
         var cites = await m.Cites.ObtenirPerDia(Avui);
-        cites.Single().Estat.Should().Be(EstatCita.Realitzada);
-        (await m.Vendes.Cercar(new FiltreVendes())).Should().BeEmpty(
-            "el client ha vingut però encara no s'ha cobrat, i això és un estat vàlid");
+        cites.Single().Estat.Should().Be(EstatCita.Pendent,
+            "cancel·lar el cobrament no ha de deixar rastre: la cita es pot tornar a cobrar");
+        (await m.Vendes.Cercar(new FiltreVendes())).Should().BeEmpty();
     }
 
     [Fact] // R-03

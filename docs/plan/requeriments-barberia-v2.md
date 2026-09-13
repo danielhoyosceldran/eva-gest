@@ -68,7 +68,7 @@ Les cites cancel·lades i no assistides no generen cap moviment econòmic; es co
 
 | Acció | Resultat |
 |---|---|
-| Realitzada | Obre el formulari de venda amb client, servei i treballadora precarregats (els que la cita tingués) |
+| Realitzada | Obre el formulari de venda amb client, servei i treballadora precarregats (els que la cita tingués). La cita passa a *Realitzada* quan es guarda la venda; si es cancel·la el cobrament, es queda *Pendent* |
 | Cancel·lada | Marca la cita com a cancel·lada. No permet venda associada |
 | No assistida | Marca la cita com a no assistida. No permet venda associada |
 
@@ -161,7 +161,7 @@ Els serveis/productes inactius no apareixen com a opció.
 
 **1. Venda independent:** des del botó `+ Nova venda`, sense cap cita associada.
 
-**2. Venda des d'una cita:** en marcar una cita com a "Realitzada", s'obre el mateix formulari amb client, servei i treballadora precarregats (els que la cita tingués). Tots els camps precarregats són modificables.
+**2. Venda des d'una cita:** en marcar una cita com a "Realitzada", s'obre el mateix formulari amb client, servei i treballadora precarregats (els que la cita tingués). Tots els camps precarregats són modificables. Guardar la venda és el que passa la cita a *Realitzada*; cancel·lar el formulari no canvia res.
 
 També es pot adjuntar manualment una cita existent (en estat Realitzada) a una venda creada de forma independent.
 

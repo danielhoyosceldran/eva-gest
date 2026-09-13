@@ -13,6 +13,13 @@
                 <TextBlock Text="{Binding AvisAniversariText}" TextWrapping="Wrap" />
             </Border>
 
+            <!-- Transient note, e.g. a blocked reset (pantalles 2.1) -->
+            <Border Background="{StaticResource AvisBgBrush}" BorderBrush="{StaticResource AvisBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource RadiControl}" Padding="12" Margin="0,0,0,16"
+                    Visibility="{Binding Avis, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Avis}" TextWrapping="Wrap" Style="{StaticResource EtiquetaDada}" />
+            </Border>
+
             <!-- Summary cards -->
             <UniformGrid Columns="6" Margin="0,0,0,16">
                 <Border Style="{StaticResource TargetaDada}" Margin="0,0,8,0">
@@ -70,33 +77,43 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
-                        <DataGridTextColumn Header="Durada" Binding="{Binding DuradaMin, StringFormat={}{0} min}" Width="80" ElementStyle="{StaticResource CellaAmbTooltip}" />
-                        <DataGridTextColumn Header="Client" Binding="{Binding NomMostrat}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
-                        <DataGridTextColumn Header="Servei" Binding="{Binding Servei.Nom, TargetNullValue=Sense servei}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
-                        <DataGridTextColumn Header="Treballadora" Binding="{Binding Treballadora.Nom, TargetNullValue=Sense assignar}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
-                        <DataGridTextColumn Header="Estat" Binding="{Binding Estat}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" Width="*" />
+                        <DataGridTextColumn Header="Durada" Binding="{Binding DuradaMin, StringFormat={}{0} min}" Width="*" />
+                        <DataGridTextColumn Header="Client" Binding="{Binding NomMostrat}" Width="*" />
+                        <DataGridTextColumn Header="Servei" Binding="{Binding Servei.Nom, TargetNullValue=Sense servei}" Width="*" />
+                        <DataGridTextColumn Header="Treballadora" Binding="{Binding Treballadora.Nom, TargetNullValue=Sense assignar}" Width="*" />
+                        <DataGridTextColumn Header="Estat" Binding="{Binding Estat}" Width="*" />
                         <DataGridTemplateColumn Header="" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
-                                                Visibility="{Binding Estat, Converter={StaticResource PendentAVisibilitatConverter}}">
-                                        <Button Content="Realitzada" Style="{StaticResource BotoSecundari}"
-                                                Padding="8,0" MinHeight="32"
-                                                Command="{Binding DataContext.MarcarRealitzadaCommand,
-                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
-                                        <Button Content="Cancel·lada" Style="{StaticResource BotoSecundari}"
-                                                Padding="8,0" MinHeight="32" Margin="6,0,0,0"
-                                                Command="{Binding DataContext.MarcarCancelladaCommand,
-                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
-                                        <Button Content="No assistida" Style="{StaticResource BotoSecundari}"
-                                                Padding="8,0" MinHeight="32" Margin="6,0,0,0"
-                                                Command="{Binding DataContext.MarcarNoAssistidaCommand,
-                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
-                                    </StackPanel>
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                                    Visibility="{Binding Estat, Converter={StaticResource PendentAVisibilitatConverter}}">
+                                            <Button Content="Realitzada" Style="{StaticResource BotoSecundari}"
+                                                    Padding="8,0" MinHeight="32"
+                                                    Command="{Binding DataContext.MarcarRealitzadaCommand,
+                                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                            <Button Content="Cancel·lada" Style="{StaticResource BotoSecundari}"
+                                                    Padding="8,0" MinHeight="32" Margin="6,0,0,0"
+                                                    Command="{Binding DataContext.MarcarCancelladaCommand,
+                                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                            <Button Content="No assistida" Style="{StaticResource BotoSecundari}"
+                                                    Padding="8,0" MinHeight="32" Margin="6,0,0,0"
+                                                    Command="{Binding DataContext.MarcarNoAssistidaCommand,
+                                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                                    Visibility="{Binding Estat, Converter={StaticResource PendentAVisibilitatInversaConverter}}">
+                                            <Button Content="Tornar a pendent" Style="{StaticResource BotoSecundari}"
+                                                    Padding="8,0" MinHeight="32"
+                                                    Command="{Binding DataContext.MarcarPendentCommand,
+                                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

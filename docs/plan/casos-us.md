@@ -101,17 +101,16 @@ flowchart TD
 
 ## 4. CU-02 · Marcar l'estat d'una cita
 
-Aquí es connecten agenda i vendes: només *Realitzada* obre el cobrament.
+Aquí es connecten agenda i vendes: l'acció *Realitzada* obre el cobrament, i és la venda guardada la que passa la cita a *Realitzada*.
 
 ```mermaid
 flowchart TD
     A[Cita en estat Pendent] --> B{Quina acció?}
 
-    B -->|Realitzada| C[Canvia estat a Realitzada]
-    C --> D[Obre diàleg de venda<br/>amb dades precarregades]
+    B -->|Realitzada| D[Obre diàleg de venda<br/>amb dades precarregades.<br/>La cita segueix Pendent]
     D --> E{L'usuària cobra?}
-    E -->|Sí| F[Es crea la venda<br/>lligada a la cita]
-    E -->|Cancel·la| G[La cita queda Realitzada<br/>sense venda associada]
+    E -->|Sí| F[Es crea la venda lligada a la cita<br/>i la cita passa a Realitzada]
+    E -->|Cancel·la| G[La cita es queda Pendent,<br/>sense cap canvi]
 
     B -->|Cancel·lada| H[Canvia estat a Cancel·lada]
     B -->|No assistida| I[Canvia estat a No assistida]
@@ -125,7 +124,9 @@ flowchart TD
     K --> L
 ```
 
-**Nota sobre el camí `G`:** si l'usuària tanca el diàleg de venda sense cobrar, la cita es queda com a *Realitzada* però sense venda. És un estat vàlid (el client va venir però encara no s'ha cobrat) i es podrà cobrar més tard associant la cita a una venda nova.
+**Nota sobre el camí `G`:** si l'usuària tanca el diàleg de venda sense cobrar, no es guarda res i la cita es queda *Pendent*, de manera que es pot tornar a prémer `Realitzada` i cobrar-la. El canvi d'estat el fa `VendaService.Crear` quan guarda una venda que anomena la cita, no l'acció de la llista.
+
+Una cita *Realitzada* sense venda associada continua sent un estat vàlid del negoci (el client va venir però encara no s'ha cobrat); ara, però, hi arriba per altres camins, no per cancel·lar el cobrament.
 
 ---
 
