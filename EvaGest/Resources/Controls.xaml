@@ -756,7 +756,8 @@
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="10,8" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
-        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <!-- Right edge marks where each column ends, not just the header row's bottom rule -->
+        <Setter Property="BorderThickness" Value="0,0,1,1" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
     </Style>
     <Style TargetType="DataGridCell">
