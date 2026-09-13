@@ -124,10 +124,10 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
-                        <DataGridTextColumn Header="Vendes ateses" Binding="{Binding VendesAteses}" Width="110" />
-                        <DataGridTextColumn Header="Ingressos" Binding="{Binding IngressosCents, StringFormat={}{0:0.00}}" Width="100" />
-                        <DataGridTextColumn Header="% de treball" Binding="{Binding PercentatgeTreball, StringFormat={}{0:0.0}%, TargetNullValue=—}" Width="100" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Vendes ateses" Binding="{Binding VendesAteses}" Width="110" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Ingressos" Binding="{Binding IngressosCents, StringFormat={}{0:0.00}}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="% de treball" Binding="{Binding PercentatgeTreball, StringFormat={}{0:0.0}%, TargetNullValue=—}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>

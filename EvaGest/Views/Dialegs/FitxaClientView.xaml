@@ -50,11 +50,11 @@
                       IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                       Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90" />
-                    <DataGridTextColumn Header="Tipus" Binding="{Binding Tipus}" Width="70" />
-                    <DataGridTextColumn Header="Concepte" Binding="{Binding Concepte}" Width="*" />
-                    <DataGridTextColumn Header="Estat" Binding="{Binding Estat}" Width="100" />
-                    <DataGridTextColumn Header="Import" Binding="{Binding Import}" Width="90" />
+                    <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                    <DataGridTextColumn Header="Tipus" Binding="{Binding Tipus}" Width="70" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                    <DataGridTextColumn Header="Concepte" Binding="{Binding Concepte}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                    <DataGridTextColumn Header="Estat" Binding="{Binding Estat}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                    <DataGridTextColumn Header="Import" Binding="{Binding Import}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

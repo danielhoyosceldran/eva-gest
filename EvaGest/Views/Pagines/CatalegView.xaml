@@ -23,10 +23,10 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Servei.Nom}" />
-                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" />
-                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
-                        <DataGridTextColumn Header="Durada" Binding="{Binding DuradaText}" Width="80" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Servei.Nom}" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Durada" Binding="{Binding DuradaText}" Width="80" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Servei.Actiu}" Width="60" />
                         <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -64,10 +64,10 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Producte.Nom}" />
-                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" />
-                        <DataGridTextColumn Header="Categoria" Binding="{Binding Producte.Categoria}" Width="120" />
-                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Producte.Nom}" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Preu" Binding="{Binding PreuText}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Categoria" Binding="{Binding Producte.Categoria}" Width="120" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="80" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Producte.Actiu}" Width="60" />
                         <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -105,7 +105,7 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <DataGridCheckBoxColumn Header="Actiu" Binding="{Binding Actiu}" Width="60" />
                         <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>

@@ -48,13 +48,14 @@
                                         <Ellipse Width="10" Height="10" VerticalAlignment="Center"
                                                  Fill="{Binding Treballadora.Color}" />
                                         <TextBlock Text="{Binding Treballadora.Nom}" Margin="8,0,0,0"
-                                                   VerticalAlignment="Center" />
+                                                   VerticalAlignment="Center"
+                                                   ToolTip="{Binding Treballadora.Nom}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Horari" Binding="{Binding HorariResum}" Width="2*" />
-                        <DataGridTextColumn Header="Estat" Binding="{Binding EstatText}" Width="90" />
+                        <DataGridTextColumn Header="Horari" Binding="{Binding HorariResum}" Width="2*" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Estat" Binding="{Binding EstatText}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <DataGridTemplateColumn Header="" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

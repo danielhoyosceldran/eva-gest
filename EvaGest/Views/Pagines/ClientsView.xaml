@@ -22,8 +22,8 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" />
-                        <DataGridTextColumn Header="Mòbil" Binding="{Binding Mobil}" Width="130" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Mòbil" Binding="{Binding Mobil}" Width="130" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <!-- Visites / Total gastat / Última visita venen dels indicadors agregats
                              (RF-17), que InformesService calcula a partir de Fase 8. Fins llavors
                              no es mostren xifres inventades. -->
@@ -90,8 +90,8 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" />
-                        <DataGridTextColumn Header="Mòbil" Binding="{Binding Mobil}" Width="130" />
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Mòbil" Binding="{Binding Mobil}" Width="130" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <DataGridTemplateColumn Header="" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

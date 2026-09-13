@@ -111,11 +111,11 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90" />
-                        <DataGridTextColumn Header="Tipus" Binding="{Binding Tipus}" Width="80" />
-                        <DataGridTextColumn Header="Concepte" Binding="{Binding Concepte}" Width="*" />
-                        <DataGridTextColumn Header="Mètode" Binding="{Binding MetodePagament.Nom}" Width="100" />
-                        <DataGridTextColumn Header="Import" Binding="{Binding ImportSignatCents, StringFormat={}{0:0.00}}" Width="90" />
+                        <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Tipus" Binding="{Binding Tipus}" Width="80" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Concepte" Binding="{Binding Concepte}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Mètode" Binding="{Binding MetodePagament.Nom}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Import" Binding="{Binding ImportSignatCents, StringFormat={}{0:0.00}}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <DataGridTemplateColumn Header="" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

@@ -10,10 +10,10 @@
                       HeadersVisibility="Column" RowHeight="{StaticResource AlcadaFila}"
                       Background="{StaticResource SurfaceBrush}" BorderThickness="0" MaxHeight="240">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Data" Binding="{Binding Data, StringFormat={}{0:dd/MM/yyyy}}" Width="100" />
-                    <DataGridTextColumn Header="Hora" Binding="{Binding Data, StringFormat={}{0:HH:mm}}" Width="70" />
-                    <DataGridTextColumn Header="Tipus" Binding="{Binding EsAutomatica, Converter={StaticResource TipusCopiaConverter}}" Width="100" />
-                    <DataGridTextColumn Header="Mida" Binding="{Binding BytesMida, Converter={StaticResource BytesAMidaConverter}}" Width="90" />
+                    <DataGridTextColumn Header="Data" Binding="{Binding Data, StringFormat={}{0:dd/MM/yyyy}}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                    <DataGridTextColumn Header="Hora" Binding="{Binding Data, StringFormat={}{0:HH:mm}}" Width="70" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                    <DataGridTextColumn Header="Tipus" Binding="{Binding EsAutomatica, Converter={StaticResource TipusCopiaConverter}}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                    <DataGridTextColumn Header="Mida" Binding="{Binding BytesMida, Converter={StaticResource BytesAMidaConverter}}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

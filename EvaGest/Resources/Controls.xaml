@@ -742,6 +742,12 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- DataGrid text cell: tooltip mirrors the cell's own text, so a value clipped by
+         the column width is still readable on hover -->
+    <Style x:Key="CellaAmbTooltip" TargetType="TextBlock">
+        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
+    </Style>
+
     <!-- DataGrid: flat surfaces and the app accent instead of the OS default blue/grey -->
     <Style TargetType="DataGridColumnHeader">
         <Setter Property="Background" Value="{StaticResource PaperBrush}" />

@@ -99,15 +99,15 @@
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0"
                           Visibility="{Binding NoHiHaResultats, Converter={StaticResource InversAVisibilitatConverter}}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Data" Binding="{Binding DataText}" Width="100" />
-                        <DataGridTextColumn Header="Client" Binding="{Binding ClientText}" Width="*" />
-                        <DataGridTextColumn Header="Treballadora" Binding="{Binding TreballadoraText}" Width="130" />
-                        <DataGridTextColumn Header="Concepte" Binding="{Binding ConcepteText}" Width="*" />
-                        <DataGridTextColumn Header="Base" Binding="{Binding BaseText}" Width="95" />
-                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="90" />
-                        <DataGridTextColumn Header="Total" Binding="{Binding TotalText}" Width="100" />
-                        <DataGridTextColumn Header="Pagament" Binding="{Binding MetodeText}" Width="110" />
-                        <DataGridTextColumn Header="Estat" Binding="{Binding EstatText}" Width="90" />
+                        <DataGridTextColumn Header="Data" Binding="{Binding DataText}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Client" Binding="{Binding ClientText}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Treballadora" Binding="{Binding TreballadoraText}" Width="130" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Concepte" Binding="{Binding ConcepteText}" Width="*" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Base" Binding="{Binding BaseText}" Width="95" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="IVA" Binding="{Binding IvaText}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Total" Binding="{Binding TotalText}" Width="100" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Pagament" Binding="{Binding MetodeText}" Width="110" ElementStyle="{StaticResource CellaAmbTooltip}" />
+                        <DataGridTextColumn Header="Estat" Binding="{Binding EstatText}" Width="90" ElementStyle="{StaticResource CellaAmbTooltip}" />
                         <DataGridTemplateColumn Header="" Width="300">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
