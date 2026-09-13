@@ -25,8 +25,9 @@ dotnet test  EvaGest.slnx --filter "FullyQualifiedName~IvaCalculator"
 dotnet ef migrations add <Name>
 ```
 
-The build is warning-free. Keep it that way. All 335 tests run in about a second,
-so run the whole suite rather than guessing which part is affected.
+The build is warning-free. Keep it that way. All 339 tests run in about a second
+(test execution itself — `dotnet test` including build/restore takes longer), so
+run the whole suite rather than guessing which part is affected.
 
 The app itself needs a Windows desktop session; it cannot be launched from a
 headless agent run. Verify through tests instead.
@@ -128,15 +129,46 @@ From `disseny-ui.md` §9 — user-visible text is design, not decoration:
 
 ## Tests
 
-`EvaGest.Tests/` — xUnit v3 + AwesomeAssertions, against a real SQLite in-memory
-database (not the EF InMemory provider). Organised as `Calculs/`, `Serveis/`,
-`Vistes/`, `Escenaris/`. The catalogue of blocks is in `docs/plan/pla-proves.md`.
+`EvaGest.Tests/` — xUnit v3 + AwesomeAssertions. Organised as `Calculs/`,
+`Serveis/`, `Vistes/`, `Escenaris/`, plus `Infra/` for shared fixtures (fake
+services, test-data builders, the WPF app fixture, in-memory DB setup). The
+catalogue of blocks is in `docs/plan/pla-proves.md`.
+
+- `Serveis/` and `Escenaris/` run against a real SQLite in-memory database (not
+  the EF InMemory provider).
+- `Vistes/` are WPF smoke/layout tests — they parse real XAML resource
+  dictionaries and run real Arrange-pass layout math via the `AplicacioWpf`
+  fixture (`[Collection(ColleccioWpf.Nom)]`); this is why the test project sets
+  `UseWPF=true`.
 
 Add a test for anything touching money, availability/overlap, client keys or the
 weekly grid.
 
+## Bug tracking
+
+Every bug found gets a row in `bugs.csv` at the repo root: short description,
+repro steps, and whether it's solved (and, if so, the commit that fixed it).
+Add the row when the bug is found; fill in the commit once it's fixed.
+
+## Planned refactor (not started)
+
+Two changes are planned but **not yet underway** — don't rename or restructure
+anything toward this unprompted, only when explicitly asked to work on it:
+
+- **Code to English.** Identifiers, namespaces, file names and comments move to
+  English; only user-facing strings stay localized. This supersedes the
+  Catalan-identifiers rule above once the refactor actually starts — until
+  then, keep writing new code the current Catalan-identifiers way.
+- **Switchable UI language**, Catalan and Spanish. V1 is restart-based: read a
+  language setting at startup and load the matching resource dictionary — no
+  dynamic runtime swap needed yet.
+- **Comment the code well**, for readability — this project overrides the usual
+  "comment only the non-obvious" default; once underway, add comments explaining
+  what non-trivial code does, not just why.
+
 ## Scope
 
 Explicitly out of scope, per the requirements §5: online booking, client
-notifications, online payments, external integrations, internationalisation,
-multi-currency, per-user roles, payroll. Do not add them.
+notifications, online payments, external integrations, multi-currency,
+per-user roles, payroll. Do not add them. (Internationalisation was listed
+here too but is now a planned refactor — see above.)
