@@ -1,0 +1,31 @@
+<UserControl x:Class="EvaGest.Views.Dialogs.RestoreDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources">
+    <StackPanel Width="440">
+        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+
+        <Border Style="{StaticResource DataCard}" Padding="0" Margin="0,0,0,12">
+            <DataGrid ItemsSource="{Binding Backups}" SelectedItem="{Binding Selected}"
+                      AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                      HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                      Background="{StaticResource SurfaceBrush}" BorderThickness="0" MaxHeight="240">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                    <DataGridTextColumn Header="{x:Static t:Texts.Time}" Binding="{Binding Date, StringFormat={}{0:HH:mm}}" Width="70" ElementStyle="{StaticResource CellWithTooltip}" />
+                    <DataGridTextColumn Header="{x:Static t:Texts.Type}" Binding="{Binding IsAutomatic, Converter={StaticResource BackupTypeConverter}}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                    <DataGridTextColumn Header="{x:Static t:Texts.Size}" Binding="{Binding SizeBytes, Converter={StaticResource BytesToSizeConverter}}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,0,0,12"
+                   Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" IsCancel="True" />
+            <Button Content="{x:Static t:Texts.Restore}" Style="{StaticResource DestructiveButton}" Command="{Binding RestoreCommand}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:EvaGest"
              xmlns:h="clr-namespace:EvaGest.Helpers"
-             xmlns:dvm="clr-namespace:EvaGest.ViewModels.Dialegs"
-             xmlns:dv="clr-namespace:EvaGest.Views.Dialegs"
+             xmlns:dvm="clr-namespace:EvaGest.ViewModels.Dialogs"
+             xmlns:dv="clr-namespace:EvaGest.Views.Dialogs"
              xmlns:evm="clr-namespace:EvaGest.ViewModels.Elements"
              xmlns:ev="clr-namespace:EvaGest.Views.Elements">
     <!-- StartupUri removed on purpose: OnStartup creates the window after the
@@ -16,41 +16,41 @@
                 <ResourceDictionary Source="Resources/Typography.xaml" />
                 <ResourceDictionary Source="Resources/Metrics.xaml" />
                 <ResourceDictionary Source="Resources/Controls.xaml" />
-                <ResourceDictionary Source="Resources/Graella.xaml" />
+                <ResourceDictionary Source="Resources/Grid.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <h:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <h:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-            <h:TancatAOpacitatConverter x:Key="TancatAOpacitatConverter" />
-            <h:ModeEditarAVisibilitatConverter x:Key="ModeEditarAVisibilitatConverter" />
-            <h:InversAVisibilitatConverter x:Key="InversAVisibilitatConverter" />
-            <h:PersonalitzatAHabilitatConverter x:Key="PersonalitzatAHabilitatConverter" />
-            <h:TipusCopiaConverter x:Key="TipusCopiaConverter" />
-            <h:BytesAMidaConverter x:Key="BytesAMidaConverter" />
-            <h:ZeroAVisibilitatConverter x:Key="ZeroAVisibilitatConverter" />
-            <h:ZeroAVisibilitatInversaConverter x:Key="ZeroAVisibilitatInversaConverter" />
-            <h:PendentAVisibilitatConverter x:Key="PendentAVisibilitatConverter" />
-            <h:PendentAVisibilitatInversaConverter x:Key="PendentAVisibilitatInversaConverter" />
+            <h:ClosedToOpacityConverter x:Key="ClosedToOpacityConverter" />
+            <h:EditModeToVisibilityConverter x:Key="EditModeToVisibilityConverter" />
+            <h:InverseVisibilityConverter x:Key="InverseVisibilityConverter" />
+            <h:CustomToEnabledConverter x:Key="CustomToEnabledConverter" />
+            <h:BackupTypeConverter x:Key="BackupTypeConverter" />
+            <h:BytesToSizeConverter x:Key="BytesToSizeConverter" />
+            <h:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+            <h:ZeroToVisibilityInverseConverter x:Key="ZeroToVisibilityInverseConverter" />
+            <h:PendingToVisibilityConverter x:Key="PendingToVisibilityConverter" />
+            <h:PendingToVisibilityInverseConverter x:Key="PendingToVisibilityInverseConverter" />
             <h:DateOnlyConverter x:Key="DateOnlyConverter" />
-            <h:EtiquetaConverter x:Key="EtiquetaConverter" />
+            <h:LabelConverter x:Key="LabelConverter" />
 
-            <!-- Dialog content templates: DialogWindow only knows DialegViewModelBase,
+            <!-- Dialog content templates: DialogWindow only knows DialogViewModelBase,
                  the actual dialog layout is resolved from the ViewModel's runtime type. -->
-            <DataTemplate DataType="{x:Type dvm:ServeiDialogViewModel}"><dv:ServeiDialogView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:ProducteDialogViewModel}"><dv:ProducteDialogView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:MetodePagamentDialogViewModel}"><dv:MetodePagamentDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:ServiceDialogViewModel}"><dv:ServiceDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:ProductDialogViewModel}"><dv:ProductDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:PaymentMethodDialogViewModel}"><dv:PaymentMethodDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:ClientDialogViewModel}"><dv:ClientDialogView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:FitxaClientViewModel}"><dv:FitxaClientView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:CitaDialogViewModel}"><dv:CitaDialogView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:VendaDialogViewModel}"><dv:VendaDialogView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:MovimentDialogViewModel}"><dv:MovimentDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:ClientRecordViewModel}"><dv:ClientRecordView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:AppointmentDialogViewModel}"><dv:AppointmentDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:SaleDialogViewModel}"><dv:SaleDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:MovementDialogViewModel}"><dv:MovementDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:ExportDialogViewModel}"><dv:ExportDialogView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:RestaurarDialogViewModel}"><dv:RestaurarDialogView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:AjudaViewModel}"><dv:AjudaView /></DataTemplate>
-            <DataTemplate DataType="{x:Type dvm:TreballadoraDialogViewModel}"><dv:TreballadoraDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:RestoreDialogViewModel}"><dv:RestoreDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:HelpViewModel}"><dv:HelpView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:WorkerDialogViewModel}"><dv:WorkerDialogView /></DataTemplate>
 
-            <!-- The weekly grid is hosted both by the Agenda page and by the cita dialog -->
-            <DataTemplate DataType="{x:Type evm:GraellaSetmanaViewModel}"><ev:GraellaSetmanaView /></DataTemplate>
+            <!-- The weekly grid is hosted both by the Agenda page and by the appointment dialog -->
+            <DataTemplate DataType="{x:Type evm:WeekGridViewModel}"><ev:WeekGridView /></DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

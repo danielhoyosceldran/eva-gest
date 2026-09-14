@@ -9,10 +9,10 @@ namespace EvaGest.Helpers;
 /// </summary>
 public class DateOnlyConverter : IValueConverter
 {
-    public object? Convert(object? valor, Type tipus, object? parametre, CultureInfo cultura)
-        => valor switch
+    public object? Convert(object? value, Type type, object? parameter, CultureInfo culture)
+        => value switch
         {
-            DateOnly data => data.ToDateTime(TimeOnly.MinValue),
+            DateOnly date => date.ToDateTime(TimeOnly.MinValue),
             DateTime moment => moment.Date,
             _ => null
         };
@@ -22,9 +22,9 @@ public class DateOnlyConverter : IValueConverter
     /// nothing at all when it is a plain DateOnly: an appointment with no date makes no
     /// sense, so there DoNothing beats writing a null the property cannot hold.
     /// </summary>
-    public object? ConvertBack(object? valor, Type tipus, object? parametre, CultureInfo cultura)
+    public object? ConvertBack(object? value, Type type, object? parameter, CultureInfo culture)
     {
-        if (valor is DateTime moment) return DateOnly.FromDateTime(moment);
-        return Nullable.GetUnderlyingType(tipus) is not null ? null : Binding.DoNothing;
+        if (value is DateTime moment) return DateOnly.FromDateTime(moment);
+        return Nullable.GetUnderlyingType(type) is not null ? null : Binding.DoNothing;
     }
 }

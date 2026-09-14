@@ -1,0 +1,58 @@
+<UserControl x:Class="EvaGest.Views.Dialogs.WorkerDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:elements="clr-namespace:EvaGest.Views.Elements">
+    <StackPanel Width="720">
+        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+
+        <TextBlock Text="{x:Static t:Texts.Name}" Style="{StaticResource DataLabel}" />
+        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+        <TextBlock Text="{x:Static t:Texts.ColorInAgenda}" Style="{StaticResource DataLabel}" />
+        <ComboBox ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding Color}"
+                  Margin="0,0,0,12" MinHeight="{StaticResource FieldHeight}"
+                  FontSize="{StaticResource FontSizeInput}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="12" Height="12" VerticalAlignment="Center"
+                                 Fill="{Binding Hex}" />
+                        <TextBlock Text="{Binding Name}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <CheckBox IsChecked="{Binding Active}" Content="{x:Static t:Texts.Active}" Margin="0,0,0,4" />
+        <TextBlock Text="{x:Static t:Texts.InactiveWorkerHint}"
+                   Style="{StaticResource DataLabel}" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+        <TextBlock Text="{x:Static t:Texts.WeeklySchedule}" Style="{StaticResource DataLabel}" />
+        <TextBlock Text="{x:Static t:Texts.WorkerScheduleHint}"
+                   Style="{StaticResource DataLabel}" TextWrapping="Wrap" Margin="0,0,0,8" />
+
+        <ItemsControl ItemsSource="{Binding ScheduleDays}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <elements:ScheduleRowView />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Content="{x:Static t:Texts.CopyMondayToWeekdays}" Style="{StaticResource SecondaryButton}"
+                HorizontalAlignment="Left" Margin="0,8,0,12"
+                Command="{Binding CopyToWeekdaysCommand}" />
+
+        <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,0,0,12"
+                   Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
+                    Command="{Binding CancelCommand}" IsCancel="True" />
+            <Button Content="{x:Static t:Texts.Save}" Style="{StaticResource PrimaryButton}"
+                    Command="{Binding SaveCommand}" IsDefault="True" Margin="12,0,0,0" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,139 @@
+<UserControl x:Class="EvaGest.Views.Pages.CatalogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             Background="{StaticResource PaperBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource PagePad}">
+            <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+
+            <!-- Quiet note, not a dialog: the delete did happen, it just turned into a
+                 deactivation because the history points at the entry (RF-10) -->
+            <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding Notice, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Style="{StaticResource DataLabel}" />
+            </Border>
+
+            <!-- Services -->
+            <TextBlock Text="{x:Static t:Texts.Services}" Style="{StaticResource Subtitle}" />
+            <Button Content="{x:Static t:Texts.NewServiceButton}" Style="{StaticResource SecondaryButton}"
+                    HorizontalAlignment="Left" Command="{Binding NewServiceCommand}" Margin="0,0,0,12" />
+            <Border Style="{StaticResource DataCard}" Padding="0">
+                <DataGrid ItemsSource="{Binding Services}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Service.Name}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Price}" Binding="{Binding PriceText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Vat}" Binding="{Binding VatText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Duration}" Binding="{Binding DurationText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Service.Active}" Width="60" />
+                        <DataGridTemplateColumn Header="" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditServiceCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Service}" />
+                                        <Button Content="{x:Static t:Texts.ToggleActive}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.ChangeServiceStatusCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Service}" />
+                                        <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.DeleteServiceCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Service}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Products -->
+            <TextBlock Text="{x:Static t:Texts.Products}" Style="{StaticResource Subtitle}" />
+            <Button Content="{x:Static t:Texts.NewProductButton}" Style="{StaticResource SecondaryButton}"
+                    HorizontalAlignment="Left" Command="{Binding NewProductCommand}" Margin="0,0,0,12" />
+            <Border Style="{StaticResource DataCard}" Padding="0">
+                <DataGrid ItemsSource="{Binding Products}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Product.Name}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Price}" Binding="{Binding PriceText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Category}" Binding="{Binding Product.Category}" Width="120" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Vat}" Binding="{Binding VatText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Product.Active}" Width="60" />
+                        <DataGridTemplateColumn Header="" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditProductCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Product}" />
+                                        <Button Content="{x:Static t:Texts.ToggleActive}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.ChangeProductStatusCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Product}" />
+                                        <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.DeleteProductCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Product}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Payment methods -->
+            <TextBlock Text="{x:Static t:Texts.PaymentMethods}" Style="{StaticResource Subtitle}" />
+            <Button Content="{x:Static t:Texts.NewMethodButton}" Style="{StaticResource SecondaryButton}"
+                    HorizontalAlignment="Left" Command="{Binding NewMethodCommand}" Margin="0,0,0,12" />
+            <Border Style="{StaticResource DataCard}" Padding="0">
+                <DataGrid ItemsSource="{Binding Methods}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Active}" Width="60" />
+                        <DataGridTemplateColumn Header="" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditMethodCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="{x:Static t:Texts.ToggleActive}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.ChangeMethodStatusCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.DeleteMethodCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

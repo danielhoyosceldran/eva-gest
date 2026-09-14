@@ -15,7 +15,7 @@
     <sys:Double x:Key="FontSizeHero">44</sys:Double>
 
     <!-- Page title -->
-    <Style x:Key="TitolPagina" TargetType="TextBlock">
+    <Style x:Key="PageTitle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource FontDisplay}" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeTitle}" />
         <Setter Property="FontWeight" Value="SemiBold" />
@@ -24,7 +24,7 @@
     </Style>
 
     <!-- Block heading -->
-    <Style x:Key="Subtitol" TargetType="TextBlock">
+    <Style x:Key="Subtitle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource FontSizeSubhead}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
@@ -32,7 +32,7 @@
     </Style>
 
     <!-- Small label above a figure. Sentence case, never spaced capitals. -->
-    <Style x:Key="EtiquetaDada" TargetType="TextBlock">
+    <Style x:Key="DataLabel" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
         <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
         <Setter Property="Margin" Value="0,0,0,4" />
@@ -40,7 +40,7 @@
 
     <!-- Money and counts. Tabular figures keep digits in a column so a wrong
          amount is visible at a glance instead of hiding in ragged alignment. -->
-    <Style x:Key="Xifra" TargetType="TextBlock">
+    <Style x:Key="Figure" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource FontDisplay}" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeFigure}" />
         <Setter Property="FontWeight" Value="SemiBold" />
@@ -49,13 +49,13 @@
     </Style>
 
     <!-- The single large figure per screen -->
-    <Style x:Key="XifraHero" TargetType="TextBlock" BasedOn="{StaticResource Xifra}">
+    <Style x:Key="HeroFigure" TargetType="TextBlock" BasedOn="{StaticResource Figure}">
         <Setter Property="FontSize" Value="{StaticResource FontSizeHero}" />
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
     <!-- Amounts inside tables: right-aligned and tabular -->
-    <Style x:Key="XifraTaula" TargetType="TextBlock">
+    <Style x:Key="TableFigure" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
         <Setter Property="TextAlignment" Value="Right" />

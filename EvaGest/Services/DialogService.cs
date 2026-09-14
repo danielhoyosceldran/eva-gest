@@ -1,41 +1,42 @@
 using System.Windows;
-using EvaGest.ViewModels.Dialegs;
-using EvaGest.Views.Dialegs;
+using EvaGest.Resources;
+using EvaGest.ViewModels.Dialogs;
+using EvaGest.Views.Dialogs;
 
 namespace EvaGest.Services;
 
 /// <summary>The only class that knows about Window/MessageBox.</summary>
 public class DialogService : IDialogService
 {
-    public Task<bool> MostrarDialeg<TViewModel>(TViewModel viewModel) where TViewModel : class
+    public Task<bool> ShowDialog<TViewModel>(TViewModel viewModel) where TViewModel : class
     {
-        if (viewModel is not DialegViewModelBase vm)
+        if (viewModel is not DialogViewModelBase vm)
             throw new ArgumentException(
-                $"{typeof(TViewModel).Name} must derive from DialegViewModelBase.");
+                $"{typeof(TViewModel).Name} must derive from DialogViewModelBase.");
 
-        var finestra = new DialogWindow(vm) { Owner = Application.Current.MainWindow };
-        bool confirmat = finestra.ShowDialog() == true;
-        return Task.FromResult(confirmat);
+        var window = new DialogWindow(vm) { Owner = Application.Current.MainWindow };
+        bool confirmed = window.ShowDialog() == true;
+        return Task.FromResult(confirmed);
     }
 
-    public Task<bool> Confirmar(string titol, string missatge,
-                                string textConfirmar, string textCancellar = "Cancel·lar")
+    public Task<bool> Confirm(string title, string message,
+                              string textConfirm, string? textCancel = null)
     {
-        var resultat = MessageBox.Show(missatge, titol,
+        var result = MessageBox.Show(message, title,
             MessageBoxButton.YesNo, MessageBoxImage.Warning);
-        return Task.FromResult(resultat == MessageBoxResult.Yes);
+        return Task.FromResult(result == MessageBoxResult.Yes);
     }
 
-    public Task Informar(string titol, string missatge)
+    public Task Inform(string title, string message)
     {
-        MessageBox.Show(missatge, titol, MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
         return Task.CompletedTask;
     }
 
-    public Task<string?> DemanarCarpeta(string titol)
+    public Task<string?> AskFolder(string title)
     {
-        var dialeg = new Microsoft.Win32.OpenFolderDialog { Title = titol };
-        bool ok = dialeg.ShowDialog() == true;
-        return Task.FromResult(ok ? dialeg.FolderName : null);
+        var dialog = new Microsoft.Win32.OpenFolderDialog { Title = title };
+        bool ok = dialog.ShowDialog() == true;
+        return Task.FromResult(ok ? dialog.FolderName : null);
     }
 }

@@ -19,7 +19,7 @@ before changing anything those comments point at.**
 ```powershell
 dotnet build EvaGest.slnx
 dotnet test  EvaGest.slnx
-dotnet test  EvaGest.slnx --filter "FullyQualifiedName~IvaCalculator"
+dotnet test  EvaGest.slnx --filter "FullyQualifiedName~VatCalculator"
 
 # migrations: run from the EvaGest/ project folder
 dotnet ef migrations add <Name>
@@ -34,20 +34,42 @@ headless agent run. Verify through tests instead.
 
 ## Language
 
-- Identifiers, namespaces, file names, database columns and UI strings: **Catalan**
-  (`Treballadora`, `Venda`, `Cita`, `Graella`).
-- Comments, commit messages and these docs: **English**.
-- Test names: Catalan, `What_Condition_ExpectedResult`
-  (`Cita_cancellada_no_compta_al_solapament`).
+- Identifiers, namespaces, file names, database columns, comments, commit
+  messages, test names and these docs: **English** (`Worker`, `Sale`,
+  `Appointment`, `Grid`).
+- Everything the user reads: **Catalan or Spanish**, never a literal in code.
+  Button labels, error messages, empty states, the FAQ and the CSV headers the
+  accountant gets all come from `Resources/Texts.resx` (Catalan, the neutral
+  table) and `Resources/Texts.es.resx` (Spanish).
+- Test names read as English sentences, `What_Condition_ExpectedResult`
+  (`A_cancelled_appointment_does_not_count`).
 
-Keep both conventions. Do not translate domain terms into English.
+The spec in `docs/plan/` is Catalan and older than this rename;
+[`docs/README.md`](docs/README.md) has the term-by-term mapping.
+
+### Adding a user-visible string
+
+1. Add the row to **both** `.resx` files, keyed in English.
+2. Add the matching property to `Resources/Texts.cs`:
+   `public static string Key => Get(nameof(Key));`, and its name to `Keys`.
+3. Use it as `{x:Static t:Texts.Key}` in XAML (`xmlns:t="clr-namespace:EvaGest.Resources"`)
+   or `Texts.Key` in a ViewModel. Messages that take values are
+   `string.Format(Texts.Key, …)` with `{0}`-style placeholders.
+
+`LanguageTests` fails if either table is missing the key or if the two disagree
+about how many placeholders the string takes.
+
+The language is read once at startup (`AppLanguage.Use`, from
+`ConfigKeys.Language`) and fixed for the session — the settings page says a
+restart is needed. `AppLanguage.Culture` is what formats every amount and date;
+do not hardcode a culture.
 
 ## Architecture
 
 ```
-Views (XAML)  →  ViewModels  →  Services  →  BarberiaDbContext  →  SQLite
+Views (XAML)  →  ViewModels  →  Services  →  ShopDbContext  →  SQLite
                       ↘                ↙
-                  pure calculators (IvaCalculator, Diners, Indicadors, GraellaHelper)
+                  pure calculators (VatCalculator, Money, Indicators, GridHelper)
 ```
 
 Hard rules, from `docs/plan/capa-mvvm.md` §1:
@@ -59,8 +81,8 @@ Hard rules, from `docs/plan/capa-mvvm.md` §1:
 - Pure calculators are static, stateless and dependency-free.
 - There is deliberately **no repository layer** — services are the boundary.
 
-Folders: `Models/` `Data/` `Services/` `ViewModels/{Pagines,Dialegs,Elements}/`
-`Views/{Pagines,Dialegs,Elements}/` `Helpers/` `Resources/`.
+Folders: `Models/` `Data/` `Services/` `ViewModels/{Pages,Dialogs,Elements}/`
+`Views/{Pages,Dialogs,Elements}/` `Helpers/` `Resources/`.
 
 ## Money and VAT — the part that must not be broken
 
@@ -75,14 +97,14 @@ restated with context in `docs/README.md`:
 3. A sale's breakdown is computed **per VAT-rate group**, not per line — summing
    per-line bases loses a cent against the total.
 4. **Canonical aggregation rule:** a period's totals are the sum of the values
-   already stored on each `Venda`. Never recompute them from `VendaLinies`.
-   `CaixaService` and `InformesService` may read lines only to count units and
+   already stored on each `Sale`. Never recompute them from `SaleLines`.
+   `TillService` and `ReportsService` may read lines only to count units and
    classify service vs. product.
 5. Rounding is `MidpointRounding.AwayFromZero`, never C#'s default banker's
    rounding.
 
-Voided sales are never deleted: `Estat = Anullada`, and every balance, VAT and
-ranking query filters on `Estat = Activa`.
+Voided sales are never deleted: `Status = Voided`, and every balance, VAT and
+ranking query filters on `Status = Active`.
 
 Touching anything money-related means running the tests before calling it done.
 
@@ -90,9 +112,9 @@ Touching anything money-related means running the tests before calling it done.
 
 - Every service method is `async`, using EF Core's `...Async` methods.
 - No `.Result`, no `.Wait()`.
-- Page load goes in a `Carregar()` method called by the host, not in a
+- Page load goes in a `Load()` method called by the host, not in a
   constructor.
-- Each page ViewModel exposes `Carregant` while it queries.
+- Each page ViewModel exposes `Loading` while it queries.
 - ViewModels must stay off the UI thread: no `Dispatcher`, `Brush` or
   `Application.Current` inside one — the tests build them off-thread. Timers and
   visual-tree work belong in the view's code-behind.
@@ -101,17 +123,17 @@ Touching anything money-related means running the tests before calling it done.
 
 - **Dialog ViewModels are constructed with `new`, not resolved from DI** (about
   23 call sites). They take their host's services plus the entity being edited.
-  Do not "fix" this by registering them in `App.Configurar`.
+  Do not "fix" this by registering them in `App.Configure`.
 - Page ViewModels *are* in DI, transient; `MainWindowViewModel` is a singleton
   holding one instance of each page so navigation keeps state.
 - MVVM plumbing is CommunityToolkit.Mvvm source generators: `[ObservableProperty]`
   on a `_camelCase` field, `[RelayCommand]` on a method. Bind to `PascalCase` /
   `XxxCommand`.
-- Grid geometry lives in `Helpers/GraellaHelper.cs` as pure statics, in whole
+- Grid geometry lives in `Helpers/GridHelper.cs` as pure statics, in whole
   minutes from midnight. Never use `TimeOnly.AddMinutes` for grid maths — it
   wraps past midnight silently.
 - Styles come from `Resources/{Colors,Typography,Metrics,Controls}.xaml`. Use the
-  existing tokens (`BotoPrimari`, `TargetaDada`, `PadPagina`…); do not hardcode
+  existing tokens (`PrimaryButton`, `DataCard`, `PagePad`…); do not hardcode
   colours or sizes in a view.
 - `Helpers/*Converter.cs` are binding converters; check whether one already
   exists before adding another.
@@ -126,19 +148,22 @@ From `disseny-ui.md` §9 — user-visible text is design, not decoration:
   not "Error de validació".
 - No apologies, no technical terms, no exception text in front of the user.
 - Empty states invite an action instead of showing a blank table.
+- Both languages say the same thing in the same voice. Translate the intent,
+  not the words.
 
 ## Tests
 
-`EvaGest.Tests/` — xUnit v3 + AwesomeAssertions. Organised as `Calculs/`,
-`Serveis/`, `Vistes/`, `Escenaris/`, plus `Infra/` for shared fixtures (fake
+`EvaGest.Tests/` — xUnit v3 + AwesomeAssertions. Organised as `Calculations/`,
+`Services/`, `Views/`, `Scenarios/`, plus `Infra/` for shared fixtures (fake
 services, test-data builders, the WPF app fixture, in-memory DB setup). The
-catalogue of blocks is in `docs/plan/pla-proves.md`.
+catalogue of blocks is in `docs/plan/pla-proves.md`; block V, the interface
+language, is newer than that document.
 
-- `Serveis/` and `Escenaris/` run against a real SQLite in-memory database (not
+- `Services/` and `Scenarios/` run against a real SQLite in-memory database (not
   the EF InMemory provider).
-- `Vistes/` are WPF smoke/layout tests — they parse real XAML resource
-  dictionaries and run real Arrange-pass layout math via the `AplicacioWpf`
-  fixture (`[Collection(ColleccioWpf.Nom)]`); this is why the test project sets
+- `Views/` are WPF smoke/layout tests — they parse real XAML resource
+  dictionaries and run real Arrange-pass layout math via the `ApplicationWpf`
+  fixture (`[Collection(WpfCollection.Name)]`); this is why the test project sets
   `UseWPF=true`.
 
 Add a test for anything touching money, availability/overlap, client keys or the
@@ -150,18 +175,14 @@ Every bug found gets a row in `bugs.csv` at the repo root: short description,
 repro steps, and whether it's solved (and, if so, the commit that fixed it).
 Add the row when the bug is found; fill in the commit once it's fixed.
 
-## Planned refactor (not started)
+## Planned refactor
 
-Two changes are planned but **not yet underway** — don't rename or restructure
-anything toward this unprompted, only when explicitly asked to work on it:
-
-- **Code to English.** Identifiers, namespaces, file names and comments move to
-  English; only user-facing strings stay localized. This supersedes the
-  Catalan-identifiers rule above once the refactor actually starts — until
-  then, keep writing new code the current Catalan-identifiers way.
-- **Switchable UI language**, Catalan and Spanish. V1 is restart-based: read a
-  language setting at startup and load the matching resource dictionary — no
-  dynamic runtime swap needed yet.
+- **Code to English** — **done**. Identifiers, namespaces, file names, comments,
+  test names, tables and columns are English; only what the user reads stays
+  Catalan. Migration `RenameToEnglish` carries an existing database across.
+- **Switchable UI language**, Catalan and Spanish — **done**, restart-based.
+  See the Language section above. A live swap without restarting is still not
+  needed; don't build one unprompted.
 - **Comment the code well**, for readability — this project overrides the usual
   "comment only the non-obvious" default; once underway, add comments explaining
   what non-trivial code does, not just why.

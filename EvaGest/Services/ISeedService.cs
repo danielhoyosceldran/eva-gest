@@ -7,5 +7,5 @@ namespace EvaGest.Services;
 /// </summary>
 public interface ISeedService
 {
-    Task Sembrar();
+    Task Seed();
 }

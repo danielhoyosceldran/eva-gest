@@ -3,36 +3,36 @@
                     xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework">
 
     <!-- Primary button: one main action per dialog (Guardar, Cobrar) -->
-    <Style x:Key="BotoPrimari" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource BlauBrush}" />
+    <Style x:Key="PrimaryButton" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource BlueBrush}" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaBoto}" />
+        <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}" />
         <Setter Property="Padding" Value="20,0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Fons" Background="{TemplateBinding Background}"
+                    <Border x:Name="Background" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource RadiControl}">
+                            CornerRadius="{StaticResource ControlRadius}">
                         <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
                                           Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauFoscBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource DarkBlueBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource InkBrush}" />
-                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource InkBrush}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="2" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Fons" Property="Background" Value="#C9CDD2" />
+                            <Setter TargetName="Background" Property="Background" Value="#C9CDD2" />
                             <Setter Property="Foreground" Value="#7A8189" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -43,12 +43,12 @@
 
     <!-- Secondary button (Cancel·lar, Editar): outline, own template — hover is a light
          tint, not the dark fill used on the primary button -->
-    <Style x:Key="BotoSecundari" TargetType="Button">
+    <Style x:Key="SecondaryButton" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaBoto}" />
+        <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}" />
         <Setter Property="Padding" Value="20,0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
@@ -56,26 +56,26 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Fons" Background="{TemplateBinding Background}"
+                    <Border x:Name="Background" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource RadiControl}">
+                            CornerRadius="{StaticResource ControlRadius}">
                         <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
                                           Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource InkBrush}" />
-                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource InkBrush}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="2" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="#C9CDD2" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="#C9CDD2" />
                             <Setter Property="Foreground" Value="#7A8189" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -85,7 +85,7 @@
     </Style>
 
     <!-- Destructive button (Eliminar, Anul·lar): red outline, hover is a light red tint -->
-    <Style x:Key="BotoDestructiu" TargetType="Button" BasedOn="{StaticResource BotoSecundari}">
+    <Style x:Key="DestructiveButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
         <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}" />
         <!-- Always separated from the confirm button by at least 24 DIP -->
@@ -93,24 +93,24 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Fons" Background="{TemplateBinding Background}"
+                    <Border x:Name="Background" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource RadiControl}">
+                            CornerRadius="{StaticResource ControlRadius}">
                         <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
                                           Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource DangerBgBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource DangerBgBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="2" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="#C9CDD2" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="#C9CDD2" />
                             <Setter Property="Foreground" Value="#7A8189" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -120,8 +120,8 @@
     </Style>
 
     <!-- Quick-action button on Inici: tall, wide, long clear text -->
-    <Style x:Key="BotoAccioRapida" TargetType="Button" BasedOn="{StaticResource BotoSecundari}">
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaBotoGran}" />
+    <Style x:Key="QuickActionButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+        <Setter Property="MinHeight" Value="{StaticResource LargeButtonHeight}" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeSubhead}" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -131,7 +131,7 @@
          below when Text is empty; it disappears the moment typing starts -->
     <Style TargetType="TextBox">
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaCamp}" />
+        <Setter Property="MinHeight" Value="{StaticResource FieldHeight}" />
         <Setter Property="Padding" Value="10,0" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
@@ -141,10 +141,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <Border x:Name="Contorn" Background="{TemplateBinding Background}"
+                    <Border x:Name="Outline" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource RadiControl}">
+                            CornerRadius="{StaticResource ControlRadius}">
                         <Grid>
                             <TextBlock x:Name="Placeholder" Text="{TemplateBinding Tag}"
                                        Foreground="{StaticResource InkMutedBrush}"
@@ -160,8 +160,8 @@
                         </Trigger>
                         <!-- Focus is shown with the accent, 2 DIP thick: visible without being loud -->
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Contorn" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
-                            <Setter TargetName="Contorn" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Outline" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Outline" Property="BorderThickness" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -170,27 +170,27 @@
     </Style>
 
     <!-- Large figure surface — the only place with the blue rule -->
-    <Style x:Key="TargetaHero" TargetType="Border">
+    <Style x:Key="HeroCard" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="CornerRadius" Value="{StaticResource RadiSuperficie}" />
+        <Setter Property="CornerRadius" Value="{StaticResource SurfaceRadius}" />
         <Setter Property="Padding" Value="{StaticResource PadCard}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BlueBrush}" />
         <!-- Rule on the top edge only: marks importance without boxing everything in -->
         <Setter Property="BorderThickness" Value="0,3,0,0" />
     </Style>
 
     <!-- Secondary surface — no rule, no shadow -->
-    <Style x:Key="TargetaDada" TargetType="Border">
+    <Style x:Key="DataCard" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="CornerRadius" Value="{StaticResource RadiSuperficie}" />
+        <Setter Property="CornerRadius" Value="{StaticResource SurfaceRadius}" />
         <Setter Property="Padding" Value="{StaticResource PadCard}" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <!-- Status badge. Colour changes with a DataTrigger, but the text is always there -->
-    <Style x:Key="Insignia" TargetType="Border">
-        <Setter Property="CornerRadius" Value="{StaticResource RadiControl}" />
+    <Style x:Key="Badge" TargetType="Border">
+        <Setter Property="CornerRadius" Value="{StaticResource ControlRadius}" />
         <Setter Property="Padding" Value="8,3" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="Background" Value="{StaticResource NeutralBgBrush}" />
@@ -201,23 +201,23 @@
     <Style x:Key="ItemNav" TargetType="RadioButton">
         <Setter Property="Foreground" Value="{StaticResource NavTextBrush}" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaBoto}" />
+        <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
-                    <Grid x:Name="Arrel" Background="Transparent">
-                        <Border x:Name="Marca" Width="3" HorizontalAlignment="Left"
+                    <Grid x:Name="Root" Background="Transparent">
+                        <Border x:Name="Check" Width="3" HorizontalAlignment="Left"
                                 Background="Transparent" />
                         <ContentPresenter Margin="20,0,12,0" VerticalAlignment="Center" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Arrel" Property="Background"
+                            <Setter TargetName="Root" Property="Background"
                                     Value="{StaticResource NavHoverBrush}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Marca" Property="Background"
-                                    Value="{StaticResource BlauClarBrush}" />
+                            <Setter TargetName="Check" Property="Background"
+                                    Value="{StaticResource LightBlueBrush}" />
                             <Setter Property="Foreground" Value="{StaticResource NavTextActiveBrush}" />
                             <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
@@ -236,11 +236,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <StackPanel Orientation="Horizontal">
-                        <Border x:Name="Caixa" Width="20" Height="20" VerticalAlignment="Center"
+                        <Border x:Name="Till" Width="20" Height="20" VerticalAlignment="Center"
                                 Background="{StaticResource SurfaceBrush}"
                                 BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
-                                CornerRadius="{StaticResource RadiControl}">
-                            <Path x:Name="Marca" Data="M3,9 L7,13 L15,4" Stretch="None"
+                                CornerRadius="{StaticResource ControlRadius}">
+                            <Path x:Name="Check" Data="M3,9 L7,13 L15,4" Stretch="None"
                                   Stroke="White" StrokeThickness="2"
                                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                                   StrokeLineJoin="Round" Visibility="Collapsed" />
@@ -249,19 +249,19 @@
                     </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Caixa" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Till" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Caixa" Property="Background" Value="{StaticResource BlauBrush}" />
-                            <Setter TargetName="Caixa" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
-                            <Setter TargetName="Marca" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Till" Property="Background" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Till" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Caixa" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Till" Property="BorderThickness" Value="2" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
-                            <Setter TargetName="Caixa" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Till" Property="Background" Value="{StaticResource PaperBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -276,15 +276,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
-                    <Border x:Name="Fons" Background="Transparent" Padding="{TemplateBinding Padding}">
+                    <Border x:Name="Background" Background="Transparent" Padding="{TemplateBinding Padding}">
                         <ContentPresenter />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource BlueBrush}" />
                             <Setter Property="Foreground" Value="White" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -296,7 +296,7 @@
     <!-- ComboBox: same geometry and focus ring as TextBox, arrow instead of caret -->
     <Style TargetType="ComboBox">
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaCamp}" />
+        <Setter Property="MinHeight" Value="{StaticResource FieldHeight}" />
         <Setter Property="Padding" Value="10,0" />
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
@@ -316,7 +316,7 @@
                                     <Border Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="{StaticResource RadiControl}">
+                                            CornerRadius="{StaticResource ControlRadius}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -332,16 +332,16 @@
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
-                        <ContentPresenter x:Name="Contingut" IsHitTestVisible="False"
+                        <ContentPresenter x:Name="Body" IsHitTestVisible="False"
                                           Content="{TemplateBinding SelectionBoxItem}"
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                           Margin="{TemplateBinding Padding}" HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
-                        <Popup x:Name="Desplegable" IsOpen="{TemplateBinding IsDropDownOpen}"
+                        <Popup x:Name="Dropdown" IsOpen="{TemplateBinding IsDropDownOpen}"
                                Placement="Bottom" AllowsTransparency="True" PopupAnimation="Slide">
                             <Border Background="{StaticResource SurfaceBrush}"
                                     BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
-                                    CornerRadius="{StaticResource RadiControl}"
+                                    CornerRadius="{StaticResource ControlRadius}"
                                     MinWidth="{TemplateBinding ActualWidth}"
                                     MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <ScrollViewer SnapsToDevicePixels="True">
@@ -352,10 +352,10 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Selector" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Selector" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Selector" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Selector" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
                             <Setter TargetName="Selector" Property="BorderThickness" Value="2" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
@@ -385,17 +385,17 @@
     <!-- One day. Trigger order is the design: selection comes last so a selected "today"
          reads as a solid blue cell instead of keeping the outline of an unselected one. -->
     <Style TargetType="CalendarDayButton">
-        <Setter Property="Width" Value="{StaticResource AlcadaCamp}" />
-        <Setter Property="Height" Value="{StaticResource AlcadaCamp}" />
+        <Setter Property="Width" Value="{StaticResource FieldHeight}" />
+        <Setter Property="Height" Value="{StaticResource FieldHeight}" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CalendarDayButton">
-                    <Border x:Name="Fons" Margin="1"
+                    <Border x:Name="Background" Margin="1"
                             Background="Transparent" BorderThickness="0"
-                            CornerRadius="{StaticResource RadiControl}">
+                            CornerRadius="{StaticResource ControlRadius}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -408,28 +408,28 @@
                         </Trigger>
                         <Trigger Property="IsToday" Value="True">
                             <Setter Property="FontWeight" Value="SemiBold" />
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
-                            <Setter TargetName="Fons" Property="BorderThickness" Value="1" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="1" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="FontWeight" Value="SemiBold" />
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauBrush}" />
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauFoscBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource DarkBlueBrush}" />
                         </MultiTrigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource InkBrush}" />
-                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource InkBrush}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -448,9 +448,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CalendarButton">
-                    <Border x:Name="Fons" Margin="2"
+                    <Border x:Name="Background" Margin="2"
                             Background="Transparent" BorderThickness="0"
-                            CornerRadius="{StaticResource RadiControl}">
+                            CornerRadius="{StaticResource ControlRadius}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -458,16 +458,16 @@
                             <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
                         </Trigger>
                         <Trigger Property="HasSelectedDays" Value="True">
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="FontWeight" Value="SemiBold" />
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource BlauBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource BlueBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource InkBrush}" />
-                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource InkBrush}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -477,7 +477,7 @@
 
     <!-- Header: the month/year toggle and the ‹ / › arrows, same glyphs as the week
          navigator in CitaDialogView. -->
-    <Style x:Key="EvaGest.CalendariBotoCapcalera" TargetType="Button">
+    <Style x:Key="EvaGest.CalendarHeaderButton" TargetType="Button">
         <Setter Property="FontSize" Value="{StaticResource FontSizeSubhead}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
@@ -487,20 +487,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Fons" Background="{TemplateBinding Background}"
-                            Padding="10,4" CornerRadius="{StaticResource RadiControl}">
+                    <Border x:Name="Background" Background="{TemplateBinding Background}"
+                            Padding="10,4" CornerRadius="{StaticResource ControlRadius}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="EvaGest.CalendariBotoNavegacioBase" TargetType="Button">
+    <Style x:Key="EvaGest.CalendarNavButtonBase" TargetType="Button">
         <Setter Property="Width" Value="36" />
         <Setter Property="Height" Value="36" />
         <Setter Property="Margin" Value="0" />
@@ -515,13 +515,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Fons" Background="{TemplateBinding Background}"
-                            CornerRadius="{StaticResource RadiControl}">
+                    <Border x:Name="Background" Background="{TemplateBinding Background}"
+                            CornerRadius="{StaticResource ControlRadius}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Fons" Property="Background" Value="{StaticResource PaperBrush}" />
+                            <Setter TargetName="Background" Property="Background" Value="{StaticResource PaperBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
@@ -531,10 +531,10 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="EvaGest.CalendariBotoAnterior" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendariBotoNavegacioBase}">
+    <Style x:Key="EvaGest.CalendarPreviousButton" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendarNavButtonBase}">
         <Setter Property="Content" Value="‹" />
     </Style>
-    <Style x:Key="EvaGest.CalendariBotoSeguent" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendariBotoNavegacioBase}">
+    <Style x:Key="EvaGest.CalendarNextButton" TargetType="Button" BasedOn="{StaticResource EvaGest.CalendarNavButtonBase}">
         <Setter Property="Content" Value="›" />
     </Style>
 
@@ -559,7 +559,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource RadiSuperficie}"
+                            CornerRadius="{StaticResource SurfaceRadius}"
                             Padding="{StaticResource PadCard}">
                         <Grid x:Name="PART_Root">
                             <Grid.RowDefinitions>
@@ -574,11 +574,11 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Button x:Name="PART_PreviousButton" Grid.Column="0"
-                                        Style="{StaticResource EvaGest.CalendariBotoAnterior}" />
+                                        Style="{StaticResource EvaGest.CalendarPreviousButton}" />
                                 <Button x:Name="PART_HeaderButton" Grid.Column="1"
-                                        Style="{StaticResource EvaGest.CalendariBotoCapcalera}" />
+                                        Style="{StaticResource EvaGest.CalendarHeaderButton}" />
                                 <Button x:Name="PART_NextButton" Grid.Column="2"
-                                        Style="{StaticResource EvaGest.CalendariBotoSeguent}" />
+                                        Style="{StaticResource EvaGest.CalendarNextButton}" />
                             </Grid>
 
                             <!-- Filled by CalendarItem: row 0 holds the day headings,
@@ -681,7 +681,7 @@
     </Style>
     <Style TargetType="DatePicker">
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaCamp}" />
+        <Setter Property="MinHeight" Value="{StaticResource FieldHeight}" />
         <Setter Property="Padding" Value="10,0" />
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
@@ -699,11 +699,11 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Border x:Name="Fons" Grid.ColumnSpan="2"
+                        <Border x:Name="Background" Grid.ColumnSpan="2"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{StaticResource RadiControl}" />
+                                CornerRadius="{StaticResource ControlRadius}" />
                         <DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0"
                                             Margin="{TemplateBinding Padding}"
                                             VerticalAlignment="Center"
@@ -716,7 +716,7 @@
                                 Background="Transparent">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="BotoFons" Background="{TemplateBinding Background}">
+                                    <Border x:Name="ButtonBackground" Background="{TemplateBinding Background}">
                                         <TextBlock Text="&#xE787;" FontFamily="Segoe MDL2 Assets"
                                                    FontSize="14" HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
@@ -724,7 +724,7 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="BotoFons" Property="Background" Value="{StaticResource PaperBrush}" />
+                                            <Setter TargetName="ButtonBackground" Property="Background" Value="{StaticResource PaperBrush}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -734,8 +734,8 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Fons" Property="BorderBrush" Value="{StaticResource BlauBrush}" />
-                            <Setter TargetName="Fons" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -744,7 +744,7 @@
     </Style>
     <!-- DataGrid text cell: tooltip mirrors the cell's own text, so a value clipped by
          the column width is still readable on hover -->
-    <Style x:Key="CellaAmbTooltip" TargetType="TextBlock">
+    <Style x:Key="CellWithTooltip" TargetType="TextBlock">
         <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}" />
     </Style>
 
@@ -786,7 +786,7 @@
     </Style>
     <Style TargetType="DataGridRow">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaFila}" />
+        <Setter Property="MinHeight" Value="{StaticResource RowHeight}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{StaticResource PaperBrush}" />
@@ -808,10 +808,10 @@
 
     <!-- Nav-list action item (Ajuda): same look and hover as ItemNav, but a plain
          action rather than a page-switching RadioButton -->
-    <Style x:Key="ItemNavAccio" TargetType="Button">
+    <Style x:Key="NavActionItem" TargetType="Button">
         <Setter Property="Foreground" Value="{StaticResource NavTextBrush}" />
         <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
-        <Setter Property="MinHeight" Value="{StaticResource AlcadaBoto}" />
+        <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
@@ -820,13 +820,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Arrel" Background="{TemplateBinding Background}">
+                    <Border x:Name="Root" Background="{TemplateBinding Background}">
                         <ContentPresenter Margin="20,0,12,0" VerticalAlignment="Center"
                                           HorizontalAlignment="Left" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Arrel" Property="Background" Value="{StaticResource NavHoverBrush}" />
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource NavHoverBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource NavTextActiveBrush}" />
@@ -840,17 +840,17 @@
     <!-- Barber pole stripe: the one decorative element in the whole app.
          Lives in the sidebar header, far from any data, so the red can never
          be confused with the "cancelled" status colour. -->
-    <Style x:Key="FranjaPal" TargetType="Border">
+    <Style x:Key="PaleInterval" TargetType="Border">
         <Setter Property="Height" Value="6" />
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="{StaticResource VermellPalColor}" Offset="0.00" />
-                    <GradientStop Color="{StaticResource VermellPalColor}" Offset="0.33" />
+                    <GradientStop Color="{StaticResource PaleRedColor}" Offset="0.00" />
+                    <GradientStop Color="{StaticResource PaleRedColor}" Offset="0.33" />
                     <GradientStop Color="#FFFFFF"                          Offset="0.33" />
                     <GradientStop Color="#FFFFFF"                          Offset="0.66" />
-                    <GradientStop Color="{StaticResource BlauColor}"        Offset="0.66" />
-                    <GradientStop Color="{StaticResource BlauColor}"        Offset="1.00" />
+                    <GradientStop Color="{StaticResource BlueColor}"        Offset="0.66" />
+                    <GradientStop Color="{StaticResource BlueColor}"        Offset="1.00" />
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>

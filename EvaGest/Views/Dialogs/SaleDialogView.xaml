@@ -1,0 +1,122 @@
+<UserControl x:Class="EvaGest.Views.Dialogs.SaleDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources">
+    <StackPanel Width="700">
+        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+
+        <TextBlock Text="{Binding LinkedAppointmentText}" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
+                   Visibility="{Binding LinkedAppointmentText, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <TextBlock Text="{x:Static t:Texts.RegisteredClientOrFreeName}" Style="{StaticResource DataLabel}" />
+        <ComboBox ItemsSource="{Binding ActiveClients}" SelectedItem="{Binding SelectedClient}"
+                  DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+        <TextBox Text="{Binding TextClient, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+        <!-- Non-blocking guest reminder (RF-05bis): offers to register, never requires it -->
+        <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,12"
+                Visibility="{Binding UnregisteredClientNotice, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock TextWrapping="Wrap"
+                           Text="{x:Static t:Texts.UnregisteredClientSale}" />
+                <Button Content="{x:Static t:Texts.RegisterNow}" Style="{StaticResource SecondaryButton}"
+                        HorizontalAlignment="Left" Margin="0,8,0,0"
+                        Command="{Binding RegisterClientNowCommand}" />
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
+        <ComboBox ItemsSource="{Binding ActiveWorkers}" SelectedItem="{Binding Worker}"
+                  DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+
+        <TextBlock Text="{x:Static t:Texts.Lines}" Style="{StaticResource Subtitle}" />
+        <ItemsControl ItemsSource="{Binding Lines}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource DataCard}" Padding="10" Margin="0,0,0,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="2" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="4" Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="6" Text="{Binding VatBp, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Column="8" Text="{Binding AmountCents}" VerticalAlignment="Center"
+                                       Style="{StaticResource TableFigure}" />
+                            <Button Grid.Column="10" Content="{x:Static t:Texts.Remove}" Style="{StaticResource SecondaryButton}"
+                                    Padding="8,0" MinHeight="32"
+                                    Command="{Binding DataContext.RemoveLineCommand,
+                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <ComboBox ItemsSource="{Binding ActiveServices}" DisplayMemberPath="Name" Width="140" x:Name="ServiceCombo" />
+            <Button Content="{x:Static t:Texts.AddServiceButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
+                    Command="{Binding AddServiceCommand}" CommandParameter="{Binding ElementName=ServiceCombo, Path=SelectedItem}" />
+            <ComboBox ItemsSource="{Binding ActiveProducts}" DisplayMemberPath="Name" Width="140" Margin="16,0,0,0" x:Name="ProductCombo" />
+            <Button Content="{x:Static t:Texts.AddProductButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
+                    Command="{Binding AddProductCommand}" CommandParameter="{Binding ElementName=ProductCombo, Path=SelectedItem}" />
+            <Button Content="{x:Static t:Texts.AddCustomLineButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="16,0,0,0"
+                    Command="{Binding AddCustomConceptCommand}" />
+        </StackPanel>
+
+        <TextBlock Text="{x:Static t:Texts.PaymentMethod}" Style="{StaticResource DataLabel}" />
+        <ComboBox ItemsSource="{Binding ActiveMethods}" SelectedItem="{Binding PaymentMethod}"
+                  DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+
+        <TextBlock Text="{x:Static t:Texts.NotesOptional}" Style="{StaticResource DataLabel}" />
+        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
+
+        <!-- Live totals footer (pantalles 3.2) -->
+        <Border Style="{StaticResource HeroCard}" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{x:Static t:Texts.TaxableBase}" Style="{StaticResource DataLabel}" />
+                    <TextBlock Text="{Binding BaseText}" Style="{StaticResource Figure}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{x:Static t:Texts.Vat}" Style="{StaticResource DataLabel}" />
+                    <TextBlock Text="{Binding VatText}" Style="{StaticResource Figure}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="{x:Static t:Texts.TotalUpper}" Style="{StaticResource DataLabel}" />
+                    <TextBlock Text="{Binding TotalText}" Style="{StaticResource HeroFigure}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+                   TextWrapping="Wrap" Margin="0,0,0,12"
+                   Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" IsCancel="True" />
+            <Button Content="{x:Static t:Texts.VoidSale}" Style="{StaticResource DestructiveButton}" Command="{Binding VoidSaleCommand}"
+                    Visibility="{Binding CurrentMode, Converter={StaticResource EditModeToVisibilityConverter}}" />
+            <Button Content="{x:Static t:Texts.Charge}" Style="{StaticResource PrimaryButton}" Command="{Binding ChargeCommand}" IsDefault="True" Margin="12,0,0,0" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

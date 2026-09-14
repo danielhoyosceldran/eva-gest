@@ -14,52 +14,55 @@ namespace EvaGest.Services;
 /// "Bizum" does not find it back after every restart.
 /// </summary>
 public class SeedService(
-    IDbContextFactory<BarberiaDbContext> factory,
-    IConfiguracioService configuracio) : ISeedService
+    IDbContextFactory<ShopDbContext> factory,
+    ISettingsService settings) : ISeedService
 {
     /// <summary>Defaults from esquema-bbdd 2.14. Booleans are stored as 0/1.</summary>
-    private static readonly (string clau, string valor)[] ConfiguracioPerDefecte =
+    private static readonly (string key, string value)[] DefaultSettings =
     [
-        (ClausConfig.BarberiaNom, ""),
-        (ClausConfig.BarberiaAdreca, ""),
-        (ClausConfig.BarberiaTelefon, ""),
-        (ClausConfig.IvaBpDefecte, "2100"),
-        (ClausConfig.IvaModeActual, nameof(IvaMode.Inclos)),
-        (ClausConfig.AplicarIvaCaixa, "0"),
-        (ClausConfig.DuradaDefecteCitaMin, "30"),
-        (ClausConfig.HoraBackup, "20:00"),
-        (ClausConfig.BackupsAConservar, "15"),
-        (ClausConfig.UltimaCopiaAutomatica, ""),
-        (ClausConfig.MostrarAvisConvidat, "1"),
-        (ClausConfig.SoConfirmacio, "1"),
+        (ConfigKeys.ShopName, ""),
+        (ConfigKeys.ShopAddress, ""),
+        (ConfigKeys.ShopPhone, ""),
+        (ConfigKeys.DefaultVatBp, "2100"),
+        (ConfigKeys.CurrentVatMode, nameof(VatMode.Included)),
+        (ConfigKeys.ApplyVatToTill, "0"),
+        (ConfigKeys.DefaultAppointmentDurationMin, "30"),
+        (ConfigKeys.BackupTime, "20:00"),
+        (ConfigKeys.BackupsToKeep, "15"),
+        (ConfigKeys.LastAutomaticBackup, ""),
+        (ConfigKeys.ShowGuestNotice, "1"),
+        (ConfigKeys.ConfirmationSound, "1"),
+        (ConfigKeys.Language, nameof(Models.Language.Catalan)),
     ];
 
-    private static readonly string[] MetodesPerDefecte = ["Efectiu", "Targeta", "Bizum"];
+    /// <summary>Seeded once, then owned by the user: they are rows she can rename, not
+    /// interface text, so they are not translated when the language changes.</summary>
+    private static readonly string[] DefaultMethods = ["Efectiu", "Targeta", "Bizum"];
 
-    public async Task Sembrar()
+    public async Task Seed()
     {
         await using var db = await factory.CreateDbContextAsync();
 
-        var jaHiSon = await db.Configuracio.AsNoTracking()
-            .Select(c => c.Clau)
+        var alreadyPresent = await db.Settings.AsNoTracking()
+            .Select(c => c.Key)
             .ToListAsync();
 
-        var quePosar = ConfiguracioPerDefecte
-            .Where(p => !jaHiSon.Contains(p.clau))
-            .Select(p => new ConfiguracioItem { Clau = p.clau, Valor = p.valor })
+        var whatToSet = DefaultSettings
+            .Where(p => !alreadyPresent.Contains(p.key))
+            .Select(p => new SettingItem { Key = p.key, Value = p.value })
             .ToList();
 
-        if (quePosar.Count > 0)
+        if (whatToSet.Count > 0)
         {
-            db.Configuracio.AddRange(quePosar);
+            db.Settings.AddRange(whatToSet);
             await db.SaveChangesAsync();
-            configuracio.InvalidarCache();
+            settings.InvalidateCache();
         }
 
-        if (!await db.MetodesPagament.AnyAsync())
+        if (!await db.PaymentMethods.AnyAsync())
         {
-            db.MetodesPagament.AddRange(
-                MetodesPerDefecte.Select(nom => new MetodePagament { Nom = nom, Actiu = true }));
+            db.PaymentMethods.AddRange(
+                DefaultMethods.Select(name => new PaymentMethod { Name = name, Active = true }));
             await db.SaveChangesAsync();
         }
     }

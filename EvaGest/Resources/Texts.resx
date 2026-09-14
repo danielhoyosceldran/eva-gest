@@ -1,0 +1,1298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Pending" xml:space="preserve">
+    <value>Pendent</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Realitzada</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Cancel·lada</value>
+  </data>
+  <data name="CancelledPlural" xml:space="preserve">
+    <value>Cancel·lades</value>
+  </data>
+  <data name="NoShow" xml:space="preserve">
+    <value>No assistida</value>
+  </data>
+  <data name="NoShowPlural" xml:space="preserve">
+    <value>No assistides</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Activa</value>
+  </data>
+  <data name="Voided" xml:space="preserve">
+    <value>Anul·lada</value>
+  </data>
+  <data name="CashIn" xml:space="preserve">
+    <value>Entrada</value>
+  </data>
+  <data name="CashOut" xml:space="preserve">
+    <value>Sortida</value>
+  </data>
+  <data name="CashInPlural" xml:space="preserve">
+    <value>Entrades</value>
+  </data>
+  <data name="CashOutPlural" xml:space="preserve">
+    <value>Sortides</value>
+  </data>
+  <data name="PricesVatIncluded" xml:space="preserve">
+    <value>Preus amb IVA inclòs</value>
+  </data>
+  <data name="PricesVatExcluded" xml:space="preserve">
+    <value>Preus sense IVA</value>
+  </data>
+  <data name="Service" xml:space="preserve">
+    <value>Servei</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Serveis</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Producte</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>Productes</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Altres</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Dilluns</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Dimarts</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Dimecres</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Dijous</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Divendres</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Dissabte</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Diumenge</value>
+  </data>
+  <data name="MondayShort" xml:space="preserve">
+    <value>Dl</value>
+  </data>
+  <data name="TuesdayShort" xml:space="preserve">
+    <value>Dt</value>
+  </data>
+  <data name="WednesdayShort" xml:space="preserve">
+    <value>Dc</value>
+  </data>
+  <data name="ThursdayShort" xml:space="preserve">
+    <value>Dj</value>
+  </data>
+  <data name="FridayShort" xml:space="preserve">
+    <value>Dv</value>
+  </data>
+  <data name="SaturdayShort" xml:space="preserve">
+    <value>Ds</value>
+  </data>
+  <data name="SundayShort" xml:space="preserve">
+    <value>Dg</value>
+  </data>
+  <data name="NavHome" xml:space="preserve">
+    <value>Inici</value>
+  </data>
+  <data name="NavAgenda" xml:space="preserve">
+    <value>Agenda</value>
+  </data>
+  <data name="NavClients" xml:space="preserve">
+    <value>Clients</value>
+  </data>
+  <data name="NavWorkers" xml:space="preserve">
+    <value>Treballadores</value>
+  </data>
+  <data name="NavCatalog" xml:space="preserve">
+    <value>Catàleg</value>
+  </data>
+  <data name="NavSales" xml:space="preserve">
+    <value>Vendes</value>
+  </data>
+  <data name="NavTill" xml:space="preserve">
+    <value>Caixa</value>
+  </data>
+  <data name="NavReports" xml:space="preserve">
+    <value>Informes</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Configuració</value>
+  </data>
+  <data name="NavHelp" xml:space="preserve">
+    <value>Ajuda</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel·lar</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="SaveAlt" xml:space="preserve">
+    <value>Desar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Tancar</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Treure</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restaurar</value>
+  </data>
+  <data name="ToggleActive" xml:space="preserve">
+    <value>Activar/Desactivar</value>
+  </data>
+  <data name="Record" xml:space="preserve">
+    <value>Fitxa</value>
+  </data>
+  <data name="Wake" xml:space="preserve">
+    <value>Despertar</value>
+  </data>
+  <data name="Asleep" xml:space="preserve">
+    <value>Adormit</value>
+  </data>
+  <data name="RegisterNow" xml:space="preserve">
+    <value>Registrar-lo ara</value>
+  </data>
+  <data name="SaveAnyway" xml:space="preserve">
+    <value>Guardar-lo igualment</value>
+  </data>
+  <data name="ClearFilters" xml:space="preserve">
+    <value>Netejar filtres</value>
+  </data>
+  <data name="ExportPeriod" xml:space="preserve">
+    <value>Exportar període</value>
+  </data>
+  <data name="VoidSale" xml:space="preserve">
+    <value>Anul·lar venda</value>
+  </data>
+  <data name="Void" xml:space="preserve">
+    <value>Anul·lar</value>
+  </data>
+  <data name="Charge" xml:space="preserve">
+    <value>Cobrar</value>
+  </data>
+  <data name="BackToPending" xml:space="preserve">
+    <value>Tornar a pendent</value>
+  </data>
+  <data name="NewClientButton" xml:space="preserve">
+    <value>+ Nou client</value>
+  </data>
+  <data name="NewAppointmentButton" xml:space="preserve">
+    <value>+ Nova cita</value>
+  </data>
+  <data name="NewSaleButton" xml:space="preserve">
+    <value>+ Nova venda</value>
+  </data>
+  <data name="NewWorkerButton" xml:space="preserve">
+    <value>+ Nova treballadora</value>
+  </data>
+  <data name="NewServiceButton" xml:space="preserve">
+    <value>+ Nou servei</value>
+  </data>
+  <data name="NewProductButton" xml:space="preserve">
+    <value>+ Nou producte</value>
+  </data>
+  <data name="NewMethodButton" xml:space="preserve">
+    <value>+ Nou mètode</value>
+  </data>
+  <data name="NewCashInButton" xml:space="preserve">
+    <value>+ Entrada</value>
+  </data>
+  <data name="NewCashOutButton" xml:space="preserve">
+    <value>+ Sortida</value>
+  </data>
+  <data name="AddServiceButton" xml:space="preserve">
+    <value>+ Servei</value>
+  </data>
+  <data name="AddProductButton" xml:space="preserve">
+    <value>+ Producte</value>
+  </data>
+  <data name="AddCustomLineButton" xml:space="preserve">
+    <value>+ Concepte lliure</value>
+  </data>
+  <data name="MarkClosedButton" xml:space="preserve">
+    <value>+ Marcar tancat</value>
+  </data>
+  <data name="NewClientTitle" xml:space="preserve">
+    <value>Nou client</value>
+  </data>
+  <data name="NewAppointmentTitle" xml:space="preserve">
+    <value>Nova cita</value>
+  </data>
+  <data name="NewSaleTitle" xml:space="preserve">
+    <value>Nova venda</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Mobile" xml:space="preserve">
+    <value>Mòbil</value>
+  </data>
+  <data name="MobilePrefix" xml:space="preserve">
+    <value>Mòbil: </value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Telèfon</value>
+  </data>
+  <data name="PhoneOptional" xml:space="preserve">
+    <value>Telèfon (opcional)</value>
+  </data>
+  <data name="EmailOptional" xml:space="preserve">
+    <value>Correu electrònic (opcional)</value>
+  </data>
+  <data name="BirthDateOptional" xml:space="preserve">
+    <value>Data de naixement (opcional)</value>
+  </data>
+  <data name="NotesOptional" xml:space="preserve">
+    <value>Observacions (opcional)</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adreça</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="Client" xml:space="preserve">
+    <value>Client</value>
+  </data>
+  <data name="Worker" xml:space="preserve">
+    <value>Treballadora</value>
+  </data>
+  <data name="WorkerOptional" xml:space="preserve">
+    <value>Treballadora (opcional)</value>
+  </data>
+  <data name="ServiceOptional" xml:space="preserve">
+    <value>Servei (opcional)</value>
+  </data>
+  <data name="CategoryOptional" xml:space="preserve">
+    <value>Categoria (opcional)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="GuestName" xml:space="preserve">
+    <value>Nom del convidat</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Estat</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipus</value>
+  </data>
+  <data name="Concept" xml:space="preserve">
+    <value>Concepte</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="AmountEuros" xml:space="preserve">
+    <value>Import (€)</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Preu</value>
+  </data>
+  <data name="PriceEuros" xml:space="preserve">
+    <value>Preu (€)</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Durada</value>
+  </data>
+  <data name="DurationMinutes" xml:space="preserve">
+    <value>Durada (minuts)</value>
+  </data>
+  <data name="DurationMinutesOptional" xml:space="preserve">
+    <value>Durada (minuts, opcional)</value>
+  </data>
+  <data name="Vat" xml:space="preserve">
+    <value>IVA</value>
+  </data>
+  <data name="VatPercent" xml:space="preserve">
+    <value>IVA (%)</value>
+  </data>
+  <data name="VatWithColon" xml:space="preserve">
+    <value>IVA:</value>
+  </data>
+  <data name="VatPercentage" xml:space="preserve">
+    <value>Percentatge d'IVA</value>
+  </data>
+  <data name="Base" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="BaseWithColon" xml:space="preserve">
+    <value>Base:</value>
+  </data>
+  <data name="TaxableBase" xml:space="preserve">
+    <value>Base imposable</value>
+  </data>
+  <data name="Quota" xml:space="preserve">
+    <value>Quota</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalUpper" xml:space="preserve">
+    <value>TOTAL</value>
+  </data>
+  <data name="TotalWithColon" xml:space="preserve">
+    <value>Total:</value>
+  </data>
+  <data name="Method" xml:space="preserve">
+    <value>Mètode</value>
+  </data>
+  <data name="PaymentMethod" xml:space="preserve">
+    <value>Mètode de pagament</value>
+  </data>
+  <data name="PaymentMethods" xml:space="preserve">
+    <value>Mètodes de pagament</value>
+  </data>
+  <data name="Payment" xml:space="preserve">
+    <value>Pagament</value>
+  </data>
+  <data name="ColumnActive" xml:space="preserve">
+    <value>Actiu</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Horari</value>
+  </data>
+  <data name="WeeklySchedule" xml:space="preserve">
+    <value>Horari setmanal</value>
+  </data>
+  <data name="Morning" xml:space="preserve">
+    <value>Matí</value>
+  </data>
+  <data name="Afternoon" xml:space="preserve">
+    <value>Tarda</value>
+  </data>
+  <data name="Lines" xml:space="preserve">
+    <value>Línies</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Mida</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>Des de</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>Fins a</value>
+  </data>
+  <data name="NotRegistered" xml:space="preserve">
+    <value>(no registrat)</value>
+  </data>
+  <data name="SearchByNameOrMobile" xml:space="preserve">
+    <value>Cerca per nom o mòbil…</value>
+  </data>
+  <data name="ShowSleepingClients" xml:space="preserve">
+    <value>Mostrar clients adormits</value>
+  </data>
+  <data name="ColorInAgenda" xml:space="preserve">
+    <value>Color a l'agenda</value>
+  </data>
+  <data name="PickTimeInAgenda" xml:space="preserve">
+    <value>Tria l'hora a l'agenda</value>
+  </data>
+  <data name="RegisteredClientOrFreeName" xml:space="preserve">
+    <value>Client registrat (o escriu un nom lliure a sota)</value>
+  </data>
+  <data name="LooksLikeExistingClient" xml:space="preserve">
+    <value>Sembla que aquest client ja existeix: </value>
+  </data>
+  <data name="CopyMondayToWeekdays" xml:space="preserve">
+    <value>Copiar dilluns a dimarts–divendres</value>
+  </data>
+  <data name="PreviousWeek" xml:space="preserve">
+    <value>‹ Setmana anterior</value>
+  </data>
+  <data name="NextWeek" xml:space="preserve">
+    <value>Setmana següent ›</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Avui</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Ahir</value>
+  </data>
+  <data name="ThisWeek" xml:space="preserve">
+    <value>Aquesta setmana</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Aquest mes</value>
+  </data>
+  <data name="PreviousMonth" xml:space="preserve">
+    <value>Mes anterior</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Personalitzat</value>
+  </data>
+  <data name="TodayAppointments" xml:space="preserve">
+    <value>Cites d'avui</value>
+  </data>
+  <data name="AppointmentsToday" xml:space="preserve">
+    <value>Cites avui</value>
+  </data>
+  <data name="SalesToday" xml:space="preserve">
+    <value>Vendes avui</value>
+  </data>
+  <data name="ChargedToday" xml:space="preserve">
+    <value>Cobrat avui</value>
+  </data>
+  <data name="DayBalance" xml:space="preserve">
+    <value>Balanç del dia</value>
+  </data>
+  <data name="Balance" xml:space="preserve">
+    <value>Balanç</value>
+  </data>
+  <data name="Movements" xml:space="preserve">
+    <value>Moviments</value>
+  </data>
+  <data name="PeriodVatBreakdown" xml:space="preserve">
+    <value>Desglossament d'IVA del període</value>
+  </data>
+  <data name="SplitVat" xml:space="preserve">
+    <value>Desglossar IVA</value>
+  </data>
+  <data name="NoAppointmentsToday" xml:space="preserve">
+    <value>Avui no tens cap cita apuntada.</value>
+  </data>
+  <data name="NoAppointmentsThisDay" xml:space="preserve">
+    <value>Aquest dia no té cap cita apuntada.</value>
+  </data>
+  <data name="NoSaleMatchesFilters" xml:space="preserve">
+    <value>Cap venda coincideix amb aquests filtres.</value>
+  </data>
+  <data name="NoWorkersYet" xml:space="preserve">
+    <value>Encara no has donat d'alta cap treballadora.</value>
+  </data>
+  <data name="NoWorkersYetDetail" xml:space="preserve">
+    <value>Fins que no n'hi hagi cap amb horari, l'agenda no sap quantes persones hi ha per atendre i avisa de solapament a totes les cites.</value>
+  </data>
+  <data name="NoClosedDaysYet" xml:space="preserve">
+    <value>Encara no has marcat cap dia com a tancat.</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Visió general</value>
+  </data>
+  <data name="ClientRankings" xml:space="preserve">
+    <value>Rànquings de clients</value>
+  </data>
+  <data name="WorkerRanking" xml:space="preserve">
+    <value>Rànquing de treballadores</value>
+  </data>
+  <data name="WorkerDetail" xml:space="preserve">
+    <value>Detall per treballadora</value>
+  </data>
+  <data name="SalesEvolution" xml:space="preserve">
+    <value>Evolució de vendes (12 mesos)</value>
+  </data>
+  <data name="ClientOfTheMonth" xml:space="preserve">
+    <value>Client del mes</value>
+  </data>
+  <data name="MostVisits" xml:space="preserve">
+    <value>Més visites</value>
+  </data>
+  <data name="MostSpend" xml:space="preserve">
+    <value>Més despesa</value>
+  </data>
+  <data name="HighestAverage" xml:space="preserve">
+    <value>Major mitjana</value>
+  </data>
+  <data name="NotSeenInAWhile" xml:space="preserve">
+    <value>Fa temps que no vénen</value>
+  </data>
+  <data name="DaysSuffix" xml:space="preserve">
+    <value> dies</value>
+  </data>
+  <data name="WorkPercentColumn" xml:space="preserve">
+    <value>% de treball</value>
+  </data>
+  <data name="WorkPercentDone" xml:space="preserve">
+    <value>% de treball realitzat</value>
+  </data>
+  <data name="SalesHandled" xml:space="preserve">
+    <value>Vendes ateses</value>
+  </data>
+  <data name="IncomeColumn" xml:space="preserve">
+    <value>Ingressos</value>
+  </data>
+  <data name="IncomeGenerated" xml:space="preserve">
+    <value>Ingressos generats</value>
+  </data>
+  <data name="Visits" xml:space="preserve">
+    <value>Visites</value>
+  </data>
+  <data name="TotalSpent" xml:space="preserve">
+    <value>Total gastat</value>
+  </data>
+  <data name="AveragePerVisit" xml:space="preserve">
+    <value>Mitjana / visita</value>
+  </data>
+  <data name="FrequencyDays" xml:space="preserve">
+    <value>Freqüència (dies)</value>
+  </data>
+  <data name="Indicators" xml:space="preserve">
+    <value>Indicadors</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historial</value>
+  </data>
+  <data name="ShopDetails" xml:space="preserve">
+    <value>Dades de la barberia</value>
+  </data>
+  <data name="CalculationMode" xml:space="preserve">
+    <value>Mode de càlcul</value>
+  </data>
+  <data name="DefaultPercent" xml:space="preserve">
+    <value>Percentatge per defecte (%)</value>
+  </data>
+  <data name="DefaultVatHint" xml:space="preserve">
+    <value>És el que es proposa en crear un servei o un producte nou. Cada element pot tenir-ne un de diferent.</value>
+  </data>
+  <data name="SplitVatOnMovements" xml:space="preserve">
+    <value>Poder desglossar l'IVA als moviments de caixa</value>
+  </data>
+  <data name="SplitVatOnMovementsHint" xml:space="preserve">
+    <value>Desactivat, un moviment d'entrada o sortida guarda només l'import final.</value>
+  </data>
+  <data name="SlotSizeHint" xml:space="preserve">
+    <value>Alçada de cada franja de la graella setmanal. Com més petita, més precisió en triar l'hora.</value>
+  </data>
+  <data name="DefaultAppointmentDuration" xml:space="preserve">
+    <value>Durada d'una cita sense servei (minuts)</value>
+  </data>
+  <data name="OpeningHours" xml:space="preserve">
+    <value>Horari d'obertura</value>
+  </data>
+  <data name="OpeningHoursHint" xml:space="preserve">
+    <value>Quan obre la barberia cada dia. Marca el matí, la tarda o totes dues; un dia sense cap de les dues és tancat. L'agenda ombreja les hores que queden fora.</value>
+  </data>
+  <data name="ClosedDays" xml:space="preserve">
+    <value>Dies tancats</value>
+  </data>
+  <data name="ClosedDaysHint" xml:space="preserve">
+    <value>Festius i vacances. L'agenda mostra el dia atenuat amb el motiu, però et deixa apuntar-hi cites igualment.</value>
+  </data>
+  <data name="Backups" xml:space="preserve">
+    <value>Còpies de seguretat</value>
+  </data>
+  <data name="BackupHour" xml:space="preserve">
+    <value>Hora de la còpia automàtica</value>
+  </data>
+  <data name="BackupHourHint" xml:space="preserve">
+    <value>La còpia es fa en obrir l'aplicació, si ja ha passat aquesta hora i encara no se n'havia fet cap avui.</value>
+  </data>
+  <data name="BackupsToKeep" xml:space="preserve">
+    <value>Còpies a conservar</value>
+  </data>
+  <data name="BackupNowButton" xml:space="preserve">
+    <value>Fer còpia ara</value>
+  </data>
+  <data name="RestoreBackupButton" xml:space="preserve">
+    <value>Restaurar còpia</value>
+  </data>
+  <data name="AccountantExport" xml:space="preserve">
+    <value>Exportació per a l'assessoria</value>
+  </data>
+  <data name="AccountantExportHint" xml:space="preserve">
+    <value>Genera els fitxers de vendes i IVA d'un període per portar-los a la gestoria.</value>
+  </data>
+  <data name="NoticesAndSounds" xml:space="preserve">
+    <value>Avisos i sons</value>
+  </data>
+  <data name="GuestNoticeOption" xml:space="preserve">
+    <value>Avisar quan una cita o venda és per a un client no registrat</value>
+  </data>
+  <data name="GuestNoticeHint" xml:space="preserve">
+    <value>L'avís ofereix registrar-lo al moment, però mai impedeix guardar.</value>
+  </data>
+  <data name="ConfirmationSoundOption" xml:space="preserve">
+    <value>So curt de confirmació en cobrar una venda</value>
+  </data>
+  <data name="SaveDataButton" xml:space="preserve">
+    <value>Desar dades</value>
+  </data>
+  <data name="SaveScheduleButton" xml:space="preserve">
+    <value>Desar horari</value>
+  </data>
+  <data name="SaveOptionsButton" xml:space="preserve">
+    <value>Desar opcions</value>
+  </data>
+  <data name="UnregisteredClientAppointment" xml:space="preserve">
+    <value>Aquest client no està registrat. Pots apuntar la cita igualment, però no en quedarà historial.</value>
+  </data>
+  <data name="UnregisteredClientSale" xml:space="preserve">
+    <value>Aquest client no està registrat. Pots cobrar igualment, però la venda no comptarà al seu historial.</value>
+  </data>
+  <data name="OutsideOpeningHours" xml:space="preserve">
+    <value>L'hora cau fora de l'horari de la barberia.</value>
+  </data>
+  <data name="PossibleOverlap" xml:space="preserve">
+    <value>Possible solapament: no queda capacitat en aquesta franja.</value>
+  </data>
+  <data name="WorkerScheduleHint" xml:space="preserve">
+    <value>Marca el matí, la tarda o totes dues per cada dia. Un dia sense cap de les dues vol dir que no treballa.</value>
+  </data>
+  <data name="InactiveWorkerHint" xml:space="preserve">
+    <value>Una treballadora inactiva conserva el seu horari i tot el seu historial, però no compta com a disponible als avisos de solapament. No es poden eliminar treballadores, precisament per no perdre'n l'historial de vendes.</value>
+  </data>
+  <data name="ExportProducesTwoFiles" xml:space="preserve">
+    <value>Es generaran dos fitxers: el llistat de vendes i el desglossament d'IVA per a la gestoria.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="LanguageCatalan" xml:space="preserve">
+    <value>Català</value>
+  </data>
+  <data name="LanguageSpanish" xml:space="preserve">
+    <value>Castellà</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Canvia l'idioma de tota l'aplicació. Cal tancar-la i tornar-la a obrir perquè el canvi es vegi.</value>
+  </data>
+  <data name="LanguageSaved" xml:space="preserve">
+    <value>Idioma desat. Tanca i torna a obrir l'aplicació per veure'l.</value>
+  </data>
+  <data name="BackupAutomatic" xml:space="preserve">
+    <value>Automàtica</value>
+  </data>
+  <data name="BackupManual" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="ColorTeal" xml:space="preserve">
+    <value>Verd blau</value>
+  </data>
+  <data name="ColorMagenta" xml:space="preserve">
+    <value>Magenta</value>
+  </data>
+  <data name="ColorPlum" xml:space="preserve">
+    <value>Prunya</value>
+  </data>
+  <data name="ColorOlive" xml:space="preserve">
+    <value>Oliva</value>
+  </data>
+  <data name="ColorOchre" xml:space="preserve">
+    <value>Ocre</value>
+  </data>
+  <data name="ColorGraphite" xml:space="preserve">
+    <value>Grafit</value>
+  </data>
+  <data name="EditClientTitle" xml:space="preserve">
+    <value>Editar client</value>
+  </data>
+  <data name="NameAndMobileRequired" xml:space="preserve">
+    <value>Cal indicar el nom i el mòbil per guardar.</value>
+  </data>
+  <data name="NewServiceTitle" xml:space="preserve">
+    <value>Nou servei</value>
+  </data>
+  <data name="EditServiceTitle" xml:space="preserve">
+    <value>Editar servei</value>
+  </data>
+  <data name="ServiceNameRequired" xml:space="preserve">
+    <value>Cal indicar el nom del servei per guardar.</value>
+  </data>
+  <data name="NewProductTitle" xml:space="preserve">
+    <value>Nou producte</value>
+  </data>
+  <data name="EditProductTitle" xml:space="preserve">
+    <value>Editar producte</value>
+  </data>
+  <data name="ProductNameRequired" xml:space="preserve">
+    <value>Cal indicar el nom del producte per guardar.</value>
+  </data>
+  <data name="PriceInvalid" xml:space="preserve">
+    <value>El preu no és vàlid.</value>
+  </data>
+  <data name="VatOutOfRange" xml:space="preserve">
+    <value>L'IVA ha de ser un percentatge entre 0 i 100.</value>
+  </data>
+  <data name="NewMethodTitle" xml:space="preserve">
+    <value>Nou mètode de pagament</value>
+  </data>
+  <data name="EditMethodTitle" xml:space="preserve">
+    <value>Editar mètode de pagament</value>
+  </data>
+  <data name="MethodNameRequired" xml:space="preserve">
+    <value>Cal indicar el nom del mètode per guardar.</value>
+  </data>
+  <data name="GuestFreeName" xml:space="preserve">
+    <value>Convidat (nom lliure)</value>
+  </data>
+  <data name="EditAppointmentTitle" xml:space="preserve">
+    <value>Editar cita</value>
+  </data>
+  <data name="GuestNameOrClientRequired" xml:space="preserve">
+    <value>Cal indicar el nom del convidat o triar un client registrat.</value>
+  </data>
+  <data name="DurationMustBePositive" xml:space="preserve">
+    <value>La durada ha de ser més gran que zero.</value>
+  </data>
+  <data name="DeleteAppointmentTitle" xml:space="preserve">
+    <value>Eliminar cita?</value>
+  </data>
+  <data name="DeleteAppointmentMessage" xml:space="preserve">
+    <value>La cita s'esborrarà de l'agenda. Això no es pot desfer.
+
+Si vols conservar-la a l'historial, marca-la com a cancel·lada o no assistida.</value>
+  </data>
+  <data name="AppointmentHasSale" xml:space="preserve">
+    <value>Aquesta cita té una venda associada i no es pot esborrar. Anul·la o elimina primer la venda.</value>
+  </data>
+  <data name="NewCashInTitle" xml:space="preserve">
+    <value>Nova entrada</value>
+  </data>
+  <data name="NewCashOutTitle" xml:space="preserve">
+    <value>Nova sortida</value>
+  </data>
+  <data name="AmountMustBePositive" xml:space="preserve">
+    <value>L'import ha de ser més gran que zero.</value>
+  </data>
+  <data name="PaymentMethodRequired" xml:space="preserve">
+    <value>Cal triar un mètode de pagament.</value>
+  </data>
+  <data name="ConceptRequired" xml:space="preserve">
+    <value>Cal indicar el concepte.</value>
+  </data>
+  <data name="NewWorkerTitle" xml:space="preserve">
+    <value>Nova treballadora</value>
+  </data>
+  <data name="EditWorkerTitle" xml:space="preserve">
+    <value>Editar treballadora</value>
+  </data>
+  <data name="WorkerNameRequired" xml:space="preserve">
+    <value>Cal indicar el nom de la treballadora.</value>
+  </data>
+  <data name="CheckRedDays" xml:space="preserve">
+    <value>Revisa els dies marcats en vermell.</value>
+  </data>
+  <data name="AtLeastOneDayRequired" xml:space="preserve">
+    <value>Indica com a mínim un dia i un horari.</value>
+  </data>
+  <data name="ExportToBeforeFrom" xml:space="preserve">
+    <value>La data «fins a» ha de ser posterior a «des de».</value>
+  </data>
+  <data name="ChooseDestinationFolder" xml:space="preserve">
+    <value>Tria la carpeta de destí</value>
+  </data>
+  <data name="ExportDoneTitle" xml:space="preserve">
+    <value>Exportació completada</value>
+  </data>
+  <data name="ExportDoneMessage" xml:space="preserve">
+    <value>S'han generat els fitxers a:
+{0}</value>
+  </data>
+  <data name="RestoreBackupTitle" xml:space="preserve">
+    <value>Restaurar còpia de seguretat</value>
+  </data>
+  <data name="ChooseBackupFromList" xml:space="preserve">
+    <value>Tria una còpia de la llista.</value>
+  </data>
+  <data name="ConfirmRestoreTitle" xml:space="preserve">
+    <value>Restaurar aquesta còpia?</value>
+  </data>
+  <data name="ConfirmRestoreMessage" xml:space="preserve">
+    <value>Es reemplaçaran totes les dades actuals per les d'aquesta còpia. L'estat actual es desarà primer com a còpia manual, per si cal desfer-ho.
+
+Caldrà reiniciar l'aplicació perquè els canvis tinguin efecte.</value>
+  </data>
+  <data name="BackupRestoredTitle" xml:space="preserve">
+    <value>Còpia restaurada</value>
+  </data>
+  <data name="BackupRestoredMessage" xml:space="preserve">
+    <value>Les dades s'han restaurat correctament. Tanca i torna a obrir l'aplicació.</value>
+  </data>
+  <data name="Sleep" xml:space="preserve">
+    <value>Adormir</value>
+  </data>
+  <data name="DeleteClientTitle" xml:space="preserve">
+    <value>Vols eliminar {0}?</value>
+  </data>
+  <data name="DeleteClientMessage" xml:space="preserve">
+    <value>S'esborrarà la seva fitxa i tot el seu historial: {0} cites i {1} vendes. Aquesta acció no es pot desfer.
+
+Si només vols que deixi d'aparèixer a les cerques, pots adormir-lo i conservar les dades.</value>
+  </data>
+  <data name="DeleteForever" xml:space="preserve">
+    <value>Eliminar definitivament</value>
+  </data>
+  <data name="HistoryAppointment" xml:space="preserve">
+    <value>Cita</value>
+  </data>
+  <data name="HistorySale" xml:space="preserve">
+    <value>Venda</value>
+  </data>
+  <data name="EditSaleTitle" xml:space="preserve">
+    <value>Editar venda</value>
+  </data>
+  <data name="NewSaleFromAppointmentTitle" xml:space="preserve">
+    <value>Nova venda (des de cita)</value>
+  </data>
+  <data name="FromAppointmentOn" xml:space="preserve">
+    <value>Des de la cita del {0} a les {1}</value>
+  </data>
+  <data name="AtLeastOneLineRequired" xml:space="preserve">
+    <value>Cal afegir almenys una línia per cobrar.</value>
+  </data>
+  <data name="MorningStartAndEndRequired" xml:space="preserve">
+    <value>Cal indicar l'hora d'inici i la de fi del matí.</value>
+  </data>
+  <data name="MorningEndsBeforeStart" xml:space="preserve">
+    <value>El matí ha d'acabar després de començar.</value>
+  </data>
+  <data name="AfternoonStartAndEndRequired" xml:space="preserve">
+    <value>Cal indicar l'hora d'inici i la de fi de la tarda.</value>
+  </data>
+  <data name="AfternoonEndsBeforeStart" xml:space="preserve">
+    <value>La tarda ha d'acabar després de començar.</value>
+  </data>
+  <data name="AfternoonBeforeMorningEnds" xml:space="preserve">
+    <value>La tarda no pot començar abans que acabi el matí.</value>
+  </data>
+  <data name="DeleteAppointmentOfMessage" xml:space="preserve">
+    <value>S'esborrarà la cita de {0} del {1} a les {2}. Això no es pot desfer.
+
+Si la vols conservar a l'historial, marca-la com a cancel·lada o no assistida.</value>
+  </data>
+  <data name="AppointmentNotDeletedHasSale" xml:space="preserve">
+    <value>La cita té una venda associada i no s'ha esborrat. Anul·la o elimina primer la venda.</value>
+  </data>
+  <data name="AppointmentDeleted" xml:space="preserve">
+    <value>La cita s'ha eliminat.</value>
+  </data>
+  <data name="NoService" xml:space="preserve">
+    <value>Sense servei</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Sense assignar</value>
+  </data>
+  <data name="NoSchedule" xml:space="preserve">
+    <value>Sense horari</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="TypeService" xml:space="preserve">
+    <value>servei</value>
+  </data>
+  <data name="TypeProduct" xml:space="preserve">
+    <value>producte</value>
+  </data>
+  <data name="TypePaymentMethod" xml:space="preserve">
+    <value>mètode de pagament</value>
+  </data>
+  <data name="ArticleService" xml:space="preserve">
+    <value>El servei</value>
+  </data>
+  <data name="ArticleProduct" xml:space="preserve">
+    <value>El producte</value>
+  </data>
+  <data name="ArticleMethod" xml:space="preserve">
+    <value>El mètode</value>
+  </data>
+  <data name="UsedInAppointmentsOrSales" xml:space="preserve">
+    <value>cites o vendes</value>
+  </data>
+  <data name="UsedInSales" xml:space="preserve">
+    <value>vendes</value>
+  </data>
+  <data name="UsedInSalesOrMovements" xml:space="preserve">
+    <value>vendes o moviments de caixa</value>
+  </data>
+  <data name="CannotDeactivateTitle" xml:space="preserve">
+    <value>No es pot desactivar</value>
+  </data>
+  <data name="KeepOneActiveMethod" xml:space="preserve">
+    <value>Cal mantenir almenys un mètode de pagament actiu per poder cobrar.</value>
+  </data>
+  <data name="MethodNotDeletedLastActive" xml:space="preserve">
+    <value>«{0}» no s'ha eliminat: cal mantenir almenys un mètode de pagament actiu per poder cobrar.</value>
+  </data>
+  <data name="DeleteCatalogItemTitle" xml:space="preserve">
+    <value>Eliminar {0}?</value>
+  </data>
+  <data name="DeleteCatalogItemMessage" xml:space="preserve">
+    <value>S'eliminarà «{0}» del catàleg.
+
+Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'historial. En tots dos casos deixarà de sortir a l'hora de registrar cites i vendes.</value>
+  </data>
+  <data name="CatalogItemDeactivated" xml:space="preserve">
+    <value>{0} «{1}» ja apareix en {2}, així que s'ha desactivat en lloc d'eliminar-se. L'historial es manté i ja no es podrà triar de nou.</value>
+  </data>
+  <data name="CatalogItemDeleted" xml:space="preserve">
+    <value>{0} «{1}» s'ha eliminat.</value>
+  </data>
+  <data name="BirthdaysToday" xml:space="preserve">
+    <value>Avui fa anys: </value>
+  </data>
+  <data name="AppointmentHasSaleCannotReopen" xml:space="preserve">
+    <value>La cita té una venda associada i no s'ha pogut tornar a pendent. Anul·la primer la venda.</value>
+  </data>
+  <data name="NoSalesThisMonth" xml:space="preserve">
+    <value>Encara no hi ha vendes aquest mes.</value>
+  </data>
+  <data name="ClientOfTheMonthLine" xml:space="preserve">
+    <value>{0} · {1} visites · {2}</value>
+  </data>
+  <data name="MoreLinesSuffix" xml:space="preserve">
+    <value> + {0} més</value>
+  </data>
+  <data name="ConfirmVoidSaleTitle" xml:space="preserve">
+    <value>Anul·lar venda?</value>
+  </data>
+  <data name="ConfirmVoidSaleMessage" xml:space="preserve">
+    <value>La venda de {0} passarà a l'estat Anul·lada. Es manté visible a l'historial però queda exclosa dels totals.</value>
+  </data>
+  <data name="DeleteForeverTitle" xml:space="preserve">
+    <value>Esborrar definitivament?</value>
+  </data>
+  <data name="DeleteSaleTitle" xml:space="preserve">
+    <value>Eliminar venda?</value>
+  </data>
+  <data name="DeleteVoidedSaleMessage" xml:space="preserve">
+    <value>La venda de {0} ja està anul·lada. S'esborrarà del tot, amb les seves línies i el desglossament d'IVA. Això no es pot desfer.</value>
+  </data>
+  <data name="DeleteActiveSaleMessage" xml:space="preserve">
+    <value>La venda de {0} forma part de l'historial, així que passarà a Anul·lada en lloc d'esborrar-se: es manté visible però queda fora dels totals.</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Esborrar</value>
+  </data>
+  <data name="SaleVoidedNotDeleted" xml:space="preserve">
+    <value>La venda s'ha anul·lat en lloc d'esborrar-se, per no perdre l'historial. Si la vols treure del tot, torna a eliminar-la ara que està anul·lada.</value>
+  </data>
+  <data name="SaleDeletedForever" xml:space="preserve">
+    <value>La venda s'ha esborrat definitivament.</value>
+  </data>
+  <data name="VatIncludedExplanation" xml:space="preserve">
+    <value>Els preus del catàleg ja porten l'IVA inclòs. Un servei de 15,00 € es cobra a 15,00 €.</value>
+  </data>
+  <data name="VatExcludedExplanation" xml:space="preserve">
+    <value>Els preus del catàleg són sense IVA. Un servei de 15,00 € es cobra a 18,15 € amb el 21 %.</value>
+  </data>
+  <data name="NoBackupYet" xml:space="preserve">
+    <value>Encara no s'ha fet cap còpia.</value>
+  </data>
+  <data name="LastBackupLine" xml:space="preserve">
+    <value>Última còpia: {0} ({1})</value>
+  </data>
+  <data name="DataSaved" xml:space="preserve">
+    <value>Dades desades.</value>
+  </data>
+  <data name="VatPercentOutOfRange" xml:space="preserve">
+    <value>El percentatge d'IVA ha de ser un número entre 0 i 100.</value>
+  </data>
+  <data name="DefaultVatSaved" xml:space="preserve">
+    <value>L'IVA per defecte dels serveis i productes nous serà del {0}.</value>
+  </data>
+  <data name="VatModeSwitchToExcluded" xml:space="preserve">
+    <value>Un servei de 15,00 € passaria a cobrar-se a 18,15 € (15,00 € + IVA).</value>
+  </data>
+  <data name="VatModeSwitchToIncluded" xml:space="preserve">
+    <value>Un servei de 15,00 € passaria a cobrar-se a 15,00 €, amb l'IVA ja inclòs dins del preu.</value>
+  </data>
+  <data name="ConfirmVatModeTitle" xml:space="preserve">
+    <value>Canviar el mode d'IVA?</value>
+  </data>
+  <data name="ConfirmVatModeMessage" xml:space="preserve">
+    <value>Aquest canvi modifica el significat de tots els preus del catàleg. {0} Les vendes ja registrades no es veuran afectades.</value>
+  </data>
+  <data name="UnderstoodChange" xml:space="preserve">
+    <value>Ho entenc, canviar</value>
+  </data>
+  <data name="VatModeSaved" xml:space="preserve">
+    <value>Mode d'IVA desat. Les vendes noves el faran servir; les ja registrades no canvien.</value>
+  </data>
+  <data name="DefaultDurationInvalid" xml:space="preserve">
+    <value>La durada per defecte ha de ser un número de minuts més gran que zero.</value>
+  </data>
+  <data name="ScheduleSavedAllClosed" xml:space="preserve">
+    <value>Horari desat. Amb tots els dies tancats, l'agenda no sabrà quan obres.</value>
+  </data>
+  <data name="ScheduleSaved" xml:space="preserve">
+    <value>Horari desat. L'agenda ja el fa servir.</value>
+  </data>
+  <data name="BackupHourInvalid" xml:space="preserve">
+    <value>L'hora de la còpia ha de tenir la forma 20:00.</value>
+  </data>
+  <data name="KeepAtLeastOneBackup" xml:space="preserve">
+    <value>Cal conservar com a mínim una còpia.</value>
+  </data>
+  <data name="BackupDoneTitle" xml:space="preserve">
+    <value>Còpia feta</value>
+  </data>
+  <data name="BackupDoneMessage" xml:space="preserve">
+    <value>S'ha creat la còpia de seguretat del {0}.</value>
+  </data>
+  <data name="BackupRestoredReopen" xml:space="preserve">
+    <value>S'han recuperat les dades de la còpia. Tanca i torna a obrir l'aplicació perquè tot es llegeixi de nou.</value>
+  </data>
+  <data name="DeleteMovementTitle" xml:space="preserve">
+    <value>Eliminar moviment?</value>
+  </data>
+  <data name="DeleteMovementMessage" xml:space="preserve">
+    <value>S'eliminarà el moviment de {0}.</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactiva</value>
+  </data>
+  <data name="MarkInactive" xml:space="preserve">
+    <value>Marcar inactiva</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Reactivar</value>
+  </data>
+  <data name="DeleteWorkerTitle" xml:space="preserve">
+    <value>Eliminar treballadora?</value>
+  </data>
+  <data name="DeleteWorkerMessage" xml:space="preserve">
+    <value>S'eliminarà «{0}» i el seu horari.
+
+Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per no perdre l'historial. En tots dos casos deixarà de sortir a l'hora d'assignar cites i vendes.</value>
+  </data>
+  <data name="WorkerDeactivated" xml:space="preserve">
+    <value>«{0}» té cites o vendes registrades, així que s'ha marcat com a inactiva en lloc d'eliminar-se. L'historial es manté i ja no es podrà assignar.</value>
+  </data>
+  <data name="WorkerDeleted" xml:space="preserve">
+    <value>«{0}» s'ha eliminat.</value>
+  </data>
+  <data name="DayNotWorking" xml:space="preserve">
+    <value>{0}: no treballa</value>
+  </data>
+  <data name="DayScheduleCell" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="ScheduleAndJoiner" xml:space="preserve">
+    <value> i </value>
+  </data>
+  <data name="WithWorker" xml:space="preserve">
+    <value>Amb {0}</value>
+  </data>
+  <data name="ThisAppointment" xml:space="preserve">
+    <value>Aquesta cita</value>
+  </data>
+  <data name="NewAppointmentAtTime" xml:space="preserve">
+    <value>{0} · Nova cita</value>
+  </data>
+  <data name="WeekRangeSameMonth" xml:space="preserve">
+    <value>{0} – {1} de {2}</value>
+  </data>
+  <data name="WeekRangeAcrossMonths" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="LongDateFormat" xml:space="preserve">
+    <value>dddd, d MMMM 'de' yyyy</value>
+  </data>
+  <data name="DayMonthFormat" xml:space="preserve">
+    <value>dddd d 'de' MMMM</value>
+  </data>
+  <data name="UnexpectedErrorTitle" xml:space="preserve">
+    <value>No s'ha pogut completar l'operació</value>
+  </data>
+  <data name="UnexpectedErrorMessage" xml:space="preserve">
+    <value>S'ha produït un error inesperat. L'operació no s'ha pogut completar, però les dades ja guardades no s'han vist afectades.</value>
+  </data>
+  <data name="DatabaseUnreadableTitle" xml:space="preserve">
+    <value>No s'han pogut obrir les dades</value>
+  </data>
+  <data name="DatabaseUnreadableMessage" xml:space="preserve">
+    <value>El fitxer de dades no es pot llegir. Pot ser que estigui malmès o que s'hagi mogut de lloc.</value>
+  </data>
+  <data name="FaqSaleRegisterQuestion" xml:space="preserve">
+    <value>Com registro una venda?</value>
+  </data>
+  <data name="FaqSaleRegisterAnswer" xml:space="preserve">
+    <value>Ves a Vendes o a l'Inici i prem «+ Nova venda». Tria el client, afegeix les línies (servei, producte o un concepte lliure) i el mètode de pagament, i prem «Cobrar».</value>
+  </data>
+  <data name="FaqSaleEditQuestion" xml:space="preserve">
+    <value>Com edito o anul·lo una venda?</value>
+  </data>
+  <data name="FaqSaleEditAnswer" xml:space="preserve">
+    <value>A la llista de vendes, prem «Editar» per canviar-ne les dades, o «Anul·lar» per invalidar-la sense esborrar-la. Una venda anul·lada queda visible a l'historial però no compta als totals.</value>
+  </data>
+  <data name="FaqSaleCustomLineQuestion" xml:space="preserve">
+    <value>Com afegeixo un concepte personalitzat a una venda?</value>
+  </data>
+  <data name="FaqSaleCustomLineAnswer" xml:space="preserve">
+    <value>Dins del diàleg de venda, prem «+ Concepte lliure» i escriu la descripció i el preu a mà.</value>
+  </data>
+  <data name="FaqAppointmentCreateQuestion" xml:space="preserve">
+    <value>Com creo una cita?</value>
+  </data>
+  <data name="FaqAppointmentCreateAnswer" xml:space="preserve">
+    <value>A l'Agenda o a l'Inici, prem «+ Nova cita». Indica el client (o un nom de convidat), la data, l'hora i, opcionalment, el servei i la treballadora.</value>
+  </data>
+  <data name="FaqAppointmentCompleteQuestion" xml:space="preserve">
+    <value>Com marco una cita com a realitzada?</value>
+  </data>
+  <data name="FaqAppointmentCompleteAnswer" xml:space="preserve">
+    <value>A la taula de cites, cada fila pendent té els botons Realitzada, Cancel·lada i No assistida.</value>
+  </data>
+  <data name="FaqNoShowQuestion" xml:space="preserve">
+    <value>Què vol dir «No assistida»?</value>
+  </data>
+  <data name="FaqNoShowAnswer" xml:space="preserve">
+    <value>Que el client no s'ha presentat a la cita. No genera cap venda ni compta com a visita als indicadors del client.</value>
+  </data>
+  <data name="FaqClientNewQuestion" xml:space="preserve">
+    <value>Com afegeixo un client nou?</value>
+  </data>
+  <data name="FaqClientNewAnswer" xml:space="preserve">
+    <value>A Clients, prem «+ Nou client» i omple el nom i el mòbil, que són els únics camps obligatoris.</value>
+  </data>
+  <data name="FaqClientHistoryQuestion" xml:space="preserve">
+    <value>Com consulto l'historial d'un client?</value>
+  </data>
+  <data name="FaqClientHistoryAnswer" xml:space="preserve">
+    <value>A la llista de clients, prem «Fitxa» per veure les seves dades, indicadors i l'historial complet de cites i vendes.</value>
+  </data>
+  <data name="FaqServiceEditQuestion" xml:space="preserve">
+    <value>Com afegeixo o modifico un servei?</value>
+  </data>
+  <data name="FaqServiceEditAnswer" xml:space="preserve">
+    <value>A Catàleg, al bloc Serveis, prem «+ Nou servei» o «Editar» a la fila que vulguis canviar.</value>
+  </data>
+  <data name="FaqProductEditQuestion" xml:space="preserve">
+    <value>Com afegeixo o modifico un producte?</value>
+  </data>
+  <data name="FaqProductEditAnswer" xml:space="preserve">
+    <value>Igual que els serveis, però al bloc Productes de la mateixa pàgina de Catàleg.</value>
+  </data>
+  <data name="FaqMovementQuestion" xml:space="preserve">
+    <value>Com registro una entrada o sortida de caixa?</value>
+  </data>
+  <data name="FaqMovementAnswer" xml:space="preserve">
+    <value>A Caixa, prem «+ Entrada» o «+ Sortida», indica l'import, el mètode de pagament i el concepte.</value>
+  </data>
+  <data name="FaqBackupQuestion" xml:space="preserve">
+    <value>Com faig una còpia de seguretat?</value>
+  </data>
+  <data name="FaqBackupAnswer" xml:space="preserve">
+    <value>A Configuració, bloc «Còpies de seguretat», prem «Fer còpia ara». L'aplicació també en fa una automàticament cada dia.</value>
+  </data>
+  <data name="FaqRestoreQuestion" xml:space="preserve">
+    <value>Com recupero una còpia de seguretat?</value>
+  </data>
+  <data name="FaqRestoreAnswer" xml:space="preserve">
+    <value>A Configuració, prem «Restaurar còpia», tria-la de la llista i confirma. Abans de restaurar, l'estat actual es guarda igualment per si cal desfer-ho.</value>
+  </data>
+  <data name="FaqWorkerNewQuestion" xml:space="preserve">
+    <value>Com afegeixo una treballadora?</value>
+  </data>
+  <data name="FaqWorkerNewAnswer" xml:space="preserve">
+    <value>A Treballadores, prem «+ Nova treballadora». Indica el nom, tria-li un color per distingir-la a l'agenda i marca els dies i les hores que treballa. Cal com a mínim un dia amb horari.</value>
+  </data>
+  <data name="FaqWorkerHolidayQuestion" xml:space="preserve">
+    <value>Què passa si una treballadora se'n va de vacances?</value>
+  </data>
+  <data name="FaqWorkerHolidayAnswer" xml:space="preserve">
+    <value>Prem «Marcar inactiva». Conserva l'horari i tot l'historial, però deixa de comptar quan l'agenda mira si queda algú lliure. Quan torni, «Reactivar» ho desfà. No es poden eliminar treballadores, perquè es perdria l'historial de vendes que tenen.</value>
+  </data>
+  <data name="FaqVatIncludedQuestion" xml:space="preserve">
+    <value>Què vol dir «preus amb IVA inclòs»?</value>
+  </data>
+  <data name="FaqVatIncludedAnswer" xml:space="preserve">
+    <value>Que el preu que escrius al catàleg és el que cobres. Si tries «preus sense IVA», l'IVA se suma a sobre en cobrar. Canviar-ho no toca cap venda ja registrada.</value>
+  </data>
+  <data name="FaqClosedDayQuestion" xml:space="preserve">
+    <value>Com marco un festiu o unes vacances?</value>
+  </data>
+  <data name="FaqClosedDayAnswer" xml:space="preserve">
+    <value>A Configuració, bloc «Dies tancats», tria la data, escriu el motiu i prem «Marcar tancat». L'agenda mostrarà el dia atenuat, però et deixarà apuntar-hi cites igualment.</value>
+  </data>
+  <data name="FaqExportQuestion" xml:space="preserve">
+    <value>Com exporto les dades per a l'assessoria?</value>
+  </data>
+  <data name="FaqExportAnswer" xml:space="preserve">
+    <value>A Vendes, Caixa o Configuració, prem «Exportar període», indica les dates i tria la carpeta on desar els dos fitxers (vendes i IVA).</value>
+  </data>
+  <data name="ExportSalesHeader" xml:space="preserve">
+    <value>data;hora;client;treballadora;conceptes;metode_pagament;base;iva;total</value>
+  </data>
+  <data name="ExportVatHeader" xml:space="preserve">
+    <value>tipus_iva;base;quota;total</value>
+  </data>
+  <data name="ClosedDayFormat" xml:space="preserve">
+    <value>Dia tancat: {0}</value>
+  </data>
+  <data name="EmailFormat" xml:space="preserve">
+    <value>Correu: {0}</value>
+  </data>
+</root>

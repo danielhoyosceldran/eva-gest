@@ -11,13 +11,13 @@
 
     <!-- Single accent, from the blue of the barber pole.
          Dark enough for white text on top (8.72:1) -->
-    <Color x:Key="BlauColor">#1E40AF</Color>
-    <Color x:Key="BlauFoscColor">#15308C</Color>
-    <Color x:Key="BlauClarColor">#7FA0F0</Color>
+    <Color x:Key="BlueColor">#1E40AF</Color>
+    <Color x:Key="DarkBlueColor">#15308C</Color>
+    <Color x:Key="LightBlueColor">#7FA0F0</Color>
 
     <!-- Barber pole red. Identity only: the stripe in the sidebar header.
          Never used for data, so it cannot be mistaken for a status. -->
-    <Color x:Key="VermellPalColor">#C8102E</Color>
+    <Color x:Key="PaleRedColor">#C8102E</Color>
 
     <SolidColorBrush x:Key="NavyBrush" Color="{StaticResource NavyColor}" />
     <SolidColorBrush x:Key="InkBrush" Color="{StaticResource InkColor}" />
@@ -25,10 +25,10 @@
     <SolidColorBrush x:Key="PaperBrush" Color="{StaticResource PaperColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
     <SolidColorBrush x:Key="LineBrush" Color="{StaticResource LineColor}" />
-    <SolidColorBrush x:Key="BlauBrush" Color="{StaticResource BlauColor}" />
-    <SolidColorBrush x:Key="BlauFoscBrush" Color="{StaticResource BlauFoscColor}" />
-    <SolidColorBrush x:Key="BlauClarBrush" Color="{StaticResource BlauClarColor}" />
-    <SolidColorBrush x:Key="VermellPalBrush" Color="{StaticResource VermellPalColor}" />
+    <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" />
+    <SolidColorBrush x:Key="DarkBlueBrush" Color="{StaticResource DarkBlueColor}" />
+    <SolidColorBrush x:Key="LightBlueBrush" Color="{StaticResource LightBlueColor}" />
+    <SolidColorBrush x:Key="PaleRedBrush" Color="{StaticResource PaleRedColor}" />
 
     <!-- Sidebar text -->
     <SolidColorBrush x:Key="NavTextBrush" Color="#C3CBD4" />
@@ -37,12 +37,12 @@
 
     <!-- Status badges: tinted background + dark text. Never colour alone: the badge
          always shows its label as text, so meaning survives colour blindness. -->
-    <SolidColorBrush x:Key="PendentBgBrush" Color="#FDF0D5" />
-    <SolidColorBrush x:Key="PendentFgBrush" Color="#8A5A00" />
-    <SolidColorBrush x:Key="RealitzadaBgBrush" Color="#E3F3E6" />
-    <SolidColorBrush x:Key="RealitzadaFgBrush" Color="#1F6B3A" />
-    <SolidColorBrush x:Key="CancelladaBgBrush" Color="#FBE9E7" />
-    <SolidColorBrush x:Key="CancelladaFgBrush" Color="#A32B1C" />
+    <SolidColorBrush x:Key="PendingBgBrush" Color="#FDF0D5" />
+    <SolidColorBrush x:Key="PendingFgBrush" Color="#8A5A00" />
+    <SolidColorBrush x:Key="CompletedBgBrush" Color="#E3F3E6" />
+    <SolidColorBrush x:Key="CompletedFgBrush" Color="#1F6B3A" />
+    <SolidColorBrush x:Key="CancelledBgBrush" Color="#FBE9E7" />
+    <SolidColorBrush x:Key="CancelledFgBrush" Color="#A32B1C" />
     <SolidColorBrush x:Key="NeutralBgBrush" Color="#ECEEF0" />
     <SolidColorBrush x:Key="NeutralFgBrush" Color="#455160" />
 
@@ -51,6 +51,6 @@
     <SolidColorBrush x:Key="DangerBgBrush" Color="#FBE9E7" />
 
     <!-- Inline warnings inside dialogs (overlap, out of hours, guest client) -->
-    <SolidColorBrush x:Key="AvisBgBrush" Color="#FDF0D5" />
-    <SolidColorBrush x:Key="AvisBorderBrush" Color="#E3C77A" />
+    <SolidColorBrush x:Key="NoticeBgBrush" Color="#FDF0D5" />
+    <SolidColorBrush x:Key="NoticeBorderBrush" Color="#E3C77A" />
 </ResourceDictionary>

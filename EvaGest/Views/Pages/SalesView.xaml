@@ -1,0 +1,175 @@
+<UserControl x:Class="EvaGest.Views.Pages.SalesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             Background="{StaticResource PaperBrush}">
+    <Grid Margin="{StaticResource PagePad}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                <Button Content="{x:Static t:Texts.ExportPeriod}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ExportPeriodCommand}" />
+                <Button Content="{x:Static t:Texts.NewSaleButton}" Style="{StaticResource PrimaryButton}" Margin="12,0,0,0"
+                        Command="{Binding NewSaleCommand}" />
+            </StackPanel>
+
+            <!-- Quiet note under the title: says when "eliminar" only cancelled the sale (RF-10) -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2"
+                    Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,8,0,0"
+                    Visibility="{Binding Notice, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Style="{StaticResource DataLabel}" />
+            </Border>
+        </Grid>
+
+        <!-- Filters (RF-15). Every picker allows an empty selection, meaning "all".
+             One row of equal cells that stretches to the page width -->
+        <Border Grid.Row="1" Style="{StaticResource DataCard}" Margin="0,0,0,12">
+            <UniformGrid Rows="1">
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.From}" Style="{StaticResource DataLabel}" />
+                    <DatePicker HorizontalAlignment="Stretch"
+                                SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" />
+                </StackPanel>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.To}" Style="{StaticResource DataLabel}" />
+                    <DatePicker HorizontalAlignment="Stretch"
+                                SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" />
+                </StackPanel>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterClients}"
+                              SelectedItem="{Binding Client}" DisplayMemberPath="Name" />
+                </StackPanel>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.Service}" Style="{StaticResource DataLabel}" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterServices}"
+                              SelectedItem="{Binding Service}" DisplayMemberPath="Name" />
+                </StackPanel>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.Product}" Style="{StaticResource DataLabel}" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterProducts}"
+                              SelectedItem="{Binding Product}" DisplayMemberPath="Name" />
+                </StackPanel>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.Payment}" Style="{StaticResource DataLabel}" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterMethods}"
+                              SelectedItem="{Binding PaymentMethod}" DisplayMemberPath="Name" />
+                </StackPanel>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.Worker}" Style="{StaticResource DataLabel}" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterWorkers}"
+                              SelectedItem="{Binding Worker}" DisplayMemberPath="Name" />
+                </StackPanel>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="{x:Static t:Texts.Status}" Style="{StaticResource DataLabel}" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterStatuses}"
+                              SelectedItem="{Binding Status}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource LabelConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <Button Content="{x:Static t:Texts.ClearFilters}" Style="{StaticResource SecondaryButton}"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Padding="8,0"
+                        Command="{Binding ClearFiltersCommand}" />
+            </UniformGrid>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource DataCard}" Padding="0">
+            <Grid>
+                <DataGrid ItemsSource="{Binding Sales}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0"
+                          Visibility="{Binding HasNoResults, Converter={StaticResource InverseVisibilityConverter}}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding DateText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Client}" Binding="{Binding ClientText}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Worker}" Binding="{Binding WorkerText}" Width="130" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding ConceptText}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Base}" Binding="{Binding BaseText}" Width="95" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Vat}" Binding="{Binding VatText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Total}" Binding="{Binding TotalText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Payment}" Binding="{Binding MethodText}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Status}" Binding="{Binding StatusText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTemplateColumn Header="" Width="300">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditSaleCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Sale}" />
+                                        <!-- Only an active sale can be cancelled: doing it twice
+                                             would suggest a second, different effect -->
+                                        <Button Content="{x:Static t:Texts.Void}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Foreground="{StaticResource DangerBrush}"
+                                                Visibility="{Binding CanVoid, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                Command="{Binding DataContext.VoidSaleCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Sale}" />
+                                        <!-- On an active sale this only cancels it and says so;
+                                             on an already cancelled one it wipes it for good -->
+                                        <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.DeleteSaleCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Sale}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24"
+                            Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{x:Static t:Texts.NoSaleMatchesFilters}"
+                               Style="{StaticResource DataLabel}" HorizontalAlignment="Center" />
+                    <Button Content="{x:Static t:Texts.ClearFilters}" Style="{StaticResource SecondaryButton}"
+                            HorizontalAlignment="Center" Margin="0,12,0,0"
+                            Command="{Binding ClearFiltersCommand}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Footer totals cover only the ACTIVE sales (pantalles 2.6) -->
+        <Border Grid.Row="3" Style="{StaticResource DataCard}" Margin="0,12,0,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource DataLabel}" VerticalAlignment="Center"
+                           Text="{Binding ActiveCount, StringFormat={}{0} vendes actives}" />
+                <TextBlock Text="{x:Static t:Texts.BaseWithColon}" Style="{StaticResource DataLabel}" Margin="24,0,6,0" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding TotalBaseText}" VerticalAlignment="Center"
+                           FontFamily="{StaticResource FontUi}" FontSize="{StaticResource FontSizeBody}"
+                           Foreground="{StaticResource InkBrush}" />
+                <TextBlock Text="{x:Static t:Texts.VatWithColon}" Style="{StaticResource DataLabel}" Margin="24,0,6,0" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding TotalVatText}" VerticalAlignment="Center"
+                           FontFamily="{StaticResource FontUi}" FontSize="{StaticResource FontSizeBody}"
+                           Foreground="{StaticResource InkBrush}" />
+                <TextBlock Text="{x:Static t:Texts.TotalWithColon}" Style="{StaticResource DataLabel}" Margin="24,0,6,0" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding TotalTotalText}" VerticalAlignment="Center" FontWeight="SemiBold"
+                           FontFamily="{StaticResource FontUi}" FontSize="{StaticResource FontSizeSubhead}"
+                           Foreground="{StaticResource InkBrush}" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

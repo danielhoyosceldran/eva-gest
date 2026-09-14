@@ -1,0 +1,158 @@
+<UserControl x:Class="EvaGest.Views.Pages.AgendaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             Background="{StaticResource PaperBrush}">
+    <Grid Margin="{StaticResource PagePad}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+
+            <!-- Quiet note: mostly why an appointment with a sale was not deleted -->
+            <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding Notice, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Style="{StaticResource DataLabel}" />
+            </Border>
+        </StackPanel>
+
+        <!-- Week header -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="{x:Static t:Texts.PreviousWeek}" Style="{StaticResource SecondaryButton}"
+                    Command="{Binding Grid.WeekPreviousCommand}" />
+            <TextBlock Grid.Column="1" Text="{Binding Grid.RangeText}" Style="{StaticResource Subtitle}"
+                       Margin="16,0" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <Button Grid.Column="2" Content="{x:Static t:Texts.NextWeek}" Style="{StaticResource SecondaryButton}"
+                    Command="{Binding Grid.WeekNextCommand}" Margin="0,0,12,0" />
+            <Button Grid.Column="3" Content="{x:Static t:Texts.ThisWeek}" Style="{StaticResource SecondaryButton}"
+                    Command="{Binding Grid.ThisWeekCommand}" Margin="0,0,12,0" />
+            <Button Grid.Column="4" Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
+                    Command="{Binding NewAppointmentCommand}" />
+        </Grid>
+
+        <!-- The week itself is the shared time grid: full size here, embedded in the
+             cita dialog as the hour picker. Click an empty slot to book there, click an
+             appointment to edit it. -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                    CornerRadius="{StaticResource SurfaceRadius}" ClipToBounds="True">
+                <ContentControl Content="{Binding Grid}" />
+            </Border>
+
+            <!-- Day detail (pantalles 2.2): opens from a column header, and shows the
+                 status buttons the compact grid cards keep hidden until hover. -->
+            <Border Grid.Column="1" Width="400" Margin="16,0,0,0"
+                    Style="{StaticResource DataCard}"
+                    Visibility="{Binding HasSelectedDay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding SelectedDayText}"
+                                   Style="{StaticResource Subtitle}" TextWrapping="Wrap" />
+                        <Button Grid.Column="1" Content="{x:Static t:Texts.Close}" Style="{StaticResource SecondaryButton}"
+                                Padding="10,0" MinHeight="32" VerticalAlignment="Top"
+                                Command="{Binding CloseDetailCommand}" />
+                    </Grid>
+
+                    <TextBlock DockPanel.Dock="Top" Text="{x:Static t:Texts.NoAppointmentsThisDay}"
+                               Style="{StaticResource DataLabel}" TextWrapping="Wrap"
+                               Visibility="{Binding DayWithoutAppointments, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding DayAppointments}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,0,1"
+                                            Padding="0,10">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding TimeText}" FontWeight="SemiBold"
+                                                           FontFamily="{StaticResource FontUi}"
+                                                           FontSize="{StaticResource FontSizeBody}"
+                                                           Foreground="{StaticResource InkBrush}" />
+                                                <TextBlock Text="{Binding DurationText}" Margin="8,0,0,0"
+                                                           Style="{StaticResource DataLabel}"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding StatusText}" Margin="12,0,0,0"
+                                                           Style="{StaticResource DataLabel}"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding ClientText}"
+                                                           FontFamily="{StaticResource FontUi}"
+                                                           FontSize="{StaticResource FontSizeBody}"
+                                                           Foreground="{StaticResource InkBrush}" />
+                                                <TextBlock Text="{x:Static t:Texts.NotRegistered}" Margin="6,0,0,0"
+                                                           Style="{StaticResource DataLabel}"
+                                                           VerticalAlignment="Center"
+                                                           Visibility="{Binding IsGuest, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                <TextBlock Text="{Binding ServiceText}" Style="{StaticResource DataLabel}" />
+                                                <Ellipse Width="8" Height="8" Margin="12,0,6,0"
+                                                         VerticalAlignment="Center" Fill="{Binding ColorHex}" />
+                                                <TextBlock Text="{Binding WorkerText}" Style="{StaticResource DataLabel}" />
+                                            </StackPanel>
+
+                                            <!-- Only a pending appointment still has a state to move to -->
+                                            <WrapPanel Margin="0,8,0,0"
+                                                       Visibility="{Binding IsPending, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Button Content="{x:Static t:Texts.Completed}" Style="{StaticResource SecondaryButton}"
+                                                        Padding="10,0" MinHeight="32" Margin="0,0,8,4"
+                                                        Command="{Binding DataContext.MarkCompletedCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding Appointment}" />
+                                                <Button Content="{x:Static t:Texts.Cancelled}" Style="{StaticResource SecondaryButton}"
+                                                        Padding="10,0" MinHeight="32" Margin="0,0,8,4"
+                                                        Command="{Binding DataContext.MarkCancelledCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding Appointment}" />
+                                                <Button Content="{x:Static t:Texts.NoShow}" Style="{StaticResource SecondaryButton}"
+                                                        Padding="10,0" MinHeight="32" Margin="0,0,0,4"
+                                                        Command="{Binding DataContext.MarkNoShowCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding Appointment}" />
+                                            </WrapPanel>
+
+                                            <!-- For the entries that should never have been
+                                                 booked. Available whatever the state: a wrong
+                                                 appointment is wrong once it is done too. -->
+                                            <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
+                                                    Padding="10,0" MinHeight="32" Margin="0,8,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Command="{Binding DataContext.DeleteAppointmentCommand,
+                                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Appointment}" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

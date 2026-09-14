@@ -1,0 +1,112 @@
+<UserControl x:Class="EvaGest.Views.Pages.ClientsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             Background="{StaticResource PaperBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource PagePad}">
+            <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="{x:Static t:Texts.SearchByNameOrMobile}" Margin="0,0,12,0" />
+                <Button Grid.Column="1" Content="{x:Static t:Texts.NewClientButton}" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding NewClientCommand}" />
+            </Grid>
+
+            <Border Style="{StaticResource DataCard}" Padding="0">
+                <DataGrid ItemsSource="{Binding Active}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Mobile}" Binding="{Binding Mobile}" Width="130" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <!-- Visits / Total spent / Last visit come from the aggregated indicators
+                             (RF-17), which ReportsService computes from Phase 8 on. Until then
+                             no made-up figures are shown. -->
+                        <DataGridTemplateColumn Header="" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{x:Static t:Texts.Record}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.OpenRecordCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.EditClientCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <ToggleButton x:Name="ToggleAsleep" IsChecked="{Binding ShowAsleep}"
+                          HorizontalAlignment="Left" Margin="0,20,0,10" Cursor="Hand">
+                <ToggleButton.Template>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="Transparent" Padding="0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <Path x:Name="Arrow" Data="M0,0 L4,4 L8,0" Stretch="None"
+                                      Stroke="{StaticResource InkMutedBrush}" StrokeThickness="1.5"
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                      VerticalAlignment="Center" Margin="0,0,8,0"
+                                      RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="0" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <TextBlock x:Name="Text" Text="{x:Static t:Texts.ShowSleepingClients}"
+                                           Foreground="{StaticResource InkMutedBrush}"
+                                           FontSize="{StaticResource FontSizeSubhead}"
+                                           TextDecorations="Underline" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Text" Property="Text" Value="Amagar clients adormits" />
+                                <Setter TargetName="Arrow" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </ToggleButton.Template>
+            </ToggleButton>
+
+            <Border Style="{StaticResource DataCard}" Padding="0"
+                    Visibility="{Binding ShowAsleep, Converter={StaticResource BoolToVisibilityConverter}}">
+                <DataGrid ItemsSource="{Binding Asleep}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Mobile}" Binding="{Binding Mobile}" Width="130" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTemplateColumn Header="" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="{x:Static t:Texts.Wake}" Style="{StaticResource SecondaryButton}"
+                                            HorizontalAlignment="Right" Padding="10,0" MinHeight="32"
+                                            Command="{Binding DataContext.WakeCommand,
+                                                      RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

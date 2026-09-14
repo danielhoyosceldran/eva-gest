@@ -1,61 +1,61 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EvaGest.Services;
-using EvaGest.ViewModels.Dialegs;
-using EvaGest.ViewModels.Pagines;
+using EvaGest.ViewModels.Dialogs;
+using EvaGest.ViewModels.Pages;
 
 namespace EvaGest.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    private readonly IDialogService _dialegs;
+    private readonly IDialogService _dialogs;
 
     [ObservableProperty]
-    private PaginaViewModelBase _paginaActual;
+    private PageViewModelBase _currentPage;
 
     // Kept alive for the session so navigating away and back does not lose state.
-    private readonly IniciViewModel _inici;
+    private readonly HomeViewModel _start;
     private readonly AgendaViewModel _agenda;
     private readonly ClientsViewModel _clients;
-    private readonly TreballadoresViewModel _treballadores;
-    private readonly CatalegViewModel _cataleg;
-    private readonly VendesViewModel _vendes;
-    private readonly CaixaViewModel _caixa;
-    private readonly InformesViewModel _informes;
-    private readonly ConfiguracioViewModel _configuracio;
+    private readonly WorkersViewModel _workers;
+    private readonly CatalogViewModel _catalog;
+    private readonly SalesViewModel _sales;
+    private readonly TillViewModel _till;
+    private readonly ReportsViewModel _reports;
+    private readonly SettingsViewModel _settings;
 
-    public MainWindowViewModel(IniciViewModel inici, CatalegViewModel cataleg, ClientsViewModel clients,
-        TreballadoresViewModel treballadores, AgendaViewModel agenda, VendesViewModel vendes,
-        CaixaViewModel caixa, InformesViewModel informes, ConfiguracioViewModel configuracio,
-        IDialogService dialegs)
+    public MainWindowViewModel(HomeViewModel start, CatalogViewModel catalog, ClientsViewModel clients,
+        WorkersViewModel workers, AgendaViewModel agenda, SalesViewModel sales,
+        TillViewModel till, ReportsViewModel reports, SettingsViewModel settings,
+        IDialogService dialogs)
     {
-        _inici = inici;
-        _cataleg = cataleg;
+        _start = start;
+        _catalog = catalog;
         _clients = clients;
-        _treballadores = treballadores;
+        _workers = workers;
         _agenda = agenda;
-        _vendes = vendes;
-        _caixa = caixa;
-        _informes = informes;
-        _configuracio = configuracio;
-        _dialegs = dialegs;
-        _paginaActual = _inici;
+        _sales = sales;
+        _till = till;
+        _reports = reports;
+        _settings = settings;
+        _dialogs = dialogs;
+        _currentPage = _start;
     }
 
-    [RelayCommand] private void NavegarInici() => PaginaActual = _inici;
-    [RelayCommand] private void NavegarAgenda() => PaginaActual = _agenda;
-    [RelayCommand] private void NavegarClients() => PaginaActual = _clients;
-    [RelayCommand] private void NavegarTreballadores() => PaginaActual = _treballadores;
-    [RelayCommand] private void NavegarCataleg() => PaginaActual = _cataleg;
-    [RelayCommand] private void NavegarVendes() => PaginaActual = _vendes;
-    [RelayCommand] private void NavegarCaixa() => PaginaActual = _caixa;
-    [RelayCommand] private void NavegarInformes() => PaginaActual = _informes;
-    [RelayCommand] private void NavegarConfiguracio() => PaginaActual = _configuracio;
+    [RelayCommand] private void NavigateHome() => CurrentPage = _start;
+    [RelayCommand] private void NavigateAgenda() => CurrentPage = _agenda;
+    [RelayCommand] private void NavigateClients() => CurrentPage = _clients;
+    [RelayCommand] private void NavigateWorkers() => CurrentPage = _workers;
+    [RelayCommand] private void NavigateCatalog() => CurrentPage = _catalog;
+    [RelayCommand] private void NavigateSales() => CurrentPage = _sales;
+    [RelayCommand] private void NavigateTill() => CurrentPage = _till;
+    [RelayCommand] private void NavigateReports() => CurrentPage = _reports;
+    [RelayCommand] private void NavigateSettings() => CurrentPage = _settings;
 
     [RelayCommand]
-    private async Task ObrirAjuda()
+    private async Task OpenHelp()
     {
-        var vm = new AjudaViewModel();
-        await _dialegs.MostrarDialeg(vm);
+        var vm = new HelpViewModel();
+        await _dialogs.ShowDialog(vm);
     }
 }

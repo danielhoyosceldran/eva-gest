@@ -2,7 +2,8 @@
 
 EvaGest is a local Windows desktop app (WPF + SQLite) for running a barbershop:
 appointments, clients, sales, till and reports. Single machine, no internet, no
-online booking. UI language is Catalan; there is no internationalisation.
+online booking. The interface is in Catalan or Spanish, chosen in the settings;
+the code that builds it is in English.
 
 The specification lives in [`plan/`](plan/). Those documents were written before
 the code and are the source of truth for *what* the app must do and *why* a
@@ -12,6 +13,31 @@ the document that defines them.
 
 The spec documents are written in Catalan. This index and `CLAUDE.md` are in
 English, to match the code comments.
+
+**The code is English, the spec is Catalan.** The identifiers were renamed from
+Catalan to English after the spec was written, so a document saying `Venda` is
+describing the class now called `Sale`. The mapping is the obvious one — the
+main terms are collected below.
+
+| Spec | Code | Spec | Code |
+|---|---|---|---|
+| Cita | `Appointment` | Caixa | `Till` |
+| Venda | `Sale` | Catàleg | `Catalog` |
+| VendaLinia | `SaleLine` | Informes | `Reports` |
+| VendaDesglossament | `SaleBreakdown` | Configuració | `Settings` |
+| Treballadora | `Worker` | Graella | `Grid` |
+| Servei | `Service` | Disponibilitat | `Availability` |
+| Producte | `Product` | IVA | `Vat` |
+| MetodePagament | `PaymentMethod` | Diners | `Money` |
+| MovimentCaixa | `CashMovement` | Inici | `Home` |
+| HorariBarberia | `ShopSchedule` | Fitxa | `Record` |
+| HorariTreballadora | `WorkerSchedule` | Avís | `Notice` |
+| DiaTancat | `ClosedDay` | Franja | `Interval` |
+
+Database tables and columns follow the same rename (`vendes` → `sales`,
+`nom_convidat` → `guest_name`), as do the enum members stored as text
+(`Pendent` → `Pending`, `Dl` → `Mon`) and the keys of the settings table.
+Migration `RenameToEnglish` moves an existing database across.
 
 ---
 
@@ -120,8 +146,8 @@ change to money, reports or the agenda touches one of them.
 
 4. **Canonical aggregation rule: a period's totals are always the sum of the
    values already stored on each sale — never recomputed from the lines.** The
-   two methods diverge, and the gap grows without bound. `CaixaService` and
-   `InformesService` may read `VendaLinies` only to count units and classify
+   two methods diverge, and the gap grows without bound. `TillService` and
+   `ReportsService` may read `SaleLines` only to count units and classify
    services vs. products, never to recompute fiscal amounts. *(requirements 6.4)*
 
 5. **Rounding is away-from-zero, never banker's.** `Math.Round(x,
@@ -140,3 +166,13 @@ Recorded here so they are not read as bugs:
   `DbContext` directly.
 - **Assertions use AwesomeAssertions**, the maintained fork, not
   FluentAssertions — see `pla-proves.md` §2.
+- **Code, schema and test names are English**, while the spec is Catalan — see
+  the table at the top of this page. Only what the user reads is translated.
+- **The interface has two languages**, Catalan and Spanish, where the spec
+  named Catalan only and ruled internationalisation out of scope. Both come
+  from `EvaGest/Resources/Texts*.resx`; the choice is `ConfigKeys.Language`,
+  read once at startup, so changing it asks for a restart.
+- **Constraint names in the database stay Catalan** (`pk_cites`,
+  `ck_cites_client_xor`, `fk_vendes_clients_client_id`). SQLite keeps them
+  inside the table's DDL text, so renaming them means rebuilding every table;
+  nothing in the code refers to them.

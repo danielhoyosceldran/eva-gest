@@ -5,10 +5,10 @@ using EvaGest.Models;
 namespace EvaGest.Services;
 
 /// <summary>
-/// Fase 9. The backup folder itself is the source of truth: each file's name encodes
+/// Phase 9. The backup folder itself is the source of truth: each file's name encodes
 /// its timestamp and whether it was automatic or manual, so no extra table is needed.
 /// </summary>
-public class BackupService(RutesApp rutes, IConfiguracioService configuracio) : IBackupService
+public class BackupService(AppPaths paths, ISettingsService settings) : IBackupService
 {
     // Millisecond precision matters: a restore always takes a safety copy right before
     // overwriting the database, and a manual backup can follow another within the same
@@ -17,101 +17,101 @@ public class BackupService(RutesApp rutes, IConfiguracioService configuracio) : 
 
     // Fallbacks only, for a database whose settings row is missing or unreadable.
     // The real values come from Configuració (esquema-bbdd 2.14).
-    private const int RetencioDeReserva = 15;
-    private static readonly TimeOnly HoraDeReserva = new(20, 0);
+    private const int FallbackRetention = 15;
+    private static readonly TimeOnly FallbackTime = new(20, 0);
 
-    public Task<List<CopiaSeguretat>> Llistar()
+    public Task<List<BackupInfo>> ListAll()
     {
-        Directory.CreateDirectory(rutes.CarpetaBackups);
+        Directory.CreateDirectory(paths.BackupsFolder);
 
-        var copies = Directory.GetFiles(rutes.CarpetaBackups, "*.db")
-            .Select(ALlegir)
+        var backups = Directory.GetFiles(paths.BackupsFolder, "*.db")
+            .Select(ReadBackup)
             .Where(c => c is not null)
             .Select(c => c!)
-            .OrderByDescending(c => c.Data)
+            .OrderByDescending(c => c.Date)
             .ToList();
 
-        return Task.FromResult(copies);
+        return Task.FromResult(backups);
     }
 
-    public async Task<CopiaSeguretat> FerCopiaManual() => await Copiar(esAutomatica: false);
+    public async Task<BackupInfo> MakeManualBackup() => await Copy(isAutomatic: false);
 
-    public async Task<CopiaSeguretat?> FerCopiaAutomaticaSiCal()
+    public async Task<BackupInfo?> RunAutomaticBackupIfDue()
     {
         // Checked at startup rather than by a timer, because the machine is usually off
         // at the configured hour (CU-11). Waiting for the hour to pass means the copy
         // lands on the first launch after it, which is the intended behaviour.
-        if (TimeOnly.FromDateTime(DateTime.Now) < await HoraDeCopia()) return null;
+        if (TimeOnly.FromDateTime(DateTime.Now) < await BackupTime()) return null;
 
-        var copies = await Llistar();
-        bool jaFetaAvui = copies.Any(c => c.EsAutomatica && c.Data.Date == DateTime.Today);
-        if (jaFetaAvui) return null;
+        var backups = await ListAll();
+        bool alreadyDoneToday = backups.Any(c => c.IsAutomatic && c.Date.Date == DateTime.Today);
+        if (alreadyDoneToday) return null;
 
-        var copia = await Copiar(esAutomatica: true);
+        var backupFile = await Copy(isAutomatic: true);
 
-        await configuracio.Guardar(ClausConfig.UltimaCopiaAutomatica,
-            DateOnly.FromDateTime(copia.Data).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        await settings.Save(ConfigKeys.LastAutomaticBackup,
+            DateOnly.FromDateTime(backupFile.Date).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
 
-        return copia;
+        return backupFile;
     }
 
-    public async Task NetejarAntigues()
+    public async Task DeleteOldBackups()
     {
-        int aConservar = Math.Max(1, await configuracio.ObtenirInt(
-            ClausConfig.BackupsAConservar, RetencioDeReserva));
+        int toKeep = Math.Max(1, await settings.GetInt(
+            ConfigKeys.BackupsToKeep, FallbackRetention));
 
-        var copies = await Llistar(); // newest first
-        foreach (var vella in copies.Skip(aConservar))
-            File.Delete(vella.Ruta);
+        var backups = await ListAll(); // newest first
+        foreach (var old in backups.Skip(toKeep))
+            File.Delete(old.Path);
     }
 
-    private async Task<TimeOnly> HoraDeCopia()
-        => TimeOnly.TryParse(await configuracio.Obtenir(ClausConfig.HoraBackup),
-                             CultureInfo.InvariantCulture, out var hora)
-            ? hora
-            : HoraDeReserva;
+    private async Task<TimeOnly> BackupTime()
+        => TimeOnly.TryParse(await settings.Get(ConfigKeys.BackupTime),
+                             CultureInfo.InvariantCulture, out var time)
+            ? time
+            : FallbackTime;
 
-    public async Task Restaurar(string rutaCopia)
+    public async Task Restore(string backupPath)
     {
         // Back up the CURRENT state first, so an accidental restore can still be
         // undone (CU-09b) — this must happen before the file is overwritten.
-        await Copiar(esAutomatica: false);
+        await Copy(isAutomatic: false);
 
-        File.Copy(rutaCopia, rutes.BaseDades, overwrite: true);
+        File.Copy(backupPath, paths.DbPath, overwrite: true);
 
         // The settings live inside the file that was just replaced, so anything cached
         // in memory now describes a database that no longer exists.
-        configuracio.InvalidarCache();
+        settings.InvalidateCache();
     }
 
-    private async Task<CopiaSeguretat> Copiar(bool esAutomatica)
+    private async Task<BackupInfo> Copy(bool isAutomatic)
     {
-        Directory.CreateDirectory(rutes.CarpetaBackups);
+        Directory.CreateDirectory(paths.BackupsFolder);
 
-        var ara = DateTime.Now;
-        string sufix = esAutomatica ? "auto" : "manual";
-        string nom = $"{ara.ToString(Format, CultureInfo.InvariantCulture)}_{sufix}.db";
-        string destinacio = Path.Combine(rutes.CarpetaBackups, nom);
+        var now = DateTime.Now;
+        string suffix = isAutomatic ? "auto" : "manual";
+        string name = $"{now.ToString(Format, CultureInfo.InvariantCulture)}_{suffix}.db";
+        string destination = Path.Combine(paths.BackupsFolder, name);
 
-        File.Copy(rutes.BaseDades, destinacio, overwrite: false);
-        await NetejarAntigues();
+        File.Copy(paths.DbPath, destination, overwrite: false);
+        await DeleteOldBackups();
 
-        return ALlegir(destinacio)!;
+        return ReadBackup(destination)!;
     }
 
-    private static CopiaSeguretat? ALlegir(string ruta)
+    private static BackupInfo? ReadBackup(string path)
     {
-        string nom = Path.GetFileNameWithoutExtension(ruta);
-        var parts = nom.Split('_');
+        string name = Path.GetFileNameWithoutExtension(path);
+        var parts = name.Split('_');
         if (parts.Length < 3) return null;
 
-        string dataText = $"{parts[0]}_{parts[1]}";
-        if (!DateTime.TryParseExact(dataText, Format, CultureInfo.InvariantCulture,
-                DateTimeStyles.None, out var data))
+        string dateText = $"{parts[0]}_{parts[1]}";
+        if (!DateTime.TryParseExact(dateText, Format, CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out var date))
             return null;
 
-        bool esAutomatica = parts[2] == "auto";
-        long mida = new FileInfo(ruta).Length;
-        return new CopiaSeguretat(ruta, data, esAutomatica, mida);
+        bool isAutomatic = parts[2] == "auto";
+        long size = new FileInfo(path).Length;
+        return new BackupInfo(path, date, isAutomatic, size);
     }
 }

@@ -1,0 +1,136 @@
+<UserControl x:Class="EvaGest.Views.Pages.TillView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:h="clr-namespace:EvaGest.Helpers"
+             xmlns:vm="clr-namespace:EvaGest.ViewModels.Pages"
+             Background="{StaticResource PaperBrush}">
+    <UserControl.Resources>
+        <h:EnumStringConverter x:Key="PeriodConverter" EnumType="{x:Type vm:TillPeriod}" />
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource PagePad}">
+            <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+
+            <!-- Period selector (pantalles 2.7) -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <ComboBox SelectedValue="{Binding Period, Converter={StaticResource PeriodConverter}}"
+                          SelectedValuePath="Tag" Width="180" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}">
+                    <ComboBoxItem Content="{x:Static t:Texts.Today}" Tag="Today" />
+                    <ComboBoxItem Content="{x:Static t:Texts.Yesterday}" Tag="Yesterday" />
+                    <ComboBoxItem Content="{x:Static t:Texts.ThisWeek}" Tag="ThisWeek" />
+                    <ComboBoxItem Content="{x:Static t:Texts.ThisMonth}" Tag="ThisMonth" />
+                    <ComboBoxItem Content="{x:Static t:Texts.PreviousMonth}" Tag="PreviousMonth" />
+                    <ComboBoxItem Content="{x:Static t:Texts.Custom}" Tag="Custom" />
+                </ComboBox>
+                <DatePicker SelectedDate="{Binding From}" Margin="16,0,0,0" FontSize="{StaticResource FontSizeInput}"
+                            IsEnabled="{Binding Period, Converter={StaticResource CustomToEnabledConverter}}" />
+                <DatePicker SelectedDate="{Binding To}" Margin="8,0,0,0" FontSize="{StaticResource FontSizeInput}"
+                            IsEnabled="{Binding Period, Converter={StaticResource CustomToEnabledConverter}}" />
+                <Button Content="{x:Static t:Texts.NewCashInButton}" Style="{StaticResource SecondaryButton}" Margin="24,0,0,0" Command="{Binding NewCashInCommand}" />
+                <Button Content="{x:Static t:Texts.NewCashOutButton}" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Command="{Binding NewCashOutCommand}" />
+            </StackPanel>
+
+            <!-- Summary cards: Vendes, Entrades, Sortides, Balanç (highlighted) -->
+            <UniformGrid Columns="4" Margin="0,0,0,16">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.NavSales}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding SalesText}" Style="{StaticResource Figure}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.CashInPlural}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding CashInText}" Style="{StaticResource Figure}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.CashOutPlural}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding CashOutText}" Style="{StaticResource Figure}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource HeroCard}">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.Balance}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding BalanceText}" Style="{StaticResource HeroFigure}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- VAT breakdown for the period -->
+            <TextBlock Text="{x:Static t:Texts.PeriodVatBreakdown}" Style="{StaticResource Subtitle}" />
+            <Border Style="{StaticResource DataCard}">
+                <StackPanel>
+                    <Grid Visibility="{Binding ShowRateBreakdown, Converter={StaticResource InverseVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static t:Texts.Base}" Style="{StaticResource DataLabel}" />
+                            <TextBlock Text="{Binding BaseText}" Style="{StaticResource Figure}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{x:Static t:Texts.Quota}" Style="{StaticResource DataLabel}" />
+                            <TextBlock Text="{Binding VatText}" Style="{StaticResource Figure}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static t:Texts.Total}" Style="{StaticResource DataLabel}" />
+                            <TextBlock Text="{Binding BalanceText}" Style="{StaticResource Figure}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding Summary.VatBreakdown}"
+                                  Visibility="{Binding ShowRateBreakdown, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding VatBp, StringFormat={}{0} bp}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding BaseCents, StringFormat={}{0:0.00}}" Style="{StaticResource TableFigure}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding VatCents, StringFormat={}{0:0.00}}" Style="{StaticResource TableFigure}" />
+                                    <TextBlock Grid.Column="3" Text="{Binding TotalCents, StringFormat={}{0:0.00}}" Style="{StaticResource TableFigure}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Movements table -->
+            <TextBlock Text="{x:Static t:Texts.Movements}" Style="{StaticResource Subtitle}" />
+            <Border Style="{StaticResource DataCard}" Padding="0">
+                <DataGrid ItemsSource="{Binding Movements}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding Date}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Type}" Binding="{Binding Type}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding Concept}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Method}" Binding="{Binding PaymentMethod.Name}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Amount}" Binding="{Binding SignedAmountCents, StringFormat={}{0:0.00}}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTemplateColumn Header="" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource SecondaryButton}"
+                                            HorizontalAlignment="Right" Padding="8,0" MinHeight="32"
+                                            Command="{Binding DataContext.DeleteCommand,
+                                                      RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

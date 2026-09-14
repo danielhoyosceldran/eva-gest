@@ -1,25 +1,25 @@
 namespace EvaGest.Services;
 
-public record CopiaSeguretat(string Ruta, DateTime Data, bool EsAutomatica, long BytesMida);
+public record BackupInfo(string Path, DateTime Date, bool IsAutomatic, long SizeBytes);
 
 public interface IBackupService
 {
-    Task<List<CopiaSeguretat>> Llistar();
+    Task<List<BackupInfo>> ListAll();
 
-    Task<CopiaSeguretat> FerCopiaManual();
+    Task<BackupInfo> MakeManualBackup();
 
     /// <summary>
     /// Runs the daily backup if it is due. Called at startup, because the machine may
     /// have been off at the configured hour (CU-11).
     /// </summary>
-    Task<CopiaSeguretat?> FerCopiaAutomaticaSiCal();
+    Task<BackupInfo?> RunAutomaticBackupIfDue();
 
     /// <summary>Deletes the oldest backups beyond the configured retention.</summary>
-    Task NetejarAntigues();
+    Task DeleteOldBackups();
 
     /// <summary>
     /// Restores a backup. Always backs up the CURRENT state first, so an accidental
     /// restore can still be undone (CU-09b).
     /// </summary>
-    Task Restaurar(string rutaCopia);
+    Task Restore(string backupPath);
 }

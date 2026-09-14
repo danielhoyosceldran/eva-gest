@@ -1,0 +1,90 @@
+using EvaGest.Data;
+using EvaGest.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace EvaGest.Services;
+
+public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillService
+{
+    public async Task<List<CashMovement>> GetByPeriod(DateOnly from, DateOnly to)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        return await db.CashMovements.AsNoTracking()
+            .Include(m => m.PaymentMethod)
+            .Where(m => m.Date >= from && m.Date <= to)
+            .OrderByDescending(m => m.Date)
+            .ToListAsync();
+    }
+
+    public async Task<TillSummary> Summary(DateOnly from, DateOnly to)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        // Cast to long before summing: SQLite SUM is 64-bit, and long avoids any risk
+        // of overflow on a very long period regardless of turnover.
+        long salesCents = await db.Sales
+            .Where(v => v.Status == SaleStatus.Active && v.Date >= from && v.Date <= to)
+            .SumAsync(v => (long)v.TotalCents);
+
+        long cashInCents = await db.CashMovements
+            .Where(m => m.Type == MovementType.In && m.Date >= from && m.Date <= to)
+            .SumAsync(m => (long)m.AmountCents);
+
+        long cashOutCents = await db.CashMovements
+            .Where(m => m.Type == MovementType.Out && m.Date >= from && m.Date <= to)
+            .SumAsync(m => (long)m.AmountCents);
+
+        // Per-rate breakdown straight from the frozen rows (never from SaleLines, Block B).
+        var byRate = await db.SaleBreakdowns
+            .Where(d => d.Sale.Status == SaleStatus.Active && d.Sale.Date >= from && d.Sale.Date <= to)
+            .GroupBy(d => d.VatBp)
+            .Select(g => new
+            {
+                VatBp = g.Key,
+                Base = g.Sum(x => (long)x.BaseCents),
+                Vat = g.Sum(x => (long)x.VatCents),
+                Total = g.Sum(x => (long)x.TotalCents)
+            })
+            .OrderBy(g => g.VatBp)
+            .ToListAsync();
+
+        long baseTotal = byRate.Sum(g => g.Base);
+        long vatTotal = byRate.Sum(g => g.Vat);
+
+        var breakdown = byRate
+            .Select(g => new RateBreakdown(g.VatBp, (int)g.Base, (int)g.Vat, (int)g.Total))
+            .ToList();
+
+        return new TillSummary(
+            SalesCents: salesCents,
+            CashInCents: cashInCents,
+            CashOutCents: cashOutCents,
+            BalanceCents: salesCents + cashInCents - cashOutCents,
+            BaseCents: baseTotal,
+            VatCents: vatTotal,
+            VatBreakdown: breakdown);
+    }
+
+    public async Task<int> Create(CashMovement movement)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        db.CashMovements.Add(movement);
+        await db.SaveChangesAsync();
+        return movement.Id;
+    }
+
+    public async Task Update(CashMovement movement)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        db.CashMovements.Update(movement);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task Delete(int movementId)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        var movement = await db.CashMovements.FirstAsync(m => m.Id == movementId);
+        db.CashMovements.Remove(movement);
+        await db.SaveChangesAsync();
+    }
+}

@@ -1,0 +1,164 @@
+<UserControl x:Class="EvaGest.Views.Pages.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             Background="{StaticResource PaperBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource PagePad}">
+            <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+
+            <!-- A) Overview -->
+            <TextBlock Text="{x:Static t:Texts.Overview}" Style="{StaticResource Subtitle}" />
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource DataCard}">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.SalesEvolution}" Style="{StaticResource DataLabel}" />
+                        <ItemsControl ItemsSource="{Binding Evolution}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Height="140" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Width="40" Margin="4,0" VerticalAlignment="Bottom">
+                                        <Border Height="{Binding HeightDip}" Background="{StaticResource BlueBrush}"
+                                                CornerRadius="2" VerticalAlignment="Bottom"
+                                                ToolTip="{Binding AmountText}" />
+                                        <TextBlock Text="{Binding Label}" FontSize="{StaticResource FontSizeSmall}"
+                                                   Foreground="{StaticResource InkMutedBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource HeroCard}">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.ClientOfTheMonth}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding ClientOfTheMonthText}" Style="{StaticResource Subtitle}"
+                                   TextWrapping="Wrap" Margin="0" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- B) Client rankings -->
+            <TextBlock Text="{x:Static t:Texts.ClientRankings}" Style="{StaticResource Subtitle}" />
+            <UniformGrid Columns="4" Margin="0,0,0,16">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.MostVisits}" Style="{StaticResource DataLabel}" />
+                        <ItemsControl ItemsSource="{Binding TopVisits}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="0,0,0,4">
+                                        <Run Text="{Binding Client.Name, Mode=OneWay}" />
+                                        <Run Text=" — " />
+                                        <Run Text="{Binding Visits, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.MostSpend}" Style="{StaticResource DataLabel}" />
+                        <ItemsControl ItemsSource="{Binding TopSpend}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Client.Name}" Margin="0,0,0,4" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.HighestAverage}" Style="{StaticResource DataLabel}" />
+                        <ItemsControl ItemsSource="{Binding TopAverage}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Client.Name}" Margin="0,0,0,4" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource DataCard}">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.NotSeenInAWhile}" Style="{StaticResource DataLabel}" />
+                        <ItemsControl ItemsSource="{Binding NotSeenRecently}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="0,0,0,4">
+                                        <Run Text="{Binding Client.Name, Mode=OneWay}" />
+                                        <Run Text=" — " />
+                                        <Run Text="{Binding DaysSince, Mode=OneWay}" />
+                                        <Run Text="{x:Static t:Texts.DaysSuffix}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Period selector shared by C and D -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <DatePicker SelectedDate="{Binding From}" FontSize="{StaticResource FontSizeInput}" />
+                <TextBlock Text=" – " VerticalAlignment="Center" Margin="8,0" />
+                <DatePicker SelectedDate="{Binding To}" FontSize="{StaticResource FontSizeInput}" />
+            </StackPanel>
+
+            <!-- C) Worker ranking -->
+            <TextBlock Text="{x:Static t:Texts.WorkerRanking}" Style="{StaticResource Subtitle}" />
+            <Border Style="{StaticResource DataCard}" Padding="0" Margin="0,0,0,16">
+                <DataGrid ItemsSource="{Binding WorkerRanking}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.SalesHandled}" Binding="{Binding SalesHandled}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.IncomeColumn}" Binding="{Binding IncomeCents, StringFormat={}{0:0.00}}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.WorkPercentColumn}" Binding="{Binding WorkPercentage, StringFormat={}{0:0.0}%, TargetNullValue=—}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- D) Detail per worker -->
+            <TextBlock Text="{x:Static t:Texts.WorkerDetail}" Style="{StaticResource Subtitle}" />
+            <ComboBox ItemsSource="{Binding Workers}" SelectedItem="{Binding SelectedWorker}"
+                      DisplayMemberPath="Name" Width="220" HorizontalAlignment="Left" Margin="0,0,0,12"
+                      FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+
+            <UniformGrid Columns="3" Margin="0,0,0,16">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.SalesHandled}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding SelectedDetail.SalesHandled}" Style="{StaticResource Figure}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.IncomeGenerated}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding SelectedDetail.IncomeCents, StringFormat={}{0:0.00} €}" Style="{StaticResource Figure}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource DataCard}">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static t:Texts.WorkPercentDone}" Style="{StaticResource DataLabel}" />
+                        <TextBlock Text="{Binding SelectedDetail.WorkPercentage, StringFormat={}{0:0.0} %, TargetNullValue=—}" Style="{StaticResource Figure}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

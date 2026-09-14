@@ -6,18 +6,18 @@
     <Thickness x:Key="PadTight">8</Thickness>
     <Thickness x:Key="PadBase">12</Thickness>
     <Thickness x:Key="PadCard">20</Thickness>
-    <Thickness x:Key="PadPagina">32,24,32,24</Thickness>
+    <Thickness x:Key="PagePad">32,24,32,24</Thickness>
 
     <!-- Touch targets: generous, because this is used in a hurry (RNF-03) -->
-    <sys:Double x:Key="AlcadaBoto">44</sys:Double>
-    <sys:Double x:Key="AlcadaBotoGran">64</sys:Double>
-    <sys:Double x:Key="AlcadaCamp">40</sys:Double>
-    <sys:Double x:Key="AlcadaFila">44</sys:Double>
-    <sys:Double x:Key="AmpladaNav">200</sys:Double>
+    <sys:Double x:Key="ButtonHeight">44</sys:Double>
+    <sys:Double x:Key="LargeButtonHeight">64</sys:Double>
+    <sys:Double x:Key="FieldHeight">40</sys:Double>
+    <sys:Double x:Key="RowHeight">44</sys:Double>
+    <sys:Double x:Key="NavWidth">200</sys:Double>
 
     <!-- Two radii only: 4 for controls, 8 for surfaces. Not one value everywhere. -->
-    <CornerRadius x:Key="RadiControl">4</CornerRadius>
-    <CornerRadius x:Key="RadiSuperficie">8</CornerRadius>
+    <CornerRadius x:Key="ControlRadius">4</CornerRadius>
+    <CornerRadius x:Key="SurfaceRadius">8</CornerRadius>
 
-    <sys:Double x:Key="GruixRegla">3</sys:Double>
+    <sys:Double x:Key="RulerThickness">3</sys:Double>
 </ResourceDictionary>

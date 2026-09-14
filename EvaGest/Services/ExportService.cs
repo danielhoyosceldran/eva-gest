@@ -3,97 +3,100 @@ using System.IO;
 using System.Text;
 using EvaGest.Data;
 using EvaGest.Models;
+using EvaGest.Resources;
 using Microsoft.EntityFrameworkCore;
 
 namespace EvaGest.Services;
 
 /// <summary>
-/// Fase 9. Writes the two CSV files the assessoria needs for Modelo 303, straight
-/// from the frozen Vendes / VendaDesglossaments rows (casos-us CU-08).
+/// Phase 9. Writes the two CSV rows the assessoria needs for Modelo 303, straight
+/// from the frozen Sales / SaleBreakdowns rows (casos-us CU-08).
 /// </summary>
-public class ExportService(IDbContextFactory<BarberiaDbContext> factory) : IExportService
+public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportService
 {
-    private static readonly CultureInfo Cultura = new("ca-ES");
+    /// <summary>The accountant's spreadsheet expects a comma decimal separator, in
+    /// either language, so the file format does not move with the interface.</summary>
+    private static readonly CultureInfo Culture = CultureInfo.GetCultureInfo("ca-ES");
 
-    public async Task ExportarVendes(DateOnly des, DateOnly fins, string carpetaDesti)
+    public async Task ExportSales(DateOnly from, DateOnly to, string destinationFolder)
     {
-        Directory.CreateDirectory(carpetaDesti);
-        string periode = $"{des:yyyyMMdd}-{fins:yyyyMMdd}";
+        Directory.CreateDirectory(destinationFolder);
+        string period = $"{from:yyyyMMdd}-{to:yyyyMMdd}";
 
         await using var db = await factory.CreateDbContextAsync();
 
-        var vendes = await db.Vendes.AsNoTracking()
-            .Where(v => v.Estat == EstatVenda.Activa && v.Data >= des && v.Data <= fins)
+        var sales = await db.Sales.AsNoTracking()
+            .Where(v => v.Status == SaleStatus.Active && v.Date >= from && v.Date <= to)
             .Include(v => v.Client)
-            .Include(v => v.Treballadora)
-            .Include(v => v.MetodePagament)
-            .Include(v => v.Linies)
-            .OrderBy(v => v.Data).ThenBy(v => v.Hora)
+            .Include(v => v.Worker)
+            .Include(v => v.PaymentMethod)
+            .Include(v => v.Lines)
+            .OrderBy(v => v.Date).ThenBy(v => v.Time)
             .ToListAsync();
 
-        await EscriureVendes(Path.Combine(carpetaDesti, $"vendes_{periode}.csv"), vendes);
+        await WriteSales(Path.Combine(destinationFolder, $"vendes_{period}.csv"), sales);
 
-        var desglossaments = await db.VendaDesglossaments.AsNoTracking()
-            .Where(d => d.Venda.Estat == EstatVenda.Activa && d.Venda.Data >= des && d.Venda.Data <= fins)
-            .GroupBy(d => d.IvaBp)
+        var breakdowns = await db.SaleBreakdowns.AsNoTracking()
+            .Where(d => d.Sale.Status == SaleStatus.Active && d.Sale.Date >= from && d.Sale.Date <= to)
+            .GroupBy(d => d.VatBp)
             .Select(g => new
             {
-                IvaBp = g.Key,
+                VatBp = g.Key,
                 Base = g.Sum(x => (long)x.BaseCents),
-                Iva = g.Sum(x => (long)x.IvaCents),
+                Vat = g.Sum(x => (long)x.VatCents),
                 Total = g.Sum(x => (long)x.TotalCents)
             })
-            .OrderBy(g => g.IvaBp)
+            .OrderBy(g => g.VatBp)
             .ToListAsync();
 
-        await EscriureIva(Path.Combine(carpetaDesti, $"iva_{periode}.csv"),
-            desglossaments.Select(d => (d.IvaBp, d.Base, d.Iva, d.Total)).ToList());
+        await WriteVat(Path.Combine(destinationFolder, $"iva_{period}.csv"),
+            breakdowns.Select(d => (d.VatBp, d.Base, d.Vat, d.Total)).ToList());
     }
 
-    private static async Task EscriureVendes(string ruta, List<Venda> vendes)
+    private static async Task WriteSales(string path, List<Sale> sales)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("data;hora;client;treballadora;conceptes;metode_pagament;base;iva;total");
+        sb.AppendLine(Texts.ExportSalesHeader);
 
-        foreach (var v in vendes)
+        foreach (var v in sales)
         {
-            string concepte = string.Join(" + ", v.Linies.Select(l => l.Descripcio));
+            string concept = string.Join(" + ", v.Lines.Select(l => l.Description));
             sb.AppendLine(string.Join(';',
-                v.Data.ToString("dd/MM/yyyy"),
-                v.Hora.ToString("HH:mm"),
-                Csv(v.NomMostrat),
-                Csv(v.Treballadora?.Nom ?? ""),
-                Csv(concepte),
-                Csv(v.MetodePagament.Nom),
-                Diners.FormatExport(v.BaseCents),
-                Diners.FormatExport(v.IvaCents),
-                Diners.FormatExport(v.TotalCents)));
+                v.Date.ToString("dd/MM/yyyy"),
+                v.Time.ToString("HH:mm"),
+                Csv(v.DisplayName),
+                Csv(v.Worker?.Name ?? ""),
+                Csv(concept),
+                Csv(v.PaymentMethod.Name),
+                Money.FormatExport(v.BaseCents),
+                Money.FormatExport(v.VatCents),
+                Money.FormatExport(v.TotalCents)));
         }
 
-        await File.WriteAllTextAsync(ruta, sb.ToString(), Encoding.UTF8);
+        await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
     }
 
-    private static async Task EscriureIva(string ruta, List<(int ivaBp, long baseCents, long ivaCents, long totalCents)> files)
+    private static async Task WriteVat(string path, List<(int vatBp, long baseCents, long vatCents, long totalCents)> rows)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("tipus_iva;base;quota;total");
+        sb.AppendLine(Texts.ExportVatHeader);
 
-        foreach (var f in files)
+        foreach (var f in rows)
         {
             sb.AppendLine(string.Join(';',
-                Percentatges.Format(f.ivaBp),
-                (f.baseCents / 100m).ToString("F2", Cultura),
-                (f.ivaCents / 100m).ToString("F2", Cultura),
-                (f.totalCents / 100m).ToString("F2", Cultura)));
+                Percentages.Format(f.vatBp),
+                (f.baseCents / 100m).ToString("F2", Culture),
+                (f.vatCents / 100m).ToString("F2", Culture),
+                (f.totalCents / 100m).ToString("F2", Culture)));
         }
 
-        await File.WriteAllTextAsync(ruta, sb.ToString(), Encoding.UTF8);
+        await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
     }
 
     /// <summary>Quotes a field only when it actually contains the separator, a quote
     /// or a newline — keeps the common case readable in a plain text editor.</summary>
-    private static string Csv(string valor)
-        => valor.Contains(';') || valor.Contains('"') || valor.Contains('\n')
-            ? $"\"{valor.Replace("\"", "\"\"")}\""
-            : valor;
+    private static string Csv(string value)
+        => value.Contains(';') || value.Contains('"') || value.Contains('\n')
+            ? $"\"{value.Replace("\"", "\"\"")}\""
+            : value;
 }

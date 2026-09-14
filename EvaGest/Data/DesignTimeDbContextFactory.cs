@@ -8,15 +8,15 @@ namespace EvaGest.Data;
 /// its DbContext through dependency injection instead (see App.xaml.cs).
 /// Without this class, `dotnet ef migrations add` cannot construct the context.
 /// </summary>
-public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<BarberiaDbContext>
+public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ShopDbContext>
 {
-    public BarberiaDbContext CreateDbContext(string[] args)
+    public ShopDbContext CreateDbContext(string[] args)
     {
-        var opcions = new DbContextOptionsBuilder<BarberiaDbContext>()
+        var options = new DbContextOptionsBuilder<ShopDbContext>()
             .UseSqlite("Data Source=disseny.db")   // never actually written to
             .UseSnakeCaseNamingConvention()
             .Options;
 
-        return new BarberiaDbContext(opcions);
+        return new ShopDbContext(options);
     }
 }

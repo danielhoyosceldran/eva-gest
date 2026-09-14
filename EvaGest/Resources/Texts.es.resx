@@ -1,0 +1,1298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Pending" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Realizada</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Cancelada</value>
+  </data>
+  <data name="CancelledPlural" xml:space="preserve">
+    <value>Canceladas</value>
+  </data>
+  <data name="NoShow" xml:space="preserve">
+    <value>No asistida</value>
+  </data>
+  <data name="NoShowPlural" xml:space="preserve">
+    <value>No asistidas</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Activa</value>
+  </data>
+  <data name="Voided" xml:space="preserve">
+    <value>Anulada</value>
+  </data>
+  <data name="CashIn" xml:space="preserve">
+    <value>Entrada</value>
+  </data>
+  <data name="CashOut" xml:space="preserve">
+    <value>Salida</value>
+  </data>
+  <data name="CashInPlural" xml:space="preserve">
+    <value>Entradas</value>
+  </data>
+  <data name="CashOutPlural" xml:space="preserve">
+    <value>Salidas</value>
+  </data>
+  <data name="PricesVatIncluded" xml:space="preserve">
+    <value>Precios con IVA incluido</value>
+  </data>
+  <data name="PricesVatExcluded" xml:space="preserve">
+    <value>Precios sin IVA</value>
+  </data>
+  <data name="Service" xml:space="preserve">
+    <value>Servicio</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Servicios</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Producto</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>Productos</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Otros</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Lunes</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Martes</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Miércoles</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Jueves</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Viernes</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Sábado</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Domingo</value>
+  </data>
+  <data name="MondayShort" xml:space="preserve">
+    <value>Lu</value>
+  </data>
+  <data name="TuesdayShort" xml:space="preserve">
+    <value>Ma</value>
+  </data>
+  <data name="WednesdayShort" xml:space="preserve">
+    <value>Mi</value>
+  </data>
+  <data name="ThursdayShort" xml:space="preserve">
+    <value>Ju</value>
+  </data>
+  <data name="FridayShort" xml:space="preserve">
+    <value>Vi</value>
+  </data>
+  <data name="SaturdayShort" xml:space="preserve">
+    <value>Sá</value>
+  </data>
+  <data name="SundayShort" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="NavHome" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="NavAgenda" xml:space="preserve">
+    <value>Agenda</value>
+  </data>
+  <data name="NavClients" xml:space="preserve">
+    <value>Clientes</value>
+  </data>
+  <data name="NavWorkers" xml:space="preserve">
+    <value>Trabajadoras</value>
+  </data>
+  <data name="NavCatalog" xml:space="preserve">
+    <value>Catálogo</value>
+  </data>
+  <data name="NavSales" xml:space="preserve">
+    <value>Ventas</value>
+  </data>
+  <data name="NavTill" xml:space="preserve">
+    <value>Caja</value>
+  </data>
+  <data name="NavReports" xml:space="preserve">
+    <value>Informes</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="NavHelp" xml:space="preserve">
+    <value>Ayuda</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="SaveAlt" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Restaurar</value>
+  </data>
+  <data name="ToggleActive" xml:space="preserve">
+    <value>Activar/Desactivar</value>
+  </data>
+  <data name="Record" xml:space="preserve">
+    <value>Ficha</value>
+  </data>
+  <data name="Wake" xml:space="preserve">
+    <value>Despertar</value>
+  </data>
+  <data name="Asleep" xml:space="preserve">
+    <value>Dormido</value>
+  </data>
+  <data name="RegisterNow" xml:space="preserve">
+    <value>Registrarlo ahora</value>
+  </data>
+  <data name="SaveAnyway" xml:space="preserve">
+    <value>Guardarlo igualmente</value>
+  </data>
+  <data name="ClearFilters" xml:space="preserve">
+    <value>Limpiar filtros</value>
+  </data>
+  <data name="ExportPeriod" xml:space="preserve">
+    <value>Exportar periodo</value>
+  </data>
+  <data name="VoidSale" xml:space="preserve">
+    <value>Anular venta</value>
+  </data>
+  <data name="Void" xml:space="preserve">
+    <value>Anular</value>
+  </data>
+  <data name="Charge" xml:space="preserve">
+    <value>Cobrar</value>
+  </data>
+  <data name="BackToPending" xml:space="preserve">
+    <value>Volver a pendiente</value>
+  </data>
+  <data name="NewClientButton" xml:space="preserve">
+    <value>+ Nuevo cliente</value>
+  </data>
+  <data name="NewAppointmentButton" xml:space="preserve">
+    <value>+ Nueva cita</value>
+  </data>
+  <data name="NewSaleButton" xml:space="preserve">
+    <value>+ Nueva venta</value>
+  </data>
+  <data name="NewWorkerButton" xml:space="preserve">
+    <value>+ Nueva trabajadora</value>
+  </data>
+  <data name="NewServiceButton" xml:space="preserve">
+    <value>+ Nuevo servicio</value>
+  </data>
+  <data name="NewProductButton" xml:space="preserve">
+    <value>+ Nuevo producto</value>
+  </data>
+  <data name="NewMethodButton" xml:space="preserve">
+    <value>+ Nuevo método</value>
+  </data>
+  <data name="NewCashInButton" xml:space="preserve">
+    <value>+ Entrada</value>
+  </data>
+  <data name="NewCashOutButton" xml:space="preserve">
+    <value>+ Salida</value>
+  </data>
+  <data name="AddServiceButton" xml:space="preserve">
+    <value>+ Servicio</value>
+  </data>
+  <data name="AddProductButton" xml:space="preserve">
+    <value>+ Producto</value>
+  </data>
+  <data name="AddCustomLineButton" xml:space="preserve">
+    <value>+ Concepto libre</value>
+  </data>
+  <data name="MarkClosedButton" xml:space="preserve">
+    <value>+ Marcar cerrado</value>
+  </data>
+  <data name="NewClientTitle" xml:space="preserve">
+    <value>Nuevo cliente</value>
+  </data>
+  <data name="NewAppointmentTitle" xml:space="preserve">
+    <value>Nueva cita</value>
+  </data>
+  <data name="NewSaleTitle" xml:space="preserve">
+    <value>Nueva venta</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Mobile" xml:space="preserve">
+    <value>Móvil</value>
+  </data>
+  <data name="MobilePrefix" xml:space="preserve">
+    <value>Móvil: </value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Teléfono</value>
+  </data>
+  <data name="PhoneOptional" xml:space="preserve">
+    <value>Teléfono (opcional)</value>
+  </data>
+  <data name="EmailOptional" xml:space="preserve">
+    <value>Correo electrónico (opcional)</value>
+  </data>
+  <data name="BirthDateOptional" xml:space="preserve">
+    <value>Fecha de nacimiento (opcional)</value>
+  </data>
+  <data name="NotesOptional" xml:space="preserve">
+    <value>Observaciones (opcional)</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="Client" xml:space="preserve">
+    <value>Cliente</value>
+  </data>
+  <data name="Worker" xml:space="preserve">
+    <value>Trabajadora</value>
+  </data>
+  <data name="WorkerOptional" xml:space="preserve">
+    <value>Trabajadora (opcional)</value>
+  </data>
+  <data name="ServiceOptional" xml:space="preserve">
+    <value>Servicio (opcional)</value>
+  </data>
+  <data name="CategoryOptional" xml:space="preserve">
+    <value>Categoría (opcional)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="GuestName" xml:space="preserve">
+    <value>Nombre del invitado</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Concept" xml:space="preserve">
+    <value>Concepto</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Importe</value>
+  </data>
+  <data name="AmountEuros" xml:space="preserve">
+    <value>Importe (€)</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Precio</value>
+  </data>
+  <data name="PriceEuros" xml:space="preserve">
+    <value>Precio (€)</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Duración</value>
+  </data>
+  <data name="DurationMinutes" xml:space="preserve">
+    <value>Duración (minutos)</value>
+  </data>
+  <data name="DurationMinutesOptional" xml:space="preserve">
+    <value>Duración (minutos, opcional)</value>
+  </data>
+  <data name="Vat" xml:space="preserve">
+    <value>IVA</value>
+  </data>
+  <data name="VatPercent" xml:space="preserve">
+    <value>IVA (%)</value>
+  </data>
+  <data name="VatWithColon" xml:space="preserve">
+    <value>IVA:</value>
+  </data>
+  <data name="VatPercentage" xml:space="preserve">
+    <value>Porcentaje de IVA</value>
+  </data>
+  <data name="Base" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="BaseWithColon" xml:space="preserve">
+    <value>Base:</value>
+  </data>
+  <data name="TaxableBase" xml:space="preserve">
+    <value>Base imponible</value>
+  </data>
+  <data name="Quota" xml:space="preserve">
+    <value>Cuota</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalUpper" xml:space="preserve">
+    <value>TOTAL</value>
+  </data>
+  <data name="TotalWithColon" xml:space="preserve">
+    <value>Total:</value>
+  </data>
+  <data name="Method" xml:space="preserve">
+    <value>Método</value>
+  </data>
+  <data name="PaymentMethod" xml:space="preserve">
+    <value>Método de pago</value>
+  </data>
+  <data name="PaymentMethods" xml:space="preserve">
+    <value>Métodos de pago</value>
+  </data>
+  <data name="Payment" xml:space="preserve">
+    <value>Pago</value>
+  </data>
+  <data name="ColumnActive" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Horario</value>
+  </data>
+  <data name="WeeklySchedule" xml:space="preserve">
+    <value>Horario semanal</value>
+  </data>
+  <data name="Morning" xml:space="preserve">
+    <value>Mañana</value>
+  </data>
+  <data name="Afternoon" xml:space="preserve">
+    <value>Tarde</value>
+  </data>
+  <data name="Lines" xml:space="preserve">
+    <value>Líneas</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Tamaño</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>Desde</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>Hasta</value>
+  </data>
+  <data name="NotRegistered" xml:space="preserve">
+    <value>(no registrado)</value>
+  </data>
+  <data name="SearchByNameOrMobile" xml:space="preserve">
+    <value>Busca por nombre o móvil…</value>
+  </data>
+  <data name="ShowSleepingClients" xml:space="preserve">
+    <value>Mostrar clientes dormidos</value>
+  </data>
+  <data name="ColorInAgenda" xml:space="preserve">
+    <value>Color en la agenda</value>
+  </data>
+  <data name="PickTimeInAgenda" xml:space="preserve">
+    <value>Elige la hora en la agenda</value>
+  </data>
+  <data name="RegisteredClientOrFreeName" xml:space="preserve">
+    <value>Cliente registrado (o escribe un nombre libre debajo)</value>
+  </data>
+  <data name="LooksLikeExistingClient" xml:space="preserve">
+    <value>Parece que este cliente ya existe: </value>
+  </data>
+  <data name="CopyMondayToWeekdays" xml:space="preserve">
+    <value>Copiar lunes a martes–viernes</value>
+  </data>
+  <data name="PreviousWeek" xml:space="preserve">
+    <value>‹ Semana anterior</value>
+  </data>
+  <data name="NextWeek" xml:space="preserve">
+    <value>Semana siguiente ›</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Ayer</value>
+  </data>
+  <data name="ThisWeek" xml:space="preserve">
+    <value>Esta semana</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Este mes</value>
+  </data>
+  <data name="PreviousMonth" xml:space="preserve">
+    <value>Mes anterior</value>
+  </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Personalizado</value>
+  </data>
+  <data name="TodayAppointments" xml:space="preserve">
+    <value>Citas de hoy</value>
+  </data>
+  <data name="AppointmentsToday" xml:space="preserve">
+    <value>Citas hoy</value>
+  </data>
+  <data name="SalesToday" xml:space="preserve">
+    <value>Ventas hoy</value>
+  </data>
+  <data name="ChargedToday" xml:space="preserve">
+    <value>Cobrado hoy</value>
+  </data>
+  <data name="DayBalance" xml:space="preserve">
+    <value>Balance del día</value>
+  </data>
+  <data name="Balance" xml:space="preserve">
+    <value>Balance</value>
+  </data>
+  <data name="Movements" xml:space="preserve">
+    <value>Movimientos</value>
+  </data>
+  <data name="PeriodVatBreakdown" xml:space="preserve">
+    <value>Desglose de IVA del periodo</value>
+  </data>
+  <data name="SplitVat" xml:space="preserve">
+    <value>Desglosar IVA</value>
+  </data>
+  <data name="NoAppointmentsToday" xml:space="preserve">
+    <value>Hoy no tienes ninguna cita apuntada.</value>
+  </data>
+  <data name="NoAppointmentsThisDay" xml:space="preserve">
+    <value>Este día no tiene ninguna cita apuntada.</value>
+  </data>
+  <data name="NoSaleMatchesFilters" xml:space="preserve">
+    <value>Ninguna venta coincide con estos filtros.</value>
+  </data>
+  <data name="NoWorkersYet" xml:space="preserve">
+    <value>Todavía no has dado de alta ninguna trabajadora.</value>
+  </data>
+  <data name="NoWorkersYetDetail" xml:space="preserve">
+    <value>Hasta que no haya ninguna con horario, la agenda no sabe cuántas personas hay para atender y avisa de solapamiento en todas las citas.</value>
+  </data>
+  <data name="NoClosedDaysYet" xml:space="preserve">
+    <value>Todavía no has marcado ningún día como cerrado.</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Visión general</value>
+  </data>
+  <data name="ClientRankings" xml:space="preserve">
+    <value>Rankings de clientes</value>
+  </data>
+  <data name="WorkerRanking" xml:space="preserve">
+    <value>Ranking de trabajadoras</value>
+  </data>
+  <data name="WorkerDetail" xml:space="preserve">
+    <value>Detalle por trabajadora</value>
+  </data>
+  <data name="SalesEvolution" xml:space="preserve">
+    <value>Evolución de ventas (12 meses)</value>
+  </data>
+  <data name="ClientOfTheMonth" xml:space="preserve">
+    <value>Cliente del mes</value>
+  </data>
+  <data name="MostVisits" xml:space="preserve">
+    <value>Más visitas</value>
+  </data>
+  <data name="MostSpend" xml:space="preserve">
+    <value>Más gasto</value>
+  </data>
+  <data name="HighestAverage" xml:space="preserve">
+    <value>Mayor media</value>
+  </data>
+  <data name="NotSeenInAWhile" xml:space="preserve">
+    <value>Hace tiempo que no vienen</value>
+  </data>
+  <data name="DaysSuffix" xml:space="preserve">
+    <value> días</value>
+  </data>
+  <data name="WorkPercentColumn" xml:space="preserve">
+    <value>% de trabajo</value>
+  </data>
+  <data name="WorkPercentDone" xml:space="preserve">
+    <value>% de trabajo realizado</value>
+  </data>
+  <data name="SalesHandled" xml:space="preserve">
+    <value>Ventas atendidas</value>
+  </data>
+  <data name="IncomeColumn" xml:space="preserve">
+    <value>Ingresos</value>
+  </data>
+  <data name="IncomeGenerated" xml:space="preserve">
+    <value>Ingresos generados</value>
+  </data>
+  <data name="Visits" xml:space="preserve">
+    <value>Visitas</value>
+  </data>
+  <data name="TotalSpent" xml:space="preserve">
+    <value>Total gastado</value>
+  </data>
+  <data name="AveragePerVisit" xml:space="preserve">
+    <value>Media / visita</value>
+  </data>
+  <data name="FrequencyDays" xml:space="preserve">
+    <value>Frecuencia (días)</value>
+  </data>
+  <data name="Indicators" xml:space="preserve">
+    <value>Indicadores</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historial</value>
+  </data>
+  <data name="ShopDetails" xml:space="preserve">
+    <value>Datos de la barbería</value>
+  </data>
+  <data name="CalculationMode" xml:space="preserve">
+    <value>Modo de cálculo</value>
+  </data>
+  <data name="DefaultPercent" xml:space="preserve">
+    <value>Porcentaje por defecto (%)</value>
+  </data>
+  <data name="DefaultVatHint" xml:space="preserve">
+    <value>Es lo que se propone al crear un servicio o un producto nuevo. Cada elemento puede tener uno distinto.</value>
+  </data>
+  <data name="SplitVatOnMovements" xml:space="preserve">
+    <value>Poder desglosar el IVA en los movimientos de caja</value>
+  </data>
+  <data name="SplitVatOnMovementsHint" xml:space="preserve">
+    <value>Desactivado, un movimiento de entrada o salida guarda solo el importe final.</value>
+  </data>
+  <data name="SlotSizeHint" xml:space="preserve">
+    <value>Altura de cada franja de la cuadrícula semanal. Cuanto más pequeña, más precisión al elegir la hora.</value>
+  </data>
+  <data name="DefaultAppointmentDuration" xml:space="preserve">
+    <value>Duración de una cita sin servicio (minutos)</value>
+  </data>
+  <data name="OpeningHours" xml:space="preserve">
+    <value>Horario de apertura</value>
+  </data>
+  <data name="OpeningHoursHint" xml:space="preserve">
+    <value>Cuándo abre la barbería cada día. Marca la mañana, la tarde o las dos; un día sin ninguna de las dos está cerrado. La agenda sombrea las horas que quedan fuera.</value>
+  </data>
+  <data name="ClosedDays" xml:space="preserve">
+    <value>Días cerrados</value>
+  </data>
+  <data name="ClosedDaysHint" xml:space="preserve">
+    <value>Festivos y vacaciones. La agenda muestra el día atenuado con el motivo, pero te deja apuntar citas igualmente.</value>
+  </data>
+  <data name="Backups" xml:space="preserve">
+    <value>Copias de seguridad</value>
+  </data>
+  <data name="BackupHour" xml:space="preserve">
+    <value>Hora de la copia automática</value>
+  </data>
+  <data name="BackupHourHint" xml:space="preserve">
+    <value>La copia se hace al abrir la aplicación, si ya ha pasado esa hora y todavía no se había hecho ninguna hoy.</value>
+  </data>
+  <data name="BackupsToKeep" xml:space="preserve">
+    <value>Copias a conservar</value>
+  </data>
+  <data name="BackupNowButton" xml:space="preserve">
+    <value>Hacer copia ahora</value>
+  </data>
+  <data name="RestoreBackupButton" xml:space="preserve">
+    <value>Restaurar copia</value>
+  </data>
+  <data name="AccountantExport" xml:space="preserve">
+    <value>Exportación para la gestoría</value>
+  </data>
+  <data name="AccountantExportHint" xml:space="preserve">
+    <value>Genera los ficheros de ventas e IVA de un periodo para llevarlos a la gestoría.</value>
+  </data>
+  <data name="NoticesAndSounds" xml:space="preserve">
+    <value>Avisos y sonidos</value>
+  </data>
+  <data name="GuestNoticeOption" xml:space="preserve">
+    <value>Avisar cuando una cita o venta es para un cliente no registrado</value>
+  </data>
+  <data name="GuestNoticeHint" xml:space="preserve">
+    <value>El aviso ofrece registrarlo al momento, pero nunca impide guardar.</value>
+  </data>
+  <data name="ConfirmationSoundOption" xml:space="preserve">
+    <value>Sonido corto de confirmación al cobrar una venta</value>
+  </data>
+  <data name="SaveDataButton" xml:space="preserve">
+    <value>Guardar datos</value>
+  </data>
+  <data name="SaveScheduleButton" xml:space="preserve">
+    <value>Guardar horario</value>
+  </data>
+  <data name="SaveOptionsButton" xml:space="preserve">
+    <value>Guardar opciones</value>
+  </data>
+  <data name="UnregisteredClientAppointment" xml:space="preserve">
+    <value>Este cliente no está registrado. Puedes apuntar la cita igualmente, pero no quedará historial.</value>
+  </data>
+  <data name="UnregisteredClientSale" xml:space="preserve">
+    <value>Este cliente no está registrado. Puedes cobrar igualmente, pero la venta no contará en su historial.</value>
+  </data>
+  <data name="OutsideOpeningHours" xml:space="preserve">
+    <value>La hora cae fuera del horario de la barbería.</value>
+  </data>
+  <data name="PossibleOverlap" xml:space="preserve">
+    <value>Posible solapamiento: no queda capacidad en esta franja.</value>
+  </data>
+  <data name="WorkerScheduleHint" xml:space="preserve">
+    <value>Marca la mañana, la tarde o las dos para cada día. Un día sin ninguna de las dos significa que no trabaja.</value>
+  </data>
+  <data name="InactiveWorkerHint" xml:space="preserve">
+    <value>Una trabajadora inactiva conserva su horario y todo su historial, pero no cuenta como disponible en los avisos de solapamiento. No se pueden eliminar trabajadoras, precisamente para no perder su historial de ventas.</value>
+  </data>
+  <data name="ExportProducesTwoFiles" xml:space="preserve">
+    <value>Se generarán dos ficheros: el listado de ventas y el desglose de IVA para la gestoría.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="LanguageCatalan" xml:space="preserve">
+    <value>Catalán</value>
+  </data>
+  <data name="LanguageSpanish" xml:space="preserve">
+    <value>Castellano</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Cambia el idioma de toda la aplicación. Hay que cerrarla y volver a abrirla para que el cambio se vea.</value>
+  </data>
+  <data name="LanguageSaved" xml:space="preserve">
+    <value>Idioma guardado. Cierra y vuelve a abrir la aplicación para verlo.</value>
+  </data>
+  <data name="BackupAutomatic" xml:space="preserve">
+    <value>Automática</value>
+  </data>
+  <data name="BackupManual" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="ColorTeal" xml:space="preserve">
+    <value>Verde azulado</value>
+  </data>
+  <data name="ColorMagenta" xml:space="preserve">
+    <value>Magenta</value>
+  </data>
+  <data name="ColorPlum" xml:space="preserve">
+    <value>Ciruela</value>
+  </data>
+  <data name="ColorOlive" xml:space="preserve">
+    <value>Oliva</value>
+  </data>
+  <data name="ColorOchre" xml:space="preserve">
+    <value>Ocre</value>
+  </data>
+  <data name="ColorGraphite" xml:space="preserve">
+    <value>Grafito</value>
+  </data>
+  <data name="EditClientTitle" xml:space="preserve">
+    <value>Editar cliente</value>
+  </data>
+  <data name="NameAndMobileRequired" xml:space="preserve">
+    <value>Hay que indicar el nombre y el móvil para guardar.</value>
+  </data>
+  <data name="NewServiceTitle" xml:space="preserve">
+    <value>Nuevo servicio</value>
+  </data>
+  <data name="EditServiceTitle" xml:space="preserve">
+    <value>Editar servicio</value>
+  </data>
+  <data name="ServiceNameRequired" xml:space="preserve">
+    <value>Hay que indicar el nombre del servicio para guardar.</value>
+  </data>
+  <data name="NewProductTitle" xml:space="preserve">
+    <value>Nuevo producto</value>
+  </data>
+  <data name="EditProductTitle" xml:space="preserve">
+    <value>Editar producto</value>
+  </data>
+  <data name="ProductNameRequired" xml:space="preserve">
+    <value>Hay que indicar el nombre del producto para guardar.</value>
+  </data>
+  <data name="PriceInvalid" xml:space="preserve">
+    <value>El precio no es válido.</value>
+  </data>
+  <data name="VatOutOfRange" xml:space="preserve">
+    <value>El IVA tiene que ser un porcentaje entre 0 y 100.</value>
+  </data>
+  <data name="NewMethodTitle" xml:space="preserve">
+    <value>Nuevo método de pago</value>
+  </data>
+  <data name="EditMethodTitle" xml:space="preserve">
+    <value>Editar método de pago</value>
+  </data>
+  <data name="MethodNameRequired" xml:space="preserve">
+    <value>Hay que indicar el nombre del método para guardar.</value>
+  </data>
+  <data name="GuestFreeName" xml:space="preserve">
+    <value>Invitado (nombre libre)</value>
+  </data>
+  <data name="EditAppointmentTitle" xml:space="preserve">
+    <value>Editar cita</value>
+  </data>
+  <data name="GuestNameOrClientRequired" xml:space="preserve">
+    <value>Hay que indicar el nombre del invitado o elegir un cliente registrado.</value>
+  </data>
+  <data name="DurationMustBePositive" xml:space="preserve">
+    <value>La duración tiene que ser mayor que cero.</value>
+  </data>
+  <data name="DeleteAppointmentTitle" xml:space="preserve">
+    <value>¿Eliminar cita?</value>
+  </data>
+  <data name="DeleteAppointmentMessage" xml:space="preserve">
+    <value>La cita se borrará de la agenda. Esto no se puede deshacer.
+
+Si quieres conservarla en el historial, márcala como cancelada o no asistida.</value>
+  </data>
+  <data name="AppointmentHasSale" xml:space="preserve">
+    <value>Esta cita tiene una venta asociada y no se puede borrar. Anula o elimina primero la venta.</value>
+  </data>
+  <data name="NewCashInTitle" xml:space="preserve">
+    <value>Nueva entrada</value>
+  </data>
+  <data name="NewCashOutTitle" xml:space="preserve">
+    <value>Nueva salida</value>
+  </data>
+  <data name="AmountMustBePositive" xml:space="preserve">
+    <value>El importe tiene que ser mayor que cero.</value>
+  </data>
+  <data name="PaymentMethodRequired" xml:space="preserve">
+    <value>Hay que elegir un método de pago.</value>
+  </data>
+  <data name="ConceptRequired" xml:space="preserve">
+    <value>Hay que indicar el concepto.</value>
+  </data>
+  <data name="NewWorkerTitle" xml:space="preserve">
+    <value>Nueva trabajadora</value>
+  </data>
+  <data name="EditWorkerTitle" xml:space="preserve">
+    <value>Editar trabajadora</value>
+  </data>
+  <data name="WorkerNameRequired" xml:space="preserve">
+    <value>Hay que indicar el nombre de la trabajadora.</value>
+  </data>
+  <data name="CheckRedDays" xml:space="preserve">
+    <value>Revisa los días marcados en rojo.</value>
+  </data>
+  <data name="AtLeastOneDayRequired" xml:space="preserve">
+    <value>Indica como mínimo un día y un horario.</value>
+  </data>
+  <data name="ExportToBeforeFrom" xml:space="preserve">
+    <value>La fecha «hasta» tiene que ser posterior a «desde».</value>
+  </data>
+  <data name="ChooseDestinationFolder" xml:space="preserve">
+    <value>Elige la carpeta de destino</value>
+  </data>
+  <data name="ExportDoneTitle" xml:space="preserve">
+    <value>Exportación completada</value>
+  </data>
+  <data name="ExportDoneMessage" xml:space="preserve">
+    <value>Se han generado los ficheros en:
+{0}</value>
+  </data>
+  <data name="RestoreBackupTitle" xml:space="preserve">
+    <value>Restaurar copia de seguridad</value>
+  </data>
+  <data name="ChooseBackupFromList" xml:space="preserve">
+    <value>Elige una copia de la lista.</value>
+  </data>
+  <data name="ConfirmRestoreTitle" xml:space="preserve">
+    <value>¿Restaurar esta copia?</value>
+  </data>
+  <data name="ConfirmRestoreMessage" xml:space="preserve">
+    <value>Se reemplazarán todos los datos actuales por los de esta copia. El estado actual se guardará primero como copia manual, por si hay que deshacerlo.
+
+Habrá que reiniciar la aplicación para que los cambios tengan efecto.</value>
+  </data>
+  <data name="BackupRestoredTitle" xml:space="preserve">
+    <value>Copia restaurada</value>
+  </data>
+  <data name="BackupRestoredMessage" xml:space="preserve">
+    <value>Los datos se han restaurado correctamente. Cierra y vuelve a abrir la aplicación.</value>
+  </data>
+  <data name="Sleep" xml:space="preserve">
+    <value>Dormir</value>
+  </data>
+  <data name="DeleteClientTitle" xml:space="preserve">
+    <value>¿Quieres eliminar a {0}?</value>
+  </data>
+  <data name="DeleteClientMessage" xml:space="preserve">
+    <value>Se borrará su ficha y todo su historial: {0} citas y {1} ventas. Esta acción no se puede deshacer.
+
+Si solo quieres que deje de aparecer en las búsquedas, puedes dormirlo y conservar los datos.</value>
+  </data>
+  <data name="DeleteForever" xml:space="preserve">
+    <value>Eliminar definitivamente</value>
+  </data>
+  <data name="HistoryAppointment" xml:space="preserve">
+    <value>Cita</value>
+  </data>
+  <data name="HistorySale" xml:space="preserve">
+    <value>Venta</value>
+  </data>
+  <data name="EditSaleTitle" xml:space="preserve">
+    <value>Editar venta</value>
+  </data>
+  <data name="NewSaleFromAppointmentTitle" xml:space="preserve">
+    <value>Nueva venta (desde cita)</value>
+  </data>
+  <data name="FromAppointmentOn" xml:space="preserve">
+    <value>Desde la cita del {0} a las {1}</value>
+  </data>
+  <data name="AtLeastOneLineRequired" xml:space="preserve">
+    <value>Hay que añadir al menos una línea para cobrar.</value>
+  </data>
+  <data name="MorningStartAndEndRequired" xml:space="preserve">
+    <value>Hay que indicar la hora de inicio y la de fin de la mañana.</value>
+  </data>
+  <data name="MorningEndsBeforeStart" xml:space="preserve">
+    <value>La mañana tiene que acabar después de empezar.</value>
+  </data>
+  <data name="AfternoonStartAndEndRequired" xml:space="preserve">
+    <value>Hay que indicar la hora de inicio y la de fin de la tarde.</value>
+  </data>
+  <data name="AfternoonEndsBeforeStart" xml:space="preserve">
+    <value>La tarde tiene que acabar después de empezar.</value>
+  </data>
+  <data name="AfternoonBeforeMorningEnds" xml:space="preserve">
+    <value>La tarde no puede empezar antes de que acabe la mañana.</value>
+  </data>
+  <data name="DeleteAppointmentOfMessage" xml:space="preserve">
+    <value>Se borrará la cita de {0} del {1} a las {2}. Esto no se puede deshacer.
+
+Si la quieres conservar en el historial, márcala como cancelada o no asistida.</value>
+  </data>
+  <data name="AppointmentNotDeletedHasSale" xml:space="preserve">
+    <value>La cita tiene una venta asociada y no se ha borrado. Anula o elimina primero la venta.</value>
+  </data>
+  <data name="AppointmentDeleted" xml:space="preserve">
+    <value>La cita se ha eliminado.</value>
+  </data>
+  <data name="NoService" xml:space="preserve">
+    <value>Sin servicio</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Sin asignar</value>
+  </data>
+  <data name="NoSchedule" xml:space="preserve">
+    <value>Sin horario</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="TypeService" xml:space="preserve">
+    <value>servicio</value>
+  </data>
+  <data name="TypeProduct" xml:space="preserve">
+    <value>producto</value>
+  </data>
+  <data name="TypePaymentMethod" xml:space="preserve">
+    <value>método de pago</value>
+  </data>
+  <data name="ArticleService" xml:space="preserve">
+    <value>El servicio</value>
+  </data>
+  <data name="ArticleProduct" xml:space="preserve">
+    <value>El producto</value>
+  </data>
+  <data name="ArticleMethod" xml:space="preserve">
+    <value>El método</value>
+  </data>
+  <data name="UsedInAppointmentsOrSales" xml:space="preserve">
+    <value>citas o ventas</value>
+  </data>
+  <data name="UsedInSales" xml:space="preserve">
+    <value>ventas</value>
+  </data>
+  <data name="UsedInSalesOrMovements" xml:space="preserve">
+    <value>ventas o movimientos de caja</value>
+  </data>
+  <data name="CannotDeactivateTitle" xml:space="preserve">
+    <value>No se puede desactivar</value>
+  </data>
+  <data name="KeepOneActiveMethod" xml:space="preserve">
+    <value>Hay que mantener al menos un método de pago activo para poder cobrar.</value>
+  </data>
+  <data name="MethodNotDeletedLastActive" xml:space="preserve">
+    <value>«{0}» no se ha eliminado: hay que mantener al menos un método de pago activo para poder cobrar.</value>
+  </data>
+  <data name="DeleteCatalogItemTitle" xml:space="preserve">
+    <value>¿Eliminar {0}?</value>
+  </data>
+  <data name="DeleteCatalogItemMessage" xml:space="preserve">
+    <value>Se eliminará «{0}» del catálogo.
+
+Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el historial. En ambos casos dejará de salir a la hora de registrar citas y ventas.</value>
+  </data>
+  <data name="CatalogItemDeactivated" xml:space="preserve">
+    <value>{0} «{1}» ya aparece en {2}, así que se ha desactivado en lugar de eliminarse. El historial se mantiene y ya no se podrá elegir de nuevo.</value>
+  </data>
+  <data name="CatalogItemDeleted" xml:space="preserve">
+    <value>{0} «{1}» se ha eliminado.</value>
+  </data>
+  <data name="BirthdaysToday" xml:space="preserve">
+    <value>Hoy cumple años: </value>
+  </data>
+  <data name="AppointmentHasSaleCannotReopen" xml:space="preserve">
+    <value>La cita tiene una venta asociada y no se ha podido volver a pendiente. Anula primero la venta.</value>
+  </data>
+  <data name="NoSalesThisMonth" xml:space="preserve">
+    <value>Todavía no hay ventas este mes.</value>
+  </data>
+  <data name="ClientOfTheMonthLine" xml:space="preserve">
+    <value>{0} · {1} visitas · {2}</value>
+  </data>
+  <data name="MoreLinesSuffix" xml:space="preserve">
+    <value> + {0} más</value>
+  </data>
+  <data name="ConfirmVoidSaleTitle" xml:space="preserve">
+    <value>¿Anular venta?</value>
+  </data>
+  <data name="ConfirmVoidSaleMessage" xml:space="preserve">
+    <value>La venta de {0} pasará al estado Anulada. Se mantiene visible en el historial pero queda excluida de los totales.</value>
+  </data>
+  <data name="DeleteForeverTitle" xml:space="preserve">
+    <value>¿Borrar definitivamente?</value>
+  </data>
+  <data name="DeleteSaleTitle" xml:space="preserve">
+    <value>¿Eliminar venta?</value>
+  </data>
+  <data name="DeleteVoidedSaleMessage" xml:space="preserve">
+    <value>La venta de {0} ya está anulada. Se borrará del todo, con sus líneas y el desglose de IVA. Esto no se puede deshacer.</value>
+  </data>
+  <data name="DeleteActiveSaleMessage" xml:space="preserve">
+    <value>La venta de {0} forma parte del historial, así que pasará a Anulada en lugar de borrarse: se mantiene visible pero queda fuera de los totales.</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="SaleVoidedNotDeleted" xml:space="preserve">
+    <value>La venta se ha anulado en lugar de borrarse, para no perder el historial. Si la quieres quitar del todo, vuelve a eliminarla ahora que está anulada.</value>
+  </data>
+  <data name="SaleDeletedForever" xml:space="preserve">
+    <value>La venta se ha borrado definitivamente.</value>
+  </data>
+  <data name="VatIncludedExplanation" xml:space="preserve">
+    <value>Los precios del catálogo ya llevan el IVA incluido. Un servicio de 15,00 € se cobra a 15,00 €.</value>
+  </data>
+  <data name="VatExcludedExplanation" xml:space="preserve">
+    <value>Los precios del catálogo son sin IVA. Un servicio de 15,00 € se cobra a 18,15 € con el 21 %.</value>
+  </data>
+  <data name="NoBackupYet" xml:space="preserve">
+    <value>Todavía no se ha hecho ninguna copia.</value>
+  </data>
+  <data name="LastBackupLine" xml:space="preserve">
+    <value>Última copia: {0} ({1})</value>
+  </data>
+  <data name="DataSaved" xml:space="preserve">
+    <value>Datos guardados.</value>
+  </data>
+  <data name="VatPercentOutOfRange" xml:space="preserve">
+    <value>El porcentaje de IVA tiene que ser un número entre 0 y 100.</value>
+  </data>
+  <data name="DefaultVatSaved" xml:space="preserve">
+    <value>El IVA por defecto de los servicios y productos nuevos será del {0}.</value>
+  </data>
+  <data name="VatModeSwitchToExcluded" xml:space="preserve">
+    <value>Un servicio de 15,00 € pasaría a cobrarse a 18,15 € (15,00 € + IVA).</value>
+  </data>
+  <data name="VatModeSwitchToIncluded" xml:space="preserve">
+    <value>Un servicio de 15,00 € pasaría a cobrarse a 15,00 €, con el IVA ya incluido dentro del precio.</value>
+  </data>
+  <data name="ConfirmVatModeTitle" xml:space="preserve">
+    <value>¿Cambiar el modo de IVA?</value>
+  </data>
+  <data name="ConfirmVatModeMessage" xml:space="preserve">
+    <value>Este cambio modifica el significado de todos los precios del catálogo. {0} Las ventas ya registradas no se verán afectadas.</value>
+  </data>
+  <data name="UnderstoodChange" xml:space="preserve">
+    <value>Lo entiendo, cambiar</value>
+  </data>
+  <data name="VatModeSaved" xml:space="preserve">
+    <value>Modo de IVA guardado. Las ventas nuevas lo usarán; las ya registradas no cambian.</value>
+  </data>
+  <data name="DefaultDurationInvalid" xml:space="preserve">
+    <value>La duración por defecto tiene que ser un número de minutos mayor que cero.</value>
+  </data>
+  <data name="ScheduleSavedAllClosed" xml:space="preserve">
+    <value>Horario guardado. Con todos los días cerrados, la agenda no sabrá cuándo abres.</value>
+  </data>
+  <data name="ScheduleSaved" xml:space="preserve">
+    <value>Horario guardado. La agenda ya lo usa.</value>
+  </data>
+  <data name="BackupHourInvalid" xml:space="preserve">
+    <value>La hora de la copia tiene que tener la forma 20:00.</value>
+  </data>
+  <data name="KeepAtLeastOneBackup" xml:space="preserve">
+    <value>Hay que conservar como mínimo una copia.</value>
+  </data>
+  <data name="BackupDoneTitle" xml:space="preserve">
+    <value>Copia hecha</value>
+  </data>
+  <data name="BackupDoneMessage" xml:space="preserve">
+    <value>Se ha creado la copia de seguridad del {0}.</value>
+  </data>
+  <data name="BackupRestoredReopen" xml:space="preserve">
+    <value>Se han recuperado los datos de la copia. Cierra y vuelve a abrir la aplicación para que todo se lea de nuevo.</value>
+  </data>
+  <data name="DeleteMovementTitle" xml:space="preserve">
+    <value>¿Eliminar movimiento?</value>
+  </data>
+  <data name="DeleteMovementMessage" xml:space="preserve">
+    <value>Se eliminará el movimiento de {0}.</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactiva</value>
+  </data>
+  <data name="MarkInactive" xml:space="preserve">
+    <value>Marcar inactiva</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Reactivar</value>
+  </data>
+  <data name="DeleteWorkerTitle" xml:space="preserve">
+    <value>¿Eliminar trabajadora?</value>
+  </data>
+  <data name="DeleteWorkerMessage" xml:space="preserve">
+    <value>Se eliminará «{0}» y su horario.
+
+Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para no perder el historial. En ambos casos dejará de salir a la hora de asignar citas y ventas.</value>
+  </data>
+  <data name="WorkerDeactivated" xml:space="preserve">
+    <value>«{0}» tiene citas o ventas registradas, así que se ha marcado como inactiva en lugar de eliminarse. El historial se mantiene y ya no se podrá asignar.</value>
+  </data>
+  <data name="WorkerDeleted" xml:space="preserve">
+    <value>«{0}» se ha eliminado.</value>
+  </data>
+  <data name="DayNotWorking" xml:space="preserve">
+    <value>{0}: no trabaja</value>
+  </data>
+  <data name="DayScheduleCell" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="ScheduleAndJoiner" xml:space="preserve">
+    <value> y </value>
+  </data>
+  <data name="WithWorker" xml:space="preserve">
+    <value>Con {0}</value>
+  </data>
+  <data name="ThisAppointment" xml:space="preserve">
+    <value>Esta cita</value>
+  </data>
+  <data name="NewAppointmentAtTime" xml:space="preserve">
+    <value>{0} · Nueva cita</value>
+  </data>
+  <data name="WeekRangeSameMonth" xml:space="preserve">
+    <value>{0} – {1} de {2}</value>
+  </data>
+  <data name="WeekRangeAcrossMonths" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="LongDateFormat" xml:space="preserve">
+    <value>dddd, d 'de' MMMM 'de' yyyy</value>
+  </data>
+  <data name="DayMonthFormat" xml:space="preserve">
+    <value>dddd d 'de' MMMM</value>
+  </data>
+  <data name="UnexpectedErrorTitle" xml:space="preserve">
+    <value>No se ha podido completar la operación</value>
+  </data>
+  <data name="UnexpectedErrorMessage" xml:space="preserve">
+    <value>Se ha producido un error inesperado. La operación no se ha podido completar, pero los datos ya guardados no se han visto afectados.</value>
+  </data>
+  <data name="DatabaseUnreadableTitle" xml:space="preserve">
+    <value>No se han podido abrir los datos</value>
+  </data>
+  <data name="DatabaseUnreadableMessage" xml:space="preserve">
+    <value>El fichero de datos no se puede leer. Puede que esté dañado o que se haya movido de sitio.</value>
+  </data>
+  <data name="FaqSaleRegisterQuestion" xml:space="preserve">
+    <value>¿Cómo registro una venta?</value>
+  </data>
+  <data name="FaqSaleRegisterAnswer" xml:space="preserve">
+    <value>Ve a Ventas o a Inicio y pulsa «+ Nueva venta». Elige el cliente, añade las líneas (servicio, producto o un concepto libre) y el método de pago, y pulsa «Cobrar».</value>
+  </data>
+  <data name="FaqSaleEditQuestion" xml:space="preserve">
+    <value>¿Cómo edito o anulo una venta?</value>
+  </data>
+  <data name="FaqSaleEditAnswer" xml:space="preserve">
+    <value>En la lista de ventas, pulsa «Editar» para cambiar sus datos, o «Anular» para invalidarla sin borrarla. Una venta anulada queda visible en el historial pero no cuenta en los totales.</value>
+  </data>
+  <data name="FaqSaleCustomLineQuestion" xml:space="preserve">
+    <value>¿Cómo añado un concepto personalizado a una venta?</value>
+  </data>
+  <data name="FaqSaleCustomLineAnswer" xml:space="preserve">
+    <value>Dentro del diálogo de venta, pulsa «+ Concepto libre» y escribe la descripción y el precio a mano.</value>
+  </data>
+  <data name="FaqAppointmentCreateQuestion" xml:space="preserve">
+    <value>¿Cómo creo una cita?</value>
+  </data>
+  <data name="FaqAppointmentCreateAnswer" xml:space="preserve">
+    <value>En la Agenda o en Inicio, pulsa «+ Nueva cita». Indica el cliente (o un nombre de invitado), la fecha, la hora y, opcionalmente, el servicio y la trabajadora.</value>
+  </data>
+  <data name="FaqAppointmentCompleteQuestion" xml:space="preserve">
+    <value>¿Cómo marco una cita como realizada?</value>
+  </data>
+  <data name="FaqAppointmentCompleteAnswer" xml:space="preserve">
+    <value>En la tabla de citas, cada fila pendiente tiene los botones Realizada, Cancelada y No asistida.</value>
+  </data>
+  <data name="FaqNoShowQuestion" xml:space="preserve">
+    <value>¿Qué significa «No asistida»?</value>
+  </data>
+  <data name="FaqNoShowAnswer" xml:space="preserve">
+    <value>Que el cliente no se ha presentado a la cita. No genera ninguna venta ni cuenta como visita en los indicadores del cliente.</value>
+  </data>
+  <data name="FaqClientNewQuestion" xml:space="preserve">
+    <value>¿Cómo añado un cliente nuevo?</value>
+  </data>
+  <data name="FaqClientNewAnswer" xml:space="preserve">
+    <value>En Clientes, pulsa «+ Nuevo cliente» y rellena el nombre y el móvil, que son los únicos campos obligatorios.</value>
+  </data>
+  <data name="FaqClientHistoryQuestion" xml:space="preserve">
+    <value>¿Cómo consulto el historial de un cliente?</value>
+  </data>
+  <data name="FaqClientHistoryAnswer" xml:space="preserve">
+    <value>En la lista de clientes, pulsa «Ficha» para ver sus datos, indicadores y el historial completo de citas y ventas.</value>
+  </data>
+  <data name="FaqServiceEditQuestion" xml:space="preserve">
+    <value>¿Cómo añado o modifico un servicio?</value>
+  </data>
+  <data name="FaqServiceEditAnswer" xml:space="preserve">
+    <value>En Catálogo, en el bloque Servicios, pulsa «+ Nuevo servicio» o «Editar» en la fila que quieras cambiar.</value>
+  </data>
+  <data name="FaqProductEditQuestion" xml:space="preserve">
+    <value>¿Cómo añado o modifico un producto?</value>
+  </data>
+  <data name="FaqProductEditAnswer" xml:space="preserve">
+    <value>Igual que los servicios, pero en el bloque Productos de la misma página de Catálogo.</value>
+  </data>
+  <data name="FaqMovementQuestion" xml:space="preserve">
+    <value>¿Cómo registro una entrada o salida de caja?</value>
+  </data>
+  <data name="FaqMovementAnswer" xml:space="preserve">
+    <value>En Caja, pulsa «+ Entrada» o «+ Salida», indica el importe, el método de pago y el concepto.</value>
+  </data>
+  <data name="FaqBackupQuestion" xml:space="preserve">
+    <value>¿Cómo hago una copia de seguridad?</value>
+  </data>
+  <data name="FaqBackupAnswer" xml:space="preserve">
+    <value>En Configuración, bloque «Copias de seguridad», pulsa «Hacer copia ahora». La aplicación también hace una automáticamente cada día.</value>
+  </data>
+  <data name="FaqRestoreQuestion" xml:space="preserve">
+    <value>¿Cómo recupero una copia de seguridad?</value>
+  </data>
+  <data name="FaqRestoreAnswer" xml:space="preserve">
+    <value>En Configuración, pulsa «Restaurar copia», elígela de la lista y confirma. Antes de restaurar, el estado actual se guarda igualmente por si hay que deshacerlo.</value>
+  </data>
+  <data name="FaqWorkerNewQuestion" xml:space="preserve">
+    <value>¿Cómo añado una trabajadora?</value>
+  </data>
+  <data name="FaqWorkerNewAnswer" xml:space="preserve">
+    <value>En Trabajadoras, pulsa «+ Nueva trabajadora». Indica el nombre, elige un color para distinguirla en la agenda y marca los días y las horas que trabaja. Hace falta como mínimo un día con horario.</value>
+  </data>
+  <data name="FaqWorkerHolidayQuestion" xml:space="preserve">
+    <value>¿Qué pasa si una trabajadora se va de vacaciones?</value>
+  </data>
+  <data name="FaqWorkerHolidayAnswer" xml:space="preserve">
+    <value>Pulsa «Marcar inactiva». Conserva el horario y todo el historial, pero deja de contar cuando la agenda mira si queda alguien libre. Cuando vuelva, «Reactivar» lo deshace. No se pueden eliminar trabajadoras, porque se perdería el historial de ventas que tienen.</value>
+  </data>
+  <data name="FaqVatIncludedQuestion" xml:space="preserve">
+    <value>¿Qué significa «precios con IVA incluido»?</value>
+  </data>
+  <data name="FaqVatIncludedAnswer" xml:space="preserve">
+    <value>Que el precio que escribes en el catálogo es el que cobras. Si eliges «precios sin IVA», el IVA se suma encima al cobrar. Cambiarlo no toca ninguna venta ya registrada.</value>
+  </data>
+  <data name="FaqClosedDayQuestion" xml:space="preserve">
+    <value>¿Cómo marco un festivo o unas vacaciones?</value>
+  </data>
+  <data name="FaqClosedDayAnswer" xml:space="preserve">
+    <value>En Configuración, bloque «Días cerrados», elige la fecha, escribe el motivo y pulsa «Marcar cerrado». La agenda mostrará el día atenuado, pero te dejará apuntar citas igualmente.</value>
+  </data>
+  <data name="FaqExportQuestion" xml:space="preserve">
+    <value>¿Cómo exporto los datos para la gestoría?</value>
+  </data>
+  <data name="FaqExportAnswer" xml:space="preserve">
+    <value>En Ventas, Caja o Configuración, pulsa «Exportar periodo», indica las fechas y elige la carpeta donde guardar los dos ficheros (ventas e IVA).</value>
+  </data>
+  <data name="ExportSalesHeader" xml:space="preserve">
+    <value>fecha;hora;cliente;trabajadora;conceptos;metodo_pago;base;iva;total</value>
+  </data>
+  <data name="ExportVatHeader" xml:space="preserve">
+    <value>tipo_iva;base;cuota;total</value>
+  </data>
+  <data name="ClosedDayFormat" xml:space="preserve">
+    <value>Día cerrado: {0}</value>
+  </data>
+  <data name="EmailFormat" xml:space="preserve">
+    <value>Correo: {0}</value>
+  </data>
+</root>
