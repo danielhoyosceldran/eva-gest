@@ -13,9 +13,15 @@
 
             <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
             <ComboBox ItemsSource="{Binding ClientOptions}" SelectedItem="{Binding SelectedOption}"
-                      DisplayMemberPath="Name" IsTextSearchEnabled="True" TextSearch.TextPath="Name"
+                      IsTextSearchEnabled="True" TextSearch.TextPath="Name"
                       Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}"
-                      MinHeight="{StaticResource FieldHeight}" />
+                      MinHeight="{StaticResource FieldHeight}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
             <!-- Disabled rather than hidden for a registered client: the dialog window is
                  SizeToContent, so collapsing these made the whole window jump every time
