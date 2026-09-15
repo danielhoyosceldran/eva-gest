@@ -1,5 +1,6 @@
 using System.Globalization;
 using EvaGest.Resources;
+using EvaGest.Services;
 
 namespace EvaGest.Helpers;
 
@@ -34,23 +35,13 @@ public static class ScheduleHelper
         [.. Enumerable.Range(0, (23 - 6) * 4 + 1)
              .Select(i => Format(new TimeOnly(6, 0).AddMinutes(i * 15)))];
 
-    // "%H" and not "H": a one-character format string is read as a STANDARD specifier,
-    // and TryParseExact throws FormatException instead of returning false.
-    private static readonly string[] Formats =
-        ["HH:mm", "H:mm", "HHmm", "Hmm", "HH.mm", "H.mm", "HH", "%H"];
-
-    /// <summary>Accepts 9, 9:00, 09:00, 9.00 and 0900 — people type hours in all of these.</summary>
+    /// <summary>
+    /// One shape only: hh:mm, with a literal colon and both parts padded to two digits,
+    /// exactly as <see cref="Slots"/> offers them. "9", "9.00" and "0900" used to be
+    /// accepted too, which made "10.00" and "20-00" land on times nobody typed.
+    /// </summary>
     public static TimeOnly? Analyze(string? text)
-    {
-        if (string.IsNullOrWhiteSpace(text)) return null;
-        var net = text.Trim();
-
-        foreach (var format in Formats)
-            if (TimeOnly.TryParseExact(net, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
-                return time;
-
-        return null;
-    }
+        => text is not null && TimeValidator.IsValidTime(text.Trim(), out var time) ? time : null;
 
     public static string Format(TimeOnly time) => time.ToString("HH\\:mm", CultureInfo.InvariantCulture);
 

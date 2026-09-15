@@ -51,6 +51,14 @@ public partial class ServiceDialogViewModel : DialogViewModelBase
             ErrorValidation = Texts.VatOutOfRange;
             return;
         }
+        // Optional, but once typed it has to be a real number of minutes: int.TryParse
+        // in AModel used to turn "trenta" into "no duration at all" without a word.
+        if (!string.IsNullOrWhiteSpace(DurationMinText)
+            && !NumberValidator.TryParseAtLeast(DurationMinText, 1, out _))
+        {
+            ErrorValidation = Texts.DurationInvalid;
+            return;
+        }
 
         ErrorValidation = null;
         RequestClose(true);
@@ -64,7 +72,7 @@ public partial class ServiceDialogViewModel : DialogViewModelBase
     {
         Money.TryParse(PriceText, out int priceCents);
         Percentages.TryParse(VatText, out int vatBp);
-        int? durationMin = int.TryParse(DurationMinText, out int d) ? d : null;
+        int? durationMin = NumberValidator.TryParseAtLeast(DurationMinText, 1, out int d) ? d : null;
 
         return new Service
         {

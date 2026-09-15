@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using EvaGest.Models;
+using EvaGest.Resources;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
 using EvaGest.ViewModels.Dialogs;
@@ -176,6 +177,130 @@ public class AppointmentDialogViewModelTests
 
         vm.ErrorValidation.Should().NotBeNull();
         (await s.Appointments.GetByDay(Today)).Should().BeEmpty();
+    }
+
+    [Theory] // F-13d
+    [InlineData("10.00")] // a dot for the colon: used to be read as 10:00
+    [InlineData("20-00")] // a dash for the colon: used to be read as a time too
+    [InlineData("10,00")]
+    [InlineData("1000")]
+    [InlineData("9:30")]  // missing the leading zero
+    [InlineData("24:00")] // no such hour
+    [InlineData("10:60")] // no such minute
+    [InlineData("deu")]
+    [InlineData("")]
+    public async Task An_hour_that_is_not_hh_mm_cannot_be_saved(string typed)
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        var vm = New(s);
+        await vm.Initialization;
+        vm.TextClient = "Algú de pas";
+        vm.TimeText = typed;
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().Be(Texts.TimeInvalid);
+        (await s.Appointments.GetByDay(Today)).Should()
+            .BeEmpty("a time nobody typed must not be guessed at and saved");
+    }
+
+    [Fact] // F-13e
+    public async Task The_hour_saved_is_the_one_typed()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        var vm = New(s);
+        await vm.Initialization;
+        vm.TextClient = "Algú de pas";
+        vm.TimeText = "16:45";
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().BeNull();
+        var appointment = (await s.Appointments.GetByDay(Today)).Should().ContainSingle().Subject;
+        appointment.Time.Should().Be(new TimeOnly(16, 45));
+    }
+
+    [Fact] // F-13f
+    public async Task The_hour_box_follows_the_time_picked_on_the_grid()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        var vm = New(s);
+        await vm.Initialization;
+
+        vm.Time = new TimeOnly(9, 5);
+
+        vm.TimeText.Should().Be("09:05");
+    }
+
+    [Theory] // F-13g
+    [InlineData("0")]
+    [InlineData("-30")]
+    [InlineData("30,5")]
+    [InlineData("mitja hora")]
+    [InlineData("")]
+    public async Task A_duration_that_is_not_a_whole_positive_number_cannot_be_saved(string typed)
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        var vm = New(s);
+        await vm.Initialization;
+        vm.TextClient = "Algú de pas";
+        vm.DurationText = typed;
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().Be(Texts.DurationInvalid);
+        (await s.Appointments.GetByDay(Today)).Should().BeEmpty();
+    }
+
+    [Fact] // F-13h
+    public async Task The_duration_box_opens_filled_and_follows_the_service_picked()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        int serviceId = await s.Catalog.CreateService(Make.Service("Tall", duration: 45));
+        var service = await s.Catalog.GetService(serviceId);
+        var vm = New(s);
+
+        vm.DurationText.Should().Be("30", "an empty box would look like nothing was set");
+
+        vm.Service = service;
+        vm.DurationText.Should().Be("45");
+    }
+
+    [Fact] // F-13b
+    public async Task A_malformed_guest_phone_cannot_be_saved()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        var vm = New(s);
+        await vm.Initialization;
+        vm.TextClient = "Algú de pas";
+        vm.GuestPhone = "123";
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().NotBeNull();
+        (await s.Appointments.GetByDay(Today)).Should().BeEmpty();
+    }
+
+    [Fact] // F-13c
+    public async Task A_guest_phone_with_spaces_saves_once_it_has_nine_digits()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        var vm = New(s);
+        await vm.Initialization;
+        vm.TextClient = "Algú de pas";
+        vm.GuestPhone = "61 23 45 678";
+
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().BeNull();
+        (await s.Appointments.GetByDay(Today)).Should().ContainSingle();
     }
 
     [Fact] // F-14

@@ -760,6 +760,30 @@
   <data name="NameAndMobileRequired" xml:space="preserve">
     <value>Cal indicar el nom i el mòbil per guardar.</value>
   </data>
+  <data name="PhoneInvalid" xml:space="preserve">
+    <value>El telèfon ha de tenir 9 xifres, només números (0-9). Es poden separar amb espais, per exemple 611 222 333.</value>
+  </data>
+  <data name="EmailInvalid" xml:space="preserve">
+    <value>El correu electrònic no és vàlid. Ha de tenir un @ i un domini amb punt, per exemple nom@exemple.com.</value>
+  </data>
+  <data name="DateInvalid" xml:space="preserve">
+    <value>La data ha de tenir el format dd/mm/aaaa i ha de ser una data real, per exemple 05/03/2026.</value>
+  </data>
+  <data name="TimeInvalid" xml:space="preserve">
+    <value>L'hora ha de tenir el format hh:mm, amb dos punts i no cap altre signe: hores de 00 a 23 i minuts de 00 a 59, per exemple 09:30.</value>
+  </data>
+  <data name="DurationInvalid" xml:space="preserve">
+    <value>La durada ha de ser un nombre enter de minuts més gran que zero, només xifres (0-9), per exemple 30.</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantitat</value>
+  </data>
+  <data name="QuantityInvalid" xml:space="preserve">
+    <value>La quantitat ha de ser un nombre enter més gran que zero, només xifres (0-9), per exemple 1.</value>
+  </data>
+  <data name="LineDescriptionRequired" xml:space="preserve">
+    <value>Cal indicar el concepte de cada línia de la venda.</value>
+  </data>
   <data name="NewServiceTitle" xml:space="preserve">
     <value>Nou servei</value>
   </data>
@@ -779,10 +803,10 @@
     <value>Cal indicar el nom del producte per guardar.</value>
   </data>
   <data name="PriceInvalid" xml:space="preserve">
-    <value>El preu no és vàlid.</value>
+    <value>El preu ha de ser un número amb xifres (0-9), amb els decimals separats per coma, per exemple 15,50.</value>
   </data>
   <data name="VatOutOfRange" xml:space="preserve">
-    <value>L'IVA ha de ser un percentatge entre 0 i 100.</value>
+    <value>L'IVA ha de ser un percentatge entre 0 i 100, només xifres (0-9), per exemple 21.</value>
   </data>
   <data name="NewMethodTitle" xml:space="preserve">
     <value>Nou mètode de pagament</value>
@@ -802,9 +826,6 @@
   <data name="GuestNameOrClientRequired" xml:space="preserve">
     <value>Cal indicar el nom del convidat o triar un client registrat.</value>
   </data>
-  <data name="DurationMustBePositive" xml:space="preserve">
-    <value>La durada ha de ser més gran que zero.</value>
-  </data>
   <data name="DeleteAppointmentTitle" xml:space="preserve">
     <value>Eliminar cita?</value>
   </data>
@@ -823,7 +844,7 @@ Si vols conservar-la a l'historial, marca-la com a cancel·lada o no assistida.<
     <value>Nova sortida</value>
   </data>
   <data name="AmountMustBePositive" xml:space="preserve">
-    <value>L'import ha de ser més gran que zero.</value>
+    <value>L'import ha de ser un número més gran que zero, amb els decimals separats per coma, per exemple 15,50.</value>
   </data>
   <data name="PaymentMethodRequired" xml:space="preserve">
     <value>Cal triar un mètode de pagament.</value>
@@ -912,13 +933,13 @@ Si només vols que deixi d'aparèixer a les cerques, pots adormir-lo i conservar
     <value>Cal afegir almenys una línia per cobrar.</value>
   </data>
   <data name="MorningStartAndEndRequired" xml:space="preserve">
-    <value>Cal indicar l'hora d'inici i la de fi del matí.</value>
+    <value>Cal indicar l'hora d'inici i la de fi del matí amb el format hh:mm, per exemple 09:00.</value>
   </data>
   <data name="MorningEndsBeforeStart" xml:space="preserve">
     <value>El matí ha d'acabar després de començar.</value>
   </data>
   <data name="AfternoonStartAndEndRequired" xml:space="preserve">
-    <value>Cal indicar l'hora d'inici i la de fi de la tarda.</value>
+    <value>Cal indicar l'hora d'inici i la de fi de la tarda amb el format hh:mm, per exemple 16:00.</value>
   </data>
   <data name="AfternoonEndsBeforeStart" xml:space="preserve">
     <value>La tarda ha d'acabar després de començar.</value>
@@ -1057,7 +1078,7 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
     <value>Dades desades.</value>
   </data>
   <data name="VatPercentOutOfRange" xml:space="preserve">
-    <value>El percentatge d'IVA ha de ser un número entre 0 i 100.</value>
+    <value>El percentatge d'IVA ha de ser un número entre 0 i 100, només xifres (0-9), per exemple 21.</value>
   </data>
   <data name="DefaultVatSaved" xml:space="preserve">
     <value>L'IVA per defecte dels serveis i productes nous serà del {0}.</value>
@@ -1081,7 +1102,7 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
     <value>Mode d'IVA desat. Les vendes noves el faran servir; les ja registrades no canvien.</value>
   </data>
   <data name="DefaultDurationInvalid" xml:space="preserve">
-    <value>La durada per defecte ha de ser un número de minuts més gran que zero.</value>
+    <value>La durada per defecte ha de ser un nombre enter de minuts més gran que zero, només xifres (0-9), per exemple 30.</value>
   </data>
   <data name="ScheduleSavedAllClosed" xml:space="preserve">
     <value>Horari desat. Amb tots els dies tancats, l'agenda no sabrà quan obres.</value>
@@ -1090,10 +1111,10 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
     <value>Horari desat. L'agenda ja el fa servir.</value>
   </data>
   <data name="BackupHourInvalid" xml:space="preserve">
-    <value>L'hora de la còpia ha de tenir la forma 20:00.</value>
+    <value>L'hora ha de tenir el format hh:mm, amb hores de 00 a 23 i minuts de 00 a 59, per exemple 20:00.</value>
   </data>
   <data name="KeepAtLeastOneBackup" xml:space="preserve">
-    <value>Cal conservar com a mínim una còpia.</value>
+    <value>Les còpies a conservar han de ser un nombre enter més gran que zero, només xifres (0-9), per exemple 15.</value>
   </data>
   <data name="BackupDoneTitle" xml:space="preserve">
     <value>Còpia feta</value>

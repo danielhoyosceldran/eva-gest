@@ -46,6 +46,21 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     [ObservableProperty] private TimeOnly _time;
     [ObservableProperty] private int _durationMin = 30;
 
+    /// <summary>
+    /// What the hour and duration boxes are actually bound to. They are text, not a
+    /// TimeOnly and an int: binding those types directly let WPF's culture-aware
+    /// converter accept "10.00" and "20-00" and quietly turn them into times nobody
+    /// typed. The text is parsed here instead, strictly, and a value that does not
+    /// parse leaves <see cref="Time"/> and <see cref="DurationMin"/> untouched until
+    /// Save refuses it with a message that says what the field expects.
+    /// </summary>
+    [ObservableProperty] private string _timeText = string.Empty;
+    [ObservableProperty] private string _durationText = string.Empty;
+
+    /// <summary>Guards the two-way sync between the typed text and the parsed value,
+    /// so pushing one into the other does not bounce straight back.</summary>
+    private bool _syncingText;
+
     [ObservableProperty] private ClientOption? _selectedOption;
     [ObservableProperty] private string _textClient = string.Empty;
     [ObservableProperty] private string? _guestPhone;
@@ -106,6 +121,9 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         _dialogs = dialogs;
         Date = dateInitial;
         Time = initialTime ?? new TimeOnly(10, 0);
+        // DurationMin is a field initialiser, which does not raise OnDurationMinChanged,
+        // so the box would open empty without this.
+        Sync(() => DurationText = DurationMin.ToString());
 
         ClientOptions.Add(new ClientOption(null));
         SelectedOption = ClientOptions[0];
@@ -249,14 +267,37 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
 
     partial void OnTimeChanged(TimeOnly value)
     {
+        Sync(() => TimeText = ScheduleHelper.Format(value));
         Grid?.ShowGhost(Date, value, DurationMin);
         _ = ReviewNotices();
     }
 
     partial void OnDurationMinChanged(int value)
     {
+        Sync(() => DurationText = value.ToString());
         Grid?.ShowGhost(Date, Time, Math.Max(1, value));
         _ = ReviewNotices();
+    }
+
+    // Only a value that parses moves the appointment. Anything else just sits in the
+    // box until Save explains what is wrong with it.
+    partial void OnTimeTextChanged(string value)
+    {
+        if (_syncingText) return;
+        if (TimeValidator.IsValidTime(value.Trim(), out var parsed)) Time = parsed;
+    }
+
+    partial void OnDurationTextChanged(string value)
+    {
+        if (_syncingText) return;
+        if (NumberValidator.TryParseAtLeast(value, 1, out int parsed)) DurationMin = parsed;
+    }
+
+    private void Sync(Action write)
+    {
+        _syncingText = true;
+        try { write(); }
+        finally { _syncingText = false; }
     }
 
     partial void OnWorkerChanged(Worker? value) => _ = ReviewNotices();
@@ -288,9 +329,21 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
             ErrorValidation = Texts.GuestNameOrClientRequired;
             return;
         }
-        if (DurationMin <= 0)
+        // The text is what the user is looking at, so it is what gets judged: checking
+        // the parsed value instead would pass a box reading "10.00" as a valid 10:00.
+        if (!TimeValidator.IsValidTime(TimeText.Trim(), out var time))
         {
-            ErrorValidation = Texts.DurationMustBePositive;
+            ErrorValidation = Texts.TimeInvalid;
+            return;
+        }
+        if (!NumberValidator.TryParseAtLeast(DurationText, 1, out int durationMin))
+        {
+            ErrorValidation = Texts.DurationInvalid;
+            return;
+        }
+        if (client is null && !string.IsNullOrWhiteSpace(GuestPhone) && !ContactValidator.IsValidPhone(GuestPhone))
+        {
+            ErrorValidation = Texts.PhoneInvalid;
             return;
         }
 
@@ -300,8 +353,8 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         {
             Id = _id ?? 0,
             Date = Date,
-            Time = Time,
-            DurationMin = DurationMin,
+            Time = time,
+            DurationMin = durationMin,
             ClientId = client?.Id,
             GuestName = client is null ? TextClient.Trim() : null,
             GuestPhone = client is null ? GuestPhone : null,

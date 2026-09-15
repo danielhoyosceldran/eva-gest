@@ -271,6 +271,14 @@ public static class Texts
         nameof(ColorGraphite),
         nameof(EditClientTitle),
         nameof(NameAndMobileRequired),
+        nameof(PhoneInvalid),
+        nameof(EmailInvalid),
+        nameof(DateInvalid),
+        nameof(TimeInvalid),
+        nameof(DurationInvalid),
+        nameof(Quantity),
+        nameof(QuantityInvalid),
+        nameof(LineDescriptionRequired),
         nameof(NewServiceTitle),
         nameof(EditServiceTitle),
         nameof(ServiceNameRequired),
@@ -285,7 +293,6 @@ public static class Texts
         nameof(GuestFreeName),
         nameof(EditAppointmentTitle),
         nameof(GuestNameOrClientRequired),
-        nameof(DurationMustBePositive),
         nameof(DeleteAppointmentTitle),
         nameof(DeleteAppointmentMessage),
         nameof(AppointmentHasSale),
@@ -1149,6 +1156,30 @@ public static class Texts
     /// <summary>Cal indicar el nom i el mòbil per guardar.</summary>
     public static string NameAndMobileRequired => Get(nameof(NameAndMobileRequired));
 
+    /// <summary>El telèfon ha de tenir 9 xifres, només números (0-9). Es pod...</summary>
+    public static string PhoneInvalid => Get(nameof(PhoneInvalid));
+
+    /// <summary>El correu electrònic no és vàlid. Ha de tenir un @ i un dom...</summary>
+    public static string EmailInvalid => Get(nameof(EmailInvalid));
+
+    /// <summary>La data ha de tenir el format dd/mm/aaaa i ha de ser una da...</summary>
+    public static string DateInvalid => Get(nameof(DateInvalid));
+
+    /// <summary>L'hora ha de tenir el format hh:mm, amb dos punts i no cap ...</summary>
+    public static string TimeInvalid => Get(nameof(TimeInvalid));
+
+    /// <summary>La durada ha de ser un nombre enter de minuts més gran que ...</summary>
+    public static string DurationInvalid => Get(nameof(DurationInvalid));
+
+    /// <summary>Quantitat</summary>
+    public static string Quantity => Get(nameof(Quantity));
+
+    /// <summary>La quantitat ha de ser un nombre enter més gran que zero, n...</summary>
+    public static string QuantityInvalid => Get(nameof(QuantityInvalid));
+
+    /// <summary>Cal indicar el concepte de cada línia de la venda.</summary>
+    public static string LineDescriptionRequired => Get(nameof(LineDescriptionRequired));
+
     /// <summary>Nou servei</summary>
     public static string NewServiceTitle => Get(nameof(NewServiceTitle));
 
@@ -1191,8 +1222,6 @@ public static class Texts
     /// <summary>Cal indicar el nom del convidat o triar un client registrat.</summary>
     public static string GuestNameOrClientRequired => Get(nameof(GuestNameOrClientRequired));
 
-    /// <summary>La durada ha de ser més gran que zero.</summary>
-    public static string DurationMustBePositive => Get(nameof(DurationMustBePositive));
 
     /// <summary>Eliminar cita?</summary>
     public static string DeleteAppointmentTitle => Get(nameof(DeleteAppointmentTitle));
@@ -1467,7 +1496,7 @@ public static class Texts
     /// <summary>Horari desat. L'agenda ja el fa servir.</summary>
     public static string ScheduleSaved => Get(nameof(ScheduleSaved));
 
-    /// <summary>L'hora de la còpia ha de tenir la forma 20:00.</summary>
+    /// <summary>L'hora ha de tenir el format hh:mm, amb hores de 00 a 23 i ...</summary>
     public static string BackupHourInvalid => Get(nameof(BackupHourInvalid));
 
     /// <summary>Cal conservar com a mínim una còpia.</summary>

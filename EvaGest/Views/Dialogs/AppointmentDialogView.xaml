@@ -13,7 +13,7 @@
 
             <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
             <ComboBox ItemsSource="{Binding ClientOptions}" SelectedItem="{Binding SelectedOption}"
-                      DisplayMemberPath="Name" IsTextSearchEnabled="True" TextSearch.TextPath="Nom"
+                      DisplayMemberPath="Name" IsTextSearchEnabled="True" TextSearch.TextPath="Name"
                       Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}"
                       MinHeight="{StaticResource FieldHeight}" />
 
@@ -40,12 +40,12 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="{x:Static t:Texts.Time}" Style="{StaticResource DataLabel}" />
-                    <TextBox Text="{Binding Time, StringFormat=HH\\:mm, ValidatesOnExceptions=True}" />
+                    <TextBox Text="{Binding TimeText, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </Grid>
 
             <TextBlock Text="{x:Static t:Texts.DurationMinutes}" Style="{StaticResource DataLabel}" />
-            <TextBox Text="{Binding DurationMin, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <TextBox Text="{Binding DurationText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.ServiceOptional}" Style="{StaticResource DataLabel}" />
             <ComboBox ItemsSource="{Binding ActiveServices}" SelectedItem="{Binding Service}"

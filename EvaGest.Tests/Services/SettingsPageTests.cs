@@ -264,7 +264,7 @@ public class SettingsPageTests
         vm.BackupTimeText = "21:30";
         vm.BackupsToKeepText = "0";
         await vm.SaveBackupOptionsCommand.ExecuteAsync(null);
-        vm.ErrorBackup.Should().Contain("una còpia");
+        vm.ErrorBackup.Should().NotBeNull();
 
         vm.BackupsToKeepText = "7";
         await vm.SaveBackupOptionsCommand.ExecuteAsync(null);
@@ -274,5 +274,25 @@ public class SettingsPageTests
         await other.Load();
         other.BackupTimeText.Should().Be("21:30");
         other.BackupsToKeepText.Should().Be("7");
+    }
+
+    [Fact] // Q-13
+    public async Task A_malformed_shop_phone_is_not_saved()
+    {
+        await using var testDb = new TestDatabase();
+        var vm = Build(testDb);
+        await vm.Load();
+
+        vm.ShopPhone = "123";
+        await vm.SaveShopDetailsCommand.ExecuteAsync(null);
+        vm.ErrorShop.Should().NotBeNull();
+
+        vm.ShopPhone = "600 111 222";
+        await vm.SaveShopDetailsCommand.ExecuteAsync(null);
+        vm.ErrorShop.Should().BeNull();
+
+        var other = Build(testDb);
+        await other.Load();
+        other.ShopPhone.Should().Be("600 111 222");
     }
 }

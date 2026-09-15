@@ -271,6 +271,18 @@ public partial class SaleDialogViewModel : DialogViewModelBase
             return;
         }
 
+        // Every line is checked before anything is charged: a half-typed quantity or
+        // VAT rate would otherwise be read as zero and freeze a wrong figure onto the
+        // sale, which no later edit of the catalogue can put right.
+        if (Lines.FirstOrDefault(l => !l.IsValid) is { } wrong)
+        {
+            ErrorValidation = string.IsNullOrWhiteSpace(wrong.Description) ? Texts.LineDescriptionRequired
+                : !NumberValidator.TryParseAtLeast(wrong.QuantityText, 1, out _) ? Texts.QuantityInvalid
+                : !Money.TryParse(wrong.PriceText, out _) ? Texts.PriceInvalid
+                : Texts.VatOutOfRange;
+            return;
+        }
+
         ErrorValidation = null;
 
         var sale = new Sale

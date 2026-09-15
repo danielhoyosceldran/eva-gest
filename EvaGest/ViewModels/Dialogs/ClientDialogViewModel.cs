@@ -46,6 +46,16 @@ public partial class ClientDialogViewModel : DialogViewModelBase
             ErrorValidation = Texts.NameAndMobileRequired;
             return;
         }
+        if (!ContactValidator.IsValidPhone(Mobile))
+        {
+            ErrorValidation = Texts.PhoneInvalid;
+            return;
+        }
+        if (!string.IsNullOrWhiteSpace(Email) && !ContactValidator.IsValidEmail(Email))
+        {
+            ErrorValidation = Texts.EmailInvalid;
+            return;
+        }
 
         // The warning is informational only: it never blocks saving (RF-03).
         if (DuplicateFound is null)

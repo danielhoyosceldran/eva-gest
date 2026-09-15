@@ -1,1 +1,9 @@
 description,repro_steps,solved,commit
+"Appointment hour box accepted any shape WPF could coerce: typing 10.00 or 20-00 silently saved 10:00","Agenda > new appointment > type 10.00 in the Hora box > Save > the appointment lands at 10:00",yes,
+"Appointment duration box bound the int directly, so WPF coerced whatever it could instead of refusing it","Agenda > new appointment > type a non-number in the Durada box > Save",yes,
+"Sale line VAT box bound raw basis points, so a typed 21 meant 0,21 % and was frozen onto the sale","Sales > new sale > add a line > type 21 in the VAT box > Charge > the ticket keeps 0,21 %",yes,
+"Sale line quantity box bound the int directly and was never validated before charging","Sales > new sale > add a line > type a non-number in the quantity box > Charge",yes,
+"Till movement crashed on Save when Desglossar IVA was ticked and the VAT box held anything but a number","Till > new cash in > tick Desglossar IVA > type letters in the VAT box > Save > FormatException from decimal.Parse",yes,
+"Opening-hours boxes guessed at 9, 0900 and 9.00, the same leniency that made 10.00 read as 10:00","Settings > opening hours > type 9.00 as a start hour > Save",yes,
+"Service duration accepted anything and silently stored no duration at all when it did not parse","Catalogue > new service > type letters in the duration box > Save > the service is saved with no duration",yes,
+"Client mobile and email were never format-checked","Clients > new client > type letters as the mobile > Save",yes,

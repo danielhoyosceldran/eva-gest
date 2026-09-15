@@ -17,15 +17,65 @@ public partial class SaleLineViewModel : ObservableObject
     [ObservableProperty] private string _priceText = "0,00";
     [ObservableProperty] private int _vatBp;
 
+    /// <summary>
+    /// What the two boxes are bound to. Quantity used to bind the int and VAT the raw
+    /// basis points, so WPF's converter accepted anything it could coerce and "21" in
+    /// the VAT box meant 0,21 %, not 21 %. Both are text now, parsed strictly and in
+    /// the same units as every other VAT box in the app: percent.
+    /// </summary>
+    [ObservableProperty] private string _quantityText = "1";
+    [ObservableProperty] private string _vatText = "0";
+
+    /// <summary>Guards the sync between the typed text and the parsed value.</summary>
+    private bool _syncingText;
+
     /// <summary>Raised so the parent dialog can recompute the sale totals.</summary>
     public event Action? Changed;
+
+    public bool IsValid =>
+        !string.IsNullOrWhiteSpace(Description)
+        && NumberValidator.TryParseAtLeast(QuantityText, 1, out _)
+        && Money.TryParse(PriceText, out _)
+        && Percentages.TryParse(VatText, out _);
 
     public int AmountCents => (Money.TryParse(PriceText, out int priceCents) ? priceCents : 0) * Quantity;
 
     partial void OnDescriptionChanged(string value) => Notify();
-    partial void OnQuantityChanged(int value) => Notify();
     partial void OnPriceTextChanged(string value) => Notify();
-    partial void OnVatBpChanged(int value) => Notify();
+
+    partial void OnQuantityChanged(int value)
+    {
+        Sync(() => QuantityText = value.ToString());
+        Notify();
+    }
+
+    partial void OnVatBpChanged(int value)
+    {
+        Sync(() => VatText = Percentages.FormatWithoutUnit(value));
+        Notify();
+    }
+
+    // Only a value that parses moves the line; the rest waits for Save to explain itself.
+    partial void OnQuantityTextChanged(string value)
+    {
+        if (_syncingText) return;
+        if (NumberValidator.TryParseAtLeast(value, 1, out int parsed)) Quantity = parsed;
+        Notify();
+    }
+
+    partial void OnVatTextChanged(string value)
+    {
+        if (_syncingText) return;
+        if (Percentages.TryParse(value, out int parsed)) VatBp = parsed;
+        Notify();
+    }
+
+    private void Sync(Action write)
+    {
+        _syncingText = true;
+        try { write(); }
+        finally { _syncingText = false; }
+    }
 
     private void Notify()
     {

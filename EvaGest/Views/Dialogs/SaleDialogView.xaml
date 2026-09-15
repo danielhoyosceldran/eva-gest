@@ -31,6 +31,25 @@
                   DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
 
         <TextBlock Text="{x:Static t:Texts.Lines}" Style="{StaticResource Subtitle}" />
+
+        <!-- Headers: without them the four boxes give no clue which is the quantity and
+             what unit the VAT one wants. -->
+        <Grid Margin="10,0,10,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{x:Static t:Texts.Concept}" Style="{StaticResource DataLabel}" />
+            <TextBlock Grid.Column="2" Text="{x:Static t:Texts.Quantity}" Style="{StaticResource DataLabel}" />
+            <TextBlock Grid.Column="4" Text="{x:Static t:Texts.PriceEuros}" Style="{StaticResource DataLabel}" />
+            <TextBlock Grid.Column="6" Text="{x:Static t:Texts.VatPercent}" Style="{StaticResource DataLabel}" />
+        </Grid>
+
         <ItemsControl ItemsSource="{Binding Lines}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -50,9 +69,9 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBox Grid.Column="2" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="2" Text="{Binding QuantityText, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox Grid.Column="4" Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBox Grid.Column="6" Text="{Binding VatBp, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="6" Text="{Binding VatText, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock Grid.Column="8" Text="{Binding AmountCents}" VerticalAlignment="Center"
                                        Style="{StaticResource TableFigure}" />
                             <Button Grid.Column="10" Content="{x:Static t:Texts.Remove}" Style="{StaticResource SecondaryButton}"

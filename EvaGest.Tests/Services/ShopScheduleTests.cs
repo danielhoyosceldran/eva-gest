@@ -52,8 +52,8 @@ public class ScheduleShopTests
         var vm = Build(testDb);
         await vm.Load();
         vm.ScheduleDays[2].WorksMorning = true;
-        vm.ScheduleDays[2].MorningStart = "10";
-        vm.ScheduleDays[2].MorningEnd = "18";
+        vm.ScheduleDays[2].MorningStart = "10:00";
+        vm.ScheduleDays[2].MorningEnd = "18:00";
         await vm.SaveScheduleCommand.ExecuteAsync(null);
 
         var other = Build(testDb);

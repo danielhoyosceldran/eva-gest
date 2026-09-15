@@ -8,13 +8,11 @@ public class ScheduleHelperTests
 {
     [Theory] // H-01
     [InlineData("09:00", 9, 0)]
-    [InlineData("9:00", 9, 0)]
-    [InlineData("9", 9, 0)]
-    [InlineData("0930", 9, 30)]
-    [InlineData("9.30", 9, 30)]
     [InlineData("  09:30  ", 9, 30)]
+    [InlineData("00:00", 0, 0)]
     [InlineData("20:15", 20, 15)]
-    public void Parse_accepts_the_shapes_people_actually_write(string text, int time, int minute)
+    [InlineData("23:59", 23, 59)]
+    public void Parse_accepts_hh_mm_and_trims_the_outer_spaces(string text, int time, int minute)
         => ScheduleHelper.Analyze(text).Should().Be(new TimeOnly(time, minute));
 
     [Theory] // H-02
@@ -22,10 +20,21 @@ public class ScheduleHelperTests
     [InlineData("   ")]
     [InlineData(null)]
     [InlineData("25:00")]
+    [InlineData("24:00")]
     [InlineData("09:70")]
     [InlineData("matí")]
     public void Parse_rejects_what_is_not_a_time(string? text)
         => ScheduleHelper.Analyze(text).Should().BeNull();
+
+    [Theory] // H-02b
+    [InlineData("9:00")]  // missing leading zero
+    [InlineData("9")]     // bare hour
+    [InlineData("0930")]  // no separator
+    [InlineData("9.30")]  // dot instead of a colon
+    [InlineData("09-30")] // dash instead of a colon
+    public void Parse_rejects_the_shorthands_that_used_to_be_guessed_at(string text)
+        => ScheduleHelper.Analyze(text).Should().BeNull(
+            "guessing at these is what turned a typed 10.00 into 10:00");
 
     [Fact] // H-03
     public void A_day_with_no_shift_gives_no_interval_and_no_error()

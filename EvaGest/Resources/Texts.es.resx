@@ -760,6 +760,30 @@
   <data name="NameAndMobileRequired" xml:space="preserve">
     <value>Hay que indicar el nombre y el móvil para guardar.</value>
   </data>
+  <data name="PhoneInvalid" xml:space="preserve">
+    <value>El teléfono debe tener 9 cifras, solo números (0-9). Se pueden separar con espacios, por ejemplo 611 222 333.</value>
+  </data>
+  <data name="EmailInvalid" xml:space="preserve">
+    <value>El correo electrónico no es válido. Debe tener un @ y un dominio con punto, por ejemplo nombre@ejemplo.com.</value>
+  </data>
+  <data name="DateInvalid" xml:space="preserve">
+    <value>La fecha debe tener el formato dd/mm/aaaa y ser una fecha real, por ejemplo 05/03/2026.</value>
+  </data>
+  <data name="TimeInvalid" xml:space="preserve">
+    <value>La hora debe tener el formato hh:mm, con dos puntos y ningún otro signo: horas de 00 a 23 y minutos de 00 a 59, por ejemplo 09:30.</value>
+  </data>
+  <data name="DurationInvalid" xml:space="preserve">
+    <value>La duración debe ser un número entero de minutos mayor que cero, solo cifras (0-9), por ejemplo 30.</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Cantidad</value>
+  </data>
+  <data name="QuantityInvalid" xml:space="preserve">
+    <value>La cantidad debe ser un número entero mayor que cero, solo cifras (0-9), por ejemplo 1.</value>
+  </data>
+  <data name="LineDescriptionRequired" xml:space="preserve">
+    <value>Hay que indicar el concepto de cada línea de la venta.</value>
+  </data>
   <data name="NewServiceTitle" xml:space="preserve">
     <value>Nuevo servicio</value>
   </data>
@@ -779,10 +803,10 @@
     <value>Hay que indicar el nombre del producto para guardar.</value>
   </data>
   <data name="PriceInvalid" xml:space="preserve">
-    <value>El precio no es válido.</value>
+    <value>El precio debe ser un número con cifras (0-9), con los decimales separados por coma, por ejemplo 15,50.</value>
   </data>
   <data name="VatOutOfRange" xml:space="preserve">
-    <value>El IVA tiene que ser un porcentaje entre 0 y 100.</value>
+    <value>El IVA debe ser un porcentaje entre 0 y 100, solo cifras (0-9), por ejemplo 21.</value>
   </data>
   <data name="NewMethodTitle" xml:space="preserve">
     <value>Nuevo método de pago</value>
@@ -802,9 +826,6 @@
   <data name="GuestNameOrClientRequired" xml:space="preserve">
     <value>Hay que indicar el nombre del invitado o elegir un cliente registrado.</value>
   </data>
-  <data name="DurationMustBePositive" xml:space="preserve">
-    <value>La duración tiene que ser mayor que cero.</value>
-  </data>
   <data name="DeleteAppointmentTitle" xml:space="preserve">
     <value>¿Eliminar cita?</value>
   </data>
@@ -823,7 +844,7 @@ Si quieres conservarla en el historial, márcala como cancelada o no asistida.</
     <value>Nueva salida</value>
   </data>
   <data name="AmountMustBePositive" xml:space="preserve">
-    <value>El importe tiene que ser mayor que cero.</value>
+    <value>El importe debe ser un número mayor que cero, con los decimales separados por coma, por ejemplo 15,50.</value>
   </data>
   <data name="PaymentMethodRequired" xml:space="preserve">
     <value>Hay que elegir un método de pago.</value>
@@ -912,13 +933,13 @@ Si solo quieres que deje de aparecer en las búsquedas, puedes dormirlo y conser
     <value>Hay que añadir al menos una línea para cobrar.</value>
   </data>
   <data name="MorningStartAndEndRequired" xml:space="preserve">
-    <value>Hay que indicar la hora de inicio y la de fin de la mañana.</value>
+    <value>Hay que indicar la hora de inicio y la de fin de la mañana con el formato hh:mm, por ejemplo 09:00.</value>
   </data>
   <data name="MorningEndsBeforeStart" xml:space="preserve">
     <value>La mañana tiene que acabar después de empezar.</value>
   </data>
   <data name="AfternoonStartAndEndRequired" xml:space="preserve">
-    <value>Hay que indicar la hora de inicio y la de fin de la tarde.</value>
+    <value>Hay que indicar la hora de inicio y la de fin de la tarde con el formato hh:mm, por ejemplo 16:00.</value>
   </data>
   <data name="AfternoonEndsBeforeStart" xml:space="preserve">
     <value>La tarde tiene que acabar después de empezar.</value>
@@ -1057,7 +1078,7 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
     <value>Datos guardados.</value>
   </data>
   <data name="VatPercentOutOfRange" xml:space="preserve">
-    <value>El porcentaje de IVA tiene que ser un número entre 0 y 100.</value>
+    <value>El porcentaje de IVA debe ser un número entre 0 y 100, solo cifras (0-9), por ejemplo 21.</value>
   </data>
   <data name="DefaultVatSaved" xml:space="preserve">
     <value>El IVA por defecto de los servicios y productos nuevos será del {0}.</value>
@@ -1081,7 +1102,7 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
     <value>Modo de IVA guardado. Las ventas nuevas lo usarán; las ya registradas no cambian.</value>
   </data>
   <data name="DefaultDurationInvalid" xml:space="preserve">
-    <value>La duración por defecto tiene que ser un número de minutos mayor que cero.</value>
+    <value>La duración por defecto debe ser un número entero de minutos mayor que cero, solo cifras (0-9), por ejemplo 30.</value>
   </data>
   <data name="ScheduleSavedAllClosed" xml:space="preserve">
     <value>Horario guardado. Con todos los días cerrados, la agenda no sabrá cuándo abres.</value>
@@ -1090,10 +1111,10 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
     <value>Horario guardado. La agenda ya lo usa.</value>
   </data>
   <data name="BackupHourInvalid" xml:space="preserve">
-    <value>La hora de la copia tiene que tener la forma 20:00.</value>
+    <value>La hora debe tener el formato hh:mm, con horas de 00 a 23 y minutos de 00 a 59, por ejemplo 20:00.</value>
   </data>
   <data name="KeepAtLeastOneBackup" xml:space="preserve">
-    <value>Hay que conservar como mínimo una copia.</value>
+    <value>Las copias a conservar deben ser un número entero mayor que cero, solo cifras (0-9), por ejemplo 15.</value>
   </data>
   <data name="BackupDoneTitle" xml:space="preserve">
     <value>Copia hecha</value>

@@ -33,6 +33,7 @@ public partial class SettingsViewModel(
     [ObservableProperty] private string _shopAddress = string.Empty;
     [ObservableProperty] private string _shopPhone = string.Empty;
     [ObservableProperty] private string? _shopConfirmation;
+    [ObservableProperty] private string? _errorShop;
 
     // ── VAT ──────────────────────────────────────────────────────────────────
     [ObservableProperty] private string _defaultVatText = "21";
@@ -143,6 +144,7 @@ public partial class SettingsViewModel(
             ErrorAgenda = null;
             ErrorBackup = null;
             ShopConfirmation = null;
+            ErrorShop = null;
         }
         finally
         {
@@ -156,6 +158,13 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private async Task SaveShopDetails()
     {
+        if (!string.IsNullOrWhiteSpace(ShopPhone) && !ContactValidator.IsValidPhone(ShopPhone))
+        {
+            ErrorShop = Texts.PhoneInvalid;
+            return;
+        }
+
+        ErrorShop = null;
         await settings.Save(ConfigKeys.ShopName, ShopName.Trim());
         await settings.Save(ConfigKeys.ShopAddress, ShopAddress.Trim());
         await settings.Save(ConfigKeys.ShopPhone, ShopPhone.Trim());
@@ -233,7 +242,7 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private async Task SaveDefaultDuration()
     {
-        if (!int.TryParse(DefaultAppointmentDurationText, out int minutes) || minutes <= 0)
+        if (!NumberValidator.TryParseAtLeast(DefaultAppointmentDurationText, 1, out int minutes))
         {
             ErrorAgenda = Texts.DefaultDurationInvalid;
             return;
@@ -313,12 +322,12 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private async Task SaveBackupOptions()
     {
-        if (!TimeOnly.TryParse(BackupTimeText, CultureInfo.InvariantCulture, out var time))
+        if (!TimeValidator.IsValidTime(BackupTimeText, out var time))
         {
             ErrorBackup = Texts.BackupHourInvalid;
             return;
         }
-        if (!int.TryParse(BackupsToKeepText, out int howmany) || howmany < 1)
+        if (!NumberValidator.TryParseAtLeast(BackupsToKeepText, 1, out int howmany))
         {
             ErrorBackup = Texts.KeepAtLeastOneBackup;
             return;

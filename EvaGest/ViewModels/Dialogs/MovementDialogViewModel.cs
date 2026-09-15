@@ -65,6 +65,13 @@ public partial class MovementDialogViewModel : DialogViewModelBase
             ErrorValidation = Texts.ConceptRequired;
             return;
         }
+        // Only when the rate is actually going to be used. Unchecked, AModel used to
+        // parse this box unguarded and threw on anything that was not a number.
+        if (SplitVat && !Percentages.TryParse(VatText, out _))
+        {
+            ErrorValidation = Texts.VatOutOfRange;
+            return;
+        }
 
         ErrorValidation = null;
         RequestClose(true);
@@ -78,10 +85,9 @@ public partial class MovementDialogViewModel : DialogViewModelBase
         Money.TryParse(PriceText, out int amountCents);
         int? baseCents = null, vatCents = null, vatBp = null;
 
-        if (SplitVat)
+        if (SplitVat && Percentages.TryParse(VatText, out int parsedBp))
         {
-            vatBp = (int)Math.Round(decimal.Parse(VatText.Replace(",", ".").Replace("%", ""),
-                System.Globalization.CultureInfo.InvariantCulture) * 100);
+            vatBp = parsedBp;
             var line = new SaleLine { AmountCents = amountCents, VatBp = vatBp.Value };
             var d = VatCalculator.Compute([line], VatMode.Included);
             baseCents = d.BaseCents;
