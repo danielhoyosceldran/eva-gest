@@ -784,6 +784,9 @@
   <data name="LineDescriptionRequired" xml:space="preserve">
     <value>Cal indicar el concepte de cada línia de la venda.</value>
   </data>
+  <data name="LineAmountTooLarge" xml:space="preserve">
+    <value>L'import d'aquesta línia és massa gran. Revisa la quantitat i el preu.</value>
+  </data>
   <data name="NewServiceTitle" xml:space="preserve">
     <value>Nou servei</value>
   </data>

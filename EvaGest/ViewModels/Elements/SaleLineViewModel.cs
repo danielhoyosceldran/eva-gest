@@ -36,9 +36,22 @@ public partial class SaleLineViewModel : ObservableObject
         !string.IsNullOrWhiteSpace(Description)
         && NumberValidator.TryParseAtLeast(QuantityText, 1, out _)
         && Money.TryParse(PriceText, out _)
-        && Percentages.TryParse(VatText, out _);
+        && Percentages.TryParse(VatText, out _)
+        && AmountCentsExact is >= int.MinValue and <= int.MaxValue;
 
-    public int AmountCents => (Money.TryParse(PriceText, out int priceCents) ? priceCents : 0) * Quantity;
+    /// <summary>Price * Quantity in <see cref="long"/>, so a line whose product does not
+    /// fit in <see cref="int"/> cents is detected instead of silently wrapping onto the
+    /// frozen sale total. Neither box has an upper bound of its own (a duration of
+    /// minutes has no natural ceiling either), so this is the one place the combination
+    /// is checked.</summary>
+    private long AmountCentsExact =>
+        (Money.TryParse(PriceText, out int priceCents) ? priceCents : 0) * (long)Quantity;
+
+    /// <summary>Unchecked on purpose: this is read on every keystroke for the live total,
+    /// before <see cref="IsValid"/> has necessarily been checked, and a plain long-to-int
+    /// cast truncates rather than throwing. <see cref="IsValid"/> is what stops Charge
+    /// from ever freezing a wrapped value onto the sale.</summary>
+    public int AmountCents => unchecked((int)AmountCentsExact);
 
     partial void OnDescriptionChanged(string value) => Notify();
     partial void OnPriceTextChanged(string value) => Notify();

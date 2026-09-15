@@ -90,6 +90,21 @@ public class SaleLineViewModelTests
         line.AmountCents.Should().Be(4500);
     }
 
+    [Fact] // price * quantity used to be unchecked int arithmetic: a quantity large
+           // enough to push the product past int.MaxValue wrapped silently and would
+           // have frozen a wrong/negative total onto the sale.
+    public void A_price_and_quantity_whose_product_overflows_int_cents_makes_the_line_invalid()
+    {
+        var line = SaleLineViewModel.Free();
+        line.Description = "Tall";
+        line.PriceText = "99999,99";
+        line.VatText = "21";
+
+        line.QuantityText = "300";
+
+        line.IsValid.Should().BeFalse();
+    }
+
     [Fact]
     public void A_half_typed_quantity_does_not_move_the_amount()
     {

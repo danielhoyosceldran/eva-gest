@@ -279,6 +279,7 @@ public static class Texts
         nameof(Quantity),
         nameof(QuantityInvalid),
         nameof(LineDescriptionRequired),
+        nameof(LineAmountTooLarge),
         nameof(NewServiceTitle),
         nameof(EditServiceTitle),
         nameof(ServiceNameRequired),
@@ -1180,6 +1181,9 @@ public static class Texts
 
     /// <summary>Cal indicar el concepte de cada línia de la venda.</summary>
     public static string LineDescriptionRequired => Get(nameof(LineDescriptionRequired));
+
+    /// <summary>L'import d'aquesta línia és massa gran. Revisa la quantitat i el preu.</summary>
+    public static string LineAmountTooLarge => Get(nameof(LineAmountTooLarge));
 
     /// <summary>Nou servei</summary>
     public static string NewServiceTitle => Get(nameof(NewServiceTitle));
