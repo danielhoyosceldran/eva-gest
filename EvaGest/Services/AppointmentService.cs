@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EvaGest.Services;
 
-public class AppointmentService(IDbContextFactory<ShopDbContext> factory) : IAppointmentService
+public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppointmentChangeNotifier? notifier = null)
+    : IAppointmentService
 {
     public async Task<List<Appointment>> GetByDay(DateOnly date)
     {
@@ -45,6 +46,22 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory) : IApp
             .ToListAsync();
     }
 
+    public async Task<List<Appointment>> GetOverduePending(DateTime asOf)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        var since = DateOnly.FromDateTime(asOf.AddDays(-1));
+        var today = DateOnly.FromDateTime(asOf);
+
+        var candidates = await Query(db)
+            .Where(c => c.Status == AppointmentStatus.Pending && c.Date >= since && c.Date <= today)
+            .ToListAsync();
+
+        return candidates
+            .Where(c => c.Date.ToDateTime(c.Time).AddHours(1) <= asOf)
+            .OrderBy(c => c.Date).ThenBy(c => c.Time)
+            .ToList();
+    }
+
     public async Task<int> CountByStatus(DateOnly from, DateOnly to, AppointmentStatus status)
     {
         await using var db = await factory.CreateDbContextAsync();
@@ -64,6 +81,7 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory) : IApp
         await using var db = await factory.CreateDbContextAsync();
         db.Appointments.Update(appointment);
         await db.SaveChangesAsync();
+        notifier?.NotifyChanged();
     }
 
     public async Task<bool> ChangeStatus(int appointmentId, AppointmentStatus newStatus)
@@ -76,6 +94,7 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory) : IApp
 
         appointment.Status = newStatus;
         await db.SaveChangesAsync();
+        notifier?.NotifyChanged();
         return true;
     }
 
@@ -93,6 +112,7 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory) : IApp
 
         db.Appointments.Remove(appointment);
         await db.SaveChangesAsync();
+        notifier?.NotifyChanged();
         return DeleteResult.Deleted;
     }
 

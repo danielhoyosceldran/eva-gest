@@ -67,6 +67,22 @@
         </Grid>
 
         <!-- Content area -->
-        <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" /> <!-- Overdue appointments warning -->
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Stays up no matter which page is open, until every cite past the hour
+                 mark is closed (pantalles 1) -->
+            <Border Grid.Row="0" Background="{StaticResource DangerBgBrush}" BorderBrush="{StaticResource DangerBrush}"
+                    BorderThickness="0,0,0,1" Padding="16,10"
+                    Visibility="{Binding OverdueAppointmentsNotice, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding OverdueAppointmentsNotice}" Foreground="{StaticResource DangerBrush}"
+                           TextWrapping="Wrap" FontWeight="SemiBold" />
+            </Border>
+
+            <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
+        </Grid>
     </Grid>
 </Window>

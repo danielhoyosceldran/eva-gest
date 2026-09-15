@@ -135,6 +135,7 @@ public partial class App : Application
         s.AddSingleton<IDialogService, DialogService>();
         s.AddTransient<ICatalogService, CatalogService>();
         s.AddTransient<IClientService, ClientService>();
+        s.AddSingleton<IAppointmentChangeNotifier, AppointmentChangeNotifier>();
         s.AddTransient<IAppointmentService, AppointmentService>();
         s.AddTransient<IAvailabilityService, AvailabilityService>();
         s.AddTransient<IWorkerService, WorkerService>();

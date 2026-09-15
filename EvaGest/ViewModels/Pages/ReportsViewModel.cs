@@ -35,13 +35,19 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
     public record ClientAverageRow(Client Client, decimal AverageEuros);
     public record InactiveClientRow(Client Client, DateOnly Last, int DaysSince);
 
+    /// <summary>Money is formatted here rather than in XAML: binding IncomeCents
+    /// straight to a {0:0.00} format string showed euros as if they were cents.</summary>
+    public record WorkerRankingRow(int WorkerId, string Name, int SalesHandled, string IncomeText, decimal? WorkPercentage);
+
     public ObservableCollection<EvolutionBar> Evolution { get; } = [];
     public ObservableCollection<ClientVisitsRow> TopVisits { get; } = [];
     public ObservableCollection<ClientSpendRow> TopSpend { get; } = [];
     public ObservableCollection<ClientAverageRow> TopAverage { get; } = [];
     public ObservableCollection<InactiveClientRow> NotSeenRecently { get; } = [];
-    public ObservableCollection<WorkerDetail> WorkerRanking { get; } = [];
+    public ObservableCollection<WorkerRankingRow> WorkerRanking { get; } = [];
     public ObservableCollection<Worker> Workers { get; } = [];
+
+    [ObservableProperty] private string _selectedDetailIncomeText = "—";
 
     public async Task Load()
     {
@@ -76,7 +82,8 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
             foreach (var t in await reports.GetNotSeenRecently()) NotSeenRecently.Add(new(t.client, t.last, t.daysSince));
 
             WorkerRanking.Clear();
-            foreach (var d in await reports.WorkerRanking(From, To)) WorkerRanking.Add(d);
+            foreach (var d in await reports.WorkerRanking(From, To))
+                WorkerRanking.Add(new(d.WorkerId, d.Name, d.SalesHandled, Money.Format((int)d.IncomeCents), d.WorkPercentage));
 
             if (Workers.Count == 0)
                 foreach (var t in await workers.GetAll()) Workers.Add(t);
@@ -85,7 +92,10 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
                 SelectedWorker = Workers[0];
 
             if (SelectedWorker is not null)
+            {
                 SelectedDetail = await reports.GetWorkerDetail(SelectedWorker.Id, From, To);
+                SelectedDetailIncomeText = Money.Format((int)SelectedDetail.IncomeCents);
+            }
         }
         finally { Loading = false; }
     }

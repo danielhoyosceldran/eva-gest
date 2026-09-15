@@ -90,8 +90,13 @@
                                     <Grid>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                                                     Visibility="{Binding Status, Converter={StaticResource PendingToVisibilityConverter}}">
-                                            <Button Content="{x:Static t:Texts.Completed}" Style="{StaticResource SecondaryButton}"
+                                            <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
                                                     Padding="8,0" MinHeight="32"
+                                                    Command="{Binding DataContext.EditAppointmentCommand,
+                                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                            <Button Content="{x:Static t:Texts.Completed}" Style="{StaticResource SecondaryButton}"
+                                                    Padding="8,0" MinHeight="32" Margin="6,0,0,0"
                                                     Command="{Binding DataContext.MarkCompletedCommand,
                                                               RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                     CommandParameter="{Binding}" />

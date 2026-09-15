@@ -1026,6 +1026,9 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
   <data name="AppointmentHasSaleCannotReopen" xml:space="preserve">
     <value>La cita tiene una venta asociada y no se ha podido volver a pendiente. Anula primero la venta.</value>
   </data>
+  <data name="OverdueAppointmentsNotice" xml:space="preserve">
+    <value>Hace más de una hora de la hora prevista y siguen pendientes: </value>
+  </data>
   <data name="NoSalesThisMonth" xml:space="preserve">
     <value>Todavía no hay ventas este mes.</value>
   </data>

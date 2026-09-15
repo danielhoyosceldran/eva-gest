@@ -127,7 +127,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.SalesHandled}" Binding="{Binding SalesHandled}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.IncomeColumn}" Binding="{Binding IncomeCents, StringFormat={}{0:0.00}}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.IncomeColumn}" Binding="{Binding IncomeText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.WorkPercentColumn}" Binding="{Binding WorkPercentage, StringFormat={}{0:0.0}%, TargetNullValue=—}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                     </DataGrid.Columns>
                 </DataGrid>
@@ -149,7 +149,7 @@
                 <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.IncomeGenerated}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding SelectedDetail.IncomeCents, StringFormat={}{0:0.00} €}" Style="{StaticResource Figure}" />
+                        <TextBlock Text="{Binding SelectedDetailIncomeText}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
                 <Border Style="{StaticResource DataCard}">

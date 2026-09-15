@@ -356,6 +356,7 @@ public static class Texts
         nameof(CatalogItemDeleted),
         nameof(BirthdaysToday),
         nameof(AppointmentHasSaleCannotReopen),
+        nameof(OverdueAppointmentsNotice),
         nameof(NoSalesThisMonth),
         nameof(ClientOfTheMonthLine),
         nameof(MoreLinesSuffix),
@@ -1411,6 +1412,9 @@ public static class Texts
 
     /// <summary>La cita té una venda associada i no s'ha pogut tornar a p...</summary>
     public static string AppointmentHasSaleCannotReopen => Get(nameof(AppointmentHasSaleCannotReopen));
+
+    /// <summary>Fa més d'una hora que hauria d'haver acabat i encara és p...</summary>
+    public static string OverdueAppointmentsNotice => Get(nameof(OverdueAppointmentsNotice));
 
     /// <summary>Encara no hi ha vendes aquest mes.</summary>
     public static string NoSalesThisMonth => Get(nameof(NoSalesThisMonth));

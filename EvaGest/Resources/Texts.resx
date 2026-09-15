@@ -1026,6 +1026,9 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
   <data name="AppointmentHasSaleCannotReopen" xml:space="preserve">
     <value>La cita té una venda associada i no s'ha pogut tornar a pendent. Anul·la primer la venda.</value>
   </data>
+  <data name="OverdueAppointmentsNotice" xml:space="preserve">
+    <value>Fa més d'una hora de l'hora prevista i encara estan pendents: </value>
+  </data>
   <data name="NoSalesThisMonth" xml:space="preserve">
     <value>Encara no hi ha vendes aquest mes.</value>
   </data>

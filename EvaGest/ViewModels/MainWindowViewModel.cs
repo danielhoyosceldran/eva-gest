@@ -1,17 +1,31 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EvaGest.Resources;
 using EvaGest.Services;
 using EvaGest.ViewModels.Dialogs;
 using EvaGest.ViewModels.Pages;
+using Serilog;
 
 namespace EvaGest.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IDialogService _dialogs;
+    private readonly IAppointmentService _appointments;
 
     [ObservableProperty]
     private PageViewModelBase _currentPage;
+
+    /// <summary>
+    /// Set whenever a still-Pending appointment is more than an hour past its start
+    /// time, so a cite never silently falls through without the user noticing. Shown
+    /// in the shell rather than a page ViewModel because it must stay visible no
+    /// matter which page is open, and it is not auto-cleared like <see cref="PageViewModelBase.Notice"/>:
+    /// it only goes away once <see cref="CheckOverdueAppointments"/> next finds
+    /// nothing overdue (the appointment got closed, or moved off the list).
+    /// </summary>
+    [ObservableProperty]
+    private string? _overdueAppointmentsNotice;
 
     // Kept alive for the session so navigating away and back does not lose state.
     private readonly HomeViewModel _start;
@@ -27,7 +41,7 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(HomeViewModel start, CatalogViewModel catalog, ClientsViewModel clients,
         WorkersViewModel workers, AgendaViewModel agenda, SalesViewModel sales,
         TillViewModel till, ReportsViewModel reports, SettingsViewModel settings,
-        IDialogService dialogs)
+        IDialogService dialogs, IAppointmentService appointments, IAppointmentChangeNotifier appointmentChanges)
     {
         _start = start;
         _catalog = catalog;
@@ -39,7 +53,34 @@ public partial class MainWindowViewModel : ObservableObject
         _reports = reports;
         _settings = settings;
         _dialogs = dialogs;
+        _appointments = appointments;
         _currentPage = _start;
+
+        // Every page's IAppointmentService is its own transient instance; this singleton
+        // is what lets an edit or delete made on the Agenda or Home page reach the
+        // overdue check here right away, instead of waiting for the next timer tick.
+        appointmentChanges.Changed += async () => await CheckOverdueAppointments();
+    }
+
+    /// <summary>
+    /// Polled from the shell's code-behind on a timer (UI-thread concern, not a
+    /// ViewModel one). Caught rather than left to the global handler: a transient DB
+    /// hiccup on a background poll must not surface an error dialog over whatever the
+    /// user is doing, but it still has to leave a record.
+    /// </summary>
+    public async Task CheckOverdueAppointments()
+    {
+        try
+        {
+            var overdue = await _appointments.GetOverduePending(DateTime.Now);
+            OverdueAppointmentsNotice = overdue.Count > 0
+                ? Texts.OverdueAppointmentsNotice + string.Join(", ", overdue.Select(a => a.DisplayName))
+                : null;
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Overdue appointment check failed");
+        }
     }
 
     [RelayCommand] private void NavigateHome() => CurrentPage = _start;

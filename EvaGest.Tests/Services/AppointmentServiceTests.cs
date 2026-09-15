@@ -268,4 +268,41 @@ public class AppointmentServiceTests
         var action = async () => await db2.SaveChangesAsync();
         await action.Should().ThrowAsync<DbUpdateException>();
     }
+
+    [Fact]
+    public async Task A_pending_appointment_more_than_an_hour_past_its_time_is_overdue()
+    {
+        await using var testDb = new TestDatabase();
+        var appointments = CreatesService(testDb);
+        int id = await appointments.Create(new Appointment { Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, GuestName = "C" });
+
+        var overdue = await appointments.GetOverduePending(Today.ToDateTime(new TimeOnly(11, 1)));
+
+        overdue.Should().ContainSingle(c => c.Id == id);
+    }
+
+    [Fact]
+    public async Task A_pending_appointment_less_than_an_hour_past_its_time_is_not_overdue()
+    {
+        await using var testDb = new TestDatabase();
+        var appointments = CreatesService(testDb);
+        await appointments.Create(new Appointment { Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, GuestName = "C" });
+
+        var overdue = await appointments.GetOverduePending(Today.ToDateTime(new TimeOnly(10, 59)));
+
+        overdue.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task A_completed_appointment_is_never_overdue()
+    {
+        await using var testDb = new TestDatabase();
+        var appointments = CreatesService(testDb);
+        int id = await appointments.Create(new Appointment { Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, GuestName = "C" });
+        await appointments.ChangeStatus(id, AppointmentStatus.Completed);
+
+        var overdue = await appointments.GetOverduePending(Today.ToDateTime(new TimeOnly(23, 0)));
+
+        overdue.Should().BeEmpty();
+    }
 }

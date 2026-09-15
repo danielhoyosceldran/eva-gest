@@ -15,6 +15,10 @@ public interface IAppointmentService
     /// <summary>Completed appointments with no sale yet, for manual association (RF-09).</summary>
     Task<List<Appointment>> GetCompletedWithoutSale();
 
+    /// <summary>Still-Pending appointments whose start time is more than an hour before
+    /// <paramref name="asOf"/>, so the shell can warn that a cite was never closed.</summary>
+    Task<List<Appointment>> GetOverduePending(DateTime asOf);
+
     /// <summary>Counts appointments in one state over a range. Used by the dashboard
     /// counters and by the day-scenario tests.</summary>
     Task<int> CountByStatus(DateOnly from, DateOnly to, AppointmentStatus status);

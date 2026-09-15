@@ -78,6 +78,14 @@ public partial class HomeViewModel(
         await Load();
     }
 
+    [RelayCommand]
+    private async Task EditAppointment(Appointment appointment)
+    {
+        var vm = new AppointmentDialogViewModel(appointments, availability, clients, catalog, workers,
+            settings, dialogs, appointment);
+        if (await dialogs.ShowDialog(vm)) await Load();
+    }
+
     [RelayCommand] private Task MarkCancelled(Appointment appointment) => ChangeAppointmentStatus(appointment, AppointmentStatus.Cancelled);
     [RelayCommand] private Task MarkNoShow(Appointment appointment) => ChangeAppointmentStatus(appointment, AppointmentStatus.NoShow);
 
