@@ -44,7 +44,14 @@ public static class Money
                               CultureInfo.InvariantCulture, out decimal euros))
             return false;
 
-        cents = (int)Math.Round(euros * 100m, MidpointRounding.AwayFromZero);
+        // Rounded first, then range-checked before the cast: decimal-to-int is a
+        // checked conversion in C# and throws OverflowException on anything the int
+        // range cannot hold, which every "if (!Money.TryParse(...))" guard in the app
+        // relies on never happening.
+        decimal roundedCents = Math.Round(euros * 100m, MidpointRounding.AwayFromZero);
+        if (roundedCents < int.MinValue || roundedCents > int.MaxValue) return false;
+
+        cents = (int)roundedCents;
         return true;
     }
 }

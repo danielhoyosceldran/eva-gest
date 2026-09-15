@@ -43,6 +43,15 @@ public class MoneyTests
         Money.TryParse("", out _).Should().BeFalse();
     }
 
+    [Fact] // C-12: a price/amount box that overflows int cents must be rejected, not
+           // throw — decimal-to-int is a checked conversion in C#, so this used to
+           // raise an unhandled OverflowException instead of showing a validation error.
+    public void TryParse_amount_too_large_is_rejected_not_thrown()
+    {
+        Money.TryParse("99999999999", out _).Should().BeFalse();
+        Money.TryParse("-99999999999", out _).Should().BeFalse();
+    }
+
     [Fact] // C-08
     public void Format_uses_a_decimal_comma()
         => Money.Format(1500).Should().Contain("15,00");
