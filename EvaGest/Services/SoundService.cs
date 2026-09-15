@@ -1,4 +1,5 @@
 using EvaGest.Models;
+using Serilog;
 
 namespace EvaGest.Services;
 
@@ -18,9 +19,11 @@ public class SoundService(ISettingsService settings) : ISoundService
         {
             System.Media.SystemSounds.Asterisk.Play();
         }
-        catch
+        catch (Exception ex)
         {
-            // A missing audio device must never interrupt a sale being saved.
+            // A missing audio device must never interrupt a sale being saved, but the
+            // failure must still be on record instead of vanishing silently.
+            Log.Warning(ex, "Could not play confirmation sound");
         }
     }
 }

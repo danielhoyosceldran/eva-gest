@@ -119,6 +119,40 @@ Touching anything money-related means running the tests before calling it done.
   `Application.Current` inside one — the tests build them off-thread. Timers and
   visual-tree work belong in the view's code-behind.
 
+## Error handling and logging
+
+Logging used to exist only in `App.xaml.cs` (app start/stop, DB-open failure,
+unhandled exceptions). It is being filled in incrementally rather than all at
+once — **every change that touches a code path capable of failing must do a
+short self-check before it's done: is this path's success/failure logged, and
+does the user find out when it fails? If either is missing, close that gap in
+the same change**, don't file it away for later. This is how coverage grows to
+the whole app over time instead of staying a one-off pass.
+
+Convention, established in `Services/SaleService.cs` and `App.xaml.cs`:
+
+- `Serilog.Log` (static, configured once in `App.xaml.cs`) is used directly
+  in Services and `App.xaml.cs`. There is no injected `ILogger` — no DI
+  logging abstraction, by design (small app, one file sink).
+- `Log.Information` — a business event completed (a sale edited/voided, an
+  appointment cancelled, a backup taken). Include the entity id.
+- `Log.Warning` — a failure that was caught and safely worked around. Never
+  swallow an exception with an empty `catch` — see `SoundService.PlayConfirmation`
+  for the pattern: still don't surface it to the user if it genuinely
+  shouldn't block them, but always leave a record.
+- `Log.Error` — a failure that reached the user as an error message.
+- `Log.Fatal` — a failure that stops the app or the process (unreadable
+  database, an exception that escaped to `AppDomain.UnhandledException`).
+- ViewModels generally don't call `Log`. Expected/validatable failures aren't
+  exceptions — they're `Error*` properties shown in the view (UI wording
+  rules below apply). Most real exceptions are left to bubble to the global
+  `DispatcherUnhandledException` handler in `App.xaml.cs`, which already logs
+  and shows a message. A ViewModel calls `Log` only if it itself catches.
+- `docs/plan/casos-us.md` (and `docs/README.md` for the code mapping)
+  sometimes states explicitly that an action must be logged (e.g. CU-04, sale
+  edit/void) — treat that as a requirement, not a suggestion, when touching
+  that flow.
+
 ## Conventions worth knowing before editing
 
 - **Dialog ViewModels are constructed with `new`, not resolved from DI** (about

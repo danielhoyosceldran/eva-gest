@@ -36,6 +36,21 @@ public partial class App : Application
             args.Handled = true;
         };
 
+        // Exceptions off the UI thread never reach DispatcherUnhandledException above and
+        // would otherwise vanish (CLR terminates the process) or be silently lost (a
+        // fire-and-forget Task whose exception nobody awaited). Log both before that happens.
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            Log.Fatal(args.ExceptionObject as Exception, "Unhandled exception (non-UI thread)");
+            // The process is terminating right after this: OnExit will not run, so flush here.
+            Log.CloseAndFlush();
+        };
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            Log.Error(args.Exception, "Unobserved task exception");
+            args.SetObserved();
+        };
+
         // A named mutex stops a second instance from writing to the same SQLite file
         _instance = new Mutex(true, "EvaGest.SingleInstance", out bool isFirst);
         if (!isFirst)
@@ -89,8 +104,17 @@ public partial class App : Application
             await Services.GetRequiredService<ISettingsService>().Get(ConfigKeys.Language)));
 
         // The machine may have been off at the configured hour, so this is checked
-        // at every startup instead of relying on a running timer (CU-11).
-        await Services.GetRequiredService<IBackupService>().RunAutomaticBackupIfDue();
+        // at every startup instead of relying on a running timer (CU-11). A failure here
+        // (locked/unwritable backup folder, full disk...) must not stop the app from
+        // opening — the user still needs to work, just without today's automatic copy.
+        try
+        {
+            await Services.GetRequiredService<IBackupService>().RunAutomaticBackupIfDue();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Automatic backup failed");
+        }
 
         new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() }.Show();
     }

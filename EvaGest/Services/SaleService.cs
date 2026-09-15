@@ -1,6 +1,7 @@
 using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace EvaGest.Services;
 
@@ -110,6 +111,9 @@ public class SaleService(
         existing.Breakdowns = sale.Breakdowns;
 
         await db.SaveChangesAsync();
+
+        // Audit trail required by CU-04: a sale's edit history must be traceable.
+        Log.Information("Sale {SaleId} updated", sale.Id);
     }
 
     public async Task Void(int saleId)
@@ -118,6 +122,9 @@ public class SaleService(
         var sale = await db.Sales.FirstAsync(v => v.Id == saleId);
         sale.Status = SaleStatus.Voided;
         await db.SaveChangesAsync();
+
+        // Audit trail required by CU-04: a voided sale must be traceable in the log.
+        Log.Information("Sale {SaleId} voided", saleId);
     }
 
     public async Task<DeleteResult> Delete(int saleId)
@@ -134,6 +141,7 @@ public class SaleService(
         {
             sale.Status = SaleStatus.Voided;
             await db.SaveChangesAsync();
+            Log.Information("Sale {SaleId} deactivated instead of deleted (was Active)", saleId);
             return DeleteResult.Deactivated;
         }
 
@@ -143,6 +151,7 @@ public class SaleService(
         db.SaleBreakdowns.RemoveRange(sale.Breakdowns);
         db.Sales.Remove(sale);
         await db.SaveChangesAsync();
+        Log.Information("Sale {SaleId} permanently deleted", saleId);
         return DeleteResult.Deleted;
     }
 
