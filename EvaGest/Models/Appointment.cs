@@ -36,6 +36,14 @@ public class Appointment
     [NotMapped]
     public bool IsGuest => ClientId is null;
 
+    /// <summary>Clamped to the last minute of the day: TimeOnly.AddMinutes wraps
+    /// silently past midnight (10:00 + 16h would read back as 02:00), which would make
+    /// a very long or very late appointment look like it ends before it starts.
+    /// TimeOnly cannot represent 24:00 either, so a duration that would cross midnight
+    /// is shown as running to the end of the day instead.</summary>
     [NotMapped]
-    public TimeOnly EndTime => Time.AddMinutes(DurationMin);
+    public TimeOnly EndTime
+        => Time.Hour * 60 + Time.Minute + DurationMin >= 24 * 60
+            ? new TimeOnly(23, 59, 59)
+            : Time.AddMinutes(DurationMin);
 }

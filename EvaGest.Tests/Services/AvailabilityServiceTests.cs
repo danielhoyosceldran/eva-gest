@@ -206,6 +206,41 @@ public class AvailabilityServiceTests
         r.OutsideSchedule.Should().BeTrue();
     }
 
+    [Fact] // E-12b: TimeOnly.AddMinutes wraps silently past midnight (23:00 + 90 min
+           // reads back as 00:30), which used to make the closing-time check compare
+           // against an early-morning time and miss that the appointment runs past
+           // closing altogether.
+    public async Task A_late_appointment_whose_duration_crosses_midnight_still_warns_outside_hours()
+    {
+        await using var testDb = new TestDatabase();
+        await using (var db = testDb.Context())
+        {
+            db.ShopSchedule.Add(new ShopSchedule
+            {
+                Weekday = Weekday.Mon, OpeningTime = new TimeOnly(9, 0), ClosingTime = new TimeOnly(20, 0)
+            });
+            await db.SaveChangesAsync();
+        }
+        var avail = CreatesService(testDb);
+
+        var r = await avail.Check(Monday, new TimeOnly(23, 0), 90, workerId: null);
+        r.OutsideSchedule.Should().BeTrue();
+    }
+
+    [Fact] // E-02b: same wrap-around bug broke the overlap check itself — two identical
+           // late appointments that duration-wrap past midnight used to compare a start
+           // time against a wrapped early-morning end and read as non-overlapping.
+    public async Task Two_identical_late_appointments_whose_duration_crosses_midnight_still_overlap()
+    {
+        await using var testDb = new TestDatabase();
+        int t = await AddsWorker(testDb, start: new TimeOnly(9, 0), fi: new TimeOnly(23, 59));
+        await AddsAppointment(testDb, new TimeOnly(23, 0), 90, t);
+        var avail = CreatesService(testDb);
+
+        var r = await avail.Check(Monday, new TimeOnly(23, 0), 90, t);
+        r.HasOverlap.Should().BeTrue();
+    }
+
     [Fact] // E-13
     public async Task A_date_among_the_closed_days_warns_with_the_reason()
     {
