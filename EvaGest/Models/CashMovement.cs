@@ -21,6 +21,16 @@ public class CashMovement
     public int PaymentMethodId { get; set; }
     public PaymentMethod PaymentMethod { get; set; } = null!;
 
+    /// <summary>Only meaningful for a cash-out; unset for a cash-in and for movements
+    /// entered before the category list existed.</summary>
+    public int? CategoryId { get; set; }
+    public ExpenseCategory? Category { get; set; }
+
+    /// <summary>Set when a cash-out pays a specific worker (a salary or a commission),
+    /// so the month-close report can compare what she was paid against what she billed.</summary>
+    public int? WorkerId { get; set; }
+    public Worker? Worker { get; set; }
+
     public string Concept { get; set; } = string.Empty;
     public string? Notes { get; set; }
 

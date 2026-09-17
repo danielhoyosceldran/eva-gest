@@ -15,6 +15,7 @@ public class Worker
     public List<WorkerSchedule> Schedules { get; set; } = [];
     public List<Appointment> Appointments { get; set; } = [];
     public List<Sale> Sales { get; set; } = [];
+    public List<CashMovement> CashMovements { get; set; } = [];
 
     public override string ToString() => Name;
 }

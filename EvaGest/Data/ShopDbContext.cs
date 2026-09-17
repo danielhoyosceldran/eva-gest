@@ -13,6 +13,7 @@ public class ShopDbContext : DbContext
     public DbSet<Service> Services => Set<Service>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
+    public DbSet<ExpenseCategory> ExpenseCategories => Set<ExpenseCategory>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleLine> SaleLines => Set<SaleLine>();
@@ -36,6 +37,7 @@ public class ShopDbContext : DbContext
         // Unique indexes
         b.Entity<Client>().HasIndex(e => e.ClientKey).IsUnique();
         b.Entity<PaymentMethod>().HasIndex(e => e.Name).IsUnique();
+        b.Entity<ExpenseCategory>().HasIndex(e => e.Name).IsUnique();
         b.Entity<ClosedDay>().HasIndex(e => e.Date).IsUnique();
         b.Entity<Sale>().HasIndex(e => e.AppointmentId).IsUnique();
 
@@ -61,6 +63,10 @@ public class ShopDbContext : DbContext
         b.Entity<Appointment>().HasOne(e => e.Worker).WithMany(t => t.Appointments)
             .OnDelete(DeleteBehavior.SetNull);
         b.Entity<Sale>().HasOne(e => e.Appointment).WithOne(c => c.Sale)
+            .OnDelete(DeleteBehavior.SetNull);
+        b.Entity<CashMovement>().HasOne(e => e.Category).WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
+        b.Entity<CashMovement>().HasOne(e => e.Worker).WithMany(t => t.CashMovements)
             .OnDelete(DeleteBehavior.SetNull);
 
         b.Entity<SettingItem>().HasKey(e => e.Key);
