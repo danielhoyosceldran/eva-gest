@@ -47,8 +47,17 @@ public partial class TillViewModel(ITillService till, ICatalogService catalog, I
         _ = Load();
     }
 
-    partial void OnFromChanged(DateOnly value) { if (Period == TillPeriod.Custom) _ = Load(); }
-    partial void OnToChanged(DateOnly value) { if (Period == TillPeriod.Custom) _ = Load(); }
+    partial void OnFromChanged(DateOnly value)
+    {
+        if (value > To) { To = value; return; }
+        if (Period == TillPeriod.Custom) _ = Load();
+    }
+
+    partial void OnToChanged(DateOnly value)
+    {
+        if (value < From) { From = value; return; }
+        if (Period == TillPeriod.Custom) _ = Load();
+    }
 
     private static (DateOnly, DateOnly) FirstAndLastOfPreviousMonth(DateOnly today)
     {

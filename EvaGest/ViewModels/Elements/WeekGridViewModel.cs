@@ -167,7 +167,10 @@ public partial class WeekGridViewModel : ObservableObject
         }
     }
 
-    public async Task LoadWeek(DateOnly monday)
+    /// <summary>filter narrows the week to a subset of appointments (Agenda's toolbar
+    /// worker filter); the appointment dialog's picker never passes one, so it keeps
+    /// showing everyone's bookings when checking for a free slot.</summary>
+    public async Task LoadWeek(DateOnly monday, Func<Appointment, bool>? filter = null)
     {
         Loading = true;
         try
@@ -178,6 +181,7 @@ public partial class WeekGridViewModel : ObservableObject
 
             // Three round trips for the whole week, never one per day.
             var all = await _appointments.GetByRange(monday, sunday);
+            if (filter is not null) all = all.Where(filter).ToList();
             var closed = await _availability.ClosedDaysIn(monday, sunday);
             var intervalsPerDay = await _availability.WeeklyIntervals();
             SlotMinutes = GridHelper.IsValidSlotMinutes(

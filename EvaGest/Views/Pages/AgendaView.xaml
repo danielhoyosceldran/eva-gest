@@ -28,6 +28,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="210" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="{x:Static t:Texts.PreviousWeek}" Style="{StaticResource SecondaryButton}"
@@ -38,7 +39,11 @@
                     Command="{Binding Grid.WeekNextCommand}" Margin="0,0,12,0" />
             <Button Grid.Column="3" Content="{x:Static t:Texts.ThisWeek}" Style="{StaticResource SecondaryButton}"
                     Command="{Binding Grid.ThisWeekCommand}" Margin="0,0,12,0" />
-            <Button Grid.Column="4" Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
+            <!-- "All" and "Not defined" sit alongside the real workers in the same list. -->
+            <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,12,0"
+                      ItemsSource="{Binding WorkerFilterOptions}" SelectedItem="{Binding SelectedWorkerFilter}"
+                      DisplayMemberPath="Name" ToolTip="{x:Static t:Texts.Worker}" />
+            <Button Grid.Column="5" Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
                     Command="{Binding NewAppointmentCommand}" />
         </Grid>
 

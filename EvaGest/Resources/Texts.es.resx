@@ -337,6 +337,9 @@
   <data name="Worker" xml:space="preserve">
     <value>Trabajadora</value>
   </data>
+  <data name="AllWorkers" xml:space="preserve">
+    <value>Todas</value>
+  </data>
   <data name="WorkerOptional" xml:space="preserve">
     <value>Trabajadora (opcional)</value>
   </data>

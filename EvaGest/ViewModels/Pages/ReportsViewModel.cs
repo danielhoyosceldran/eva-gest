@@ -100,7 +100,16 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
         finally { Loading = false; }
     }
 
-    partial void OnFromChanged(DateOnly value) => _ = Load();
-    partial void OnToChanged(DateOnly value) => _ = Load();
+    partial void OnFromChanged(DateOnly value)
+    {
+        if (value > To) To = value;
+        else _ = Load();
+    }
+
+    partial void OnToChanged(DateOnly value)
+    {
+        if (value < From) From = value;
+        else _ = Load();
+    }
     partial void OnSelectedWorkerChanged(Worker? value) => _ = Load();
 }

@@ -72,12 +72,42 @@ public partial class AgendaViewModel : PageViewModelBase
     public bool HasSelectedDay => SelectedDay is not null;
     public bool DayWithoutAppointments => SelectedDay is not null && DayAppointments.Count == 0;
 
+    /// <summary>
+    /// One combo entry for the toolbar filter: "All" and "Not defined" alongside every
+    /// real worker, since neither of those two has a <see cref="Models.Worker"/> to bind
+    /// to. <see cref="Worker"/> is null for both — <see cref="IsUnassigned"/> tells them
+    /// apart — so <see cref="Matches"/> is the one place that has to know the difference.
+    /// </summary>
+    public sealed record WorkerFilterItem(string Name, Worker? Worker, bool IsUnassigned)
+    {
+        public bool Matches(Appointment appointment)
+            => IsUnassigned ? appointment.Worker is null
+             : Worker is null || appointment.Worker?.Id == Worker.Id;
+    }
+
+    [ObservableProperty] private WorkerFilterItem? _selectedWorkerFilter;
+    public ObservableCollection<WorkerFilterItem> WorkerFilterOptions { get; } = [];
+
     /// <summary>Which week is shown and its label both live on the grid, so this toolbar
     /// and the picker embedded in the appointment dialog drive exactly the same navigation.</summary>
     private DateOnly WeekStart => Grid.WeekStart;
 
     public async Task Load()
-        => await LoadWeek(WeekHelper.MondayOfWeek(DateOnly.FromDateTime(DateTime.Today)));
+    {
+        if (WorkerFilterOptions.Count == 0)
+        {
+            WorkerFilterOptions.Add(new WorkerFilterItem(Texts.AllWorkers, null, IsUnassigned: false));
+            WorkerFilterOptions.Add(new WorkerFilterItem(Texts.Unassigned, null, IsUnassigned: true));
+            foreach (var worker in await _workers.GetAll())
+                WorkerFilterOptions.Add(new WorkerFilterItem(worker.Name, worker, IsUnassigned: false));
+
+            SelectedWorkerFilter = WorkerFilterOptions[0];
+        }
+
+        await LoadWeek(WeekHelper.MondayOfWeek(DateOnly.FromDateTime(DateTime.Today)));
+    }
+
+    partial void OnSelectedWorkerFilterChanged(WorkerFilterItem? value) => _ = LoadWeek(WeekStart);
 
     /// <summary>Toolbar button: books on the day being examined if there is one, else on
     /// today when today is in view, else on the Monday shown — and always at that day's
@@ -180,7 +210,8 @@ public partial class AgendaViewModel : PageViewModelBase
 
         if (SelectedDay is DateOnly day)
             foreach (var appointment in await _appointments.GetByDay(day))
-                DayAppointments.Add(ToRow(appointment));
+                if (SelectedWorkerFilter is null || SelectedWorkerFilter.Matches(appointment))
+                    DayAppointments.Add(ToRow(appointment));
 
         OnPropertyChanged(nameof(HasSelectedDay));
         OnPropertyChanged(nameof(DayWithoutAppointments));
@@ -206,7 +237,7 @@ public partial class AgendaViewModel : PageViewModelBase
         Loading = true;
         try
         {
-            await Grid.LoadWeek(monday);
+            await Grid.LoadWeek(monday, SelectedWorkerFilter is { } filter ? filter.Matches : null);
 
             // The detail panel would otherwise keep showing the appointments of a day
             // that is no longer on screen, or stale rows after an edit.

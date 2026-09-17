@@ -130,6 +130,7 @@ public static class Texts
         nameof(Time),
         nameof(Client),
         nameof(Worker),
+        nameof(AllWorkers),
         nameof(WorkerOptional),
         nameof(ServiceOptional),
         nameof(CategoryOptional),
@@ -734,6 +735,9 @@ public static class Texts
 
     /// <summary>Treballadora</summary>
     public static string Worker => Get(nameof(Worker));
+
+    /// <summary>Totes</summary>
+    public static string AllWorkers => Get(nameof(AllWorkers));
 
     /// <summary>Treballadora (opcional)</summary>
     public static string WorkerOptional => Get(nameof(WorkerOptional));
