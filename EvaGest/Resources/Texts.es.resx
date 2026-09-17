@@ -271,6 +271,9 @@
   <data name="NewMethodButton" xml:space="preserve">
     <value>+ Nuevo método</value>
   </data>
+  <data name="NewCategoryButton" xml:space="preserve">
+    <value>+ Nueva categoría</value>
+  </data>
   <data name="NewCashInButton" xml:space="preserve">
     <value>+ Entrada</value>
   </data>
@@ -426,6 +429,9 @@
   </data>
   <data name="PaymentMethods" xml:space="preserve">
     <value>Métodos de pago</value>
+  </data>
+  <data name="ExpenseCategories" xml:space="preserve">
+    <value>Categorías de gasto</value>
   </data>
   <data name="Payment" xml:space="preserve">
     <value>Pago</value>
@@ -823,6 +829,15 @@
   <data name="MethodNameRequired" xml:space="preserve">
     <value>Hay que indicar el nombre del método para guardar.</value>
   </data>
+  <data name="NewCategoryTitle" xml:space="preserve">
+    <value>Nueva categoría de gasto</value>
+  </data>
+  <data name="EditCategoryTitle" xml:space="preserve">
+    <value>Editar categoría de gasto</value>
+  </data>
+  <data name="CategoryNameRequired" xml:space="preserve">
+    <value>Hay que indicar el nombre de la categoría para guardar.</value>
+  </data>
   <data name="GuestFreeName" xml:space="preserve">
     <value>Invitado (nombre libre)</value>
   </data>
@@ -985,6 +1000,9 @@ Si la quieres conservar en el historial, márcala como cancelada o no asistida.<
   <data name="TypePaymentMethod" xml:space="preserve">
     <value>método de pago</value>
   </data>
+  <data name="TypeExpenseCategory" xml:space="preserve">
+    <value>categoría de gasto</value>
+  </data>
   <data name="ArticleService" xml:space="preserve">
     <value>El servicio</value>
   </data>
@@ -994,6 +1012,9 @@ Si la quieres conservar en el historial, márcala como cancelada o no asistida.<
   <data name="ArticleMethod" xml:space="preserve">
     <value>El método</value>
   </data>
+  <data name="ArticleCategory" xml:space="preserve">
+    <value>La categoría</value>
+  </data>
   <data name="UsedInAppointmentsOrSales" xml:space="preserve">
     <value>citas o ventas</value>
   </data>
@@ -1002,6 +1023,9 @@ Si la quieres conservar en el historial, márcala como cancelada o no asistida.<
   </data>
   <data name="UsedInSalesOrMovements" xml:space="preserve">
     <value>ventas o movimientos de caja</value>
+  </data>
+  <data name="UsedInMovements" xml:space="preserve">
+    <value>movimientos de caja</value>
   </data>
   <data name="CannotDeactivateTitle" xml:space="preserve">
     <value>No se puede desactivar</value>

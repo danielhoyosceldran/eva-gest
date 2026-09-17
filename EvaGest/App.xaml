@@ -39,6 +39,7 @@
             <DataTemplate DataType="{x:Type dvm:ServiceDialogViewModel}"><dv:ServiceDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:ProductDialogViewModel}"><dv:ProductDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:PaymentMethodDialogViewModel}"><dv:PaymentMethodDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:CategoryDialogViewModel}"><dv:CategoryDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:ClientDialogViewModel}"><dv:ClientDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:ClientRecordViewModel}"><dv:ClientRecordView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:AppointmentDialogViewModel}"><dv:AppointmentDialogView /></DataTemplate>

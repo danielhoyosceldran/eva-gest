@@ -47,4 +47,15 @@ public interface ICatalogService
     /// with none left there would be no way to take money (pantalles 2.5).
     /// </summary>
     Task<DeleteResult> DeleteMethod(int id);
+
+    // --- Expense categories ---
+    Task<List<ExpenseCategory>> GetCategories(bool onlyActive = false);
+    Task<int> CreateCategory(string name);
+    Task UpdateCategory(ExpenseCategory category);
+    Task ChangeCategoryStatus(int id, bool active);
+
+    /// <summary>Unlike a payment method, a category is optional on a cash movement, so
+    /// there is no "last active one" guard: deactivating them all just leaves nothing to
+    /// pick, same as an empty catalogue.</summary>
+    Task<DeleteResult> DeleteCategory(int id);
 }

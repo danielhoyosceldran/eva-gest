@@ -134,6 +134,44 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
+
+            <!-- Expense categories -->
+            <TextBlock Text="{x:Static t:Texts.ExpenseCategories}" Style="{StaticResource Subtitle}" />
+            <Button Content="{x:Static t:Texts.NewCategoryButton}" Style="{StaticResource SecondaryButton}"
+                    HorizontalAlignment="Left" Command="{Binding NewCategoryCommand}" Margin="0,0,0,12" />
+            <Border Style="{StaticResource DataCard}" Padding="0">
+                <DataGrid ItemsSource="{Binding Categories}" AutoGenerateColumns="False"
+                          IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
+                          Background="{StaticResource SurfaceBrush}" BorderThickness="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Active}" Width="60" />
+                        <DataGridTemplateColumn Header="" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32"
+                                                Command="{Binding DataContext.EditCategoryCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="{x:Static t:Texts.ToggleActive}" Style="{StaticResource SecondaryButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.ChangeCategoryStatusCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
+                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Command="{Binding DataContext.DeleteCategoryCommand,
+                                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

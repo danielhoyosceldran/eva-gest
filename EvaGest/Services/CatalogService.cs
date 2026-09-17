@@ -201,4 +201,57 @@ public class CatalogService(IDbContextFactory<ShopDbContext> factory) : ICatalog
         await db.SaveChangesAsync();
         return DeleteResult.Deleted;
     }
+
+    public async Task<List<ExpenseCategory>> GetCategories(bool onlyActive = false)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        var query = db.ExpenseCategories.AsNoTracking().AsQueryable();
+        if (onlyActive) query = query.Where(c => c.Active);
+        return await query.OrderBy(c => c.Name).ToListAsync();
+    }
+
+    public async Task<int> CreateCategory(string name)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        var category = new ExpenseCategory { Name = name, Active = true };
+        db.ExpenseCategories.Add(category);
+        await db.SaveChangesAsync();
+        return category.Id;
+    }
+
+    public async Task UpdateCategory(ExpenseCategory category)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        db.ExpenseCategories.Update(category);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task ChangeCategoryStatus(int id, bool active)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        var category = await db.ExpenseCategories.FirstAsync(c => c.Id == id);
+        category.Active = active;
+        await db.SaveChangesAsync();
+    }
+
+    public async Task<DeleteResult> DeleteCategory(int id)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        var category = await db.ExpenseCategories.FirstOrDefaultAsync(c => c.Id == id);
+        if (category is null) return DeleteResult.Deleted;
+
+        bool used = await db.CashMovements.AnyAsync(m => m.CategoryId == id);
+
+        if (used)
+        {
+            category.Active = false;
+            await db.SaveChangesAsync();
+            return DeleteResult.Deactivated;
+        }
+
+        db.ExpenseCategories.Remove(category);
+        await db.SaveChangesAsync();
+        return DeleteResult.Deleted;
+    }
 }

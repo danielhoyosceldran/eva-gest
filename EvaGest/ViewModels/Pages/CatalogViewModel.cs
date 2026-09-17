@@ -27,6 +27,7 @@ public partial class CatalogViewModel(
     public ObservableCollection<ServiceRow> Services { get; } = [];
     public ObservableCollection<ProductRow> Products { get; } = [];
     public ObservableCollection<PaymentMethod> Methods { get; } = [];
+    public ObservableCollection<ExpenseCategory> Categories { get; } = [];
 
     public async Task Load()
     {
@@ -44,6 +45,9 @@ public partial class CatalogViewModel(
 
             Methods.Clear();
             foreach (var m in await catalog.GetMethods()) Methods.Add(m);
+
+            Categories.Clear();
+            foreach (var c in await catalog.GetCategories()) Categories.Add(c);
         }
         finally { Loading = false; }
     }
@@ -192,6 +196,49 @@ public partial class CatalogViewModel(
             ? string.Format(Texts.MethodNotDeletedLastActive, method.Name)
             : ResultText(result, Texts.ArticleMethod, method.Name,
                          Texts.UsedInSalesOrMovements));
+    }
+
+    // --- Expense categories ---
+
+    [RelayCommand]
+    private async Task NewCategory()
+    {
+        var vm = new CategoryDialogViewModel();
+        if (await dialogs.ShowDialog(vm))
+        {
+            await catalog.CreateCategory(vm.AModel().Name);
+            await Load();
+        }
+    }
+
+    [RelayCommand]
+    private async Task EditCategory(ExpenseCategory category)
+    {
+        var vm = new CategoryDialogViewModel(category);
+        if (await dialogs.ShowDialog(vm))
+        {
+            var updated = vm.AModel();
+            updated.Active = category.Active;
+            await catalog.UpdateCategory(updated);
+            await Load();
+        }
+    }
+
+    [RelayCommand]
+    private async Task ChangeCategoryStatus(ExpenseCategory category)
+    {
+        await catalog.ChangeCategoryStatus(category.Id, !category.Active);
+        await Load();
+    }
+
+    [RelayCommand]
+    private async Task DeleteCategory(ExpenseCategory category)
+    {
+        if (!await ConfirmDeletion(Texts.TypeExpenseCategory, category.Name)) return;
+
+        var result = await catalog.DeleteCategory(category.Id);
+        await Load();
+        ShowNotice(ResultText(result, Texts.ArticleCategory, category.Name, Texts.UsedInMovements));
     }
 
     // --- Esborrat ---

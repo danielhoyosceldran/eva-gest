@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
 using Xunit;
@@ -78,5 +79,52 @@ public class CatalogServiceTests
         await catalog.CreateMethod("Targeta");
 
         (await catalog.CanDeactivateMethod(cash)).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Create_and_read_back_an_expense_category()
+    {
+        await using var testDb = new TestDatabase();
+        var catalog = CreatesService(testDb);
+
+        int id = await catalog.CreateCategory("Salaris");
+
+        var all = await catalog.GetCategories();
+        all.Should().ContainSingle(c => c.Id == id && c.Name == "Salaris" && c.Active);
+    }
+
+    [Fact]
+    public async Task An_unused_expense_category_is_deleted_outright()
+    {
+        await using var testDb = new TestDatabase();
+        var catalog = CreatesService(testDb);
+
+        int id = await catalog.CreateCategory("Neteja");
+        var result = await catalog.DeleteCategory(id);
+
+        result.Should().Be(DeleteResult.Deleted);
+        (await catalog.GetCategories()).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task An_expense_category_used_by_a_movement_is_deactivated_not_deleted()
+    {
+        await using var testDb = new TestDatabase();
+        var catalog = CreatesService(testDb);
+        var till = new TillService(new TestFactory(testDb.Options));
+
+        int categoryId = await catalog.CreateCategory("Impostos");
+        int methodId = await catalog.CreateMethod("Efectiu");
+        await till.Create(new CashMovement
+        {
+            Date = new DateOnly(2026, 9, 7), Type = MovementType.Out, AmountCents = 5000,
+            PaymentMethodId = methodId, CategoryId = categoryId, Concept = "IVA trimestral"
+        });
+
+        var result = await catalog.DeleteCategory(categoryId);
+
+        result.Should().Be(DeleteResult.Deactivated);
+        var remaining = await catalog.GetCategories();
+        remaining.Should().ContainSingle(c => c.Id == categoryId && !c.Active);
     }
 }

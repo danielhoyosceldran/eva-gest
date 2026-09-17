@@ -108,6 +108,7 @@ public static class Texts
         nameof(NewServiceButton),
         nameof(NewProductButton),
         nameof(NewMethodButton),
+        nameof(NewCategoryButton),
         nameof(NewCashInButton),
         nameof(NewCashOutButton),
         nameof(AddServiceButton),
@@ -160,6 +161,7 @@ public static class Texts
         nameof(Method),
         nameof(PaymentMethod),
         nameof(PaymentMethods),
+        nameof(ExpenseCategories),
         nameof(Payment),
         nameof(ColumnActive),
         nameof(Schedule),
@@ -292,6 +294,9 @@ public static class Texts
         nameof(NewMethodTitle),
         nameof(EditMethodTitle),
         nameof(MethodNameRequired),
+        nameof(NewCategoryTitle),
+        nameof(EditCategoryTitle),
+        nameof(CategoryNameRequired),
         nameof(GuestFreeName),
         nameof(EditAppointmentTitle),
         nameof(GuestNameOrClientRequired),
@@ -343,12 +348,15 @@ public static class Texts
         nameof(TypeService),
         nameof(TypeProduct),
         nameof(TypePaymentMethod),
+        nameof(TypeExpenseCategory),
         nameof(ArticleService),
         nameof(ArticleProduct),
         nameof(ArticleMethod),
+        nameof(ArticleCategory),
         nameof(UsedInAppointmentsOrSales),
         nameof(UsedInSales),
         nameof(UsedInSalesOrMovements),
+        nameof(UsedInMovements),
         nameof(CannotDeactivateTitle),
         nameof(KeepOneActiveMethod),
         nameof(MethodNotDeletedLastActive),
@@ -670,6 +678,9 @@ public static class Texts
     /// <summary>+ Nou mètode</summary>
     public static string NewMethodButton => Get(nameof(NewMethodButton));
 
+    /// <summary>+ Nova categoria</summary>
+    public static string NewCategoryButton => Get(nameof(NewCategoryButton));
+
     /// <summary>+ Entrada</summary>
     public static string NewCashInButton => Get(nameof(NewCashInButton));
 
@@ -825,6 +836,9 @@ public static class Texts
 
     /// <summary>Mètodes de pagament</summary>
     public static string PaymentMethods => Get(nameof(PaymentMethods));
+
+    /// <summary>Categories de despesa</summary>
+    public static string ExpenseCategories => Get(nameof(ExpenseCategories));
 
     /// <summary>Pagament</summary>
     public static string Payment => Get(nameof(Payment));
@@ -1222,6 +1236,15 @@ public static class Texts
     /// <summary>Cal indicar el nom del mètode per guardar.</summary>
     public static string MethodNameRequired => Get(nameof(MethodNameRequired));
 
+    /// <summary>Nova categoria de despesa</summary>
+    public static string NewCategoryTitle => Get(nameof(NewCategoryTitle));
+
+    /// <summary>Editar categoria de despesa</summary>
+    public static string EditCategoryTitle => Get(nameof(EditCategoryTitle));
+
+    /// <summary>Cal indicar el nom de la categoria per guardar.</summary>
+    public static string CategoryNameRequired => Get(nameof(CategoryNameRequired));
+
     /// <summary>Convidat (nom lliure)</summary>
     public static string GuestFreeName => Get(nameof(GuestFreeName));
 
@@ -1376,6 +1399,9 @@ public static class Texts
     /// <summary>mètode de pagament</summary>
     public static string TypePaymentMethod => Get(nameof(TypePaymentMethod));
 
+    /// <summary>categoria de despesa</summary>
+    public static string TypeExpenseCategory => Get(nameof(TypeExpenseCategory));
+
     /// <summary>El servei</summary>
     public static string ArticleService => Get(nameof(ArticleService));
 
@@ -1385,6 +1411,9 @@ public static class Texts
     /// <summary>El mètode</summary>
     public static string ArticleMethod => Get(nameof(ArticleMethod));
 
+    /// <summary>La categoria</summary>
+    public static string ArticleCategory => Get(nameof(ArticleCategory));
+
     /// <summary>cites o vendes</summary>
     public static string UsedInAppointmentsOrSales => Get(nameof(UsedInAppointmentsOrSales));
 
@@ -1393,6 +1422,9 @@ public static class Texts
 
     /// <summary>vendes o moviments de caixa</summary>
     public static string UsedInSalesOrMovements => Get(nameof(UsedInSalesOrMovements));
+
+    /// <summary>moviments de caixa</summary>
+    public static string UsedInMovements => Get(nameof(UsedInMovements));
 
     /// <summary>No es pot desactivar</summary>
     public static string CannotDeactivateTitle => Get(nameof(CannotDeactivateTitle));
