@@ -22,8 +22,14 @@ public partial class ClientRecordViewModel : DialogViewModelBase
 
     public ObservableCollection<HistoryRow> History { get; } = [];
 
-    public string TotalSpentText => Indicators is null ? "—" : Money.Format((int)Indicators.TotalSpentCents);
-    public string AverageText => Indicators?.AveragePerVisitEuros is decimal m ? m.ToString("C2") : "—";
+    public string TotalSpentText => Indicators is null ? "—" : Money.Format(Indicators.TotalSpentCents);
+
+    /// <summary>Formatted through AppLanguage.Culture like every other amount. Using the
+    /// bare "C2" took CurrentCulture, so this one figure followed Windows' regional
+    /// settings while the rest of the screen followed the app's language.</summary>
+    public string AverageText => Indicators?.AveragePerVisitEuros is decimal m
+        ? m.ToString("C2", AppLanguage.Culture)
+        : "—";
     public string FrequencyText => Indicators?.FrequencyDays is double f ? f.ToString("0.0") : "—";
     public string SleepWakeText => Client.Asleep ? Texts.Wake : Texts.Sleep;
 

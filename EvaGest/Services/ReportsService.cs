@@ -32,7 +32,7 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
 
         int visits = activeSalesDates.Count;
         long totalCents = activeSalesDates.Sum(v => (long)v.TotalCents);
-        decimal? average = visits == 0 ? null : totalCents / 100m / visits;
+        decimal? average = Indicators.AveragePerVisit(totalCents, visits);
         double? frequency = Indicators.FrequencyDays(activeSalesDates.Select(v => v.Date));
 
         DateOnly? first = activeSalesDates.Count == 0 ? null : activeSalesDates.Min(v => v.Date);
@@ -153,10 +153,8 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
         return new WorkerDetail(
             workerId, worker.Name,
             sales.Count, incomeCents,
-            // Indicators.WorkPercentage takes int; clamp rather than overflow on an
-            // implausibly large period total instead of throwing.
-            Indicators.WorkPercentage((int)Math.Min(incomeCents, int.MaxValue), (int)Math.Min(periodTotalCents, int.MaxValue)),
-            Indicators.ProductsPercentage((int)Math.Min(productsCents, int.MaxValue), (int)Math.Min(incomeCents, int.MaxValue)),
+            Indicators.WorkPercentage(incomeCents, periodTotalCents),
+            Indicators.ProductsPercentage(productsCents, incomeCents),
             services, products, otherCents, activity);
     }
 

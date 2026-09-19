@@ -20,18 +20,41 @@ public partial class TillViewModel(
     [ObservableProperty] private DateOnly _to = DateOnly.FromDateTime(DateTime.Today);
     [ObservableProperty] private TillSummary? _summary;
 
-    public ObservableCollection<CashMovement> Movements { get; } = [];
+    /// <summary>
+    /// One movement row, formatted here rather than in XAML. The table used to bind the
+    /// model directly, which printed SignedAmountCents through a {0:0.00} format string —
+    /// so a 15 € cash-in read "1500,00" — and printed the raw enum ("In"/"Out") and the
+    /// raw DateOnly, neither of which is in the user's language.
+    /// </summary>
+    public record MovementRow(
+        CashMovement Movement, string DateText, string TypeText, string ConceptText,
+        string CategoryText, string WorkerText, string MethodText, string AmountText);
 
-    public string SalesText => Money.Format((int)(Summary?.SalesCents ?? 0));
-    public string CashInText => Money.Format((int)(Summary?.CashInCents ?? 0));
-    public string CashOutText => Money.Format((int)(Summary?.CashOutCents ?? 0));
-    public string BalanceText => Money.Format((int)(Summary?.BalanceCents ?? 0));
-    public string BaseText => Money.Format((int)(Summary?.BaseCents ?? 0));
-    public string VatText => Money.Format((int)(Summary?.VatCents ?? 0));
+    /// <summary>One VAT-rate row. The rate is basis points in storage and a percentage
+    /// on screen; the three amounts are cents in storage and euros on screen.</summary>
+    public record RateRow(string RateText, string BaseText, string VatText, string TotalText);
 
-    /// <summary>Only shown per rate when the period actually mixes VAT rates
-    /// (pantalles 2.7): with a single rate the top-line breakdown already says it all.</summary>
-    public bool ShowRateBreakdown => (Summary?.VatBreakdown.Count ?? 0) > 1;
+    public ObservableCollection<MovementRow> Movements { get; } = [];
+    public ObservableCollection<RateRow> VatRates { get; } = [];
+
+    public string SalesText => Money.Format(Summary?.SalesCents ?? 0);
+    public string CashInText => Money.Format(Summary?.CashInCents ?? 0);
+    public string CashOutText => Money.Format(Summary?.CashOutCents ?? 0);
+    public string BalanceText => Money.Format(Summary?.BalanceCents ?? 0);
+    public string BaseText => Money.Format(Summary?.BaseCents ?? 0);
+    public string VatText => Money.Format(Summary?.VatCents ?? 0);
+
+    /// <summary>Base + quota. This is the invoiced total the VAT block is about, and it is
+    /// NOT the till balance: the balance also carries cash movements, which have no VAT
+    /// breakdown of their own. The two were bound to the same property, so the VAT block's
+    /// "Total" silently showed the balance.</summary>
+    public string VatTotalText => Money.Format((Summary?.BaseCents ?? 0) + (Summary?.VatCents ?? 0));
+
+    /// <summary>True once any sale in the period carries VAT, which is the only case where
+    /// a per-rate table has nothing to say. It is no longer hidden when the period uses a
+    /// single rate: the user asked for the rate to be legible at all times, and a one-row
+    /// table still states which rate the money was taxed at.</summary>
+    public bool ShowRateBreakdown => VatRates.Count > 0;
 
     partial void OnPeriodChanged(TillPeriod value)
     {
@@ -73,16 +96,38 @@ public partial class TillViewModel(
         try
         {
             Summary = await till.Summary(From, To);
+
             Movements.Clear();
-            foreach (var m in await till.GetByPeriod(From, To)) Movements.Add(m);
+            foreach (var m in await till.GetByPeriod(From, To)) Movements.Add(ToRow(m));
+
+            VatRates.Clear();
+            foreach (var rate in Summary.VatBreakdown)
+                VatRates.Add(new RateRow(
+                    Percentages.Format(rate.VatBp),
+                    Money.Format(rate.BaseCents),
+                    Money.Format(rate.VatCents),
+                    Money.Format(rate.TotalCents)));
 
             foreach (var text in new[]
                      { nameof(SalesText), nameof(CashInText), nameof(CashOutText),
-                       nameof(BalanceText), nameof(BaseText), nameof(VatText), nameof(ShowRateBreakdown) })
+                       nameof(BalanceText), nameof(BaseText), nameof(VatText),
+                       nameof(VatTotalText), nameof(ShowRateBreakdown) })
                 OnPropertyChanged(text);
         }
         finally { Loading = false; }
     }
+
+    /// <summary>A cash-out is shown as a negative amount, which is what SignedAmountCents
+    /// already encodes; the sign is the only thing distinguishing the two in the column.</summary>
+    private static MovementRow ToRow(CashMovement m) => new(
+        m,
+        m.Date.ToString("dd/MM/yyyy"),
+        Labels.Text(m.Type),
+        m.Concept,
+        m.Category?.Name ?? "—",
+        m.Worker?.Name ?? "—",
+        m.PaymentMethod?.Name ?? "—",
+        Money.Format(m.SignedAmountCents));
 
     [RelayCommand]
     private async Task NewCashIn() => await OpenMovementDialog(MovementType.In);
@@ -104,14 +149,14 @@ public partial class TillViewModel(
     }
 
     [RelayCommand]
-    private async Task Delete(CashMovement movement)
+    private async Task Delete(MovementRow row)
     {
         bool confirmed = await dialogs.Confirm(Texts.DeleteMovementTitle,
-            string.Format(Texts.DeleteMovementMessage, Money.Format(movement.AmountCents)),
+            string.Format(Texts.DeleteMovementMessage, Money.Format(row.Movement.AmountCents)),
             Texts.Delete);
         if (!confirmed) return;
 
-        await till.Delete(movement.Id);
+        await till.Delete(row.Movement.Id);
         await Load();
     }
 }

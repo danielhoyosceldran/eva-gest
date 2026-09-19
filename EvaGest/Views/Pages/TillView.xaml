@@ -63,7 +63,9 @@
             <TextBlock Text="{x:Static t:Texts.PeriodVatBreakdown}" Style="{StaticResource Subtitle}" />
             <Border Style="{StaticResource DataCard}">
                 <StackPanel>
-                    <Grid Visibility="{Binding ShowRateBreakdown, Converter={StaticResource InverseVisibilityConverter}}">
+                    <!-- Period totals. "Total" here is base + quota (the invoiced total),
+                         never the till balance, which also carries cash movements. -->
+                    <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
@@ -79,12 +81,38 @@
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="{x:Static t:Texts.Total}" Style="{StaticResource DataLabel}" />
-                            <TextBlock Text="{Binding BalanceText}" Style="{StaticResource Figure}" />
+                            <TextBlock Text="{Binding VatTotalText}" Style="{StaticResource Figure}" />
                         </StackPanel>
                     </Grid>
 
-                    <ItemsControl ItemsSource="{Binding Summary.VatBreakdown}"
+                    <!-- Per-rate detail, always shown when there is any VAT at all: the rate
+                         each figure was taxed at is never left implicit, not even with one rate. -->
+                    <ItemsControl ItemsSource="{Binding VatRates}"
                                   Visibility="{Binding ShowRateBreakdown, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl">
+                                <StackPanel>
+                                    <!-- Same column widths as the rows below, so the headers
+                                         sit over the figures they name. -->
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{x:Static t:Texts.Vat}" Style="{StaticResource DataLabel}" />
+                                        <TextBlock Grid.Column="1" Text="{x:Static t:Texts.Base}" Style="{StaticResource DataLabel}" HorizontalAlignment="Right" />
+                                        <TextBlock Grid.Column="2" Text="{x:Static t:Texts.Quota}" Style="{StaticResource DataLabel}" HorizontalAlignment="Right" />
+                                        <TextBlock Grid.Column="3" Text="{x:Static t:Texts.Total}" Style="{StaticResource DataLabel}" HorizontalAlignment="Right" />
+                                    </Grid>
+                                    <ItemsPresenter />
+                                </StackPanel>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Grid Margin="0,0,0,8">
@@ -94,10 +122,10 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding VatBp, StringFormat={}{0} bp}" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="{Binding BaseCents, StringFormat={}{0:0.00}}" Style="{StaticResource TableFigure}" />
-                                    <TextBlock Grid.Column="2" Text="{Binding VatCents, StringFormat={}{0:0.00}}" Style="{StaticResource TableFigure}" />
-                                    <TextBlock Grid.Column="3" Text="{Binding TotalCents, StringFormat={}{0:0.00}}" Style="{StaticResource TableFigure}" />
+                                    <TextBlock Grid.Column="0" Text="{Binding RateText}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding BaseText}" Style="{StaticResource TableFigure}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding VatText}" Style="{StaticResource TableFigure}" />
+                                    <TextBlock Grid.Column="3" Text="{Binding TotalText}" Style="{StaticResource TableFigure}" />
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -112,11 +140,13 @@
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding Date}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Type}" Binding="{Binding Type}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding Concept}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Method}" Binding="{Binding PaymentMethod.Name}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Amount}" Binding="{Binding SignedAmountCents, StringFormat={}{0:0.00}}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding DateText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Type}" Binding="{Binding TypeText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding ConceptText}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Category}" Binding="{Binding CategoryText}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Worker}" Binding="{Binding WorkerText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Method}" Binding="{Binding MethodText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Amount}" Binding="{Binding AmountText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTemplateColumn Header="" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

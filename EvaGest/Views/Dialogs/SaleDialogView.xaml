@@ -33,8 +33,17 @@
         <TextBlock Text="{x:Static t:Texts.Lines}" Style="{StaticResource Subtitle}" />
 
         <!-- Headers: without them the four boxes give no clue which is the quantity and
-             what unit the VAT one wants. -->
-        <Grid Margin="10,0,10,4">
+             what unit the VAT one wants.
+
+             The column list below MUST stay identical to the row template's. It used to
+             declare only the first seven columns while each row declared eleven, so the
+             star columns divided a different amount of space in the two grids and every
+             header sat left of the box it named, drifting further across the row. The
+             two trailing columns are fixed rather than Auto for the same reason: an
+             Auto column is sized by its content, which the header does not have.
+
+             The 11px margin is the card's 10px padding plus its 1px border. -->
+        <Grid x:Name="LineHeaders" Margin="11,0,11,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="8" />
@@ -43,14 +52,20 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="8" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="96" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{x:Static t:Texts.Concept}" Style="{StaticResource DataLabel}" />
             <TextBlock Grid.Column="2" Text="{x:Static t:Texts.Quantity}" Style="{StaticResource DataLabel}" />
             <TextBlock Grid.Column="4" Text="{x:Static t:Texts.PriceEuros}" Style="{StaticResource DataLabel}" />
             <TextBlock Grid.Column="6" Text="{x:Static t:Texts.VatPercent}" Style="{StaticResource DataLabel}" />
+            <TextBlock Grid.Column="8" Text="{x:Static t:Texts.Amount}" Style="{StaticResource DataLabel}"
+                       HorizontalAlignment="Right" />
         </Grid>
 
-        <ItemsControl ItemsSource="{Binding Lines}">
+        <ItemsControl x:Name="LineRows" ItemsSource="{Binding Lines}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Style="{StaticResource DataCard}" Padding="10" Margin="0,0,0,8">
@@ -64,18 +79,20 @@
                                 <ColumnDefinition Width="8" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="8" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="8" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="96" />
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox Grid.Column="2" Text="{Binding QuantityText, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox Grid.Column="4" Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox Grid.Column="6" Text="{Binding VatText, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Grid.Column="8" Text="{Binding AmountCents}" VerticalAlignment="Center"
+                            <!-- AmountText, not AmountCents: the raw property is cents and
+                                 printed "1500" for a fifteen-euro line. -->
+                            <TextBlock Grid.Column="8" Text="{Binding AmountText}" VerticalAlignment="Center"
                                        Style="{StaticResource TableFigure}" />
                             <Button Grid.Column="10" Content="{x:Static t:Texts.Remove}" Style="{StaticResource SecondaryButton}"
-                                    Padding="8,0" MinHeight="32"
+                                    Padding="8,0" MinHeight="32" HorizontalAlignment="Stretch"
                                     Command="{Binding DataContext.RemoveLineCommand,
                                               RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}" />

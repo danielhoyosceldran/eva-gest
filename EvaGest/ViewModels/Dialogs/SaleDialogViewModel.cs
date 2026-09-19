@@ -48,6 +48,17 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     [ObservableProperty] private string? _linkedAppointmentText;
     private int? _appointmentId;
 
+    /// <summary>
+    /// When this sale happened. Only a brand new sale is stamped with "now": editing an
+    /// existing one keeps its own date, and one raised from an appointment takes the
+    /// appointment's. Charge used to stamp DateTime.Now in all three modes, so correcting
+    /// a typo on an old ticket moved that sale into today — out of its VAT quarter, out of
+    /// its month in the reports, and onto today's till balance (decision 6.4: a recorded
+    /// sale never moves).
+    /// </summary>
+    private DateOnly _date = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly _time = TimeOnly.FromDateTime(DateTime.Now);
+
     public ObservableCollection<SaleLineViewModel> Lines { get; } = [];
 
     public ObservableCollection<Client> ActiveClients { get; } = [];
@@ -146,6 +157,10 @@ public partial class SaleDialogViewModel : DialogViewModelBase
 
         var sale = await sales.PrepareFromAppointment(appointment.Id);
         vm._appointmentId = appointment.Id;
+        // The sale belongs to the appointment's slot, not to the moment it was charged:
+        // an appointment closed the next morning still belongs to the day it happened.
+        vm._date = sale.Date;
+        vm._time = sale.Time;
         vm.LinkedAppointmentText = string.Format(Texts.FromAppointmentOn,
             sale.Date.ToString("dd/MM/yyyy"), sale.Time.ToString("HH\\:mm"));
         vm.SelectedClient = vm.ActiveClients.FirstOrDefault(c => c.Id == sale.ClientId);
@@ -206,6 +221,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         }
 
         vm._id = sale.Id;
+        vm._date = sale.Date;
+        vm._time = sale.Time;
         vm.ReviewGuestNotice();
         return vm;
     }
@@ -289,8 +306,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         var sale = new Sale
         {
             Id = _id ?? 0,
-            Date = DateOnly.FromDateTime(DateTime.Now),
-            Time = TimeOnly.FromDateTime(DateTime.Now),
+            Date = _date,
+            Time = _time,
             ClientId = SelectedClient?.Id,
             GuestName = SelectedClient is null ? TextClient.Trim() : null,
             GuestPhone = SelectedClient is null ? GuestPhone : null,

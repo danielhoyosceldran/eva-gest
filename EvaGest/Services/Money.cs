@@ -5,12 +5,17 @@ namespace EvaGest.Services;
 /// <summary>Cents are the storage unit. Euros exist only for display and export.</summary>
 public static class Money
 {
-    /// <summary>Formats cents for the UI: 1500 -> "15,00 €".</summary>
-    public static string Format(int cents)
+    /// <summary>Formats cents for the UI: 1500 -> "15,00 €". Always two decimals, so a
+    /// round amount still reads as money and columns line up on the separator.</summary>
+    public static string Format(long cents)
         => (cents / 100m).ToString("C2", AppLanguage.Culture);
 
-    /// <summary>Formats cents for CSV export without the currency symbol: 1500 -> "15,00".</summary>
-    public static string FormatExport(int cents)
+    /// <summary>
+    /// Aggregates are summed as <see cref="long"/> (see TillSummary). Taking long here
+    /// too is what removes the "(int)Math.Min(x, int.MaxValue)" clamps that used to sit
+    /// at every point a period total reached the screen.
+    /// </summary>
+    public static string FormatExport(long cents)
         => (cents / 100m).ToString("N2", AppLanguage.Culture);
 
     /// <summary>
@@ -24,23 +29,24 @@ public static class Money
         cents = 0;
         if (string.IsNullOrWhiteSpace(text)) return false;
 
-        text = text.Replace("€", "").Replace(" ", "").Trim();
+        // Non-breaking spaces come in with anything pasted from a spreadsheet or from a
+        // currency-formatted cell, and are invisible in the box.
+        text = text.Replace("€", "")
+                   .Replace(" ", "").Replace(" ", "").Replace(" ", "")
+                   .Trim();
+        if (text.Length == 0) return false;
 
         int posDecimal = text.LastIndexOfAny(['.', ',']);
 
-        string normalized;
-        if (posDecimal < 0)
-        {
-            normalized = text;
-        }
-        else
-        {
-            string whole = text[..posDecimal].Replace(",", "").Replace(".", "");
-            string decimals = text[(posDecimal + 1)..];
-            normalized = $"{whole}.{decimals}";
-        }
+        string whole = posDecimal < 0 ? text : text[..posDecimal];
+        string decimals = posDecimal < 0 ? "" : text[(posDecimal + 1)..];
 
-        if (!decimal.TryParse(normalized, NumberStyles.Number,
+        if (!decimals.All(char.IsAsciiDigit)) return false;
+        if (!IsWholePart(whole)) return false;
+
+        string normalized = $"{whole.Replace(",", "").Replace(".", "")}.{(decimals.Length == 0 ? "0" : decimals)}";
+
+        if (!decimal.TryParse(normalized, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint,
                               CultureInfo.InvariantCulture, out decimal euros))
             return false;
 
@@ -53,6 +59,35 @@ public static class Money
 
         cents = (int)roundedCents;
         return true;
+    }
+
+    /// <summary>
+    /// The part before the decimal separator: digits, optionally signed, optionally split
+    /// into groups of three by a separator used consistently.
+    ///
+    /// The grouping is checked rather than simply stripped. Stripping accepted anything:
+    /// a stuck comma key turning "12,50" into "12,,50" was read as 12,50 and "1,2,3,4"
+    /// was read as 123,40 — a number nobody typed, silently frozen onto a sale. A shape
+    /// this parser cannot be sure about is now refused so the user retypes it.
+    /// </summary>
+    private static bool IsWholePart(string whole)
+    {
+        if (whole.StartsWith('-') || whole.StartsWith('+')) whole = whole[1..];
+        if (whole.Length == 0) return true;               // ",50" is a valid way to type 0,50
+
+        int firstSeparator = whole.IndexOfAny(['.', ',']);
+        if (firstSeparator < 0) return whole.All(char.IsAsciiDigit);
+
+        char separator = whole[firstSeparator];
+        var groups = whole.Split(separator);
+
+        // A second, different separator in the whole part means the shape is not a
+        // consistent grouping (e.g. "1.234,567.89").
+        if (groups.Any(g => g.IndexOfAny(['.', ',']) >= 0)) return false;
+
+        if (groups[0].Length is < 1 or > 3) return false;
+        return groups.All(g => g.All(char.IsAsciiDigit))
+            && groups.Skip(1).All(g => g.Length == 3);
     }
 }
 

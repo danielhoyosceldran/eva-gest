@@ -9,8 +9,13 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
     public async Task<List<CashMovement>> GetByPeriod(DateOnly from, DateOnly to)
     {
         await using var db = await factory.CreateDbContextAsync();
+        // Category and Worker are included because the movements table shows them: without
+        // these two the columns bound to them stayed permanently blank, which looked like
+        // the fields were never saved.
         return await db.CashMovements.AsNoTracking()
             .Include(m => m.PaymentMethod)
+            .Include(m => m.Category)
+            .Include(m => m.Worker)
             .Where(m => m.Date >= from && m.Date <= to)
             .OrderByDescending(m => m.Date)
             .ToListAsync();

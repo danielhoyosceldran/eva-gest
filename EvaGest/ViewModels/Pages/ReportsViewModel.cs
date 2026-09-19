@@ -30,10 +30,30 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
     // Named-property rows for the ranking lists: WPF Binding resolves CLR properties
     // reliably, unlike ValueTuple's Item1/Item2 fields, which are not guaranteed to
     // bind (silently blank instead of throwing — see Phase 7's XAML resource lesson).
-    public record ClientVisitsRow(Client Client, int Visits, long TotalCents);
-    public record ClientSpendRow(Client Client, long TotalCents);
-    public record ClientAverageRow(Client Client, decimal AverageEuros);
-    public record InactiveClientRow(Client Client, DateOnly Last, int DaysSince);
+    // Each row carries its figure already formatted. The cents/euros values stay on the
+    // record for sorting and tests; only the *Text properties are ever bound, because a
+    // raw *Cents value in a TextBlock prints cents as if they were euros.
+    public record ClientVisitsRow(Client Client, int Visits, long TotalCents)
+    {
+        public string TotalText => Money.Format(TotalCents);
+    }
+
+    public record ClientSpendRow(Client Client, long TotalCents)
+    {
+        public string TotalText => Money.Format(TotalCents);
+    }
+
+    public record ClientAverageRow(Client Client, decimal AverageEuros)
+    {
+        /// <summary>Already euros, not cents — this one comes out of Indicators as a
+        /// decimal, so it is formatted directly rather than through Money.</summary>
+        public string AverageText => AverageEuros.ToString("C2", AppLanguage.Culture);
+    }
+
+    public record InactiveClientRow(Client Client, DateOnly Last, int DaysSince)
+    {
+        public string LastText => Last.ToString("dd/MM/yyyy");
+    }
 
     /// <summary>Money is formatted here rather than in XAML: binding IncomeCents
     /// straight to a {0:0.00} format string showed euros as if they were cents.</summary>

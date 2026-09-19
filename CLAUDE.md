@@ -25,9 +25,14 @@ dotnet test  EvaGest.slnx --filter "FullyQualifiedName~VatCalculator"
 dotnet ef migrations add <Name>
 ```
 
-The build is warning-free. Keep it that way. All 339 tests run in about a second
+The build is warning-free. Keep it that way. All 581 tests run in about two seconds
 (test execution itself — `dotnet test` including build/restore takes longer), so
 run the whole suite rather than guessing which part is affected.
+
+If `dotnet test` appears to hang for minutes, it is not the tests: they exit in
+seconds. Look for a stale `testhost` process holding the output DLL
+(`Get-Process testhost | Stop-Process -Force`), the app still running and locking
+`EvaGest.exe`, or Visual Studio's test discovery holding the same files.
 
 The app itself needs a Windows desktop session; it cannot be launched from a
 headless agent run. Verify through tests instead.

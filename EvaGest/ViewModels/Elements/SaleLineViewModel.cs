@@ -53,6 +53,14 @@ public partial class SaleLineViewModel : ObservableObject
     /// from ever freezing a wrapped value onto the sale.</summary>
     public int AmountCents => unchecked((int)AmountCentsExact);
 
+    /// <summary>
+    /// What the view binds. Binding <see cref="AmountCents"/> straight to a TextBlock
+    /// printed the raw cents ("1500" for fifteen euros); a {0:0.00} format string on it
+    /// would have printed "1500,00", which is the same mistake with a decimal point.
+    /// Cents only ever become euros through <see cref="Money"/>.
+    /// </summary>
+    public string AmountText => Money.Format(AmountCents);
+
     partial void OnDescriptionChanged(string value) => Notify();
     partial void OnPriceTextChanged(string value) => Notify();
 
@@ -93,6 +101,7 @@ public partial class SaleLineViewModel : ObservableObject
     private void Notify()
     {
         OnPropertyChanged(nameof(AmountCents));
+        OnPropertyChanged(nameof(AmountText));
         Changed?.Invoke();
     }
 
