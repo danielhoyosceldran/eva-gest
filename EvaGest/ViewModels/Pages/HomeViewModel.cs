@@ -147,6 +147,8 @@ public partial class HomeViewModel(
     {
         var vm = new MovementDialogViewModel(type);
         await vm.LoadMethods(catalog);
+        await vm.LoadCategories(catalog);
+        await vm.LoadWorkers(workers);
         if (await dialogs.ShowDialog(vm))
         {
             await till.Create(vm.AModel());

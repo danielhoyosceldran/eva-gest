@@ -9,7 +9,8 @@ namespace EvaGest.ViewModels.Pages;
 
 public enum TillPeriod { Today, Yesterday, ThisWeek, ThisMonth, PreviousMonth, Custom }
 
-public partial class TillViewModel(ITillService till, ICatalogService catalog, IDialogService dialogs)
+public partial class TillViewModel(
+    ITillService till, ICatalogService catalog, IWorkerService workers, IDialogService dialogs)
     : PageViewModelBase
 {
     public override string Title => Texts.NavTill;
@@ -93,6 +94,8 @@ public partial class TillViewModel(ITillService till, ICatalogService catalog, I
     {
         var vm = new ViewModels.Dialogs.MovementDialogViewModel(type);
         await vm.LoadMethods(catalog);
+        await vm.LoadCategories(catalog);
+        await vm.LoadWorkers(workers);
         if (await dialogs.ShowDialog(vm))
         {
             await till.Create(vm.AModel());

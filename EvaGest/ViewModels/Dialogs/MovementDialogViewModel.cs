@@ -24,9 +24,20 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     [ObservableProperty] private string _vatText = "21";
     [ObservableProperty] private string? _notes;
 
+    /// <summary>Only meaningful for a cash-out; left null for a cash-in. Both are
+    /// optional, so nothing here needs validation in <see cref="Save"/>.</summary>
+    [ObservableProperty] private ExpenseCategory? _category;
+    [ObservableProperty] private Worker? _worker;
+
     public ObservableCollection<PaymentMethod> ActiveMethods { get; } = [];
+    public ObservableCollection<ExpenseCategory> ActiveCategories { get; } = [];
+    public ObservableCollection<Worker> ActiveWorkers { get; } = [];
 
     public override string Title => Type == MovementType.In ? Texts.NewCashInTitle : Texts.NewCashOutTitle;
+
+    /// <summary>Category and worker only make sense for money going out (RF-16
+    /// extension): a cash-in has no expense to classify or worker to pay.</summary>
+    public bool IsCashOut => Type == MovementType.Out;
 
     public MovementDialogViewModel(MovementType type) => Type = type;
 
@@ -45,6 +56,16 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     {
         foreach (var m in await catalog.GetMethods(onlyActive: true)) ActiveMethods.Add(m);
         Method ??= ActiveMethods.FirstOrDefault();
+    }
+
+    public async Task LoadCategories(ICatalogService catalog)
+    {
+        foreach (var c in await catalog.GetCategories(onlyActive: true)) ActiveCategories.Add(c);
+    }
+
+    public async Task LoadWorkers(IWorkerService workers)
+    {
+        foreach (var w in await workers.GetAll(onlyActive: true)) ActiveWorkers.Add(w);
     }
 
     [RelayCommand]
@@ -104,6 +125,8 @@ public partial class MovementDialogViewModel : DialogViewModelBase
             VatCents = vatCents,
             VatBp = vatBp,
             PaymentMethodId = Method!.Id,
+            CategoryId = Category?.Id,
+            WorkerId = Worker?.Id,
             Concept = Concept.Trim(),
             Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim()
         };

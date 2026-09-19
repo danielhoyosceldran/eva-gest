@@ -12,6 +12,16 @@
         <ComboBox ItemsSource="{Binding ActiveMethods}" SelectedItem="{Binding Method}"
                   DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
 
+        <StackPanel Visibility="{Binding IsCashOut, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="{x:Static t:Texts.CategoryOptional}" Style="{StaticResource DataLabel}" />
+            <ComboBox ItemsSource="{Binding ActiveCategories}" SelectedItem="{Binding Category}"
+                      DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+
+            <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
+            <ComboBox ItemsSource="{Binding ActiveWorkers}" SelectedItem="{Binding Worker}"
+                      DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+        </StackPanel>
+
         <TextBlock Text="{x:Static t:Texts.Concept}" Style="{StaticResource DataLabel}" />
         <TextBox Text="{Binding Concept, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
