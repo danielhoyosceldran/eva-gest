@@ -605,19 +605,20 @@ def seed(db_path: str) -> None:
         marc_on        = wd in MARC_DAYS
         joan_on        = wd in JOAN_DAYS
         n_workers      = int(marc_on) + int(joan_on)
-        # Conservative capacity: assume average service = 30 min
-        slots_each     = 4 if morning_only else 8
-        capacity       = slots_each * n_workers
-        d_str          = d.isoformat()
+        d_str = d.isoformat()
 
-        # Target: busy days aim for ~75 % capacity; every day has a hard floor.
-        if d in busy_days:
-            target = max(int(capacity * 0.75), 2 if morning_only else 4)
-            target += rng.randint(0, 2)       # small random upside
+        # Targets based on realistic capacity (avg service ~31 min):
+        #   full day per worker  = 480 min / 31 ≈ 15 clients
+        #   morning per worker   = 240 min / 31 ≈  7 clients
+        # Busy days: ~80 % of capacity.  Normal days: ~55 % — still busy, not empty.
+        if morning_only:
+            target = rng.randint(5, 7) if d in busy_days else rng.randint(3, 5)
         else:
-            base_floor  = 2 if morning_only else 4
-            extra       = rng.randint(0, 3) if not morning_only else rng.randint(0, 1)
-            target      = base_floor + extra  # normal days: floor + a few more
+            # n_workers: 2 on Mon/Tue/Thu/Fri, so capacity ~30
+            if d in busy_days:
+                target = rng.randint(14, 18) * n_workers // 2
+            else:
+                target = rng.randint(8, 12)  * n_workers // 2
 
         current = day_count.get(d_str, 0)
         to_add  = max(0, target - current)
