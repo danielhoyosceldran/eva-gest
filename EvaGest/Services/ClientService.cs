@@ -4,6 +4,8 @@ using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
 
+using Serilog;
+
 namespace EvaGest.Services;
 
 public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientService
@@ -42,28 +44,30 @@ public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientSe
         return await db.Clients.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public async Task<Client?> FindPossibleDuplicate(string name, string mobile)
+    public async Task<Client?> FindByName(string name)
     {
-        string key = ComputeClientKey(name, mobile);
+        string key = ComputeClientKey(name);
         await using var db = await factory.CreateDbContextAsync();
         return await db.Clients.AsNoTracking().FirstOrDefaultAsync(c => c.ClientKey == key);
     }
 
     public async Task<int> Create(Client client)
     {
-        client.ClientKey = ComputeClientKey(client.Name, client.Mobile);
+        client.ClientKey = ComputeClientKey(client.Name);
         await using var db = await factory.CreateDbContextAsync();
         db.Clients.Add(client);
         await db.SaveChangesAsync();
+        Log.Information("Client {ClientId} created", client.Id);
         return client.Id;
     }
 
     public async Task Update(Client client)
     {
-        client.ClientKey = ComputeClientKey(client.Name, client.Mobile);
+        client.ClientKey = ComputeClientKey(client.Name);
         await using var db = await factory.CreateDbContextAsync();
         db.Clients.Update(client);
         await db.SaveChangesAsync();
+        Log.Information("Client {ClientId} updated", client.Id);
     }
 
     public async Task Sleep(int clientId)
@@ -131,21 +135,27 @@ public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientSe
     }
 
     /// <summary>
-    /// Builds the duplicate-detection key: normalised first name + last 9 phone digits.
-    /// "Joan" + "+34 612 345 678" and "joán" + "612345678" produce the same key.
+    /// Builds the identity key: the whole name, normalised. Two clients may not share
+    /// a name (decision 6.1, revised) — "Joan García" twice is refused even on two
+    /// different phone numbers, and the user tells them apart by adding a surname or a
+    /// second given name.
+    ///
+    /// The phone deliberately takes no part. It used to: the key was the FIRST name
+    /// plus the last nine digits, which made this a duplicate-detection heuristic that
+    /// wanted false positives, sitting under a unique index that could not tolerate
+    /// one. Those two jobs cannot share a key, and the index was the half that won —
+    /// by crashing.
+    ///
+    /// Accents, case and spacing are normalised away, so "Joan García", "joan garcia"
+    /// and "JoanGarcía" are all one client.
     /// </summary>
-    public static string ComputeClientKey(string name, string mobile)
+    public static string ComputeClientKey(string name)
     {
-        string firstName = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                              .FirstOrDefault() ?? string.Empty;
-
-        string normalized = new string(firstName.Normalize(NormalizationForm.FormD)
+        string withoutAccents = new(name.Normalize(NormalizationForm.FormD)
             .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-            .ToArray()).ToLowerInvariant();
+            .ToArray());
 
-        string digits = new string(mobile.Where(char.IsDigit).ToArray());
-        string last9 = digits.Length > 9 ? digits[^9..] : digits;
-
-        return normalized + last9;
+        return new string(withoutAccents.Where(c => !char.IsWhiteSpace(c)).ToArray())
+            .ToLowerInvariant();
     }
 }

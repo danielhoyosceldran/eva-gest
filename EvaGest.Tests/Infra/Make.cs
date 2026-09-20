@@ -1,4 +1,5 @@
 using EvaGest.Models;
+using EvaGest.Services;
 
 namespace EvaGest.Tests.Infra;
 
@@ -6,7 +7,7 @@ namespace EvaGest.Tests.Infra;
 public static class Make
 {
     public static Client Client(string name = "Joan García", string mobile = "612345678")
-        => new() { Name = name, Mobile = mobile, ClientKey = $"{name.ToLower()}{mobile}" };
+        => new() { Name = name, Mobile = mobile, ClientKey = ClientService.ComputeClientKey(name) };
 
     public static Service Service(string name = "Tall", int priceCents = 1500,
                                 int vatBp = 2100, int? duration = 30)

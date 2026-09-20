@@ -94,7 +94,6 @@ public static class Texts
         nameof(Wake),
         nameof(Asleep),
         nameof(RegisterNow),
-        nameof(SaveAnyway),
         nameof(ClearFilters),
         nameof(ExportPeriod),
         nameof(VoidSale),
@@ -178,7 +177,7 @@ public static class Texts
         nameof(ColorInAgenda),
         nameof(PickTimeInAgenda),
         nameof(RegisteredClientOrFreeName),
-        nameof(LooksLikeExistingClient),
+        nameof(ClientNameAlreadyExists),
         nameof(CopyMondayToWeekdays),
         nameof(PreviousWeek),
         nameof(NextWeek),
@@ -641,7 +640,6 @@ public static class Texts
     public static string RegisterNow => Get(nameof(RegisterNow));
 
     /// <summary>Guardar-lo igualment</summary>
-    public static string SaveAnyway => Get(nameof(SaveAnyway));
 
     /// <summary>Netejar filtres</summary>
     public static string ClearFilters => Get(nameof(ClearFilters));
@@ -893,7 +891,7 @@ public static class Texts
     public static string RegisteredClientOrFreeName => Get(nameof(RegisteredClientOrFreeName));
 
     /// <summary>Sembla que aquest client ja existeix: </summary>
-    public static string LooksLikeExistingClient => Get(nameof(LooksLikeExistingClient));
+    public static string ClientNameAlreadyExists => Get(nameof(ClientNameAlreadyExists));
 
     /// <summary>Copiar dilluns a dimarts–divendres</summary>
     public static string CopyMondayToWeekdays => Get(nameof(CopyMondayToWeekdays));

@@ -107,7 +107,7 @@ La implementació concreta viu a la capa de UI i és l'única que coneix `Window
 
 | Servei | Responsabilitat |
 |---|---|
-| `ClientService` | CRUD de clients, cerca, càlcul de `ClientKey`, detecció de duplicats, adormir/despertar/eliminar |
+| `ClientService` | CRUD de clients, cerca, càlcul de `ClientKey`, unicitat del nom, adormir/despertar/eliminar |
 | `CitaService` | CRUD de cites i canvis d'estat |
 | `DisponibilitatService` | Càlcul de solapament, horari de la barberia, dies tancats |
 | `VendaService` | Crear, editar i anul·lar vendes; construir-les des d'una cita |
@@ -134,13 +134,13 @@ public interface IClientService
     Task<List<Client>> Cercar(string text);          // by name or phone
     Task<Client?> ObtenirPerId(int id);
 
-    /// <summary>Returns the existing client whose ClientKey matches, if any.
-    /// Used to warn about probable duplicates before saving (RF-03).</summary>
+    /// <summary>The existing client with this name, if there is one. A name identifies
+    /// a client, so this REFUSES the save rather than warning about it (RF-03).</summary>
     Task<Client?> BuscarPossibleDuplicat(string nom, string mobil);
 
     Task<int> Crear(Client client);
 
-    /// <summary>Recalculates ClientKey when name or phone changed.</summary>
+    /// <summary>Recalculates ClientKey when the name changed.</summary>
     Task Actualitzar(Client client);
 
     Task Adormir(int clientId);
@@ -161,24 +161,18 @@ public interface IClientService
 
 ```csharp
 /// <summary>
-/// Builds the duplicate-detection key: normalised first name + last 9 phone digits.
-/// "Joan" + "+34 612 345 678" and "joán" + "612345678" produce the same key.
+/// Builds the identity key: the whole name, normalised. The phone takes no part —
+/// "Joan García" is one client whatever number they are on, and "Joan Pérez" on that
+/// same number is a different one.
 /// </summary>
-private static string CalcularClientKey(string nom, string mobil)
+private static string CalcularClientKey(string nom)
 {
-    string primerNom = nom.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                          .FirstOrDefault() ?? string.Empty;
-
-    // Strip diacritics and lowercase
-    string normalitzat = new string(primerNom.Normalize(NormalizationForm.FormD)
+    // Strip diacritics, drop every space, lowercase
+    string normalitzat = new string(nom.Normalize(NormalizationForm.FormD)
         .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
         .ToArray()).ToLowerInvariant();
 
-    // Keep digits only, then take the last 9 (drops any country prefix)
-    string digits = new string(mobil.Where(char.IsDigit).ToArray());
-    string ultims9 = digits.Length > 9 ? digits[^9..] : digits;
-
-    return normalitzat + ultims9;
+    return new string(normalitzat.Where(c => !char.IsWhiteSpace(c)).ToArray());
 }
 ```
 
@@ -1026,7 +1020,7 @@ Aquests són els punts que trencarien la comptabilitat sense avisar. El catàleg
 | **Suma d'un període == suma dels valors guardats** | La regla canònica de 6.4. Si algú un dia recalcula des de les línies, aquesta prova ho detecta |
 | `Vendes.BaseCents == Σ Desglossaments.BaseCents` | Invariant de consistència entre les dues taules |
 | `Indicadors`: els quatre casos de divisió per zero | Han de tornar `null`, no petar ni tornar `0` |
-| `ClientService.CalcularClientKey`: variants de nom i telèfon | "Joan"+"+34 612…" i "joán"+"612…" han de donar la mateixa clau |
+| `ClientService.CalcularClientKey`: variants del nom | "Joán García" i "joan  garcia" han de donar la mateixa clau; "Joan Pérez", una de diferent |
 | `Diners.TryParse`: "15", "15,50", "15.50", "1.234,56" | El separador de milers va trencar la primera versió |
 | `DisponibilitatService`: els 6 casos límit dels casos d'ús | La lògica menys evident del projecte |
 

@@ -27,7 +27,7 @@
 | Camp | Tipus | Obligatori | Notes |
 |---|---|---|---|
 | `id` | INTEGER PK | Sí | Autoincremental |
-| `client_key` | TEXT | Sí | **Índex únic.** Hash de nom + telèfon (decisió 6.1) |
+| `client_key` | TEXT | Sí | **Índex únic.** Nom sencer normalitzat (decisió 6.1) |
 | `nom` | TEXT | Sí | |
 | `mobil` | TEXT | Sí | |
 | `correu` | TEXT | No | |
@@ -353,7 +353,7 @@ Regles de negoci que cal validar a la capa de servei (C#), no a SQLite:
 - **Invariant `base_cents + iva_cents = total_cents`**: es garanteix per construcció de l'algoritme (6.4), però SQLite no la imposa. Val la pena una prova unitària que la verifiqui.
 - **Avís de solapament d'agenda** (6.7): càlcul dinàmic sobre l'horari de treballadores actives; no es pot expressar amb un `CHECK`.
 - **Només cites `Realitzada` poden tenir venda associada** (RF-02): SQLite no admet `CHECK` amb subconsultes a altres taules de forma fiable. Es valida a l'aplicació.
-- **Recàlcul de `client_key`** si es corregeix el nom o el telèfon (6.1): camp derivat sense trigger, cal fer-ho al servei.
+- **Recàlcul de `client_key`** si es corregeix el nom (6.1): camp derivat sense trigger, cal fer-ho al servei. El telèfon ja no hi intervé.
 
 ---
 

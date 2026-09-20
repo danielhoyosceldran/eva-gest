@@ -21,22 +21,8 @@
         <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
                  AcceptsReturn="True" TextWrapping="Wrap" Height="60" Margin="0,0,0,12" />
 
-        <!-- Non-blocking duplicate warning (pantalles 3.3): saving stays possible either way -->
-        <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
-                BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="12" Margin="0,0,0,12"
-                Visibility="{Binding DuplicateFound, Converter={StaticResource NullToVisibilityConverter}}">
-            <StackPanel>
-                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource InkBrush}">
-                    <Run Text="{x:Static t:Texts.LooksLikeExistingClient}" />
-                    <Run Text="{Binding DuplicateFound.Name, Mode=OneWay}" FontWeight="SemiBold" />
-                    <Run Text=" (" /><Run Text="{Binding DuplicateFound.Mobile, Mode=OneWay}" /><Run Text=")." />
-                </TextBlock>
-                <Button Content="{x:Static t:Texts.SaveAnyway}" Style="{StaticResource SecondaryButton}"
-                        HorizontalAlignment="Left" MinHeight="32" Margin="0,8,0,0"
-                        Command="{Binding SaveAnywayCommand}" />
-            </StackPanel>
-        </Border>
-
+        <!-- A repeated name is refused, not warned about (decision 6.1), so it reaches the
+             user through ErrorValidation below like every other blocking check. -->
         <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
                    TextWrapping="Wrap" Margin="0,0,0,12"
                    Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />

@@ -14,75 +14,96 @@ public class ClientServiceTests
     private static ClientService CreatesService(TestDatabase testDb) => new(new TestFactory(testDb.Options));
 
     [Fact] // D-01
-    public void ClientKey_matches_the_same_phone_written_with_another_prefix()
+    public void ClientKey_ignores_the_phone_entirely()
     {
-        string a = ClientService.ComputeClientKey("Joan", "612345678");
-        string b = ClientService.ComputeClientKey("Joan", "+34 612 345 678");
+        // The phone used to be half the key. It is not any more: a name identifies a
+        // client, so the same name on a new number is the same client (decision 6.1).
+        string a = ClientService.ComputeClientKey("Joan García");
+        string b = ClientService.ComputeClientKey("Joan García");
         a.Should().Be(b);
     }
 
     [Fact] // D-02
     public void ClientKey_normalizes_accents()
     {
-        string a = ClientService.ComputeClientKey("joán", "612345678");
-        string b = ClientService.ComputeClientKey("Joan", "612345678");
+        string a = ClientService.ComputeClientKey("Joán Garcia");
+        string b = ClientService.ComputeClientKey("Joan Garcia");
         a.Should().Be(b);
     }
 
     [Fact] // D-03
-    public void ClientKey_only_uses_the_first_name()
+    public void ClientKey_uses_the_whole_name_not_only_the_first()
     {
-        string a = ClientService.ComputeClientKey("Joan García", "612345678");
-        string b = ClientService.ComputeClientKey("Joan Pérez", "612345678");
-        a.Should().Be(b);
+        // The inverse of what this pinned before. Two people who share a first name are
+        // two clients, and the surname is what the user adds to tell them apart.
+        string a = ClientService.ComputeClientKey("Joan García");
+        string b = ClientService.ComputeClientKey("Joan Pérez");
+        a.Should().NotBe(b);
     }
 
     [Fact] // D-04
-    public void ClientKey_ignores_the_0034_prefix()
+    public void ClientKey_ignores_case_and_spacing()
     {
-        string a = ClientService.ComputeClientKey("Joan", "0034612345678");
-        string b = ClientService.ComputeClientKey("Joan", "612345678");
+        string a = ClientService.ComputeClientKey("  joan   garcia ");
+        string b = ClientService.ComputeClientKey("JoanGarcia");
         a.Should().Be(b);
     }
 
     [Fact] // D-05
-    public async Task Saving_two_clients_with_the_same_key_is_rejected()
+    public async Task Saving_two_clients_with_the_same_name_is_rejected_even_on_another_phone()
     {
         await using var testDb = new TestDatabase();
         var clients = CreatesService(testDb);
 
-        await clients.Create(new Client { Name = "Joan", Mobile = "612345678" });
+        await clients.Create(new Client { Name = "Joan García", Mobile = "612345678" });
 
-        var action = async () => await clients.Create(new Client { Name = "Joan", Mobile = "612345678" });
+        // A different number is not a different client: the index refuses it. The dialog
+        // is what stops the user ever reaching this (see ClientDialogViewModelTests).
+        var action = async () => await clients.Create(
+            new Client { Name = "Joan García", Mobile = "699999999" });
         await action.Should().ThrowAsync<Microsoft.EntityFrameworkCore.DbUpdateException>();
     }
 
-    [Fact] // D-06
-    public async Task FindPossibleDuplicate_returns_the_existing_client()
+    [Fact] // D-05b
+    public async Task Two_clients_sharing_a_phone_but_not_a_name_are_both_saved()
     {
         await using var testDb = new TestDatabase();
         var clients = CreatesService(testDb);
 
-        int id = await clients.Create(new Client { Name = "Joan", Mobile = "612345678" });
+        // A family on one number. This used to be refused, because the key was the first
+        // name plus the phone and both of these keyed to "joan612345678".
+        await clients.Create(new Client { Name = "Joan García", Mobile = "612345678" });
+        await clients.Create(new Client { Name = "Joan Pérez", Mobile = "612345678" });
 
-        var duplicate = await clients.FindPossibleDuplicate("Joan", "612345678");
-        duplicate.Should().NotBeNull();
-        duplicate!.Id.Should().Be(id);
+        (await clients.GetActive()).Should().HaveCount(2);
+    }
+
+    [Fact] // D-06
+    public async Task FindByName_returns_the_existing_client()
+    {
+        await using var testDb = new TestDatabase();
+        var clients = CreatesService(testDb);
+
+        int id = await clients.Create(new Client { Name = "Joan García", Mobile = "612345678" });
+
+        var existing = await clients.FindByName("joan  garcia");
+        existing.Should().NotBeNull();
+        existing!.Id.Should().Be(id);
     }
 
     [Fact] // D-07
-    public async Task Changing_the_phone_recomputes_the_client_key()
+    public async Task Changing_the_name_recomputes_the_client_key()
     {
         await using var testDb = new TestDatabase();
         var clients = CreatesService(testDb);
 
         int id = await clients.Create(new Client { Name = "Joan", Mobile = "612345678" });
         var client = await clients.GetById(id);
-        client!.Mobile = "699999999";
+        client!.Name = "Joan García";
         await clients.Update(client);
 
         var updated = await clients.GetById(id);
-        updated!.ClientKey.Should().Be(ClientService.ComputeClientKey("Joan", "699999999"));
+        updated!.ClientKey.Should().Be(ClientService.ComputeClientKey("Joan García"));
     }
 
     [Fact]

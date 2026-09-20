@@ -23,7 +23,7 @@ public class ReportsServiceTests
     private static async Task<int> AddsClient(TestDatabase testDb, string name = "Joan", string mobile = "612345678")
     {
         await using var db = testDb.Context();
-        var c = new Client { Name = name, Mobile = mobile, ClientKey = ClientService.ComputeClientKey(name, mobile) };
+        var c = new Client { Name = name, Mobile = mobile, ClientKey = ClientService.ComputeClientKey(name) };
         db.Clients.Add(c);
         await db.SaveChangesAsync();
         return c.Id;

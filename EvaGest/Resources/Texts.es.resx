@@ -229,9 +229,6 @@
   <data name="RegisterNow" xml:space="preserve">
     <value>Registrarlo ahora</value>
   </data>
-  <data name="SaveAnyway" xml:space="preserve">
-    <value>Guardarlo igualmente</value>
-  </data>
   <data name="ClearFilters" xml:space="preserve">
     <value>Limpiar filtros</value>
   </data>
@@ -481,8 +478,8 @@
   <data name="RegisteredClientOrFreeName" xml:space="preserve">
     <value>Cliente registrado (o escribe un nombre libre debajo)</value>
   </data>
-  <data name="LooksLikeExistingClient" xml:space="preserve">
-    <value>Parece que este cliente ya existe: </value>
+  <data name="ClientNameAlreadyExists" xml:space="preserve">
+    <value>Ya tienes un cliente que se llama {0} ({1}). Añade el apellido o un segundo nombre para distinguirlos.</value>
   </data>
   <data name="CopyMondayToWeekdays" xml:space="preserve">
     <value>Copiar lunes a martes–viernes</value>

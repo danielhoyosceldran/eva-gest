@@ -9,13 +9,14 @@ public interface IClientService
     Task<List<Client>> Search(string text);          // by name or phone
     Task<Client?> GetById(int id);
 
-    /// <summary>Returns the existing client whose ClientKey matches, if any.
-    /// Used to warn about probable duplicates before saving (RF-03).</summary>
-    Task<Client?> FindPossibleDuplicate(string name, string mobile);
+    /// <summary>The existing client with this name, if there is one. A name identifies
+    /// a client, so this is what refuses the save rather than warning about it
+    /// (RF-03, decision 6.1).</summary>
+    Task<Client?> FindByName(string name);
 
     Task<int> Create(Client client);
 
-    /// <summary>Recalculates ClientKey when name or phone changed.</summary>
+    /// <summary>Recalculates ClientKey when the name changed.</summary>
     Task Update(Client client);
 
     Task Sleep(int clientId);

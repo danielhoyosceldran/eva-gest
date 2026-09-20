@@ -172,6 +172,15 @@ Recorded here so they are not read as bugs:
   named Catalan only and ruled internationalisation out of scope. Both come
   from `EvaGest/Resources/Texts*.resx`; the choice is `ConfigKeys.Language`,
   read once at startup, so changing it asks for a restart.
+- **`ClientKey` is the whole name and nothing else** — decision 6.1 originally
+  made it the *first* name plus the last nine phone digits, and RF-03 described
+  the duplicate check as a warning that never blocks. Both were revised in place
+  in `requeriments-barberia-v2.md`: a name now identifies a client, two clients
+  may not share one even on different numbers, and the dialog refuses the save
+  instead of warning. Two clients with different names may share a phone, which
+  the old key rejected. The original shape could not work — a detection
+  heuristic wants false positives, the unique index on the column tolerates
+  none, and the index won by throwing `DbUpdateException` at the user.
 - **Constraint names in the database stay Catalan** (`pk_cites`,
   `ck_cites_client_xor`, `fk_vendes_clients_client_id`). SQLite keeps them
   inside the table's DDL text, so renaming them means rebuilding every table;

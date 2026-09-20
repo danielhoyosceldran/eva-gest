@@ -82,6 +82,8 @@ Crear, modificar, consultar i cercar clients. Cerca per nom o telèfon.
 
 **Dades del client:** nom i mòbil (**obligatoris**); correu, observacions i data de naixement (**opcionals**). Totes les dades es podran ampliar i modificar més endavant.
 
+**Nom únic:** dos clients no poden compartir nom (decisió 6.1). En crear o modificar un client amb un nom que ja existeix, l'aplicació ho refusa i diu amb quin client xoca, perquè la usuària hi pugui afegir el cognom.
+
 **Aniversari:** si s'indica la data de naixement, l'aplicació mostra un avís discret a la pantalla principal el dia de l'aniversari d'un client.
 
 ### RF-04. Eliminar i adormir clients
@@ -396,17 +398,19 @@ Es conserven els **30 últims dies** de registres, valor fix al codi. No s'expos
 | Camp | Tipus | Propòsit |
 |---|---|---|
 | `Id` | `INTEGER PRIMARY KEY AUTOINCREMENT` | Clau primària interna, estable, mai canvia. Usada per totes les FK |
-| `ClientKey` | `TEXT` amb índex **únic** | Hash per detectar duplicats en crear un client |
+| `ClientKey` | `TEXT` amb índex **únic** | Nom normalitzat: dos clients no poden dir-se igual |
 
 **Càlcul de `ClientKey`:**
 
 ```
-nom_de_pila normalitzat (sense accents, lowercase, sense espais extres)
-+ els 9 últims dígits del telèfon (sense prefix internacional)
-→ hash
+nom sencer normalitzat (sense accents, lowercase, sense espais)
 ```
 
-**Per què PK autoincremental i no el hash com a PK:** si un client canvia de telèfon o es corregeix una errada al nom, el hash canviaria i trencaria totes les cites i vendes vinculades. La clau interna és estable; el hash només serveix per avisar de possibles duplicats.
+**Regla:** el nom identifica el client. Dos clients no poden compartir nom, **ni tan sols amb telèfons diferents**; quan passa, la usuària hi afegeix el cognom o un segon nom per distingir-los. Dos clients amb noms diferents sí que poden compartir telèfon (una família amb un sol número).
+
+**El telèfon no hi participa** (revisat). A la primera versió la clau era el nom de pila + els 9 últims dígits del telèfon, i feia dues feines alhora que no poden compartir una clau: detectar duplicats *probables*, que vol falsos positius, i alimentar un índex únic, que no en tolera cap. Guanyava l'índex — el botó «Guardar-lo igualment» arribava a `Create` amb una clau repetida i petava amb una `DbUpdateException` que la usuària veia com un error inesperat, perdent el client. Ara el xoc es refusa al diàleg, amb un missatge que diu què cal fer.
+
+**Per què PK autoincremental i no el nom com a PK:** si es corregeix una errada al nom, la clau canviaria i trencaria totes les cites i vendes vinculades. La clau interna és estable; `ClientKey` només fa de restricció d'unicitat.
 
 ### 6.2. Estat dels clients
 

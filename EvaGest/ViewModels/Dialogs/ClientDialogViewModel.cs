@@ -17,10 +17,6 @@ public partial class ClientDialogViewModel : DialogViewModelBase
     [ObservableProperty] private DateOnly? _birthDate;
     [ObservableProperty] private string? _notes;
 
-    /// <summary>Set when a duplicate is found on save, so the view can show the
-    /// non-blocking warning with its two extra actions (pantalles 3.3).</summary>
-    [ObservableProperty] private Client? _duplicateFound;
-
     public override string Title => _id is null ? Texts.NewClientTitle : Texts.EditClientTitle;
 
     public ClientDialogViewModel(IClientService clients)
@@ -57,24 +53,21 @@ public partial class ClientDialogViewModel : DialogViewModelBase
             return;
         }
 
-        // The warning is informational only: it never blocks saving (RF-03).
-        if (DuplicateFound is null)
+        // A name identifies a client, so this refuses the save rather than warning about
+        // it (decision 6.1). It used to be a non-blocking notice with a "save it anyway"
+        // button, but the unique index on ClientKey would then reject the insert with an
+        // unhandled DbUpdateException: the override could never actually override
+        // anything. Checked here, where the message can say what to do about it.
+        //
+        // The Id guard is what lets a client be edited without colliding with itself.
+        var existing = await _clients.FindByName(Name);
+        if (existing is not null && existing.Id != _id)
         {
-            var possible = await _clients.FindPossibleDuplicate(Name, Mobile);
-            if (possible is not null && possible.Id != _id)
-            {
-                DuplicateFound = possible;
-                return;
-            }
+            ErrorValidation = string.Format(Texts.ClientNameAlreadyExists,
+                                            existing.Name, existing.Mobile);
+            return;
         }
 
-        ErrorValidation = null;
-        RequestClose(true);
-    }
-
-    [RelayCommand]
-    private void SaveAnyway()
-    {
         ErrorValidation = null;
         RequestClose(true);
     }
