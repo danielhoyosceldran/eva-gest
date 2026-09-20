@@ -123,15 +123,15 @@
                 </Border>
             </UniformGrid>
 
-            <!-- Period selector shared by C and D -->
+            <!-- C) Worker ranking -->
+            <TextBlock Text="{x:Static t:Texts.WorkerRanking}" Style="{StaticResource Subtitle}" />
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                 <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
                 <TextBlock Text=" – " VerticalAlignment="Center" Margin="8,0" />
                 <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
+                <Button Content="{x:Static t:Texts.ThisMonth}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding SelectThisMonthCommand}" Margin="12,0,0,0" />
             </StackPanel>
-
-            <!-- C) Worker ranking -->
-            <TextBlock Text="{x:Static t:Texts.WorkerRanking}" Style="{StaticResource Subtitle}" />
             <Border Style="{StaticResource DataCard}" Padding="0" Margin="0,0,0,16">
                 <DataGrid ItemsSource="{Binding WorkerRanking}" AutoGenerateColumns="False"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
@@ -144,33 +144,6 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
-
-            <!-- D) Detail per worker -->
-            <TextBlock Text="{x:Static t:Texts.WorkerDetail}" Style="{StaticResource Subtitle}" />
-            <ComboBox ItemsSource="{Binding Workers}" SelectedItem="{Binding SelectedWorker}"
-                      DisplayMemberPath="Name" Width="220" HorizontalAlignment="Left" Margin="0,0,0,12"
-                      FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
-
-            <UniformGrid Columns="3" Margin="0,0,0,16">
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static t:Texts.SalesHandled}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding SelectedDetail.SalesHandled}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static t:Texts.IncomeGenerated}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding SelectedDetailIncomeText}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource DataCard}">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static t:Texts.WorkPercentDone}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding SelectedDetail.WorkPercentage, StringFormat={}{0:0.0} %, TargetNullValue=—}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

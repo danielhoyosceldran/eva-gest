@@ -206,7 +206,6 @@ public static class Texts
         nameof(Overview),
         nameof(ClientRankings),
         nameof(WorkerRanking),
-        nameof(WorkerDetail),
         nameof(SalesEvolution),
         nameof(ClientOfTheMonth),
         nameof(MostVisits),
@@ -215,10 +214,8 @@ public static class Texts
         nameof(NotSeenInAWhile),
         nameof(DaysSuffix),
         nameof(WorkPercentColumn),
-        nameof(WorkPercentDone),
         nameof(SalesHandled),
         nameof(IncomeColumn),
-        nameof(IncomeGenerated),
         nameof(Visits),
         nameof(TotalSpent),
         nameof(AveragePerVisit),
@@ -972,9 +969,6 @@ public static class Texts
     /// <summary>Rànquing de treballadores</summary>
     public static string WorkerRanking => Get(nameof(WorkerRanking));
 
-    /// <summary>Detall per treballadora</summary>
-    public static string WorkerDetail => Get(nameof(WorkerDetail));
-
     /// <summary>Evolució de vendes (12 mesos)</summary>
     public static string SalesEvolution => Get(nameof(SalesEvolution));
 
@@ -999,17 +993,11 @@ public static class Texts
     /// <summary>% de treball</summary>
     public static string WorkPercentColumn => Get(nameof(WorkPercentColumn));
 
-    /// <summary>% de treball realitzat</summary>
-    public static string WorkPercentDone => Get(nameof(WorkPercentDone));
-
     /// <summary>Vendes ateses</summary>
     public static string SalesHandled => Get(nameof(SalesHandled));
 
     /// <summary>Ingressos</summary>
     public static string IncomeColumn => Get(nameof(IncomeColumn));
-
-    /// <summary>Ingressos generats</summary>
-    public static string IncomeGenerated => Get(nameof(IncomeGenerated));
 
     /// <summary>Visites</summary>
     public static string Visits => Get(nameof(Visits));

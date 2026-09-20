@@ -565,9 +565,6 @@
   <data name="WorkerRanking" xml:space="preserve">
     <value>Rànquing de treballadores</value>
   </data>
-  <data name="WorkerDetail" xml:space="preserve">
-    <value>Detall per treballadora</value>
-  </data>
   <data name="SalesEvolution" xml:space="preserve">
     <value>Evolució de vendes (12 mesos)</value>
   </data>
@@ -592,17 +589,11 @@
   <data name="WorkPercentColumn" xml:space="preserve">
     <value>% de treball</value>
   </data>
-  <data name="WorkPercentDone" xml:space="preserve">
-    <value>% de treball realitzat</value>
-  </data>
   <data name="SalesHandled" xml:space="preserve">
     <value>Vendes ateses</value>
   </data>
   <data name="IncomeColumn" xml:space="preserve">
     <value>Ingressos</value>
-  </data>
-  <data name="IncomeGenerated" xml:space="preserve">
-    <value>Ingressos generats</value>
   </data>
   <data name="Visits" xml:space="preserve">
     <value>Visites</value>

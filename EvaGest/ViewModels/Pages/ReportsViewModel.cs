@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Resources;
@@ -7,11 +8,11 @@ using EvaGest.Resources;
 namespace EvaGest.ViewModels.Pages;
 
 /// <summary>
-/// Reports (pantalles 2.8): four blocks with a common period selector for the
-/// worker-related ones. Reports only make sense once there is real data (Phase 8
-/// is deliberately one of the last modules built).
+/// Reports (pantalles 2.8): three blocks with a period selector for the worker
+/// ranking. Reports only make sense once there is real data (Phase 8 is
+/// deliberately one of the last modules built).
 /// </summary>
-public partial class ReportsViewModel(IReportsService reports, IWorkerService workers)
+public partial class ReportsViewModel(IReportsService reports)
     : PageViewModelBase
 {
     public override string Title => Texts.NavReports;
@@ -21,8 +22,6 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
     [ObservableProperty] private DateOnly _to = DateOnly.FromDateTime(DateTime.Today);
 
     [ObservableProperty] private string? _clientOfTheMonthText;
-    [ObservableProperty] private WorkerDetail? _selectedDetail;
-    [ObservableProperty] private Worker? _selectedWorker;
 
     /// <summary>Bar height in DIP for the evolution chart, scaled to the largest month.</summary>
     public record EvolutionBar(string Label, double HeightDip, string AmountText);
@@ -65,9 +64,6 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
     public ObservableCollection<ClientAverageRow> TopAverage { get; } = [];
     public ObservableCollection<InactiveClientRow> NotSeenRecently { get; } = [];
     public ObservableCollection<WorkerRankingRow> WorkerRanking { get; } = [];
-    public ObservableCollection<Worker> Workers { get; } = [];
-
-    [ObservableProperty] private string _selectedDetailIncomeText = "—";
 
     public async Task Load()
     {
@@ -104,18 +100,6 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
             WorkerRanking.Clear();
             foreach (var d in await reports.WorkerRanking(From, To))
                 WorkerRanking.Add(new(d.WorkerId, d.Name, d.SalesHandled, Money.Format((int)d.IncomeCents), d.WorkPercentage));
-
-            if (Workers.Count == 0)
-                foreach (var t in await workers.GetAll()) Workers.Add(t);
-
-            if (SelectedWorker is null && Workers.Count > 0)
-                SelectedWorker = Workers[0];
-
-            if (SelectedWorker is not null)
-            {
-                SelectedDetail = await reports.GetWorkerDetail(SelectedWorker.Id, From, To);
-                SelectedDetailIncomeText = Money.Format((int)SelectedDetail.IncomeCents);
-            }
         }
         finally { Loading = false; }
     }
@@ -131,5 +115,13 @@ public partial class ReportsViewModel(IReportsService reports, IWorkerService wo
         if (value < From) From = value;
         else _ = Load();
     }
-    partial void OnSelectedWorkerChanged(Worker? value) => _ = Load();
+
+    /// <summary>Shortcut next to the range pickers: jumps straight to the 1st of the
+    /// current month through today, the range most people want most of the time.</summary>
+    [RelayCommand]
+    private void SelectThisMonth()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        (From, To) = (new DateOnly(today.Year, today.Month, 1), today);
+    }
 }
