@@ -125,9 +125,9 @@
 
             <!-- Period selector shared by C and D -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                <DatePicker SelectedDate="{Binding From}" FontSize="{StaticResource FontSizeInput}" />
+                <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
                 <TextBlock Text=" – " VerticalAlignment="Center" Margin="8,0" />
-                <DatePicker SelectedDate="{Binding To}" FontSize="{StaticResource FontSizeInput}" />
+                <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
             </StackPanel>
 
             <!-- C) Worker ranking -->

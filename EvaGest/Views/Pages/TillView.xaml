@@ -23,9 +23,9 @@
                     <ComboBoxItem Content="{x:Static t:Texts.PreviousMonth}" Tag="PreviousMonth" />
                     <ComboBoxItem Content="{x:Static t:Texts.Custom}" Tag="Custom" />
                 </ComboBox>
-                <DatePicker SelectedDate="{Binding From}" Margin="16,0,0,0" FontSize="{StaticResource FontSizeInput}"
+                <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" Margin="16,0,0,0" FontSize="{StaticResource FontSizeInput}"
                             IsEnabled="{Binding Period, Converter={StaticResource CustomToEnabledConverter}}" />
-                <DatePicker SelectedDate="{Binding To}" Margin="8,0,0,0" FontSize="{StaticResource FontSizeInput}"
+                <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" Margin="8,0,0,0" FontSize="{StaticResource FontSizeInput}"
                             IsEnabled="{Binding Period, Converter={StaticResource CustomToEnabledConverter}}" />
                 <Button Content="{x:Static t:Texts.NewCashInButton}" Style="{StaticResource SecondaryButton}" Margin="24,0,0,0" Command="{Binding NewCashInCommand}" />
                 <Button Content="{x:Static t:Texts.NewCashOutButton}" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Command="{Binding NewCashOutCommand}" />
