@@ -2,6 +2,8 @@ using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
 
+using Serilog;
+
 namespace EvaGest.Services;
 
 public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppointmentChangeNotifier? notifier = null)
@@ -73,6 +75,8 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         await using var db = await factory.CreateDbContextAsync();
         db.Appointments.Add(appointment);
         await db.SaveChangesAsync();
+        Log.Information("Appointment {AppointmentId} created for {Date} {Time}",
+            appointment.Id, appointment.Date, appointment.Time);
         return appointment.Id;
     }
 
@@ -81,6 +85,8 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         await using var db = await factory.CreateDbContextAsync();
         db.Appointments.Update(appointment);
         await db.SaveChangesAsync();
+        Log.Information("Appointment {AppointmentId} updated to {Date} {Time}",
+            appointment.Id, appointment.Date, appointment.Time);
         notifier?.NotifyChanged();
     }
 
@@ -94,6 +100,10 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
 
         appointment.Status = newStatus;
         await db.SaveChangesAsync();
+
+        // Cancelling an appointment is a business event CU-04 requires to be traceable.
+        Log.Information("Appointment {AppointmentId} status changed to {Status}",
+            appointmentId, newStatus);
         notifier?.NotifyChanged();
         return true;
     }
@@ -112,6 +122,7 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
 
         db.Appointments.Remove(appointment);
         await db.SaveChangesAsync();
+        Log.Information("Appointment {AppointmentId} deleted", appointmentId);
         notifier?.NotifyChanged();
         return DeleteResult.Deleted;
     }

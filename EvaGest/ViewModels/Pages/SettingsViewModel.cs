@@ -8,6 +8,7 @@ using EvaGest.Services;
 using EvaGest.ViewModels.Dialogs;
 using EvaGest.ViewModels.Elements;
 using EvaGest.Resources;
+using Serilog;
 
 namespace EvaGest.ViewModels.Pages;
 
@@ -197,8 +198,12 @@ public partial class SettingsViewModel(
         OnPropertyChanged(nameof(VatModeExplanation));
         if (!_loaded || value == _modeVatSaved) return;
 
-        _ = ConfirmVatModeChange(value);
+        VatModeChange = ConfirmVatModeChange(value);
     }
+
+    /// <summary>The confirmation currently in flight. Awaited by the tests; the view
+    /// lets it run in the background, exactly like AppointmentDialogViewModel.Initialization.</summary>
+    public Task VatModeChange { get; private set; } = Task.CompletedTask;
 
     private async Task ConfirmVatModeChange(VatMode newValue)
     {
@@ -219,8 +224,26 @@ public partial class SettingsViewModel(
             return;
         }
 
+        // Marked saved only once the write has actually landed. Setting it first meant a
+        // failed write left the picker and _modeVatSaved both showing a mode that was
+        // never stored, with no error and no further prompt — while every sale taken
+        // afterwards was still frozen in the old mode (decision 6.4).
+        try
+        {
+            await settings.Save(ConfigKeys.CurrentVatMode, newValue.ToString());
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Could not save the VAT mode");
+            _loaded = false;
+            ModeVat = _modeVatSaved;
+            _loaded = true;
+            VatError = Texts.VatModeNotSaved;
+            return;
+        }
+
         _modeVatSaved = newValue;
-        await settings.Save(ConfigKeys.CurrentVatMode, newValue.ToString());
+        VatError = null;
         VatConfirmation = Texts.VatModeSaved;
     }
 

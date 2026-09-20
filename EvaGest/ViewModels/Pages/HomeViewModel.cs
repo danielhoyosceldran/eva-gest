@@ -52,10 +52,13 @@ public partial class HomeViewModel(
 
             var summary = await till.Summary(today, today);
             TodaySales = (await sales.Search(new SalesFilter(today, today, Status: SaleStatus.Active))).Count;
-            ChargedTodayText = Money.Format((int)summary.SalesCents);
-            CashInText = Money.Format((int)summary.CashInCents);
-            CashOutText = Money.Format((int)summary.CashOutCents);
-            BalanceText = Money.Format((int)summary.BalanceCents);
+            // No (int) cast on the way in: TillSummary sums as long precisely so a
+            // period total never depends on turnover staying below int.MaxValue, and
+            // Money.Format takes long. Casting here put that clamp straight back.
+            ChargedTodayText = Money.Format(summary.SalesCents);
+            CashInText = Money.Format(summary.CashInCents);
+            CashOutText = Money.Format(summary.CashOutCents);
+            BalanceText = Money.Format(summary.BalanceCents);
         }
         finally { Loading = false; }
     }

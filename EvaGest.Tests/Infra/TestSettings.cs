@@ -32,8 +32,15 @@ public class TestSettings : ISettingsService
         return Task.FromResult(bool.TryParse(value, out bool r) ? r : perDefault);
     }
 
+    /// <summary>Keys whose write should fail, so a test can check what the caller does
+    /// when the database refuses it rather than only the happy path.</summary>
+    public HashSet<string> FailsToSave { get; } = [];
+
     public Task Save(string key, string value)
     {
+        if (FailsToSave.Contains(key))
+            return Task.FromException(new InvalidOperationException($"refusing to save {key}"));
+
         _values[key] = value;
         return Task.CompletedTask;
     }

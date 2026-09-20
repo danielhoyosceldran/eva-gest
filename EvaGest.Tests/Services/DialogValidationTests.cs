@@ -1,6 +1,8 @@
 using AwesomeAssertions;
 using EvaGest.Models;
 using EvaGest.Resources;
+using EvaGest.Tests.Infra;
+using EvaGest.Services;
 using EvaGest.ViewModels.Dialogs;
 using Xunit;
 
@@ -122,5 +124,58 @@ public class DialogValidationTests
         vm.SaveCommand.Execute(null);
 
         vm.ErrorValidation.Should().Be(Texts.VatOutOfRange);
+    }
+
+    // ── The two settings the movement dialog is supposed to follow ───────────
+    // pantalles 3.5: the VAT-split box is "Només visible si `aplicar_iva_caixa` està
+    // activat", and the rate it starts on is the configured default. Both were written
+    // by Configuració and read by nobody: the box always showed, and the rate was the
+    // literal 21, so a shop on any other rate froze the wrong quota onto every movement.
+
+    [Fact]
+    public async Task The_vat_split_box_is_hidden_unless_the_setting_turns_it_on()
+    {
+        var vm = Movement();
+        await vm.LoadDefaults(new Infra.TestSettings());
+
+        vm.ShowVatSplit.Should().BeFalse("the seeded default for apply_vat_to_till is 0");
+    }
+
+    [Fact]
+    public async Task The_vat_split_box_is_shown_when_the_setting_turns_it_on()
+    {
+        var vm = Movement();
+        await vm.LoadDefaults(new Infra.TestSettings((ConfigKeys.ApplyVatToTill, "1")));
+
+        vm.ShowVatSplit.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Turning_the_setting_off_clears_a_tick_the_user_can_no_longer_see()
+    {
+        var vm = Movement();
+        vm.SplitVat = true;
+
+        await vm.LoadDefaults(new Infra.TestSettings((ConfigKeys.ApplyVatToTill, "0")));
+
+        vm.SplitVat.Should().BeFalse();
+        vm.AModel().VatBp.Should().BeNull("a hidden box must not still split the VAT");
+    }
+
+    [Fact]
+    public async Task A_new_movement_starts_on_the_configured_vat_rate_not_on_21()
+    {
+        var vm = Movement();
+        await vm.LoadDefaults(new Infra.TestSettings(
+            (ConfigKeys.ApplyVatToTill, "1"), (ConfigKeys.DefaultVatBp, "1000")));
+
+        vm.VatText.Should().Be("10");
+
+        vm.SplitVat = true;
+        var model = vm.AModel();
+        model.VatBp.Should().Be(1000, "the rate frozen onto the movement is the shop's own");
+        model.BaseCents.Should().Be(1364);   // 1500 inc. 10 % -> 1363,64 -> 1364
+        model.VatCents.Should().Be(136);
+        (model.BaseCents + model.VatCents).Should().Be(model.AmountCents);
     }
 }

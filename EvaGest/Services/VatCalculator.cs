@@ -4,7 +4,18 @@ namespace EvaGest.Services;
 
 public record VatBreakdown(int BaseCents, int VatCents, int TotalCents);
 
+/// <summary>One VAT rate's share of a SINGLE sale. int cents, because one sale's
+/// amounts are bounded by what a sale line can hold.</summary>
 public record RateBreakdown(int VatBp, int BaseCents, int VatCents, int TotalCents);
+
+/// <summary>
+/// One VAT rate's share of a PERIOD, summed from the frozen SaleBreakdowns rows.
+/// Deliberately a separate record from <see cref="RateBreakdown"/> and deliberately
+/// long: a period total must never depend on turnover staying below int.MaxValue,
+/// and sharing the per-sale record forced a narrowing cast at exactly the point the
+/// figure reached the screen.
+/// </summary>
+public record RateTotals(int VatBp, long BaseCents, long VatCents, long TotalCents);
 
 public static class VatCalculator
 {

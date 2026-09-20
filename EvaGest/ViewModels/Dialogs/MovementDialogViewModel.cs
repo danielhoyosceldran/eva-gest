@@ -21,7 +21,20 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     [ObservableProperty] private PaymentMethod? _method;
     [ObservableProperty] private string _concept = string.Empty;
     [ObservableProperty] private bool _splitVat;
+
+    /// <summary>Filled from ConfigKeys.DefaultVatBp by <see cref="LoadDefaults"/>. The
+    /// literal is only what the box holds before the settings have been read: hardcoding
+    /// 21 here meant a shop configured for any other rate froze the wrong quota onto
+    /// every cash movement it split.</summary>
     [ObservableProperty] private string _vatText = "21";
+
+    /// <summary>
+    /// Whether the VAT-split checkbox is offered at all. pantalles 3.5: "Desglossar IVA
+    /// | Casella. Només visible si `aplicar_iva_caixa` està activat". The setting was
+    /// written by Configuració and read by nobody, so the box showed unconditionally and
+    /// the toggle the user flipped did nothing.
+    /// </summary>
+    [ObservableProperty] private bool _showVatSplit;
     [ObservableProperty] private string? _notes;
 
     /// <summary>Only meaningful for a cash-out; left null for a cash-in. Both are
@@ -66,6 +79,27 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     public async Task LoadWorkers(IWorkerService workers)
     {
         foreach (var w in await workers.GetAll(onlyActive: true)) ActiveWorkers.Add(w);
+    }
+
+    /// <summary>
+    /// Brings across the two settings this dialog is supposed to follow: whether the VAT
+    /// split is offered at all, and which rate it starts on. An existing movement keeps
+    /// the rate it was saved with — a default must never move a figure already recorded.
+    /// </summary>
+    public async Task LoadDefaults(ISettingsService settings)
+    {
+        ShowVatSplit = await settings.GetBool(ConfigKeys.ApplyVatToTill, false);
+
+        if (_id is null)
+            VatText = Percentages.FormatWithoutUnit(
+                await settings.GetInt(ConfigKeys.DefaultVatBp, 2100));
+
+        // SplitVat stays the single source of truth for whether the VAT is split; this
+        // is the one place the setting can clear it. Guarding AModel and Save on
+        // ShowVatSplit instead would make the split silently depend on this loader
+        // having been called, which is a trap for every caller that builds the dialog
+        // directly.
+        if (!ShowVatSplit) SplitVat = false;
     }
 
     [RelayCommand]

@@ -2,6 +2,8 @@ using System.Globalization;
 using System.IO;
 using EvaGest.Models;
 
+using Serilog;
+
 namespace EvaGest.Services;
 
 /// <summary>
@@ -62,7 +64,21 @@ public class BackupService(AppPaths paths, ISettingsService settings) : IBackupS
 
         var backups = await ListAll(); // newest first
         foreach (var old in backups.Skip(toKeep))
-            File.Delete(old.Path);
+        {
+            // Caught per file rather than round the loop: one copy held open by an
+            // antivirus scan or an Explorer preview used to abort the whole prune and,
+            // worse, propagate out of Copy — so a backup that had already been written
+            // successfully was reported to the user as a failure.
+            try
+            {
+                File.Delete(old.Path);
+                Log.Information("Old backup deleted: {BackupPath}", old.Path);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Could not delete old backup {BackupPath}", old.Path);
+            }
+        }
     }
 
     private async Task<TimeOnly> BackupTime()
@@ -82,6 +98,11 @@ public class BackupService(AppPaths paths, ISettingsService settings) : IBackupS
         // The settings live inside the file that was just replaced, so anything cached
         // in memory now describes a database that no longer exists.
         settings.InvalidateCache();
+
+        // The whole database has just been overwritten. Without this line the log has
+        // nothing between "Application started" and "Application closed" to explain
+        // why a day's work is missing (CU-09b).
+        Log.Information("Database restored from backup {BackupPath}", backupPath);
     }
 
     private async Task<BackupInfo> Copy(bool isAutomatic)
@@ -94,6 +115,9 @@ public class BackupService(AppPaths paths, ISettingsService settings) : IBackupS
         string destination = Path.Combine(paths.BackupsFolder, name);
 
         File.Copy(paths.DbPath, destination, overwrite: false);
+        Log.Information("{BackupKind} backup taken: {BackupPath}",
+            isAutomatic ? "Automatic" : "Manual", destination);
+
         await DeleteOldBackups();
 
         return ReadBackup(destination)!;

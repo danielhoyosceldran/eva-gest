@@ -389,6 +389,9 @@ public static class Texts
         nameof(ConfirmVatModeMessage),
         nameof(UnderstoodChange),
         nameof(VatModeSaved),
+        nameof(VatModeNotSaved),
+        nameof(ActiveSalesCount),
+        nameof(SlotMinutesOption),
         nameof(DefaultDurationInvalid),
         nameof(ScheduleSavedAllClosed),
         nameof(ScheduleSaved),
@@ -1518,6 +1521,15 @@ public static class Texts
 
     /// <summary>Mode d'IVA desat. Les vendes noves el faran servir; les j...</summary>
     public static string VatModeSaved => Get(nameof(VatModeSaved));
+
+    /// <summary>No s'ha pogut desar el mode d'IVA. Torna-ho a provar.</summary>
+    public static string VatModeNotSaved => Get(nameof(VatModeNotSaved));
+
+    /// <summary>{0} vendes actives</summary>
+    public static string ActiveSalesCount => Get(nameof(ActiveSalesCount));
+
+    /// <summary>{0} minuts</summary>
+    public static string SlotMinutesOption => Get(nameof(SlotMinutesOption));
 
     /// <summary>La durada per defecte ha de ser un número de minuts més g...</summary>
     public static string DefaultDurationInvalid => Get(nameof(DefaultDurationInvalid));

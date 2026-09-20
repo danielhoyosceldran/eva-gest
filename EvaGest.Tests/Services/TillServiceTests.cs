@@ -185,6 +185,42 @@ public class TillServiceTests
         summary.SalesCents.Should().Be(1500);
     }
 
+    /// <summary>
+    /// The aggregate types are long precisely so a period total does not depend on
+    /// turnover staying under int.MaxValue (21.474.836,47 EUR). The per-rate rows used
+    /// to be summed as long and then cast straight back to int on the way out, which
+    /// put that ceiling back at the one point the figure reached the screen.
+    /// </summary>
+    [Fact] // H-09 companion: a period total above int.MaxValue survives intact
+    public async Task A_period_total_above_int_max_is_not_truncated()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+
+        // Two sales that each fit in int cents but whose sum does not.
+        const int huge = 1_500_000_000;
+        const long expected = 2L * huge;
+        expected.Should().BeGreaterThan(int.MaxValue, "otherwise this test proves nothing");
+
+        await using (var db = testDb.Context())
+        {
+            db.Sales.Add(Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(huge, 2100)));
+            db.Sales.Add(Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(huge, 2100)));
+            await db.SaveChangesAsync();
+        }
+
+        var till = CreatesService(testDb);
+        var summary = await till.Summary(Today, Today);
+
+        summary.SalesCents.Should().Be(expected);
+        summary.BalanceCents.Should().Be(expected);
+
+        // The single 21% row carries the whole period, so this is where the cast bit.
+        summary.VatBreakdown.Should().ContainSingle()
+            .Which.TotalCents.Should().Be(expected);
+        summary.VatBreakdown.Sum(r => r.BaseCents + r.VatCents).Should().Be(expected);
+    }
+
     [Fact] // H-03/H-06 companion: a period with neither movements nor sales returns zero
     public async Task An_empty_period_returns_zero_and_no_exception()
     {

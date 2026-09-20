@@ -6,6 +6,8 @@ using EvaGest.Models;
 using EvaGest.Resources;
 using Microsoft.EntityFrameworkCore;
 
+using Serilog;
+
 namespace EvaGest.Services;
 
 /// <summary>
@@ -51,6 +53,11 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
 
         await WriteVat(Path.Combine(destinationFolder, $"iva_{period}.csv"),
             breakdowns.Select(d => (d.VatBp, d.Base, d.Vat, d.Total)).ToList());
+
+        // The file the accountant is given: worth being able to say afterwards which
+        // period was exported, when, and how many sales it covered (CU-08).
+        Log.Information("Exported {SaleCount} sales for {From}..{To} to {Folder}",
+            sales.Count, from, to, destinationFolder);
     }
 
     private static async Task WriteSales(string path, List<Sale> sales)

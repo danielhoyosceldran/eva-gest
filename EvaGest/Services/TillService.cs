@@ -2,6 +2,8 @@ using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
 
+using Serilog;
+
 namespace EvaGest.Services;
 
 public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillService
@@ -56,8 +58,10 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
         long baseTotal = byRate.Sum(g => g.Base);
         long vatTotal = byRate.Sum(g => g.Vat);
 
+        // Summed as long and kept as long: casting back to int here reintroduced the
+        // overflow the (long) casts above exist to avoid.
         var breakdown = byRate
-            .Select(g => new RateBreakdown(g.VatBp, (int)g.Base, (int)g.Vat, (int)g.Total))
+            .Select(g => new RateTotals(g.VatBp, g.Base, g.Vat, g.Total))
             .ToList();
 
         return new TillSummary(
@@ -75,6 +79,8 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
         await using var db = await factory.CreateDbContextAsync();
         db.CashMovements.Add(movement);
         await db.SaveChangesAsync();
+        Log.Information("Cash movement {MovementId} created: {MovementType} {AmountCents} cents",
+            movement.Id, movement.Type, movement.AmountCents);
         return movement.Id;
     }
 
@@ -83,6 +89,7 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
         await using var db = await factory.CreateDbContextAsync();
         db.CashMovements.Update(movement);
         await db.SaveChangesAsync();
+        Log.Information("Cash movement {MovementId} updated", movement.Id);
     }
 
     public async Task Delete(int movementId)
@@ -91,5 +98,10 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
         var movement = await db.CashMovements.FirstAsync(m => m.Id == movementId);
         db.CashMovements.Remove(movement);
         await db.SaveChangesAsync();
+
+        // A cash movement is deleted outright, not voided like a sale, so the log line
+        // is the only record left that it ever existed.
+        Log.Information("Cash movement {MovementId} deleted: {MovementType} {AmountCents} cents",
+            movementId, movement.Type, movement.AmountCents);
     }
 }

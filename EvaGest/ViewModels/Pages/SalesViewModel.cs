@@ -75,9 +75,11 @@ public partial class SalesViewModel(
             // the user can see it does not add up (RF-10).
             var active = found.Where(v => v.Status == SaleStatus.Active).ToList();
             ActiveCount = active.Count;
-            TotalBaseText = Money.Format(active.Sum(v => v.BaseCents));
-            TotalVatText = Money.Format(active.Sum(v => v.VatCents));
-            TotalTotalText = Money.Format(active.Sum(v => v.TotalCents));
+            // Summed as long: with no date filter this is the whole history, and
+            // Enumerable.Sum over int is checked — it throws rather than widening.
+            TotalBaseText = Money.Format(active.Sum(v => (long)v.BaseCents));
+            TotalVatText = Money.Format(active.Sum(v => (long)v.VatCents));
+            TotalTotalText = Money.Format(active.Sum(v => (long)v.TotalCents));
 
             OnPropertyChanged(nameof(HasNoResults));
         }

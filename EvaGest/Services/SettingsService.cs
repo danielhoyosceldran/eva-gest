@@ -59,12 +59,15 @@ public class SettingsService(IDbContextFactory<ShopDbContext> factory) : ISettin
         finally { _lock.Release(); }
     }
 
-    public void InvalidateCache()
-    {
-        _lock.Wait();
-        try { _cache = null; }
-        finally { _lock.Release(); }
-    }
+    /// <summary>
+    /// Dropped without taking the lock on purpose. This runs on the UI thread (a restore
+    /// replaces the file the settings live in), and <c>_lock.Wait()</c> here could park
+    /// that thread while the semaphore is held by a <see cref="Load"/> awaiting the
+    /// database: the continuation needs the dispatcher, which is exactly what is blocked.
+    /// A reference assignment is atomic, and <see cref="Load"/>'s double-check already
+    /// tolerates a racing reader — the worst case is one extra read of a small table.
+    /// </summary>
+    public void InvalidateCache() => Volatile.Write(ref _cache, null);
 
     private async Task<Dictionary<string, string>> Load()
     {

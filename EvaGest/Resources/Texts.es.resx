@@ -1125,6 +1125,15 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
   <data name="VatModeSaved" xml:space="preserve">
     <value>Modo de IVA guardado. Las ventas nuevas lo usarán; las ya registradas no cambian.</value>
   </data>
+  <data name="VatModeNotSaved" xml:space="preserve">
+    <value>No se ha podido guardar el modo de IVA. Vuelve a intentarlo.</value>
+  </data>
+  <data name="ActiveSalesCount" xml:space="preserve">
+    <value>{0} ventas activas</value>
+  </data>
+  <data name="SlotMinutesOption" xml:space="preserve">
+    <value>{0} minutos</value>
+  </data>
   <data name="DefaultDurationInvalid" xml:space="preserve">
     <value>La duración por defecto debe ser un número entero de minutos mayor que cero, solo cifras (0-9), por ejemplo 30.</value>
   </data>

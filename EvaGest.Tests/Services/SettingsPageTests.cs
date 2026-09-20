@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using EvaGest.Models;
+using EvaGest.Resources;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
 using EvaGest.ViewModels.Pages;
@@ -294,5 +295,65 @@ public class SettingsPageTests
         var other = Build(testDb);
         await other.Load();
         other.ShopPhone.Should().Be("600 111 222");
+    }
+
+    // ── Changing the VAT mode ────────────────────────────────────────────────
+    // The one setting that confirms before saving (CU-10), because it reinterprets
+    // every catalogue price. _modeVatSaved used to be set BEFORE the await, so a write
+    // that failed left the picker and the saved value agreeing on a mode that was never
+    // stored, with no error — while every later sale was still frozen in the old one.
+
+    private static SettingsViewModel BuildWith(
+        TestDatabase testDb, ISettingsService config, TestDialogService dialogs)
+    {
+        var factory = new TestFactory(testDb.Options);
+        var paths = new AppPaths(
+            Path.Combine(Path.GetTempPath(), "eva-prova.db"), Path.GetTempPath());
+
+        return new SettingsViewModel(
+            new BackupService(paths, config), new ExportService(factory), config,
+            new AvailabilityService(factory), dialogs);
+    }
+
+    [Fact]
+    public async Task A_confirmed_vat_mode_change_is_saved()
+    {
+        await using var testDb = new TestDatabase();
+        var config = new TestSettings((ConfigKeys.CurrentVatMode, nameof(VatMode.Included)));
+        var vm = BuildWith(testDb, config, new TestDialogService { ResultConfirm = true });
+        await vm.Load();
+
+        vm.ModeVat = VatMode.NotIncluded;
+        await vm.VatModeChange;
+
+        vm.ModeVat.Should().Be(VatMode.NotIncluded);
+        (await config.Get(ConfigKeys.CurrentVatMode)).Should().Be(nameof(VatMode.NotIncluded));
+        vm.VatError.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task A_vat_mode_change_that_cannot_be_saved_puts_the_picker_back_and_says_so()
+    {
+        await using var testDb = new TestDatabase();
+        var config = new TestSettings((ConfigKeys.CurrentVatMode, nameof(VatMode.Included)));
+        config.FailsToSave.Add(ConfigKeys.CurrentVatMode);
+
+        var vm = BuildWith(testDb, config, new TestDialogService { ResultConfirm = true });
+        await vm.Load();
+
+        vm.ModeVat = VatMode.NotIncluded;
+        await vm.VatModeChange;
+
+        vm.ModeVat.Should().Be(VatMode.Included, "nothing was stored, so nothing may look stored");
+        vm.VatError.Should().Be(Texts.VatModeNotSaved);
+        vm.VatConfirmation.Should().BeNull();
+
+        // And the failure must not have been recorded as the new baseline: changing the
+        // picker again has to retry the save rather than decide there is nothing to do.
+        config.FailsToSave.Clear();
+        vm.ModeVat = VatMode.NotIncluded;
+        await vm.VatModeChange;
+
+        (await config.Get(ConfigKeys.CurrentVatMode)).Should().Be(nameof(VatMode.NotIncluded));
     }
 }

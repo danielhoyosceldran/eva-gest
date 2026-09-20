@@ -73,7 +73,7 @@ public partial class ReportsViewModel(IReportsService reports)
             var clientOfTheMonth = await reports.ClientOfTheMonth();
             ClientOfTheMonthText = clientOfTheMonth is { } cdm
                 ? string.Format(Texts.ClientOfTheMonthLine, cdm.client.Name, cdm.visits,
-                                Money.Format((int)cdm.totalCents))
+                                Money.Format(cdm.totalCents))
                 : Texts.NoSalesThisMonth;
 
             var monthly = await reports.MonthlyEvolution();
@@ -82,7 +82,7 @@ public partial class ReportsViewModel(IReportsService reports)
             foreach (var (year, month, total) in monthly)
             {
                 var label = new DateOnly(year, month, 1).ToString("MMM", AppLanguage.Culture);
-                Evolution.Add(new EvolutionBar(label, 4 + (total * 116.0 / max), Money.FormatExport((int)total)));
+                Evolution.Add(new EvolutionBar(label, 4 + (total * 116.0 / max), Money.FormatExport(total)));
             }
 
             TopVisits.Clear();
@@ -99,7 +99,7 @@ public partial class ReportsViewModel(IReportsService reports)
 
             WorkerRanking.Clear();
             foreach (var d in await reports.WorkerRanking(From, To))
-                WorkerRanking.Add(new(d.WorkerId, d.Name, d.SalesHandled, Money.Format((int)d.IncomeCents), d.WorkPercentage));
+                WorkerRanking.Add(new(d.WorkerId, d.Name, d.SalesHandled, Money.Format(d.IncomeCents), d.WorkPercentage));
         }
         finally { Loading = false; }
     }

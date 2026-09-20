@@ -230,4 +230,29 @@ public class SalesPageTests
         vm.ActiveCount.Should().Be(0);
         vm.Sales.Should().ContainSingle("continua a l'historial");
     }
+
+    /// <summary>
+    /// The footer used to sum int cents with Enumerable.Sum, which is checked: past
+    /// int.MaxValue it threw rather than widening, so clearing the filters on a long
+    /// enough history failed the page load outright instead of showing a total.
+    /// </summary>
+    [Fact]
+    public async Task The_footer_totals_survive_a_history_above_int_max()
+    {
+        await using var testDb = new TestDatabase();
+        var d = await Seed(testDb);
+
+        const int huge = 1_500_000_000;
+        const long expected = 2L * huge;
+        expected.Should().BeGreaterThan(int.MaxValue, "otherwise this test proves nothing");
+
+        await AddsSale(testDb, d, huge);
+        await AddsSale(testDb, d, huge);
+
+        var vm = await Build(testDb);
+        await vm.Load();
+
+        vm.ActiveCount.Should().Be(2);
+        vm.TotalTotalText.Should().Be(Money.Format(expected));
+    }
 }

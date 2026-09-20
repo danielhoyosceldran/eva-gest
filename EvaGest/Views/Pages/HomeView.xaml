@@ -79,7 +79,7 @@
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{x:Static t:Texts.Time}" Binding="{Binding Time}" Width="*" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Duration}" Binding="{Binding DurationMin, StringFormat={}{0} min}" Width="*" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Duration}" Binding="{Binding DurationMin, StringFormat={x:Static t:Texts.MinutesShort}}" Width="*" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Client}" Binding="{Binding DisplayName}" Width="*" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Service}" Binding="{Binding Service.Name, TargetNullValue={x:Static t:Texts.NoService}}" Width="*" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Worker}" Binding="{Binding Worker.Name, TargetNullValue={x:Static t:Texts.Unassigned}}" Width="*" />

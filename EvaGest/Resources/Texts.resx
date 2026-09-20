@@ -1125,6 +1125,15 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
   <data name="VatModeSaved" xml:space="preserve">
     <value>Mode d'IVA desat. Les vendes noves el faran servir; les ja registrades no canvien.</value>
   </data>
+  <data name="VatModeNotSaved" xml:space="preserve">
+    <value>No s'ha pogut desar el mode d'IVA. Torna-ho a provar.</value>
+  </data>
+  <data name="ActiveSalesCount" xml:space="preserve">
+    <value>{0} vendes actives</value>
+  </data>
+  <data name="SlotMinutesOption" xml:space="preserve">
+    <value>{0} minuts</value>
+  </data>
   <data name="DefaultDurationInvalid" xml:space="preserve">
     <value>La durada per defecte ha de ser un nombre enter de minuts més gran que zero, només xifres (0-9), per exemple 30.</value>
   </data>

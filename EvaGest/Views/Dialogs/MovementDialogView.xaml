@@ -26,7 +26,8 @@
         <TextBox Text="{Binding Concept, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
         <CheckBox Content="{x:Static t:Texts.SplitVat}" IsChecked="{Binding SplitVat}" Margin="0,0,0,12"
-                  FontSize="{StaticResource FontSizeInput}" />
+                  FontSize="{StaticResource FontSizeInput}"
+                  Visibility="{Binding ShowVatSplit, Converter={StaticResource BoolToVisibilityConverter}}" />
 
         <StackPanel Visibility="{Binding SplitVat, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock Text="{x:Static t:Texts.VatPercentage}" Style="{StaticResource DataLabel}" />

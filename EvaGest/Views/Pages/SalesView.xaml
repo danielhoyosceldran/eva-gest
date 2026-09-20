@@ -156,7 +156,7 @@
         <Border Grid.Row="3" Style="{StaticResource DataCard}" Margin="0,12,0,0">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Style="{StaticResource DataLabel}" VerticalAlignment="Center"
-                           Text="{Binding ActiveCount, StringFormat={}{0} vendes actives}" />
+                           Text="{Binding ActiveCount, StringFormat={x:Static t:Texts.ActiveSalesCount}}" />
                 <TextBlock Text="{x:Static t:Texts.BaseWithColon}" Style="{StaticResource DataLabel}" Margin="24,0,6,0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding TotalBaseText}" VerticalAlignment="Center"
                            FontFamily="{StaticResource FontUi}" FontSize="{StaticResource FontSizeBody}"

@@ -11,7 +11,7 @@ public record TillSummary(
     long BalanceCents,
     long BaseCents,
     long VatCents,
-    List<RateBreakdown> VatBreakdown);
+    List<RateTotals> VatBreakdown);
 
 public interface ITillService
 {
