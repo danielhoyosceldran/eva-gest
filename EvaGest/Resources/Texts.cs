@@ -390,6 +390,10 @@ public static class Texts
         nameof(UnderstoodChange),
         nameof(VatModeSaved),
         nameof(VatModeNotSaved),
+        nameof(SaleTotalTooLarge),
+        nameof(ConfirmDeleteBackupsTitle),
+        nameof(ConfirmDeleteBackupsMessage),
+        nameof(DeleteBackups),
         nameof(ActiveSalesCount),
         nameof(SlotMinutesOption),
         nameof(DefaultDurationInvalid),
@@ -1524,6 +1528,18 @@ public static class Texts
 
     /// <summary>No s'ha pogut desar el mode d'IVA. Torna-ho a provar.</summary>
     public static string VatModeNotSaved => Get(nameof(VatModeNotSaved));
+
+    /// <summary>El total d'aquesta venda és massa gran. Revisa les línies i di...</summary>
+    public static string SaleTotalTooLarge => Get(nameof(SaleTotalTooLarge));
+
+    /// <summary>Vols conservar només {0} còpies?...</summary>
+    public static string ConfirmDeleteBackupsTitle => Get(nameof(ConfirmDeleteBackupsTitle));
+
+    /// <summary>S'esborraran {0} còpies de seguretat antigues i no es podran r...</summary>
+    public static string ConfirmDeleteBackupsMessage => Get(nameof(ConfirmDeleteBackupsMessage));
+
+    /// <summary>Esborrar les antigues...</summary>
+    public static string DeleteBackups => Get(nameof(DeleteBackups));
 
     /// <summary>{0} vendes actives</summary>
     public static string ActiveSalesCount => Get(nameof(ActiveSalesCount));

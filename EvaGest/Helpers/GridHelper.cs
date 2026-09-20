@@ -21,6 +21,22 @@ public static class GridHelper
 
     public static int DayMinutes(TimeOnly time) => time.Hour * 60 + time.Minute;
 
+    /// <summary>
+    /// Start time plus a duration, clamped to the last moment of the day.
+    /// <see cref="TimeOnly.AddMinutes"/> wraps silently past midnight (23:30 + 90 min
+    /// reads back as 01:00), which broke both the overlap check and the opening-hours
+    /// check for a late appointment with a long enough duration. TimeOnly cannot
+    /// represent 24:00 either, so anything that would cross midnight is treated as
+    /// running to the end of the day instead of wrapping to an early-morning time.
+    ///
+    /// This lived in two places — Appointment.EndTime and AvailabilityService — and the
+    /// bugfix that introduced the clamp had to patch both copies at once.
+    /// </summary>
+    public static TimeOnly ClampedEnd(TimeOnly time, int durationMin)
+        => DayMinutes(time) + durationMin >= MinutesPerDay
+            ? new TimeOnly(23, 59, 59)
+            : time.AddMinutes(durationMin);
+
     public static TimeOnly ATime(int minutes)
     {
         int m = Math.Clamp(minutes, 0, MinutesPerDay - 1);

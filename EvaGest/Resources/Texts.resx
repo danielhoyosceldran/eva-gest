@@ -1128,6 +1128,18 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
   <data name="VatModeNotSaved" xml:space="preserve">
     <value>No s'ha pogut desar el mode d'IVA. Torna-ho a provar.</value>
   </data>
+  <data name="SaleTotalTooLarge" xml:space="preserve">
+    <value>El total d'aquesta venda és massa gran. Revisa les línies i divideix-la en dues si cal.</value>
+  </data>
+  <data name="ConfirmDeleteBackupsTitle" xml:space="preserve">
+    <value>Vols conservar només {0} còpies?</value>
+  </data>
+  <data name="ConfirmDeleteBackupsMessage" xml:space="preserve">
+    <value>S'esborraran {0} còpies de seguretat antigues i no es podran recuperar. Les {1} més recents es mantenen.</value>
+  </data>
+  <data name="DeleteBackups" xml:space="preserve">
+    <value>Esborrar les antigues</value>
+  </data>
   <data name="ActiveSalesCount" xml:space="preserve">
     <value>{0} vendes actives</value>
   </data>

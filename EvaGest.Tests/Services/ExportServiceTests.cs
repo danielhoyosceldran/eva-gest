@@ -118,4 +118,75 @@ public class ExportServiceTests : IDisposable
         var lines = await File.ReadAllLinesAsync(Path.Combine(_folder, $"vendes_{Today:yyyyMMdd}-{Today:yyyyMMdd}.csv"));
         lines.Where(l => l.Length > 0).Should().ContainSingle(); // header only
     }
+
+    /// <summary>
+    /// The two files go to the same spreadsheet, so an amount has to be written the same
+    /// way in both. The sales file used to go through Money.FormatExport — the interface
+    /// culture, and "N2" with group separators — while the VAT file used the fixed
+    /// culture and "F2": 1250,00 EUR came out as "1.250,00" in one and "1250,00" in the
+    /// other.
+    /// </summary>
+    [Fact]
+    public async Task Both_files_write_the_same_amount_the_same_way()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        await using (var db = testDb.Context())
+        {
+            // Over 1000 EUR on purpose: below that, a group separator never shows up
+            // and the two formats look identical.
+            db.Sales.Add(Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(125_000, 2100)));
+            await db.SaveChangesAsync();
+        }
+
+        await new ExportService(new TestFactory(testDb.Options)).ExportSales(Today, Today, _folder);
+
+        string period = $"{Today:yyyyMMdd}-{Today:yyyyMMdd}";
+        string sales = await File.ReadAllTextAsync(Path.Combine(_folder, $"vendes_{period}.csv"));
+        string vat = await File.ReadAllTextAsync(Path.Combine(_folder, $"iva_{period}.csv"));
+
+        sales.Should().Contain("1250,00").And.NotContain("1.250,00");
+        vat.Should().Contain("1250,00").And.NotContain("1.250,00");
+    }
+
+    /// <summary>
+    /// Both supported languages happen to agree on how a number looks (comma decimal,
+    /// dot grouping), so this cannot prove the export pins its own culture — swapping
+    /// the fixed culture for AppLanguage.Culture would not move these bytes. What it
+    /// does pin is that the figures are written identically in both sessions, including
+    /// a fractional VAT rate; the N2-vs-F2 split that actually shipped is caught by
+    /// <see cref="Both_files_write_the_same_amount_the_same_way"/>.
+    /// </summary>
+    [Fact]
+    public async Task The_figures_are_written_the_same_way_in_either_language()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        await using (var db = testDb.Context())
+        {
+            db.Sales.Add(Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(125_000, 520)));
+            await db.SaveChangesAsync();
+        }
+
+        var export = new ExportService(new TestFactory(testDb.Options));
+        string period = $"{Today:yyyyMMdd}-{Today:yyyyMMdd}";
+
+        // The header row is deliberately translated (CLAUDE.md: the CSV headers the
+        // accountant gets come from the resx). It is the data rows that must not move.
+        static async Task<string> DataRows(string path)
+            => string.Join("|", (await File.ReadAllLinesAsync(path)).Skip(1));
+
+        var written = new List<string>();
+        foreach (var language in new[] { Language.Catalan, Language.Spanish })
+        {
+            AppLanguage.Use(language);
+            await export.ExportSales(Today, Today, _folder);
+            written.Add(await DataRows(Path.Combine(_folder, $"vendes_{period}.csv"))
+                      + await DataRows(Path.Combine(_folder, $"iva_{period}.csv")));
+        }
+
+        AppLanguage.Use(Language.Catalan);   // this suite shares one process
+        written[0].Should().Be(written[1], "the assessoria's figures are not part of the interface");
+        written[0].Should().Contain("5,2 %", "including the rate, which is not always whole");
+    }
 }

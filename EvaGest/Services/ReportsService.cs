@@ -2,6 +2,7 @@ using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
 
+using EvaGest.Helpers;
 namespace EvaGest.Services;
 
 public record ClientIndicators(
@@ -129,6 +130,55 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
             .Where(v => v.Status == SaleStatus.Active && v.Date >= from && v.Date <= to)
             .SumAsync(v => (long)v.TotalCents);
 
+        return Detail(workerId, worker.Name, sales, periodTotalCents);
+    }
+
+    /// <summary>
+    /// Every worker's figures for the period, ranked by takings. Workers with no sales
+    /// still appear, on zero.
+    ///
+    /// Loads the period once rather than calling GetWorkerDetail per worker: that ran
+    /// three queries each and re-summed the same period total every time, so six
+    /// workers meant nineteen round trips to answer one screen.
+    /// </summary>
+    public async Task<List<WorkerDetail>> WorkerRanking(DateOnly from, DateOnly to)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        var workers = await db.Workers.AsNoTracking().ToListAsync();
+
+        var sales = await db.Sales.AsNoTracking()
+            .Where(v => v.Status == SaleStatus.Active && v.Date >= from && v.Date <= to)
+            .Include(v => v.Lines)
+            .ToListAsync();
+
+        // The denominator is the whole period, guest and unassigned sales included, so
+        // it is summed before the per-worker split (I-14).
+        long periodTotalCents = sales.Sum(v => (long)v.TotalCents);
+
+        var byWorker = sales
+            .Where(v => v.WorkerId is not null)
+            .GroupBy(v => v.WorkerId!.Value)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        return workers
+            .Select(w => Detail(w.Id, w.Name, byWorker.GetValueOrDefault(w.Id, []), periodTotalCents))
+            .OrderByDescending(r => r.IncomeCents)
+            .ToList();
+    }
+
+    /// <summary>
+    /// The arithmetic behind one worker's block, over sales already loaded. Pure, so the
+    /// single-worker call and the ranking cannot drift apart: they used to be the same
+    /// code only by virtue of the ranking calling the single-worker method in a loop.
+    ///
+    /// Lines are read here to count units and to tell a service from a product, which is
+    /// all block B allows them to be used for; every amount comes from the frozen totals
+    /// on the sale itself.
+    /// </summary>
+    private static WorkerDetail Detail(
+        int workerId, string name, List<Sale> sales, long periodTotalCents)
+    {
         long incomeCents = sales.Sum(v => (long)v.TotalCents);
         var allLines = sales.SelectMany(v => v.Lines).ToList();
 
@@ -146,27 +196,16 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
             .ToList();
 
         var activity = sales
-            .GroupBy(v => ToWeekday(v.Date))
+            .GroupBy(v => WeekHelper.ToWeekday(v.Date))
             .Select(g => (g.Key, g.Count(), g.Sum(v => (long)v.TotalCents)))
             .ToList();
 
         return new WorkerDetail(
-            workerId, worker.Name,
+            workerId, name,
             sales.Count, incomeCents,
             Indicators.WorkPercentage(incomeCents, periodTotalCents),
             Indicators.ProductsPercentage(productsCents, incomeCents),
             services, products, otherCents, activity);
-    }
-
-    public async Task<List<WorkerDetail>> WorkerRanking(DateOnly from, DateOnly to)
-    {
-        await using var db = await factory.CreateDbContextAsync();
-        var ids = await db.Workers.AsNoTracking().Select(t => t.Id).ToListAsync();
-
-        var results = new List<WorkerDetail>();
-        foreach (var id in ids) results.Add(await GetWorkerDetail(id, from, to));
-
-        return results.OrderByDescending(r => r.IncomeCents).ToList();
     }
 
     public async Task<List<(int year, int month, long totalCents)>> MonthlyEvolution(int months = 12)
@@ -218,6 +257,4 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
         return clients.ToDictionary(c => c.Id);
     }
 
-    /// <summary>Monday = Mon, ..., Sunday = Sun, matching AvailabilityService.</summary>
-    private static Weekday ToWeekday(DateOnly date) => (Weekday)(((int)date.DayOfWeek + 6) % 7);
 }

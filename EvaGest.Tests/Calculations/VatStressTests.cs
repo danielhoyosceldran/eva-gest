@@ -163,4 +163,60 @@ public class VatStressTests
         rows.Select(r => r.VatBp).Should().BeInAscendingOrder("the export reports rates in order");
         rows.Sum(r => r.TotalCents).Should().Be(50_000);
     }
+
+    // ── What the lines come to TOGETHER ──────────────────────────────────────
+    // A line is bounded on its own, never against its neighbours, and ComputeByRate
+    // sums a rate group with a checked Enumerable.Sum. Two individually valid lines
+    // could therefore take the group past int.MaxValue and throw — on a keystroke,
+    // because the sale dialog recomputes its footer on every change.
+
+    [Fact]
+    public void A_normal_ticket_fits()
+    {
+        VatCalculator.FitsInOneSale([Make.Line(1500, 2100), Make.Line(900, 1000)])
+            .Should().BeTrue();
+    }
+
+    [Fact]
+    public void Two_lines_that_overflow_their_rate_group_do_not_fit()
+    {
+        // Each fits in int cents on its own; together they do not.
+        var lines = new[] { Make.Line(1_500_000_000, 2100), Make.Line(1_500_000_000, 2100) };
+        lines.Sum(l => (long)l.AmountCents).Should().BeGreaterThan(int.MaxValue);
+
+        VatCalculator.FitsInOneSale(lines).Should().BeFalse();
+    }
+
+    [Fact]
+    public void The_same_amounts_split_across_two_rates_still_do_not_fit_as_a_sale()
+    {
+        // Neither group overflows on its own, so only the grand total catches this.
+        var lines = new[] { Make.Line(1_500_000_000, 2100), Make.Line(1_500_000_000, 1000) };
+
+        VatCalculator.FitsInOneSale(lines).Should().BeFalse();
+    }
+
+    [Fact]
+    public void A_group_that_only_overflows_once_its_vat_is_added_does_not_fit()
+    {
+        // Under int.MaxValue as a base, over it once 21 % is added on top, which is
+        // exactly what a VAT-exclusive sale stores.
+        var line = Make.Line(2_000_000_000, 2100);
+        ((long)line.AmountCents).Should().BeLessThan(int.MaxValue);
+
+        VatCalculator.FitsInOneSale([line]).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Asking_first_is_what_stops_ComputeByRate_from_throwing()
+    {
+        var lines = new[] { Make.Line(1_500_000_000, 2100), Make.Line(1_500_000_000, 2100) };
+
+        // The guard's whole reason for existing: without it, this is what the sale
+        // dialog does on every keystroke.
+        var compute = () => VatCalculator.ComputeByRate(lines, VatMode.Included);
+        compute.Should().Throw<OverflowException>();
+
+        VatCalculator.FitsInOneSale(lines).Should().BeFalse("so the dialog never gets there");
+    }
 }

@@ -20,6 +20,19 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
     /// either language, so the file format does not move with the interface.</summary>
     private static readonly CultureInfo Culture = CultureInfo.GetCultureInfo("ca-ES");
 
+    /// <summary>
+    /// The one way an amount is written to either CSV. The sales file used to go through
+    /// Money.FormatExport, which formats with AppLanguage.Culture and "N2": that both
+    /// ignored the fixed culture above and added group separators, so the same 1250,00 EUR
+    /// came out as "1.250,00" in vendes_*.csv and "1250,00" in iva_*.csv — one export,
+    /// two number formats, from files the assessoria imports side by side.
+    ///
+    /// "F2" and not "N2": no group separator, so the field never depends on the importer
+    /// being told which character to ignore.
+    /// </summary>
+    private static string Amount(long cents)
+        => (cents / 100m).ToString("F2", Culture);
+
     public async Task ExportSales(DateOnly from, DateOnly to, string destinationFolder)
     {
         Directory.CreateDirectory(destinationFolder);
@@ -75,9 +88,9 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
                 Csv(v.Worker?.Name ?? ""),
                 Csv(concept),
                 Csv(v.PaymentMethod.Name),
-                Money.FormatExport(v.BaseCents),
-                Money.FormatExport(v.VatCents),
-                Money.FormatExport(v.TotalCents)));
+                Amount(v.BaseCents),
+                Amount(v.VatCents),
+                Amount(v.TotalCents)));
         }
 
         await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
@@ -91,10 +104,10 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
         foreach (var f in rows)
         {
             sb.AppendLine(string.Join(';',
-                Percentages.Format(f.vatBp),
-                (f.baseCents / 100m).ToString("F2", Culture),
-                (f.vatCents / 100m).ToString("F2", Culture),
-                (f.totalCents / 100m).ToString("F2", Culture)));
+                Percentages.Format(f.vatBp, Culture),
+                Amount(f.baseCents),
+                Amount(f.vatCents),
+                Amount(f.totalCents)));
         }
 
         await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);

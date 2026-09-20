@@ -124,11 +124,6 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         ReviewGuestNotice();
     }
 
-    private static async Task<VatMode> EffectiveVatMode(ISettingsService settings)
-        => Enum.TryParse<VatMode>(await settings.Get(ConfigKeys.CurrentVatMode), out var mode)
-            ? mode
-            : VatMode.Included;
-
     /// <summary>Empty sale, opened from "+ New sale".</summary>
     public static async Task<SaleDialogViewModel> New(
         ISaleService sales, IClientService clients, ICatalogService catalog,
@@ -136,7 +131,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         IDialogService dialogs)
     {
         var vm = new SaleDialogViewModel(sales, so, clients, dialogs) { CurrentMode = Mode.New };
-        vm._modeVat = await EffectiveVatMode(settings);
+        vm._modeVat = await settings.CurrentVatMode();
         await vm.LoadOptions(clients, catalog, workers, settings);
         return vm;
     }
@@ -152,7 +147,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         IDialogService dialogs, Appointment appointment)
     {
         var vm = new SaleDialogViewModel(sales, so, clients, dialogs) { CurrentMode = Mode.FromAppointment };
-        vm._modeVat = await EffectiveVatMode(settings);
+        vm._modeVat = await settings.CurrentVatMode();
         await vm.LoadOptions(clients, catalog, workers, settings);
 
         var sale = await sales.PrepareFromAppointment(appointment.Id);
@@ -263,10 +258,21 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         && PaymentMethod is not null
         && (SelectedClient is not null || !string.IsNullOrWhiteSpace(TextClient));
 
+    /// <summary>Set while the lines add up to more than one sale can hold. Charge
+    /// refuses, and the footer stops recomputing rather than throwing mid-keystroke.</summary>
+    [ObservableProperty] private bool _totalTooLarge;
+
     [RelayCommand]
     private void RecomputeTotals()
     {
         var lines = Lines.Select(l => l.AModel()).ToList();
+
+        // Asked before computing rather than caught afterwards: ComputeByRate sums each
+        // rate group with a checked Enumerable.Sum, so an over-large group throws rather
+        // than returning a wrong number — and this runs on every keystroke.
+        TotalTooLarge = !VatCalculator.FitsInOneSale(lines);
+        if (TotalTooLarge) return;
+
         var d = VatCalculator.Compute(lines, _modeVat);
         BaseCents = d.BaseCents;
         VatCents = d.VatCents;
@@ -301,6 +307,18 @@ public partial class SaleDialogViewModel : DialogViewModelBase
             return;
         }
 
+        var lines = Lines.Select(l => l.AModel()).ToList();
+
+        // Each line is bounded on its own above; this is the only check of what they
+        // come to together. A VAT-rate group is summed with a checked Enumerable.Sum,
+        // so without this the sale would throw on the way to the database instead of
+        // being refused with something the user can act on.
+        if (!VatCalculator.FitsInOneSale(lines))
+        {
+            ErrorValidation = Texts.SaleTotalTooLarge;
+            return;
+        }
+
         ErrorValidation = null;
 
         var sale = new Sale
@@ -316,8 +334,6 @@ public partial class SaleDialogViewModel : DialogViewModelBase
             Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim(),
             AppointmentId = _appointmentId
         };
-
-        var lines = Lines.Select(l => l.AModel()).ToList();
 
         if (CurrentMode == Mode.Edit) await _sales.Update(sale, lines);
         else await _sales.Create(sale, lines);

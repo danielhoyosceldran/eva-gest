@@ -1128,6 +1128,18 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
   <data name="VatModeNotSaved" xml:space="preserve">
     <value>No se ha podido guardar el modo de IVA. Vuelve a intentarlo.</value>
   </data>
+  <data name="SaleTotalTooLarge" xml:space="preserve">
+    <value>El total de esta venta es demasiado grande. Revisa las líneas y divídela en dos si hace falta.</value>
+  </data>
+  <data name="ConfirmDeleteBackupsTitle" xml:space="preserve">
+    <value>¿Quieres conservar solo {0} copias?</value>
+  </data>
+  <data name="ConfirmDeleteBackupsMessage" xml:space="preserve">
+    <value>Se borrarán {0} copias de seguridad antiguas y no se podrán recuperar. Las {1} más recientes se mantienen.</value>
+  </data>
+  <data name="DeleteBackups" xml:space="preserve">
+    <value>Borrar las antiguas</value>
+  </data>
   <data name="ActiveSalesCount" xml:space="preserve">
     <value>{0} ventas activas</value>
   </data>

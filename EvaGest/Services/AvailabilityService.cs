@@ -2,6 +2,7 @@ using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
 
+using EvaGest.Helpers;
 namespace EvaGest.Services;
 
 /// <summary>
@@ -28,7 +29,7 @@ public class AvailabilityService(IDbContextFactory<ShopDbContext> factory) : IAv
 
         // Strict overlap on both ends: two appointments that merely touch (one starts
         // exactly when the other ends) do not conflict.
-        bool Overlaps(Appointment c) => time < ClampedEnd(c.Time, c.DurationMin) && ClampedEnd(time, durationMin) > c.Time;
+        bool Overlaps(Appointment c) => time < GridHelper.ClampedEnd(c.Time, c.DurationMin) && GridHelper.ClampedEnd(time, durationMin) > c.Time;
 
         if (workerId is int id)
         {
@@ -57,8 +58,8 @@ public class AvailabilityService(IDbContextFactory<ShopDbContext> factory) : IAv
     public async Task<List<Worker>> AvailableWorkers(DateOnly date, TimeOnly time, int durationMin)
     {
         await using var db = await factory.CreateDbContextAsync();
-        var day = ToWeekday(date);
-        var endTime = ClampedEnd(time, durationMin);
+        var day = WeekHelper.ToWeekday(date);
+        var endTime = GridHelper.ClampedEnd(time, durationMin);
 
         return await db.Workers.AsNoTracking()
             .Where(t => t.Active && t.Schedules.Any(h =>
@@ -69,14 +70,14 @@ public class AvailabilityService(IDbContextFactory<ShopDbContext> factory) : IAv
     public async Task<bool> IsDayOpen(DateOnly date)
     {
         await using var db = await factory.CreateDbContextAsync();
-        var day = ToWeekday(date);
+        var day = WeekHelper.ToWeekday(date);
         return await db.ShopSchedule.AsNoTracking().AnyAsync(h => h.Weekday == day);
     }
 
     public async Task<List<(TimeOnly start, TimeOnly fi)>> OpeningIntervals(DateOnly date)
     {
         await using var db = await factory.CreateDbContextAsync();
-        var day = ToWeekday(date);
+        var day = WeekHelper.ToWeekday(date);
         var intervals = await db.ShopSchedule.AsNoTracking()
             .Where(h => h.Weekday == day)
             .OrderBy(h => h.OpeningTime)
@@ -165,24 +166,11 @@ public class AvailabilityService(IDbContextFactory<ShopDbContext> factory) : IAv
 
     private async Task<bool> IsInsideSchedule(ShopDbContext db, DateOnly date, TimeOnly time, int durationMin)
     {
-        var day = ToWeekday(date);
-        var endTime = ClampedEnd(time, durationMin);
+        var day = WeekHelper.ToWeekday(date);
+        var endTime = GridHelper.ClampedEnd(time, durationMin);
 
         return await db.ShopSchedule.AsNoTracking()
             .AnyAsync(h => h.Weekday == day && h.OpeningTime <= time && h.ClosingTime >= endTime);
     }
 
-    /// <summary>Monday = Mon, ..., Sunday = Sun, matching the enum declared in models-domini.</summary>
-    private static Weekday ToWeekday(DateOnly date) => (Weekday)(((int)date.DayOfWeek + 6) % 7);
-
-    /// <summary>Start time plus a duration, clamped to the last moment of the day.
-    /// TimeOnly.AddMinutes wraps silently past midnight (23:30 + 90 min would read back
-    /// as 01:00), which broke both the overlap check and the opening-hours check for a
-    /// late appointment with a long enough duration. TimeOnly cannot represent 24:00
-    /// either, so anything that would cross midnight is treated as running to the end
-    /// of the day instead of wrapping to an early-morning time.</summary>
-    private static TimeOnly ClampedEnd(TimeOnly time, int durationMin)
-        => time.Hour * 60 + time.Minute + durationMin >= 24 * 60
-            ? new TimeOnly(23, 59, 59)
-            : time.AddMinutes(durationMin);
 }

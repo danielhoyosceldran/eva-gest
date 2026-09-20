@@ -94,8 +94,12 @@ public static class Money
 /// <summary>Formats VAT basis points for display: 2100 -> "21 %", 520 -> "5,2 %".</summary>
 public static class Percentages
 {
-    public static string Format(int bp)
-        => (bp / 100m).ToString("0.##", AppLanguage.Culture) + " %";
+    public static string Format(int bp) => Format(bp, AppLanguage.Culture);
+
+    /// <summary>The same rate against an explicit culture. The CSV export pins its own,
+    /// so the file the assessoria imports does not move with the interface language.</summary>
+    public static string Format(int bp, CultureInfo culture)
+        => (bp / 100m).ToString("0.##", culture) + " %";
 
     /// <summary>Same value without the unit, for a text box the user edits: 2100 -> "21".</summary>
     public static string FormatWithoutUnit(int bp)

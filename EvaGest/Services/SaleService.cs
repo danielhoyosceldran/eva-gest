@@ -14,19 +14,14 @@ public class SaleService(
     IDbContextFactory<ShopDbContext> factory,
     ISettingsService settings) : ISaleService
 {
-    /// <summary>Used only if the setting is missing or unreadable; matches the seeded
-    /// default (esquema-bbdd 2.14).</summary>
-    private const VatMode FallbackVatMode = VatMode.Included;
-
     /// <summary>
     /// The mode in force right now, read at save time and then frozen onto the sale.
     /// Changing it in Configuració must never move a sale that is already recorded
     /// (decision 6.4), which is exactly why this is read per save and stored per row.
+    /// Shared with the sale dialog's live footer through
+    /// <see cref="VatModeSettings.CurrentVatMode"/>, so the two cannot disagree.
     /// </summary>
-    private async Task<VatMode> CurrentVatMode()
-        => Enum.TryParse<VatMode>(await settings.Get(ConfigKeys.CurrentVatMode), out var mode)
-            ? mode
-            : FallbackVatMode;
+    private Task<VatMode> CurrentVatMode() => settings.CurrentVatMode();
 
     public async Task<List<Sale>> Search(SalesFilter filter)
     {

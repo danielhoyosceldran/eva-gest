@@ -356,4 +356,83 @@ public class SettingsPageTests
 
         (await config.Get(ConfigKeys.CurrentVatMode)).Should().Be(nameof(VatMode.NotIncluded));
     }
+
+    // ── Lowering the number of backups to keep ───────────────────────────────
+    // It prunes immediately, and File.Delete does not come back. Typing 1 where 15 was
+    // meant used to destroy fourteen copies with no warning and no way back.
+
+    private sealed class BackupFolder : IDisposable
+    {
+        public string Path { get; } = System.IO.Path.Combine(
+            System.IO.Path.GetTempPath(), "EvaGestBackupTests_" + Guid.NewGuid());
+
+        public string DbPath => System.IO.Path.Combine(Path, "eva.db");
+
+        public BackupFolder(int existingBackups)
+        {
+            Directory.CreateDirectory(System.IO.Path.Combine(Path, "Backups"));
+            File.WriteAllText(DbPath, "not a real database, and never opened as one");
+
+            for (int i = 0; i < existingBackups; i++)
+                File.WriteAllText(
+                    System.IO.Path.Combine(Path, "Backups",
+                        // Real timestamps: BackupService parses the name and ignores a
+                        // file it cannot read a date out of.
+                        $"202609{i + 1:00}_120000000_manual.db"), "old");
+        }
+
+        public int Count() => Directory.GetFiles(System.IO.Path.Combine(Path, "Backups"), "*.db").Length;
+
+        public void Dispose() => Directory.Delete(Path, recursive: true);
+    }
+
+    private static SettingsViewModel BuildWithBackups(
+        TestDatabase testDb, BackupFolder folder, TestDialogService dialogs)
+    {
+        var factory = new TestFactory(testDb.Options);
+        var config = new SettingsService(factory);
+
+        return new SettingsViewModel(
+            new BackupService(new AppPaths(folder.DbPath, folder.Path), config),
+            new ExportService(factory), config, new AvailabilityService(factory), dialogs);
+    }
+
+    [Fact]
+    public async Task Cutting_the_number_of_backups_down_asks_before_deleting_any()
+    {
+        await using var testDb = new TestDatabase();
+        using var folder = new BackupFolder(existingBackups: 5);
+
+        var dialogs = new TestDialogService { ResultConfirm = false };
+        var vm = BuildWithBackups(testDb, folder, dialogs);
+        await vm.Load();
+
+        vm.BackupsToKeepText = "1";
+        await vm.SaveBackupOptionsCommand.ExecuteAsync(null);
+
+        dialogs.ConfirmacionsRequested.Should().ContainSingle();
+        folder.Count().Should().Be(5, "nothing may be deleted without confirmation");
+
+        dialogs.ResultConfirm = true;
+        await vm.SaveBackupOptionsCommand.ExecuteAsync(null);
+
+        folder.Count().Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Raising_the_number_deletes_nothing_and_asks_nothing()
+    {
+        await using var testDb = new TestDatabase();
+        using var folder = new BackupFolder(existingBackups: 3);
+
+        var dialogs = new TestDialogService { ResultConfirm = false };
+        var vm = BuildWithBackups(testDb, folder, dialogs);
+        await vm.Load();
+
+        vm.BackupsToKeepText = "20";
+        await vm.SaveBackupOptionsCommand.ExecuteAsync(null);
+
+        dialogs.ConfirmacionsRequested.Should().BeEmpty("nothing is being lost");
+        folder.Count().Should().Be(3);
+    }
 }

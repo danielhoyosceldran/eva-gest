@@ -305,4 +305,53 @@ public class AppointmentServiceTests
 
         overdue.Should().BeEmpty();
     }
+
+    /// <summary>
+    /// Every change that persists has to reach the shell's overdue check, whichever page
+    /// made it. Create was the one that did not notify, so an appointment booked for
+    /// earlier today sat unnoticed until the next timer tick.
+    /// </summary>
+    [Fact]
+    public async Task Creating_an_appointment_notifies_like_every_other_change()
+    {
+        await using var testDb = new TestDatabase();
+        var notifier = new AppointmentChangeNotifier();
+        int notifications = 0;
+        notifier.Changed += () => notifications++;
+
+        var appointments = new AppointmentService(new TestFactory(testDb.Options), notifier);
+
+        int id = await appointments.Create(
+            new Appointment { Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, GuestName = "C" });
+        notifications.Should().Be(1);
+
+        await appointments.ChangeStatus(id, AppointmentStatus.Cancelled);
+        notifications.Should().Be(2);
+
+        await appointments.Delete(id);
+        notifications.Should().Be(3);
+    }
+
+    /// <summary>
+    /// The midnight clamp used to be written out twice, in Appointment.EndTime and in
+    /// AvailabilityService, and one past bugfix had to patch both copies at once. They
+    /// read the same helper now; this is what would notice if they parted again.
+    /// </summary>
+    [Theory]
+    [InlineData(23, 30, 90)]    // crosses midnight
+    [InlineData(10, 0, 960)]    // 16 hours, also crosses
+    [InlineData(9, 0, 30)]      // ordinary
+    [InlineData(23, 0, 59)]     // ends at 23:59 exactly
+    public void An_appointment_ends_where_the_availability_check_thinks_it_does(
+        int hour, int minute, int durationMin)
+    {
+        var start = new TimeOnly(hour, minute);
+        var appointment = new Appointment
+        {
+            Date = Today, Time = start, DurationMin = durationMin, GuestName = "C"
+        };
+
+        appointment.EndTime.Should().Be(EvaGest.Helpers.GridHelper.ClampedEnd(start, durationMin));
+        appointment.EndTime.Should().BeOnOrAfter(start, "an appointment never ends before it starts");
+    }
 }

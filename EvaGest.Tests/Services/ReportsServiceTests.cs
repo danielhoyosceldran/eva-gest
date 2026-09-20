@@ -227,4 +227,83 @@ public class ReportsServiceTests
         var result = await CreatesService(testDb).ClientOfTheMonth();
         result!.Value.client.Id.Should().Be(clientLarge);
     }
+
+    // ── The worker ranking ───────────────────────────────────────────────────
+    // It used to call GetWorkerDetail once per worker, so the two could not disagree by
+    // construction. Now it loads the period once and shares a pure Detail(); these pin
+    // that the answers are still identical.
+
+    private static async Task<(int busy, int quiet, DateOnly date)> TwoWorkersOneBusy(TestDatabase testDb)
+    {
+        int methodId = await AddsMethod(testDb);
+        int busy, quiet;
+        await using (var db = testDb.Context())
+        {
+            var a = Make.Worker("Marta");
+            var b = Make.Worker("Anna");
+            db.Workers.AddRange(a, b);
+            await db.SaveChangesAsync();
+            busy = a.Id; quiet = b.Id;
+        }
+
+        var date = new DateOnly(2026, 1, 1);
+        await using (var db = testDb.Context())
+        {
+            var sale = Make.Sale(date, methodId, SaleStatus.Active, Make.Line(6000, 2100));
+            sale.WorkerId = busy;
+
+            // No worker at all: still part of the period total the percentages divide by.
+            var unassigned = Make.Sale(date, methodId, SaleStatus.Active, Make.Line(4000, 2100));
+
+            db.Sales.AddRange(sale, unassigned);
+            await db.SaveChangesAsync();
+        }
+
+        return (busy, quiet, date);
+    }
+
+    [Fact]
+    public async Task The_ranking_gives_each_worker_the_same_figures_as_asking_for_them_one_by_one()
+    {
+        await using var testDb = new TestDatabase();
+        var (busy, quiet, date) = await TwoWorkersOneBusy(testDb);
+        var reports = CreatesService(testDb);
+
+        var ranking = await reports.WorkerRanking(date, date);
+
+        foreach (int id in new[] { busy, quiet })
+        {
+            var one = await reports.GetWorkerDetail(id, date, date);
+            var fromRanking = ranking.Single(r => r.WorkerId == id);
+
+            fromRanking.Should().BeEquivalentTo(one);
+        }
+    }
+
+    [Fact]
+    public async Task A_worker_with_no_sales_still_appears_in_the_ranking_on_zero()
+    {
+        await using var testDb = new TestDatabase();
+        var (busy, quiet, date) = await TwoWorkersOneBusy(testDb);
+
+        var ranking = await CreatesService(testDb).WorkerRanking(date, date);
+
+        ranking.Should().HaveCount(2);
+        ranking[0].WorkerId.Should().Be(busy, "ranked by takings, highest first");
+        ranking[1].WorkerId.Should().Be(quiet);
+        ranking[1].IncomeCents.Should().Be(0);
+        ranking[1].SalesHandled.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task The_percentages_divide_by_the_whole_period_including_unassigned_sales()
+    {
+        await using var testDb = new TestDatabase();
+        var (busy, _, date) = await TwoWorkersOneBusy(testDb);
+
+        var ranking = await CreatesService(testDb).WorkerRanking(date, date);
+
+        // 6000 of a 10000 period, not 6000 of the 6000 that has a worker on it.
+        ranking.Single(r => r.WorkerId == busy).WorkPercentage.Should().Be(60m);
+    }
 }

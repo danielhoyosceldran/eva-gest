@@ -65,6 +65,36 @@ public static class VatCalculator
     }
 
     /// <summary>
+    /// Whether this set of lines can be represented at all: every per-rate group, and
+    /// their total, has to fit in int cents.
+    ///
+    /// <see cref="ComputeByRate"/> sums a group with Enumerable.Sum over int, which is
+    /// checked — it throws rather than wrapping. Two lines that are each individually
+    /// valid (a line is bounded on its own, not against its neighbours) could therefore
+    /// take the group past int.MaxValue and throw on a keystroke, because the sale
+    /// dialog recomputes its live footer on every change. Asked first, this returns
+    /// false instead and the dialog refuses the sale with a message.
+    /// </summary>
+    public static bool FitsInOneSale(IEnumerable<SaleLine> lines)
+    {
+        long total = 0;
+        foreach (var group in lines.GroupBy(l => l.VatBp))
+        {
+            long sum = group.Sum(l => (long)l.AmountCents);
+
+            // A VAT-exclusive sale adds its quota on top, so the group's total is what
+            // has to fit, not just the base.
+            long withVat = sum + sum * group.Key / 10000;
+            if (sum is < int.MinValue or > int.MaxValue) return false;
+            if (withVat is < int.MinValue or > int.MaxValue) return false;
+
+            total += withVat;
+        }
+
+        return total is >= int.MinValue and <= int.MaxValue;
+    }
+
+    /// <summary>
     /// Rows to persist in SaleBreakdowns. These are the frozen figures that every
     /// period total and every Modelo 303 export is summed from, so they are written
     /// once when the sale is saved and never recalculated afterwards.

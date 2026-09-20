@@ -2,6 +2,8 @@ using AwesomeAssertions;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
+using EvaGest.Resources;
+using EvaGest.ViewModels.Dialogs;
 using EvaGest.ViewModels.Pages;
 using Xunit;
 
@@ -254,5 +256,92 @@ public class SalesPageTests
 
         vm.ActiveCount.Should().Be(2);
         vm.TotalTotalText.Should().Be(Money.Format(expected));
+    }
+
+    // ── What the lines come to together ──────────────────────────────────────
+    // Each line is bounded on its own, never against its neighbours, and ComputeByRate
+    // sums a rate group with a checked Enumerable.Sum. Two individually valid lines
+    // could take the group past int.MaxValue and throw — while the user was still
+    // typing, because the dialog recomputes its footer on every keystroke.
+
+    private static async Task<SaleDialogViewModel> NewSaleDialog(TestDatabase testDb)
+    {
+        var factory = new TestFactory(testDb.Options);
+        var config = new SettingsService(factory);
+        await new SeedService(factory, config).Seed();
+
+        var vm = await SaleDialogViewModel.New(
+            new SaleService(factory, config), new ClientService(factory), new CatalogService(factory),
+            new WorkerService(factory), new TestSoundService(), config, new TestDialogService());
+
+        vm.TextClient = "Client de prova";
+        vm.PaymentMethod = vm.ActiveMethods[0];
+        return vm;
+    }
+
+    private static void AddLine(SaleDialogViewModel vm, string price)
+    {
+        vm.AddCustomConceptCommand.Execute(null);
+        var line = vm.Lines[^1];
+        line.Description = "Concepte";
+        line.QuantityText = "1";
+        line.VatText = "21";
+        line.PriceText = price;
+    }
+
+    [Fact]
+    public async Task Typing_a_second_over_large_line_does_not_throw_it_flags_the_total()
+    {
+        await using var testDb = new TestDatabase();
+        var vm = await NewSaleDialog(testDb);
+
+        AddLine(vm, "15000000,00");
+        vm.TotalTooLarge.Should().BeFalse("one line of this size is representable");
+
+        // This is the keystroke that used to crash the dialog.
+        var second = () => AddLine(vm, "15000000,00");
+        second.Should().NotThrow<OverflowException>();
+
+        vm.TotalTooLarge.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task A_sale_whose_lines_overflow_their_rate_group_is_refused_not_charged()
+    {
+        await using var testDb = new TestDatabase();
+        var d = await Seed(testDb);
+        var vm = await NewSaleDialog(testDb);
+
+        AddLine(vm, "15000000,00");
+        AddLine(vm, "15000000,00");
+
+        await vm.ChargeCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().Be(Texts.SaleTotalTooLarge);
+
+        var page = await Build(testDb);
+        await page.Load();
+        page.Sales.Should().BeEmpty("nothing may reach the database");
+    }
+
+    [Fact]
+    public async Task An_ordinary_two_line_sale_is_still_charged()
+    {
+        await using var testDb = new TestDatabase();
+        var d = await Seed(testDb);
+        var vm = await NewSaleDialog(testDb);
+
+        AddLine(vm, "15,00");
+        AddLine(vm, "9,00");
+
+        await vm.ChargeCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().BeNull();
+        vm.TotalTooLarge.Should().BeFalse();
+
+        var page = await Build(testDb);
+        await page.Load();
+        page.Sales.Should().ContainSingle();
+        page.Sales[0].Sale.TotalCents.Should().Be(2400);
     }
 }

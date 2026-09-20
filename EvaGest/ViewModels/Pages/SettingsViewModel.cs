@@ -356,6 +356,21 @@ public partial class SettingsViewModel(
             return;
         }
 
+        // Lowering the number deletes files for good. Asked here rather than inside the
+        // service, because the automatic prune that follows every backup is expected and
+        // must stay silent — it is only the user cutting the number down that needs to
+        // see what it costs before it happens.
+        int existing = (await backup.ListAll()).Count;
+        if (existing > howmany)
+        {
+            bool confirmed = await dialogs.Confirm(
+                string.Format(Texts.ConfirmDeleteBackupsTitle, howmany),
+                string.Format(Texts.ConfirmDeleteBackupsMessage, existing - howmany, howmany),
+                Texts.DeleteBackups);
+
+            if (!confirmed) return;
+        }
+
         ErrorBackup = null;
         await settings.Save(ConfigKeys.BackupTime, time.ToString("HH\\:mm", CultureInfo.InvariantCulture));
         await settings.Save(ConfigKeys.BackupsToKeep, howmany.ToString());

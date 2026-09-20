@@ -77,6 +77,10 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         await db.SaveChangesAsync();
         Log.Information("Appointment {AppointmentId} created for {Date} {Time}",
             appointment.Id, appointment.Date, appointment.Time);
+
+        // Create was the one change that did not notify, so an appointment booked for
+        // earlier today did not reach the shell's overdue check until the next timer tick.
+        notifier?.NotifyChanged();
         return appointment.Id;
     }
 
