@@ -116,6 +116,13 @@ public class TableAlignmentTests(ApplicationWpf app)
 
         var vm = new TillViewModel(new TillService(factory), new CatalogService(factory),
             new WorkerService(factory), new TestDialogService());
+
+        // The period is pinned to the fixed date the rows were written on. Leaving it on
+        // the default (today) made this test pass only on the day it was written, and
+        // report an empty till from the next midnight onwards.
+        vm.Period = TillPeriod.Custom;
+        vm.From = Today;
+        vm.To = Today;
         await vm.Load();
 
         vm.SalesText.Should().Be(Money.Format(12_100));
