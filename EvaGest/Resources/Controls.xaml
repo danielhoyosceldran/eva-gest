@@ -84,6 +84,23 @@
         </Setter>
     </Style>
 
+    <!-- Close cross on a warning banner: borderless until hovered, danger-coloured glyph -->
+    <Style x:Key="NoticeCloseButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Destructive button (Eliminar, Anul·lar): red outline, hover is a light red tint -->
     <Style x:Key="DestructiveButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
         <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />

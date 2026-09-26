@@ -181,6 +181,13 @@ Recorded here so they are not read as bugs:
   the old key rejected. The original shape could not work — a detection
   heuristic wants false positives, the unique index on the column tolerates
   none, and the index won by throwing `DbUpdateException` at the user.
+- **A cash movement carries its own date.** The dialog stamped `DateTime.Today`
+  inside `AModel`, so one entered while the Till showed a past period was written
+  outside it. It now takes the date from whoever opened it and shows it in a
+  picker: the Start page passes today, the Till passes today when today is in the
+  period on screen and that period's last day otherwise. Both pages build the
+  dialog through `MovementDialogViewModel.New`, which is also what stopped the
+  Start page from silently skipping the till VAT settings.
 - **Constraint names in the database stay Catalan** (`pk_cites`,
   `ck_cites_client_xor`, `fk_vendes_clients_client_id`). SQLite keeps them
   inside the table's DDL text, so renaming them means rebuilding every table;

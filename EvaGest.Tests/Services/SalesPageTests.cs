@@ -344,4 +344,66 @@ public class SalesPageTests
         page.Sales.Should().ContainSingle();
         page.Sales[0].Sale.TotalCents.Should().Be(2400);
     }
+
+    /// <summary>Counts the queries the page actually sends, which is the thing that went
+    /// wrong: asserting on the rows cannot see it, because a fast in-memory database
+    /// happens to answer in order and the right load wins anyway.</summary>
+    private sealed class CountingSales(ISaleService inner) : ISaleService
+    {
+        public int Searches { get; private set; }
+
+        public Task<List<Sale>> Search(SalesFilter filter)
+        {
+            Searches++;
+            return inner.Search(filter);
+        }
+
+        public Task<Sale?> GetById(int id) => inner.GetById(id);
+        public Task<List<Sale>> GetByClient(int clientId) => inner.GetByClient(clientId);
+        public Task<int> Create(Sale sale, List<SaleLine> lines) => inner.Create(sale, lines);
+        public Task Update(Sale sale, List<SaleLine> lines) => inner.Update(sale, lines);
+        public Task Void(int saleId) => inner.Void(saleId);
+        public Task<DeleteResult> Delete(int saleId) => inner.Delete(saleId);
+        public Task<Sale> PrepareFromAppointment(int id) => inner.PrepareFromAppointment(id);
+    }
+
+    [Fact] // T-xx
+    public async Task Clearing_the_filters_queries_once_instead_of_once_per_box()
+    {
+        await using var testDb = new TestDatabase();
+        var d = await Seed(testDb);
+        await AddsSale(testDb, d, 1000, date: Today, methodId: d.MethodId);
+        await AddsSale(testDb, d, 2000, date: Today, methodId: d.OtherMethodId);
+
+        var factory = new TestFactory(testDb.Options);
+        var config = new SettingsService(factory);
+        await new SeedService(factory, config).Seed();
+        var sales = new CountingSales(new SaleService(factory, config));
+
+        var vm = new SalesViewModel(
+            sales, new ClientService(factory), new CatalogService(factory),
+            new WorkerService(factory), new TestSoundService(), config,
+            new ExportService(factory), new TestDialogService());
+
+        await vm.Load();
+
+        // Narrow it down. Each box legitimately reloads on its own.
+        vm.PaymentMethod = vm.FilterMethods.First(m => m.Id == d.MethodId);
+        vm.Status = SaleStatus.Active;
+        vm.From = Today;
+        vm.To = Today;
+        await Task.Delay(100);
+
+        int before = sales.Searches;
+        await vm.ClearFiltersCommand.ExecuteAsync(null);
+        await Task.Delay(100);
+
+        // Clearing four filters used to start four fire-and-forget queries on top of the
+        // awaited one, all racing each other; the last to come back won, which is not
+        // necessarily the last one sent.
+        (sales.Searches - before).Should().Be(1, "clearing the filters is one reload");
+
+        vm.Sales.Should().HaveCount(2, "every filter is cleared, so both sales are listed");
+        vm.TotalTotalText.Should().Be(Money.Format(3000));
+    }
 }

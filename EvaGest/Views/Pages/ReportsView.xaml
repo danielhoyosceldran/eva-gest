@@ -140,7 +140,7 @@
                         <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.SalesHandled}" Binding="{Binding SalesHandled}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.IncomeColumn}" Binding="{Binding IncomeText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.WorkPercentColumn}" Binding="{Binding WorkPercentage, StringFormat={}{0:0.0}%, TargetNullValue=—}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.WorkPercentColumn}" Binding="{Binding WorkPercentText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>

@@ -12,7 +12,8 @@ namespace EvaGest.Services;
 /// </summary>
 public class SaleService(
     IDbContextFactory<ShopDbContext> factory,
-    ISettingsService settings) : ISaleService
+    ISettingsService settings,
+    IAppointmentChangeNotifier? appointmentChanges = null) : ISaleService
 {
     /// <summary>
     /// The mode in force right now, read at save time and then frozen onto the sale.
@@ -69,6 +70,11 @@ public class SaleService(
             var appointment = await db.Appointments.FirstAsync(c => c.Id == appointmentId);
             appointment.Status = AppointmentStatus.Completed;
             await db.SaveChangesAsync();
+            Log.Information("Appointment {AppointmentId} completed by sale {SaleId}", appointmentId, sale.Id);
+
+            // Charging an appointment closes it; without this the shell's overdue notice
+            // kept naming it until the next timer tick.
+            appointmentChanges?.NotifyChanged();
         }
 
         return sale.Id;

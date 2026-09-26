@@ -56,7 +56,19 @@ public partial class ReportsViewModel(IReportsService reports)
 
     /// <summary>Money is formatted here rather than in XAML: binding IncomeCents
     /// straight to a {0:0.00} format string showed euros as if they were cents.</summary>
-    public record WorkerRankingRow(int WorkerId, string Name, int SalesHandled, string IncomeText, decimal? WorkPercentage);
+    public record WorkerRankingRow(int WorkerId, string Name, int SalesHandled, string IncomeText, decimal? WorkPercentage)
+    {
+        /// <summary>
+        /// Formatted here and not in XAML. A StringFormat of {0:0.0}% is resolved with the
+        /// binding's culture, which defaults to en-US whatever AppLanguage.Culture says -
+        /// nothing sets FrameworkElement.Language - so the column printed "42.5%" beside an
+        /// income column reading "1.250,00 EUR". The percentage is already 0-100, so it is a
+        /// plain number with the same " %" suffix Percentages.Format uses for a rate.
+        /// </summary>
+        public string WorkPercentText => WorkPercentage is decimal percent
+            ? percent.ToString("0.0", AppLanguage.Culture) + " %"
+            : "-";
+    }
 
     public ObservableCollection<EvolutionBar> Evolution { get; } = [];
     public ObservableCollection<ClientVisitsRow> TopVisits { get; } = [];
@@ -65,18 +77,39 @@ public partial class ReportsViewModel(IReportsService reports)
     public ObservableCollection<InactiveClientRow> NotSeenRecently { get; } = [];
     public ObservableCollection<WorkerRankingRow> WorkerRanking { get; } = [];
 
+    /// <summary>
+    /// Which load is the current one. Every reload takes the next number and only writes
+    /// to the collections if it still holds it when its queries come back, so a load
+    /// overtaken by a newer one discards itself instead of fighting it.
+    /// </summary>
+    private int _generation;
+
     public async Task Load()
     {
+        int generation = ++_generation;
         Loading = true;
         try
         {
+            // Everything is queried first and the collections are rewritten afterwards in
+            // one synchronous block. Clearing a collection and THEN awaiting let a second
+            // load clear in between and both append, so every ranking listed each client
+            // twice - reachable from the "this month" shortcut, which moves From and To in
+            // two steps and so triggers two loads.
             var clientOfTheMonth = await reports.ClientOfTheMonth();
+            var monthly = await reports.MonthlyEvolution();
+            var topVisits = await reports.TopByVisits();
+            var topSpend = await reports.TopBySpend();
+            var topAverage = await reports.TopByAverage();
+            var notSeen = await reports.GetNotSeenRecently();
+            var ranking = await reports.WorkerRanking(From, To);
+
+            if (generation != _generation) return;
+
             ClientOfTheMonthText = clientOfTheMonth is { } cdm
                 ? string.Format(Texts.ClientOfTheMonthLine, cdm.client.Name, cdm.visits,
                                 Money.Format(cdm.totalCents))
                 : Texts.NoSalesThisMonth;
 
-            var monthly = await reports.MonthlyEvolution();
             long max = Math.Max(1, monthly.Max(m => m.totalCents));
             Evolution.Clear();
             foreach (var (year, month, total) in monthly)
@@ -86,22 +119,22 @@ public partial class ReportsViewModel(IReportsService reports)
             }
 
             TopVisits.Clear();
-            foreach (var t in await reports.TopByVisits()) TopVisits.Add(new(t.client, t.visits, t.totalCents));
+            foreach (var t in topVisits) TopVisits.Add(new(t.client, t.visits, t.totalCents));
 
             TopSpend.Clear();
-            foreach (var t in await reports.TopBySpend()) TopSpend.Add(new(t.client, t.totalCents));
+            foreach (var t in topSpend) TopSpend.Add(new(t.client, t.totalCents));
 
             TopAverage.Clear();
-            foreach (var t in await reports.TopByAverage()) TopAverage.Add(new(t.client, t.averageEuros));
+            foreach (var t in topAverage) TopAverage.Add(new(t.client, t.averageEuros));
 
             NotSeenRecently.Clear();
-            foreach (var t in await reports.GetNotSeenRecently()) NotSeenRecently.Add(new(t.client, t.last, t.daysSince));
+            foreach (var t in notSeen) NotSeenRecently.Add(new(t.client, t.last, t.daysSince));
 
             WorkerRanking.Clear();
-            foreach (var d in await reports.WorkerRanking(From, To))
+            foreach (var d in ranking)
                 WorkerRanking.Add(new(d.WorkerId, d.Name, d.SalesHandled, Money.Format(d.IncomeCents), d.WorkPercentage));
         }
-        finally { Loading = false; }
+        finally { if (generation == _generation) Loading = false; }
     }
 
     partial void OnFromChanged(DateOnly value)

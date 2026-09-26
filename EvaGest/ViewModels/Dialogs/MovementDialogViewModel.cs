@@ -17,6 +17,15 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     private readonly int? _id;
 
     [ObservableProperty] private MovementType _type;
+
+    /// <summary>
+    /// The day the money actually moved. It used to be stamped with DateTime.Today inside
+    /// <see cref="AModel"/>, so a movement entered while the Till showed a past period was
+    /// written outside that period and vanished from the table the user was looking at —
+    /// the same mistake the sale dialog used to make (decision 6.4: a recorded movement
+    /// belongs to the day it happened, not to the moment the dialog was saved).
+    /// </summary>
+    [ObservableProperty] private DateOnly _date;
     [ObservableProperty] private string _priceText = "0,00";
     [ObservableProperty] private PaymentMethod? _method;
     [ObservableProperty] private string _concept = string.Empty;
@@ -52,12 +61,35 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     /// extension): a cash-in has no expense to classify or worker to pay.</summary>
     public bool IsCashOut => Type == MovementType.Out;
 
-    public MovementDialogViewModel(MovementType type) => Type = type;
+    public MovementDialogViewModel(MovementType type, DateOnly date)
+    {
+        Type = type;
+        Date = date;
+    }
+
+    /// <summary>
+    /// The dialog ready to use: the one place the two pages that open it agree on how it
+    /// is set up. The Start page used to build it by hand and forgot
+    /// <see cref="LoadDefaults"/>, so the same action behaved differently depending on
+    /// which page it was started from.
+    /// </summary>
+    public static async Task<MovementDialogViewModel> New(
+        MovementType type, DateOnly date,
+        ICatalogService catalog, IWorkerService workers, ISettingsService settings)
+    {
+        var vm = new MovementDialogViewModel(type, date);
+        await vm.LoadMethods(catalog);
+        await vm.LoadCategories(catalog);
+        await vm.LoadWorkers(workers);
+        await vm.LoadDefaults(settings);
+        return vm;
+    }
 
     public MovementDialogViewModel(CashMovement movement)
     {
         _id = movement.Id;
         Type = movement.Type;
+        Date = movement.Date;
         PriceText = Money.FormatExport(movement.AmountCents);
         Concept = movement.Concept;
         Notes = movement.Notes;
@@ -152,7 +184,7 @@ public partial class MovementDialogViewModel : DialogViewModelBase
         return new CashMovement
         {
             Id = _id ?? 0,
-            Date = DateOnly.FromDateTime(DateTime.Today),
+            Date = Date,
             Type = Type,
             AmountCents = amountCents,
             BaseCents = baseCents,

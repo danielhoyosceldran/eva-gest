@@ -120,26 +120,46 @@ public partial class SalesViewModel(
                + string.Format(Texts.MoreLinesSuffix, lines.Count - 2);
     }
 
-    partial void OnFromChanged(DateOnly? value) => _ = Load();
-    partial void OnToChanged(DateOnly? value) => _ = Load();
-    partial void OnClientChanged(Client? value) => _ = Load();
-    partial void OnServiceChanged(Service? value) => _ = Load();
-    partial void OnProductChanged(Product? value) => _ = Load();
-    partial void OnPaymentMethodChanged(PaymentMethod? value) => _ = Load();
-    partial void OnWorkerChanged(Worker? value) => _ = Load();
-    partial void OnStatusChanged(SaleStatus? value) => _ = Load();
+    /// <summary>
+    /// Set while several filters are being changed at once, so the page reloads once at
+    /// the end instead of once per box. Clearing eight filters used to start eight
+    /// fire-and-forget queries plus the awaited one, and the last to come back won - which
+    /// is not necessarily the last to be sent, so the table and its totals could settle on
+    /// a filter combination the boxes no longer showed.
+    /// </summary>
+    private bool _changingSeveralFilters;
+
+    private void FilterChanged()
+    {
+        if (!_changingSeveralFilters) _ = Load();
+    }
+
+    partial void OnFromChanged(DateOnly? value) => FilterChanged();
+    partial void OnToChanged(DateOnly? value) => FilterChanged();
+    partial void OnClientChanged(Client? value) => FilterChanged();
+    partial void OnServiceChanged(Service? value) => FilterChanged();
+    partial void OnProductChanged(Product? value) => FilterChanged();
+    partial void OnPaymentMethodChanged(PaymentMethod? value) => FilterChanged();
+    partial void OnWorkerChanged(Worker? value) => FilterChanged();
+    partial void OnStatusChanged(SaleStatus? value) => FilterChanged();
 
     [RelayCommand]
     private async Task ClearFilters()
     {
-        From = null;
-        To = null;
-        Client = null;
-        Service = null;
-        Product = null;
-        PaymentMethod = null;
-        Worker = null;
-        Status = null;
+        _changingSeveralFilters = true;
+        try
+        {
+            From = null;
+            To = null;
+            Client = null;
+            Service = null;
+            Product = null;
+            PaymentMethod = null;
+            Worker = null;
+            Status = null;
+        }
+        finally { _changingSeveralFilters = false; }
+
         await Load();
     }
 

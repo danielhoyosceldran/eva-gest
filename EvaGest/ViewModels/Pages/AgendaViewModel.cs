@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -204,14 +204,21 @@ public partial class AgendaViewModel : PageViewModelBase
             : Texts.AppointmentDeleted);
     }
 
+    /// <summary>
+    /// Queried first, rewritten afterwards. Clearing and then awaiting let two quick
+    /// clicks on different day headers both append, listing the day twice, because the
+    /// grid raises its callback fire-and-forget.
+    /// </summary>
     private async Task LoadDayDetail()
     {
-        DayAppointments.Clear();
+        var rows = SelectedDay is DateOnly day
+            ? (await _appointments.GetByDay(day))
+                .Where(a => SelectedWorkerFilter is null || SelectedWorkerFilter.Matches(a))
+                .Select(ToRow).ToList()
+            : [];
 
-        if (SelectedDay is DateOnly day)
-            foreach (var appointment in await _appointments.GetByDay(day))
-                if (SelectedWorkerFilter is null || SelectedWorkerFilter.Matches(appointment))
-                    DayAppointments.Add(ToRow(appointment));
+        DayAppointments.Clear();
+        foreach (var row in rows) DayAppointments.Add(row);
 
         OnPropertyChanged(nameof(HasSelectedDay));
         OnPropertyChanged(nameof(DayWithoutAppointments));

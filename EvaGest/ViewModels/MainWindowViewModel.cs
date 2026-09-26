@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EvaGest.Helpers;
 using EvaGest.Resources;
 using EvaGest.Services;
 using EvaGest.ViewModels.Dialogs;
@@ -21,11 +22,15 @@ public partial class MainWindowViewModel : ObservableObject
     /// time, so a cite never silently falls through without the user noticing. Shown
     /// in the shell rather than a page ViewModel because it must stay visible no
     /// matter which page is open, and it is not auto-cleared like <see cref="PageViewModelBase.Notice"/>:
-    /// it only goes away once <see cref="CheckOverdueAppointments"/> next finds
-    /// nothing overdue (the appointment got closed, or moved off the list).
+    /// it goes away once <see cref="CheckOverdueAppointments"/> next finds nothing
+    /// overdue (the appointment got charged, cancelled, marked no-show or moved), or
+    /// for a while when the user closes it (<see cref="DismissOverdueNoticeCommand"/>).
     /// </summary>
     [ObservableProperty]
     private string? _overdueAppointmentsNotice;
+
+    private readonly OverdueNoticeSnooze _snooze = new();
+    private List<int> _overdueIds = [];
 
     // Kept alive for the session so navigating away and back does not lose state.
     private readonly HomeViewModel _start;
@@ -72,8 +77,11 @@ public partial class MainWindowViewModel : ObservableObject
     {
         try
         {
-            var overdue = await _appointments.GetOverduePending(DateTime.Now);
-            OverdueAppointmentsNotice = overdue.Count > 0
+            var now = DateTime.Now;
+            var overdue = await _appointments.GetOverduePending(now);
+            _overdueIds = overdue.Select(a => a.Id).ToList();
+
+            OverdueAppointmentsNotice = _snooze.ShouldShow(_overdueIds, now)
                 ? Texts.OverdueAppointmentsNotice + string.Join(", ", overdue.Select(a => a.DisplayName))
                 : null;
         }
@@ -81,6 +89,17 @@ public partial class MainWindowViewModel : ObservableObject
         {
             Log.Warning(ex, "Overdue appointment check failed");
         }
+    }
+
+    /// <summary>
+    /// The notice's close button. Hides it for <see cref="OverdueNoticeSnooze.Duration"/>;
+    /// the next check after that brings it back if the same appointments are still Pending.
+    /// </summary>
+    [RelayCommand]
+    private void DismissOverdueNotice()
+    {
+        _snooze.Dismiss(_overdueIds, DateTime.Now);
+        OverdueAppointmentsNotice = null;
     }
 
     [RelayCommand] private void NavigateHome() => CurrentPage = _start;

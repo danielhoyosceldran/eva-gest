@@ -96,10 +96,16 @@ public partial class TillViewModel(
         Loading = true;
         try
         {
-            Summary = await till.Summary(From, To);
+            // Both queries first, then one synchronous rewrite: a custom range moves From
+            // and To separately, so two loads can be in flight and clearing before the
+            // await would let them interleave.
+            var summary = await till.Summary(From, To);
+            var movements = await till.GetByPeriod(From, To);
+
+            Summary = summary;
 
             Movements.Clear();
-            foreach (var m in await till.GetByPeriod(From, To)) Movements.Add(ToRow(m));
+            foreach (var m in movements) Movements.Add(ToRow(m));
 
             VatRates.Clear();
             foreach (var rate in Summary.VatBreakdown)
@@ -136,13 +142,22 @@ public partial class TillViewModel(
     [RelayCommand]
     private async Task NewCashOut() => await OpenMovementDialog(MovementType.Out);
 
+    /// <summary>
+    /// Today when today is in the period on screen; the period's last day otherwise. A
+    /// movement entered while looking at a past month belongs to that month, and dating
+    /// it today would drop it outside the table the user is reading. The dialog shows the
+    /// date either way, so this is a starting point and not a decision made for them.
+    /// </summary>
+    private DateOnly DateForNewMovement()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        return today >= From && today <= To ? today : To;
+    }
+
     private async Task OpenMovementDialog(MovementType type)
     {
-        var vm = new ViewModels.Dialogs.MovementDialogViewModel(type);
-        await vm.LoadMethods(catalog);
-        await vm.LoadCategories(catalog);
-        await vm.LoadWorkers(workers);
-        await vm.LoadDefaults(settings);
+        var vm = await ViewModels.Dialogs.MovementDialogViewModel.New(
+            type, DateForNewMovement(), catalog, workers, settings);
         if (await dialogs.ShowDialog(vm))
         {
             await till.Create(vm.AModel());

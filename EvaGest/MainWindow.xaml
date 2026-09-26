@@ -74,12 +74,19 @@
             </Grid.RowDefinitions>
 
             <!-- Stays up no matter which page is open, until every cite past the hour
-                 mark is closed (pantalles 1) -->
+                 mark is closed (pantalles 1). The cross hides it for a while; it comes
+                 back if those cites are still pending. -->
             <Border Grid.Row="0" Background="{StaticResource DangerBgBrush}" BorderBrush="{StaticResource DangerBrush}"
-                    BorderThickness="0,0,0,1" Padding="16,10"
+                    BorderThickness="0,0,0,1" Padding="16,10,8,10"
                     Visibility="{Binding OverdueAppointmentsNotice, Converter={StaticResource NullToVisibilityConverter}}">
-                <TextBlock Text="{Binding OverdueAppointmentsNotice}" Foreground="{StaticResource DangerBrush}"
-                           TextWrapping="Wrap" FontWeight="SemiBold" />
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource NoticeCloseButton}"
+                            Command="{Binding DismissOverdueNoticeCommand}"
+                            ToolTip="{x:Static t:Texts.Close}"
+                            AutomationProperties.Name="{x:Static t:Texts.Close}" />
+                    <TextBlock Text="{Binding OverdueAppointmentsNotice}" Foreground="{StaticResource DangerBrush}"
+                               TextWrapping="Wrap" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </DockPanel>
             </Border>
 
             <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" />

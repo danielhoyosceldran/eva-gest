@@ -114,7 +114,7 @@ public class TillServiceTests
     [Fact] // H-06
     public void A_movement_with_vat_saves_the_computed_base_and_quota()
     {
-        var vm = new EvaGest.ViewModels.Dialogs.MovementDialogViewModel(MovementType.In)
+        var vm = new EvaGest.ViewModels.Dialogs.MovementDialogViewModel(MovementType.In, DateOnly.FromDateTime(DateTime.Today))
         {
             PriceText = "15,00", VatText = "21", SplitVat = true,
             Method = new PaymentMethod { Id = 1, Name = "Efectiu" }

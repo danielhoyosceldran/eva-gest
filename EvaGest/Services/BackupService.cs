@@ -10,8 +10,17 @@ namespace EvaGest.Services;
 /// Phase 9. The backup folder itself is the source of truth: each file's name encodes
 /// its timestamp and whether it was automatic or manual, so no extra table is needed.
 /// </summary>
-public class BackupService(AppPaths paths, ISettingsService settings) : IBackupService
+/// <param name="now">
+/// How the service reads the clock. Defaulted rather than injected, so the container
+/// still resolves it from AppPaths and ISettingsService alone; the tests pass a fixed
+/// moment, because pinning the configured hour at "23:59" and asserting the backup had
+/// not run yet was true for all but the one minute a day the suite started in it.
+/// </param>
+public class BackupService(
+    AppPaths paths, ISettingsService settings, Func<DateTime>? now = null) : IBackupService
 {
+    private readonly Func<DateTime> _now = now ?? (() => DateTime.Now);
+
     // Millisecond precision matters: a restore always takes a safety copy right before
     // overwriting the database, and a manual backup can follow another within the same
     // second — second-only precision made those two collide on the same filename.
@@ -43,10 +52,10 @@ public class BackupService(AppPaths paths, ISettingsService settings) : IBackupS
         // Checked at startup rather than by a timer, because the machine is usually off
         // at the configured hour (CU-11). Waiting for the hour to pass means the copy
         // lands on the first launch after it, which is the intended behaviour.
-        if (TimeOnly.FromDateTime(DateTime.Now) < await BackupTime()) return null;
+        if (TimeOnly.FromDateTime(_now()) < await BackupTime()) return null;
 
         var backups = await ListAll();
-        bool alreadyDoneToday = backups.Any(c => c.IsAutomatic && c.Date.Date == DateTime.Today);
+        bool alreadyDoneToday = backups.Any(c => c.IsAutomatic && c.Date.Date == _now().Date);
         if (alreadyDoneToday) return null;
 
         var backupFile = await Copy(isAutomatic: true);
@@ -109,7 +118,7 @@ public class BackupService(AppPaths paths, ISettingsService settings) : IBackupS
     {
         Directory.CreateDirectory(paths.BackupsFolder);
 
-        var now = DateTime.Now;
+        var now = _now();
         string suffix = isAutomatic ? "auto" : "manual";
         string name = $"{now.ToString(Format, CultureInfo.InvariantCulture)}_{suffix}.db";
         string destination = Path.Combine(paths.BackupsFolder, name);

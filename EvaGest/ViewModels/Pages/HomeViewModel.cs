@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -148,10 +148,8 @@ public partial class HomeViewModel(
 
     private async Task OpenMovementDialog(MovementType type)
     {
-        var vm = new MovementDialogViewModel(type);
-        await vm.LoadMethods(catalog);
-        await vm.LoadCategories(catalog);
-        await vm.LoadWorkers(workers);
+        var vm = await MovementDialogViewModel.New(
+            type, DateOnly.FromDateTime(DateTime.Today), catalog, workers, settings);
         if (await dialogs.ShowDialog(vm))
         {
             await till.Create(vm.AModel());

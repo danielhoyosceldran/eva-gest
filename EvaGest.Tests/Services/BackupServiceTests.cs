@@ -22,10 +22,12 @@ public class BackupServiceTests : IDisposable
     public void Dispose() => Directory.Delete(_folder, recursive: true);
 
     /// <summary>Defaults to an hour already past, so the tests that are not about the
-    /// schedule do not depend on what time of day they happen to run.</summary>
-    private BackupService CreatesService(TestSettings? config = null)
+    /// schedule do not depend on what time of day they happen to run. The ones that ARE
+    /// about the schedule pass <paramref name="now"/> and do not depend on it either.</summary>
+    private BackupService CreatesService(TestSettings? config = null, DateTime? now = null)
         => new(new AppPaths(_pathDb, _folder),
-               config ?? new TestSettings((ConfigKeys.BackupTime, "00:00")));
+               config ?? new TestSettings((ConfigKeys.BackupTime, "00:00")),
+               now is DateTime moment ? () => moment : null);
 
     [Fact] // L-01
     public async Task A_manual_backup_creates_a_file()
@@ -126,12 +128,27 @@ public class BackupServiceTests : IDisposable
     [Fact] // L-08
     public async Task Before_the_configured_hour_the_automatic_backup_waits()
     {
-        // An hour that cannot have passed yet today, whatever time the suite runs at
-        var backup = CreatesService(new TestSettings((ConfigKeys.BackupTime, "23:59")));
+        // The clock is pinned rather than reasoned about. This used to configure "23:59"
+        // and call it an hour that could not have passed yet, which was false for the one
+        // minute a day the suite happened to start inside it.
+        var backup = CreatesService(new TestSettings((ConfigKeys.BackupTime, "20:00")),
+                                    now: new DateTime(2026, 3, 4, 19, 59, 0));
 
         var result = await backup.RunAutomaticBackupIfDue();
 
         result.Should().BeNull("the daily backup only runs from the configured hour on");
+    }
+
+    [Fact] // L-08b
+    public async Task From_the_configured_hour_on_the_automatic_backup_runs()
+    {
+        // The other side of the same boundary, which nothing pinned before.
+        var backup = CreatesService(new TestSettings((ConfigKeys.BackupTime, "20:00")),
+                                    now: new DateTime(2026, 3, 4, 20, 0, 0));
+
+        var result = await backup.RunAutomaticBackupIfDue();
+
+        result.Should().NotBeNull();
     }
 
     [Fact] // L-09

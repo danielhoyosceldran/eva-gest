@@ -16,7 +16,7 @@ public class DialogValidationTests
 {
     private static MovementDialogViewModel Movement()
     {
-        var vm = new MovementDialogViewModel(MovementType.In)
+        var vm = new MovementDialogViewModel(MovementType.In, DateOnly.FromDateTime(DateTime.Today))
         {
             PriceText = "15,00",
             Concept = "Canvi inicial"
