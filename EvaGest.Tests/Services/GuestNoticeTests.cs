@@ -111,7 +111,8 @@ public class NoticeGuestTests
         vm.TextClient = "Pere";
         vm.UnregisteredClientNotice.Should().BeTrue();
 
-        vm.SelectedOption = vm.ClientOptions.First(o => o.Client?.Name == "Joana");
+        vm.ClientPicker.Text = "joana";
+        vm.ClientPicker.PickHighlightedCommand.Execute(null);
 
         vm.UnregisteredClientNotice.Should().BeFalse();
     }

@@ -49,9 +49,13 @@
             <DataTemplate DataType="{x:Type dvm:RestoreDialogViewModel}"><dv:RestoreDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:HelpViewModel}"><dv:HelpView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:WorkerDialogViewModel}"><dv:WorkerDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:ClientBrowserDialogViewModel}"><dv:ClientBrowserDialogView /></DataTemplate>
 
             <!-- The weekly grid is hosted both by the Agenda page and by the appointment dialog -->
             <DataTemplate DataType="{x:Type evm:WeekGridViewModel}"><ev:WeekGridView /></DataTemplate>
+
+            <!-- The client box is shared by the appointment and sale dialogs -->
+            <DataTemplate DataType="{x:Type evm:ClientPickerViewModel}"><ev:ClientPickerView /></DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

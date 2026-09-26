@@ -34,8 +34,24 @@ public partial class SaleDialogViewModel : DialogViewModelBase
 
     [ObservableProperty] private Mode _currentMode;
 
-    [ObservableProperty] private Client? _selectedClient;
-    [ObservableProperty] private string _textClient = string.Empty;
+    /// <summary>The client box: an existing client searched or browsed, or a new one's name.</summary>
+    public ClientPickerViewModel ClientPicker { get; }
+
+    /// <summary>The registered client picked in <see cref="ClientPicker"/>, or null for a guest.</summary>
+    public Client? SelectedClient
+    {
+        get => ClientPicker.SelectedClient;
+        set => ClientPicker.Select(value);
+    }
+
+    /// <summary>The guest's free name; empty while a registered client is picked.
+    /// Writing it makes the sale a guest's again.</summary>
+    public string TextClient
+    {
+        get => ClientPicker.GuestName;
+        set { if (value != TextClient) ClientPicker.SetGuestName(value); }
+    }
+
     [ObservableProperty] private string? _guestPhone;
 
     [ObservableProperty] private Worker? _worker;
@@ -61,7 +77,6 @@ public partial class SaleDialogViewModel : DialogViewModelBase
 
     public ObservableCollection<SaleLineViewModel> Lines { get; } = [];
 
-    public ObservableCollection<Client> ActiveClients { get; } = [];
     public ObservableCollection<Service> ActiveServices { get; } = [];
     public ObservableCollection<Product> ActiveProducts { get; } = [];
     public ObservableCollection<Worker> ActiveWorkers { get; } = [];
@@ -90,6 +105,21 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         _so = so;
         _clients = clients;
         _dialogs = dialogs;
+
+        ClientPicker = new ClientPickerViewModel(dialogs);
+        ClientPicker.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ClientPickerViewModel.SelectedClient))
+            {
+                OnPropertyChanged(nameof(SelectedClient));
+                ReviewGuestNotice();
+            }
+            else if (e.PropertyName == nameof(ClientPickerViewModel.GuestName))
+            {
+                OnPropertyChanged(nameof(TextClient));
+                ReviewGuestNotice();
+            }
+        };
     }
 
     /// <summary>
@@ -101,9 +131,6 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         => UnregisteredClientNotice = _guestNoticeEnabled
             && SelectedClient is null
             && !string.IsNullOrWhiteSpace(TextClient);
-
-    partial void OnTextClientChanged(string value) => ReviewGuestNotice();
-    partial void OnSelectedClientChanged(Client? value) => ReviewGuestNotice();
 
     /// <summary>Registers the guest without losing the half-filled sale, and selects
     /// the new client, so the reminder does not simply reappear.</summary>
@@ -118,10 +145,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         var created = dialog.AModel();
         created.Id = await _clients.Create(created);
 
-        ActiveClients.Add(created);
+        ClientPicker.Add(created);
         SelectedClient = created;
-        TextClient = string.Empty;
-        ReviewGuestNotice();
     }
 
     /// <summary>Empty sale, opened from "+ New sale".</summary>
@@ -158,8 +183,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         vm._time = sale.Time;
         vm.LinkedAppointmentText = string.Format(Texts.FromAppointmentOn,
             sale.Date.ToString("dd/MM/yyyy"), sale.Time.ToString("HH\\:mm"));
-        vm.SelectedClient = vm.ActiveClients.FirstOrDefault(c => c.Id == sale.ClientId);
         vm.TextClient = sale.GuestName ?? string.Empty;
+        await vm.SelectOwnClient(clients, sale.ClientId);
         vm.GuestPhone = sale.GuestPhone;
         vm.Worker = vm.ActiveWorkers.FirstOrDefault(t => t.Id == sale.WorkerId);
 
@@ -196,8 +221,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
                 .FirstOrDefault(m => m.Id == sale.PaymentMethodId) is { } methodInactive)
             vm.ActiveMethods.Add(methodInactive);
 
-        vm.SelectedClient = sale.ClientId is int cid ? vm.ActiveClients.FirstOrDefault(c => c.Id == cid) : null;
         vm.TextClient = sale.GuestName ?? string.Empty;
+        await vm.SelectOwnClient(clients, sale.ClientId);
         vm.GuestPhone = sale.GuestPhone;
         vm.Worker = sale.WorkerId is int tid ? vm.ActiveWorkers.FirstOrDefault(t => t.Id == tid) : null;
         vm.PaymentMethod = vm.ActiveMethods.FirstOrDefault(m => m.Id == sale.PaymentMethodId);
@@ -227,11 +252,23 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     {
         _guestNoticeEnabled = await settings.GetBool(ConfigKeys.ShowGuestNotice, true);
 
-        foreach (var c in await clients.GetActive()) ActiveClients.Add(c);
+        ClientPicker.SetClients(await clients.GetActive());
         foreach (var s in await catalog.GetServices(onlyActive: true)) ActiveServices.Add(s);
         foreach (var p in await catalog.GetProducts(onlyActive: true)) ActiveProducts.Add(p);
         foreach (var t in await workers.GetAll(onlyActive: true)) ActiveWorkers.Add(t);
         foreach (var m in await catalog.GetMethods(onlyActive: true)) ActiveMethods.Add(m);
+    }
+
+    /// <summary>
+    /// Picks the client the sale (or its appointment) already belongs to. Looked up by
+    /// id rather than among the active ones: an asleep client is left out of the search,
+    /// but a sale already made for them must keep them rather than turn guest.
+    /// </summary>
+    private async Task SelectOwnClient(IClientService clients, int? clientId)
+    {
+        if (clientId is not int id || await clients.GetById(id) is not { } client) return;
+        ClientPicker.Add(client);
+        SelectedClient = client;
     }
 
     [RelayCommand] private void AddService(Service service) => AddExistingLine(SaleLineViewModel.FromService(service));
@@ -288,8 +325,11 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     {
         if (!CanCharge())
         {
-            ErrorValidation = Lines.Count == 0
-                ? Texts.AtLeastOneLineRequired
+            // Checked in the same order as CanCharge. The client used to be missing
+            // here, so a sale with no client was refused as missing a payment method.
+            ErrorValidation = Lines.Count == 0 ? Texts.AtLeastOneLineRequired
+                : SelectedClient is null && string.IsNullOrWhiteSpace(TextClient)
+                    ? (ClientPicker.IsNewClient ? Texts.GuestNameOrClientRequired : Texts.ClientNotPicked)
                 : Texts.PaymentMethodRequired;
             return;
         }

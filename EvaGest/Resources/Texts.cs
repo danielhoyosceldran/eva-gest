@@ -135,7 +135,6 @@ public static class Texts
         nameof(ServiceOptional),
         nameof(CategoryOptional),
         nameof(Category),
-        nameof(GuestName),
         nameof(Status),
         nameof(Type),
         nameof(Concept),
@@ -176,7 +175,7 @@ public static class Texts
         nameof(ShowSleepingClients),
         nameof(ColorInAgenda),
         nameof(PickTimeInAgenda),
-        nameof(RegisteredClientOrFreeName),
+        nameof(ClientSearchPlaceholder),
         nameof(ClientNameAlreadyExists),
         nameof(CopyMondayToWeekdays),
         nameof(Today),
@@ -299,7 +298,7 @@ public static class Texts
         nameof(NewCategoryTitle),
         nameof(EditCategoryTitle),
         nameof(CategoryNameRequired),
-        nameof(GuestFreeName),
+        nameof(RegisteredClientTag),
         nameof(EditAppointmentTitle),
         nameof(GuestNameOrClientRequired),
         nameof(DeleteAppointmentTitle),
@@ -472,6 +471,15 @@ public static class Texts
         nameof(ExportVatHeader),
         nameof(ClosedDayFormat),
         nameof(EmailFormat),
+        nameof(ExistingClient),
+        nameof(NewClient),
+        nameof(BrowseClients),
+        nameof(NewClientNamePlaceholder),
+        nameof(ClientBrowserTitle),
+        nameof(ClientSearchPlaceholderBrowse),
+        nameof(ClientBrowserEmpty),
+        nameof(ChooseClient),
+        nameof(ClientNotPicked),
     ];
 
     /// <summary>Pendent</summary>
@@ -770,9 +778,6 @@ public static class Texts
     /// <summary>Categoria</summary>
     public static string Category => Get(nameof(Category));
 
-    /// <summary>Nom del convidat</summary>
-    public static string GuestName => Get(nameof(GuestName));
-
     /// <summary>Estat</summary>
     public static string Status => Get(nameof(Status));
 
@@ -893,8 +898,8 @@ public static class Texts
     /// <summary>Tria l'hora a l'agenda</summary>
     public static string PickTimeInAgenda => Get(nameof(PickTimeInAgenda));
 
-    /// <summary>Client registrat (o escriu un nom lliure a sota)</summary>
-    public static string RegisteredClientOrFreeName => Get(nameof(RegisteredClientOrFreeName));
+    /// <summary>Busca per nom o telèfon</summary>
+    public static string ClientSearchPlaceholder => Get(nameof(ClientSearchPlaceholder));
 
     /// <summary>Sembla que aquest client ja existeix: </summary>
     public static string ClientNameAlreadyExists => Get(nameof(ClientNameAlreadyExists));
@@ -1262,8 +1267,8 @@ public static class Texts
     /// <summary>Cal indicar el nom de la categoria per guardar.</summary>
     public static string CategoryNameRequired => Get(nameof(CategoryNameRequired));
 
-    /// <summary>Convidat (nom lliure)</summary>
-    public static string GuestFreeName => Get(nameof(GuestFreeName));
+    /// <summary>✓ Client registrat</summary>
+    public static string RegisteredClientTag => Get(nameof(RegisteredClientTag));
 
     /// <summary>Editar cita</summary>
     public static string EditAppointmentTitle => Get(nameof(EditAppointmentTitle));
@@ -1781,4 +1786,31 @@ public static class Texts
 
     /// <summary>Correu: {0}</summary>
     public static string EmailFormat => Get(nameof(EmailFormat));
+
+    /// <summary>Client existent</summary>
+    public static string ExistingClient => Get(nameof(ExistingClient));
+
+    /// <summary>Client nou</summary>
+    public static string NewClient => Get(nameof(NewClient));
+
+    /// <summary>Veure la llista</summary>
+    public static string BrowseClients => Get(nameof(BrowseClients));
+
+    /// <summary>Nom del client nou</summary>
+    public static string NewClientNamePlaceholder => Get(nameof(NewClientNamePlaceholder));
+
+    /// <summary>Triar client</summary>
+    public static string ClientBrowserTitle => Get(nameof(ClientBrowserTitle));
+
+    /// <summary>Escriu per filtrar per nom o telèfon</summary>
+    public static string ClientSearchPlaceholderBrowse => Get(nameof(ClientSearchPlaceholderBrowse));
+
+    /// <summary>Cap client coincideix amb la cerca. Prova amb una altra paraula, o torna enrere i tria Client nou.</summary>
+    public static string ClientBrowserEmpty => Get(nameof(ClientBrowserEmpty));
+
+    /// <summary>Triar</summary>
+    public static string ChooseClient => Get(nameof(ChooseClient));
+
+    /// <summary>Tria un client de la llista, o canvia a Client nou per escriure'n el nom.</summary>
+    public static string ClientNotPicked => Get(nameof(ClientNotPicked));
 }

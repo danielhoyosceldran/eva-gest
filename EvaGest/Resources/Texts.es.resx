@@ -352,9 +352,6 @@
   <data name="Category" xml:space="preserve">
     <value>Categoría</value>
   </data>
-  <data name="GuestName" xml:space="preserve">
-    <value>Nombre del invitado</value>
-  </data>
   <data name="Status" xml:space="preserve">
     <value>Estado</value>
   </data>
@@ -475,8 +472,8 @@
   <data name="PickTimeInAgenda" xml:space="preserve">
     <value>Elige la hora en la agenda</value>
   </data>
-  <data name="RegisteredClientOrFreeName" xml:space="preserve">
-    <value>Cliente registrado (o escribe un nombre libre debajo)</value>
+  <data name="ClientSearchPlaceholder" xml:space="preserve">
+    <value>Busca por nombre o teléfono</value>
   </data>
   <data name="ClientNameAlreadyExists" xml:space="preserve">
     <value>Ya tienes un cliente que se llama {0} ({1}). Añade el apellido o un segundo nombre para distinguirlos.</value>
@@ -844,8 +841,8 @@
   <data name="CategoryNameRequired" xml:space="preserve">
     <value>Hay que indicar el nombre de la categoría para guardar.</value>
   </data>
-  <data name="GuestFreeName" xml:space="preserve">
-    <value>Invitado (nombre libre)</value>
+  <data name="RegisteredClientTag" xml:space="preserve">
+    <value>✓ Cliente registrado</value>
   </data>
   <data name="EditAppointmentTitle" xml:space="preserve">
     <value>Editar cita</value>
@@ -1375,5 +1372,32 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   </data>
   <data name="EmailFormat" xml:space="preserve">
     <value>Correo: {0}</value>
+  </data>
+  <data name="ExistingClient" xml:space="preserve">
+    <value>Cliente existente</value>
+  </data>
+  <data name="NewClient" xml:space="preserve">
+    <value>Cliente nuevo</value>
+  </data>
+  <data name="BrowseClients" xml:space="preserve">
+    <value>Ver la lista</value>
+  </data>
+  <data name="NewClientNamePlaceholder" xml:space="preserve">
+    <value>Nombre del cliente nuevo</value>
+  </data>
+  <data name="ClientBrowserTitle" xml:space="preserve">
+    <value>Elegir cliente</value>
+  </data>
+  <data name="ClientSearchPlaceholderBrowse" xml:space="preserve">
+    <value>Escribe para filtrar por nombre o teléfono</value>
+  </data>
+  <data name="ClientBrowserEmpty" xml:space="preserve">
+    <value>Ningún cliente coincide con la búsqueda. Prueba con otra palabra, o vuelve atrás y elige Cliente nuevo.</value>
+  </data>
+  <data name="ChooseClient" xml:space="preserve">
+    <value>Elegir</value>
+  </data>
+  <data name="ClientNotPicked" xml:space="preserve">
+    <value>Elige un cliente de la lista, o cambia a Cliente nuevo para escribir su nombre.</value>
   </data>
 </root>

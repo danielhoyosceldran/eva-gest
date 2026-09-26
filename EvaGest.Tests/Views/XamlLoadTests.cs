@@ -71,6 +71,39 @@ public class XamlLoadTests(ApplicationWpf app)
             view.Arrange(new Rect(0, 0, 1200, 800));
         });
 
+    [Fact]
+    public void The_client_picker_builds_through_its_data_template()
+        => app.Runs(() =>
+        {
+            // Hosted like the dialogs host it: a ContentControl resolving the view from the
+            // DataTemplate in App.xaml, so a missing template fails here, not in the dialog.
+            var picker = new ClientPickerViewModel();
+            picker.SetClients([new Client { Id = 1, Name = "Joan García", Mobile = "612345678" }]);
+            var host = new ContentControl { Content = picker };
+            host.Measure(new Size(420, 200));
+            host.Arrange(new Rect(0, 0, 420, 200));
+
+            // The template resolved to the real view, wired to this view model. The
+            // binding values themselves are covered by the view model tests: waiting for
+            // WPF's deferred binding pass here needs a nested dispatcher frame, which hung
+            // the shared test dispatcher now and then.
+            var view = Descendants<EvaGest.Views.Elements.ClientPickerView>(host).Single();
+            view.DataContext.Should().BeSameAs(picker);
+            Descendants<TextBox>(host).Should().HaveCount(2, "the search box and the new-client name box");
+        });
+
+    [Fact]
+    public void The_client_browser_dialog_builds_with_its_list()
+        => app.Runs(() =>
+        {
+            var vm = new EvaGest.ViewModels.Dialogs.ClientBrowserDialogViewModel(
+                [new Client { Id = 1, Name = "Joan García", Mobile = "612345678" }]);
+            var view = new EvaGest.Views.Dialogs.ClientBrowserDialogView { DataContext = vm };
+            view.Measure(new Size(800, 700));
+            view.Arrange(new Rect(0, 0, 800, 700));
+            view.ActualHeight.Should().BeGreaterThan(0);
+        });
+
     [Fact] // X-05
     public void The_settings_view_builds()
         => app.Runs(() =>

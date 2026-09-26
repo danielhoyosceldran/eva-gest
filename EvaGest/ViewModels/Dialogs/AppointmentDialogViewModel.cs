@@ -10,16 +10,6 @@ using EvaGest.Resources;
 namespace EvaGest.ViewModels.Dialogs;
 
 /// <summary>
-/// One entry of the client picker. The first one is always "Convidat", so choosing a
-/// registered client is undone by picking it again rather than by an empty combo box.
-/// </summary>
-public sealed record ClientOption(Client? Client)
-{
-    public string Name => Client?.Name ?? Texts.GuestFreeName;
-    public bool IsGuest => Client is null;
-}
-
-/// <summary>
 /// Appointment (new / edit), pantalles 3.1. What is special: warnings recompute live as
 /// date/time/worker change, and NONE of them ever blocks saving (casos-us CU-01).
 /// The hour is picked on the same weekly grid the Agenda page uses, with a ghost block
@@ -61,8 +51,24 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     /// so pushing one into the other does not bounce straight back.</summary>
     private bool _syncingText;
 
-    [ObservableProperty] private ClientOption? _selectedOption;
-    [ObservableProperty] private string _textClient = string.Empty;
+    /// <summary>The client box: an existing client searched or browsed, or a new one's name.</summary>
+    public ClientPickerViewModel ClientPicker { get; }
+
+    /// <summary>The registered client picked in <see cref="ClientPicker"/>, or null for a guest.</summary>
+    public Client? SelectedClient
+    {
+        get => ClientPicker.SelectedClient;
+        set => ClientPicker.Select(value);
+    }
+
+    /// <summary>The guest's free name; empty while a registered client is picked.
+    /// Writing it makes the appointment a guest's again.</summary>
+    public string TextClient
+    {
+        get => ClientPicker.GuestName;
+        set { if (value != TextClient) ClientPicker.SetGuestName(value); }
+    }
+
     [ObservableProperty] private string? _guestPhone;
 
     [ObservableProperty] private Service? _service;
@@ -78,14 +84,11 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
 
     [ObservableProperty] private WeekGridViewModel? _grid;
 
-    public ObservableCollection<ClientOption> ClientOptions { get; } = [];
     public ObservableCollection<Service> ActiveServices { get; } = [];
     public ObservableCollection<Worker> ActiveWorkers { get; } = [];
 
-    /// <summary>The picker itself is never disabled: deselecting is picking "Convidat".</summary>
-    public bool CanWriteGuest => SelectedOption?.IsGuest ?? true;
-
-    public Client? SelectedClient => SelectedOption?.Client;
+    /// <summary>The phone box belongs to a new client (a guest); a registered one already has one.</summary>
+    public bool CanWriteGuest => ClientPicker.IsNewClient;
 
     public override string Title => _id is null ? Texts.NewAppointmentTitle : Texts.EditAppointmentTitle;
 
@@ -125,8 +128,17 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         // so the box would open empty without this.
         Sync(() => DurationText = DurationMin.ToString());
 
-        ClientOptions.Add(new ClientOption(null));
-        SelectedOption = ClientOptions[0];
+        ClientPicker = new ClientPickerViewModel(dialogs);
+        ClientPicker.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ClientPickerViewModel.SelectedClient)) OnSelectedClientChanged();
+            else if (e.PropertyName == nameof(ClientPickerViewModel.IsNewClient)) OnPropertyChanged(nameof(CanWriteGuest));
+            else if (e.PropertyName == nameof(ClientPickerViewModel.GuestName))
+            {
+                OnPropertyChanged(nameof(TextClient));
+                ReviewGuestNotice();
+            }
+        };
 
         if (appointment is not null)
         {
@@ -156,7 +168,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         if (_id is null)
             DurationMin = await settings.GetInt(ConfigKeys.DefaultAppointmentDurationMin, 30);
 
-        foreach (var c in await clients.GetActive()) ClientOptions.Add(new ClientOption(c));
+        ClientPicker.SetClients(await clients.GetActive());
         foreach (var s in await catalog.GetServices(onlyActive: true)) ActiveServices.Add(s);
         foreach (var t in await workers.GetAll(onlyActive: true)) ActiveWorkers.Add(t);
 
@@ -177,8 +189,13 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         // Resolve every selection by id, never by reference: the appointment's related
         // entities come from a different AsNoTracking query than these lists, so the
         // instances are not equal and the combo boxes would render empty.
-        if (_originalClientId is int clientId)
-            SelectedOption = ClientOptions.FirstOrDefault(o => o.Client?.Id == clientId) ?? ClientOptions[0];
+        // An asleep client is left out of the search like any other picker, but an
+        // appointment already booked for them must keep them rather than turn guest.
+        if (_originalClientId is int clientId && await clients.GetById(clientId) is { } client)
+        {
+            ClientPicker.Add(client);
+            SelectedClient = client;
+        }
 
         int savedDuration = DurationMin;
         if (_originalServiceId is int serviceId)
@@ -209,8 +226,6 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
             && SelectedClient is null
             && !string.IsNullOrWhiteSpace(TextClient);
 
-    partial void OnTextClientChanged(string value) => ReviewGuestNotice();
-
     /// <summary>
     /// Registers the guest without losing the half-filled appointment, and selects the
     /// new client straight away, so the reminder does not simply reappear.
@@ -226,11 +241,8 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         var created = dialog.AModel();
         created.Id = await _clients.Create(created);
 
-        var option = new ClientOption(created);
-        ClientOptions.Add(option);
-        SelectedOption = option;
-        TextClient = string.Empty;
-        ReviewGuestNotice();
+        ClientPicker.Add(created);
+        SelectedClient = created;
     }
 
     partial void OnServiceChanged(Service? value)
@@ -238,12 +250,12 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         if (value?.DurationMin is int d) DurationMin = d;
     }
 
-    partial void OnSelectedOptionChanged(ClientOption? value)
+    private void OnSelectedClientChanged()
     {
-        if (value?.Client is { } client)
+        var value = SelectedClient;
+        if (value is not null)
         {
-            TextClient = string.Empty;
-            GuestPhone = client.Mobile;
+            GuestPhone = value.Mobile;
         }
         else if (PreviouslySelectedClient is not null)
         {
@@ -251,7 +263,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
             GuestPhone = null;
         }
 
-        PreviouslySelectedClient = value?.Client;
+        PreviouslySelectedClient = value;
         OnPropertyChanged(nameof(CanWriteGuest));
         OnPropertyChanged(nameof(SelectedClient));
         ReviewGuestNotice();
@@ -327,7 +339,9 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         var client = SelectedClient;
         if (client is null && string.IsNullOrWhiteSpace(TextClient))
         {
-            ErrorValidation = Texts.GuestNameOrClientRequired;
+            // Say what is missing in the mode the user is in: a name to type, or a
+            // client still to be picked from the search.
+            ErrorValidation = ClientPicker.IsNewClient ? Texts.GuestNameOrClientRequired : Texts.ClientNotPicked;
             return;
         }
         // The text is what the user is looking at, so it is what gets judged: checking

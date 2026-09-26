@@ -352,9 +352,6 @@
   <data name="Category" xml:space="preserve">
     <value>Categoria</value>
   </data>
-  <data name="GuestName" xml:space="preserve">
-    <value>Nom del convidat</value>
-  </data>
   <data name="Status" xml:space="preserve">
     <value>Estat</value>
   </data>
@@ -475,8 +472,8 @@
   <data name="PickTimeInAgenda" xml:space="preserve">
     <value>Tria l'hora a l'agenda</value>
   </data>
-  <data name="RegisteredClientOrFreeName" xml:space="preserve">
-    <value>Client registrat (o escriu un nom lliure a sota)</value>
+  <data name="ClientSearchPlaceholder" xml:space="preserve">
+    <value>Busca per nom o telèfon</value>
   </data>
   <data name="ClientNameAlreadyExists" xml:space="preserve">
     <value>Ja tens un client que es diu {0} ({1}). Afegeix el cognom o un segon nom per distingir-los.</value>
@@ -844,8 +841,8 @@
   <data name="CategoryNameRequired" xml:space="preserve">
     <value>Cal indicar el nom de la categoria per guardar.</value>
   </data>
-  <data name="GuestFreeName" xml:space="preserve">
-    <value>Convidat (nom lliure)</value>
+  <data name="RegisteredClientTag" xml:space="preserve">
+    <value>✓ Client registrat</value>
   </data>
   <data name="EditAppointmentTitle" xml:space="preserve">
     <value>Editar cita</value>
@@ -1375,5 +1372,32 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   </data>
   <data name="EmailFormat" xml:space="preserve">
     <value>Correu: {0}</value>
+  </data>
+  <data name="ExistingClient" xml:space="preserve">
+    <value>Client existent</value>
+  </data>
+  <data name="NewClient" xml:space="preserve">
+    <value>Client nou</value>
+  </data>
+  <data name="BrowseClients" xml:space="preserve">
+    <value>Veure la llista</value>
+  </data>
+  <data name="NewClientNamePlaceholder" xml:space="preserve">
+    <value>Nom del client nou</value>
+  </data>
+  <data name="ClientBrowserTitle" xml:space="preserve">
+    <value>Triar client</value>
+  </data>
+  <data name="ClientSearchPlaceholderBrowse" xml:space="preserve">
+    <value>Escriu per filtrar per nom o telèfon</value>
+  </data>
+  <data name="ClientBrowserEmpty" xml:space="preserve">
+    <value>Cap client coincideix amb la cerca. Prova amb una altra paraula, o torna enrere i tria Client nou.</value>
+  </data>
+  <data name="ChooseClient" xml:space="preserve">
+    <value>Triar</value>
+  </data>
+  <data name="ClientNotPicked" xml:space="preserve">
+    <value>Tria un client de la llista, o canvia a Client nou per escriure'n el nom.</value>
   </data>
 </root>

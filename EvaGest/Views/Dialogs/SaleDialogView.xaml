@@ -8,10 +8,9 @@
         <TextBlock Text="{Binding LinkedAppointmentText}" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
                    Visibility="{Binding LinkedAppointmentText, Converter={StaticResource NullToVisibilityConverter}}" />
 
-        <TextBlock Text="{x:Static t:Texts.RegisteredClientOrFreeName}" Style="{StaticResource DataLabel}" />
-        <ComboBox ItemsSource="{Binding ActiveClients}" SelectedItem="{Binding SelectedClient}"
-                  DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
-        <TextBox Text="{Binding TextClient, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+        <!-- Search a registered client or type a guest's name, in the same box -->
+        <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
+        <ContentControl Content="{Binding ClientPicker}" Focusable="False" Margin="0,0,0,8" />
 
         <!-- Non-blocking guest reminder (RF-05bis): offers to register, never requires it -->
         <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"

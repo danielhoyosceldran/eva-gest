@@ -279,6 +279,25 @@ public class SalesPageTests
         return vm;
     }
 
+    [Fact]
+    public async Task A_sale_with_no_client_says_so_rather_than_asking_for_the_payment_method()
+    {
+        // Charge used to fall through to "payment method required" whenever lines were
+        // present, even with the method chosen and only the client missing.
+        await using var testDb = new TestDatabase();
+        var vm = await NewSaleDialog(testDb);
+        AddLine(vm, "15,00");
+
+        vm.TextClient = string.Empty;
+        vm.ClientPicker.IsExistingClient = true;
+        await vm.ChargeCommand.ExecuteAsync(null);
+        vm.ErrorValidation.Should().Be(Texts.ClientNotPicked);
+
+        vm.ClientPicker.IsNewClient = true;
+        await vm.ChargeCommand.ExecuteAsync(null);
+        vm.ErrorValidation.Should().Be(Texts.GuestNameOrClientRequired);
+    }
+
     private static void AddLine(SaleDialogViewModel vm, string price)
     {
         vm.AddCustomConceptCommand.Execute(null);

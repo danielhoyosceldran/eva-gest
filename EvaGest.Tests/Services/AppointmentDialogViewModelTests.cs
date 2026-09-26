@@ -62,7 +62,7 @@ public class AppointmentDialogViewModelTests
     }
 
     [Fact] // F-09
-    public async Task The_first_option_is_always_Guest_and_comes_selected()
+    public async Task A_new_appointment_opens_on_existing_client_with_nothing_picked()
     {
         await using var testDb = new TestDatabase();
         var s = Build(testDb);
@@ -71,9 +71,10 @@ public class AppointmentDialogViewModelTests
         var vm = New(s);
         await vm.Initialization;
 
-        vm.ClientOptions[0].IsGuest.Should().BeTrue();
-        vm.SelectedOption.Should().BeSameAs(vm.ClientOptions[0]);
-        vm.CanWriteGuest.Should().BeTrue();
+        vm.ClientPicker.Text.Should().BeEmpty();
+        vm.ClientPicker.IsDropdownOpen.Should().BeFalse();
+        vm.ClientPicker.IsExistingClient.Should().BeTrue();
+        vm.CanWriteGuest.Should().BeFalse("the phone box belongs to a new client");
         vm.SelectedClient.Should().BeNull();
     }
 
@@ -97,8 +98,32 @@ public class AppointmentDialogViewModelTests
 
         vm.SelectedClient.Should().NotBeNull();
         vm.SelectedClient!.Id.Should().Be(clientId);
-        vm.SelectedOption!.Name.Should().Be("Joan García");
+        vm.ClientPicker.Text.Should().Be("Joan García");
         vm.CanWriteGuest.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Editing_an_appointment_of_an_asleep_client_keeps_that_client()
+    {
+        // Asleep clients are left out of the search, and the picker used to be filled
+        // from the active ones only: the appointment reopened as a guest with an empty
+        // name, and saving it either failed or lost the client.
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        int clientId = await s.Clients.Create(Make.Client("Joan García"));
+        int appointmentId = await s.Appointments.Create(new Appointment
+        {
+            Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, ClientId = clientId
+        });
+        await s.Clients.Sleep(clientId);
+        var appointment = await s.Appointments.GetById(appointmentId);
+
+        var vm = Edit(s, appointment!);
+        await vm.Initialization;
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().BeNull();
+        (await s.Appointments.GetById(appointmentId))!.ClientId.Should().Be(clientId);
     }
 
     [Fact] // F-10b
@@ -131,7 +156,7 @@ public class AppointmentDialogViewModelTests
     }
 
     [Fact] // F-11
-    public async Task Going_back_to_Guest_frees_the_fields_and_clears_the_client_phone()
+    public async Task Switching_to_new_client_after_a_pick_frees_the_phone_and_clears_the_client_one()
     {
         await using var testDb = new TestDatabase();
         var s = Build(testDb);
@@ -139,11 +164,12 @@ public class AppointmentDialogViewModelTests
         var vm = New(s);
         await vm.Initialization;
 
-        vm.SelectedOption = vm.ClientOptions.First(o => !o.IsGuest);
+        vm.ClientPicker.Text = "joan";
+        vm.ClientPicker.PickHighlightedCommand.Execute(null);
         vm.CanWriteGuest.Should().BeFalse();
         vm.GuestPhone.Should().Be("612345678");
 
-        vm.SelectedOption = vm.ClientOptions[0];
+        vm.ClientPicker.IsNewClient = true;
 
         vm.CanWriteGuest.Should().BeTrue();
         vm.SelectedClient.Should().BeNull();
@@ -160,7 +186,8 @@ public class AppointmentDialogViewModelTests
         await vm.Initialization;
         vm.TextClient = "Algú de pas";
 
-        vm.SelectedOption = vm.ClientOptions.First(o => !o.IsGuest);
+        vm.ClientPicker.Text = "garcia";
+        vm.ClientPicker.PickHighlightedCommand.Execute(null);
 
         vm.TextClient.Should().BeEmpty();
     }
@@ -317,7 +344,8 @@ public class AppointmentDialogViewModelTests
 
         var registered = New(s);
         await registered.Initialization;
-        registered.SelectedOption = registered.ClientOptions.First(o => !o.IsGuest);
+        registered.ClientPicker.Text = "joan";
+        registered.ClientPicker.PickHighlightedCommand.Execute(null);
         registered.Time = new TimeOnly(12, 0);
         await registered.SaveCommand.ExecuteAsync(null);
 
@@ -369,5 +397,39 @@ public class AppointmentDialogViewModelTests
 
         vm.Date.Should().Be(otherDay.Date);
         vm.Time.Should().Be(EvaGest.Helpers.GridHelper.ATime(grid.GridStartMinute + 60));
+    }
+
+    [Fact]
+    public async Task Saving_with_a_search_typed_but_nobody_picked_says_to_pick_or_switch()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        await s.Clients.Create(Make.Client("Joan García"));
+        var vm = New(s);
+        await vm.Initialization;
+
+        vm.ClientPicker.Text = "joan";
+        await vm.SaveCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().Be(Texts.ClientNotPicked);
+        (await s.Appointments.GetByDay(Today)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task An_appointment_for_a_guest_reopens_on_new_client_with_its_name()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        int appointmentId = await s.Appointments.Create(new Appointment
+        {
+            Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, GuestName = "Algú"
+        });
+
+        var vm = Edit(s, (await s.Appointments.GetById(appointmentId))!);
+        await vm.Initialization;
+
+        vm.ClientPicker.IsNewClient.Should().BeTrue();
+        vm.ClientPicker.NewName.Should().Be("Algú");
+        vm.CanWriteGuest.Should().BeTrue();
     }
 }
