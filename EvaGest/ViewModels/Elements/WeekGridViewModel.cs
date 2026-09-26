@@ -296,7 +296,11 @@ public partial class WeekGridViewModel : ObservableObject
         PixelsPerMinute = GridHelper.PixelsPerMinute(SlotHeightPx, SlotMinutes);
         HourHeightPx = PixelsPerMinute * 60;
         TotalHeightPx = (GridEndMinute - GridStartMinute) * PixelsPerMinute;
-        InitialOffsetPx = GridHelper.Top(_firstOpenMinute, GridStartMinute, PixelsPerMinute);
+        // Open on the padding hour above the first opening, not on the opening itself,
+        // so the empty hour before the day starts is visible from the first frame.
+        InitialOffsetPx = GridHelper.Top(
+            Math.Max(GridStartMinute, _firstOpenMinute - GridHelper.OpeningPaddingMinutes),
+            GridStartMinute, PixelsPerMinute);
     }
 
     private void FillRuler()

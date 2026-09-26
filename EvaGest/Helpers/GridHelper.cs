@@ -77,10 +77,16 @@ public static class GridHelper
     }
 
     /// <summary>
-    /// Visible band for the whole week: the union of every day's opening hours, widened
-    /// to contain any appointment falling outside them (an out-of-hours appointment must
-    /// never be invisible), then floored/ceiled to whole hours so the hour lines align
-    /// with the origin.
+    /// Empty band shown before the earliest opening and after the latest closing, so the
+    /// working day never starts flush against the top of the grid or ends at its bottom.
+    /// </summary>
+    public const int OpeningPaddingMinutes = 60;
+
+    /// <summary>
+    /// Visible band for the whole week: the union of every day's opening hours, padded by
+    /// <see cref="OpeningPaddingMinutes"/> on each side, widened to contain any appointment
+    /// falling outside them (an out-of-hours appointment must never be invisible), then
+    /// floored/ceiled to whole hours so the hour lines align with the origin.
     /// </summary>
     public static (int startMinute, int endMinute) VisibleRange(
         IEnumerable<(TimeOnly start, TimeOnly fi)> intervals,
@@ -90,8 +96,9 @@ public static class GridHelper
 
         foreach (var f in intervals)
         {
-            start = Math.Min(start, DayMinutes(f.start));
-            fi = Math.Max(fi, ToEndMinute(f.fi));
+            // Clamped to the day: an opening at 00:30 cannot pad into the previous day.
+            start = Math.Min(start, Math.Max(0, DayMinutes(f.start) - OpeningPaddingMinutes));
+            fi = Math.Max(fi, Math.Min(MinutesPerDay, ToEndMinute(f.fi) + OpeningPaddingMinutes));
         }
         foreach (var c in appointments)
         {

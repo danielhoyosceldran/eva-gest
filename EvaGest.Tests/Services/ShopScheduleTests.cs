@@ -161,8 +161,8 @@ public class ScheduleShopTests
             EvaGest.ViewModels.Elements.ModeGrid.Agenda, (_, _) => { });
         await grid.LoadWeek(new DateOnly(2026, 9, 7));
 
-        (grid.GridStartMinute, grid.GridEndMinute).Should().Be((10 * 60, 18 * 60));
-        grid.Days[0].Bands.Should().BeEmpty("monday is open across the whole visible range");
+        (grid.GridStartMinute, grid.GridEndMinute).Should().Be((9 * 60, 19 * 60));   // plus the padding hours
+        grid.Days[0].Bands.Should().HaveCount(2, "only the padding hours fall outside monday's schedule");
         grid.Days[6].Bands.Should().ContainSingle("sunday is closed all day");
     }
 

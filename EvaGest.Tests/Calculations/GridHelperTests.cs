@@ -81,33 +81,48 @@ public class GridHelperTests
     // ---------- Rang visible ----------
 
     [Fact] // G-09
-    public void VisibleRange_with_a_split_shift_spans_the_first_opening_to_the_last_closing()
+    public void VisibleRange_with_a_split_shift_spans_the_first_opening_to_the_last_closing_plus_an_hour_each_side()
     {
         var intervals = new[] { (new TimeOnly(9, 0), new TimeOnly(13, 0)), (new TimeOnly(16, 0), new TimeOnly(20, 0)) };
-        GridHelper.VisibleRange(intervals, []).Should().Be((9 * 60, 20 * 60));
+        GridHelper.VisibleRange(intervals, []).Should().Be((8 * 60, 21 * 60));
     }
 
     [Fact] // G-10
     public void VisibleRange_widens_for_an_appointment_before_opening()
     {
         var intervals = new[] { (new TimeOnly(9, 0), new TimeOnly(20, 0)) };
-        var appointments = new[] { (new TimeOnly(8, 30), 30) };
-        GridHelper.VisibleRange(intervals, appointments).Should().Be((8 * 60, 20 * 60));
+        var appointments = new[] { (new TimeOnly(7, 30), 30) };
+        GridHelper.VisibleRange(intervals, appointments).Should().Be((7 * 60, 21 * 60));
     }
 
     [Fact] // G-11
     public void VisibleRange_widens_for_an_appointment_after_closing()
     {
         var intervals = new[] { (new TimeOnly(9, 0), new TimeOnly(20, 0)) };
-        var appointments = new[] { (new TimeOnly(20, 15), 45) };
-        GridHelper.VisibleRange(intervals, appointments).Should().Be((9 * 60, 21 * 60));
+        var appointments = new[] { (new TimeOnly(21, 15), 45) };
+        GridHelper.VisibleRange(intervals, appointments).Should().Be((8 * 60, 22 * 60));
     }
 
     [Fact] // G-12
     public void VisibleRange_treats_midnight_as_the_end_of_the_day()
     {
         var intervals = new[] { (new TimeOnly(18, 0), TimeOnly.MinValue) };
-        GridHelper.VisibleRange(intervals, []).Should().Be((18 * 60, 24 * 60));
+        GridHelper.VisibleRange(intervals, []).Should().Be((17 * 60, 24 * 60));
+    }
+
+    [Fact]
+    public void VisibleRange_padding_never_runs_past_either_end_of_the_day()
+    {
+        var intervals = new[] { (new TimeOnly(0, 30), new TimeOnly(23, 30)) };
+        GridHelper.VisibleRange(intervals, []).Should().Be((0, 24 * 60));
+    }
+
+    [Fact]
+    public void VisibleRange_an_appointment_inside_the_padding_hour_does_not_widen_further()
+    {
+        var intervals = new[] { (new TimeOnly(9, 0), new TimeOnly(20, 0)) };
+        var appointments = new[] { (new TimeOnly(8, 30), 30), (new TimeOnly(20, 15), 45) };
+        GridHelper.VisibleRange(intervals, appointments).Should().Be((8 * 60, 21 * 60));
     }
 
     [Fact] // G-13

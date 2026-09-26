@@ -118,10 +118,12 @@ public class GridWeekViewModelTests
 
         await grid.LoadWeek(Monday);
 
-        grid.GridStartMinute.Should().Be(9 * 60);
-        grid.GridEndMinute.Should().Be(20 * 60);
-        grid.Days[0].Bands.Should().ContainSingle()
-            .Which.Top.Should().BeApproximately(4 * 60 * grid.PixelsPerMinute, 1e-9);
+        // One padding hour either side of 09:00-20:00.
+        grid.GridStartMinute.Should().Be(8 * 60);
+        grid.GridEndMinute.Should().Be(21 * 60);
+        // Before opening, the lunch gap, after closing: the lunch gap starts at 13:00.
+        grid.Days[0].Bands.Should().HaveCount(3);
+        grid.Days[0].Bands[1].Top.Should().BeApproximately(5 * 60 * grid.PixelsPerMinute, 1e-9);
     }
 
     [Fact] // GV-05
@@ -132,8 +134,8 @@ public class GridWeekViewModelTests
         var (grid, record) = Build(testDb);
         await grid.LoadWeek(Monday);
 
-        // 90 minutes after the start of the grid, in the wednesday column
-        grid.Days[2].ClickAtPosition(90 * grid.PixelsPerMinute);
+        // 150 minutes after the start of the grid (08:00, the padding hour), in the wednesday column
+        grid.Days[2].ClickAtPosition(150 * grid.PixelsPerMinute);
 
         record.Slots.Should().ContainSingle()
             .Which.Should().Be((Monday.AddDays(2), new TimeOnly(10, 30)));
@@ -241,7 +243,7 @@ public class GridWeekViewModelTests
         grid.ShowGhost(Monday.AddDays(2), new TimeOnly(12, 0), 60);
         grid.Days[0].Appointments.Should().NotContain(c => c.IsGhost);
         var ghost = grid.Days[2].Appointments.Should().ContainSingle(c => c.IsGhost).Subject;
-        ghost.Top.Should().BeApproximately(3 * 60 * grid.PixelsPerMinute, 1e-9);
+        ghost.Top.Should().BeApproximately(4 * 60 * grid.PixelsPerMinute, 1e-9);   // grid starts at 08:00
         ghost.Height.Should().BeApproximately(60 * grid.PixelsPerMinute - 1, 1e-9);
     }
 
@@ -278,7 +280,7 @@ public class GridWeekViewModelTests
 
         await grid.LoadWeek(Monday);
 
-        grid.Days[0].Bands.Should().BeEmpty("monday is open across the whole visible range");
+        grid.Days[0].Bands.Should().HaveCount(2, "only the padding hours fall outside monday's schedule");
         grid.Days[1].Bands.Should().ContainSingle("tuesday has no schedule");
     }
 

@@ -15,7 +15,7 @@
             <ComboBox ItemsSource="{Binding ClientOptions}" SelectedItem="{Binding SelectedOption}"
                       IsTextSearchEnabled="True" TextSearch.TextPath="Name"
                       Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}"
-                      MinHeight="{StaticResource FieldHeight}">
+                      MinHeight="{StaticResource FieldHeight}" Cursor="Hand">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
