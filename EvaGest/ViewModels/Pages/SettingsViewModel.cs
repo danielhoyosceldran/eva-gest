@@ -21,13 +21,30 @@ namespace EvaGest.ViewModels.Pages;
 /// </summary>
 public partial class SettingsViewModel(
     IBackupService backup, IExportService export, ISettingsService settings,
-    IAvailabilityService availability, IDialogService dialogs)
+    IAvailabilityService availability, IDialogService dialogs, IOwnerAccessService owner)
     : PageViewModelBase
 {
     public override string Title => Texts.NavSettings;
 
     /// <summary>Guards the initial assignments during Load from writing straight back.</summary>
     private bool _loaded;
+
+    // ── Owner PIN ────────────────────────────────────────────────────────────
+    [ObservableProperty] private string? _ownerPinConfirmation;
+
+    /// <summary>
+    /// Changes the owner's PIN. This page is itself private, so whoever is here already
+    /// opened owner mode; the current PIN is still asked for, so a worker who finds owner
+    /// mode left open cannot lock the owner out by choosing a PIN of their own.
+    /// </summary>
+    [RelayCommand]
+    private async Task ChangeOwnerPin()
+    {
+        OwnerPinConfirmation = null;
+        var vm = new OwnerPinDialogViewModel(owner, OwnerPinMode.Change);
+        if (await dialogs.ShowDialog(vm))
+            OwnerPinConfirmation = Texts.OwnerPinChanged;
+    }
 
     // ── Shop details ─────────────────────────────────────────────────────────
     [ObservableProperty] private string _shopName = string.Empty;

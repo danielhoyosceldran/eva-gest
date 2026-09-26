@@ -19,6 +19,10 @@
             </DataGrid>
         </Border>
 
+        <!-- The PIN lives in the database, so a restore brings back whichever one it had -->
+        <TextBlock Text="{x:Static t:Texts.RestoreBringsBackPin}" Style="{StaticResource DataLabel}"
+                   TextWrapping="Wrap" Margin="0,0,0,12" />
+
         <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
                    TextWrapping="Wrap" Margin="0,0,0,12"
                    Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />

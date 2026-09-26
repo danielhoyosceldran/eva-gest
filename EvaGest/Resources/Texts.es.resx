@@ -1400,4 +1400,100 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="ClientNotPicked" xml:space="preserve">
     <value>Elige un cliente de la lista, o cambia a Cliente nuevo para escribir su nombre.</value>
   </data>
+  <data name="NavOwnerMode" xml:space="preserve">
+    <value>Modo propietaria</value>
+  </data>
+  <data name="NavLock" xml:space="preserve">
+    <value>Bloquear</value>
+  </data>
+  <data name="OwnerUnlockTitle" xml:space="preserve">
+    <value>Modo propietaria</value>
+  </data>
+  <data name="OwnerUnlockIntro" xml:space="preserve">
+    <value>Escribe el PIN para abrir Ventas, Caja, Informes, Trabajadoras, Catálogo y Configuración.</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>PIN</value>
+  </data>
+  <data name="UnlockButton" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="ForgotPin" xml:space="preserve">
+    <value>He olvidado el PIN</value>
+  </data>
+  <data name="RecoveryCode" xml:space="preserve">
+    <value>Código de recuperación</value>
+  </data>
+  <data name="RecoveryIntro" xml:space="preserve">
+    <value>Escribe el código de recuperación que apuntaste en un papel al crear el PIN. Después podrás elegir uno nuevo.</value>
+  </data>
+  <data name="CheckRecoveryCode" xml:space="preserve">
+    <value>Comprobar el código</value>
+  </data>
+  <data name="BackToPin" xml:space="preserve">
+    <value>Volver al PIN</value>
+  </data>
+  <data name="WrongPin" xml:space="preserve">
+    <value>Ese PIN no es correcto. Vuelve a probar.</value>
+  </data>
+  <data name="WrongRecoveryCode" xml:space="preserve">
+    <value>Ese código no es correcto. Revisa el papel donde lo apuntaste.</value>
+  </data>
+  <data name="TooManyAttempts" xml:space="preserve">
+    <value>Demasiados intentos seguidos. Espera {0} segundos y vuelve a probar.</value>
+  </data>
+  <data name="CreateOwnerPinTitle" xml:space="preserve">
+    <value>Crea el PIN de propietaria</value>
+  </data>
+  <data name="CreateOwnerPinIntro" xml:space="preserve">
+    <value>Con este PIN solo tú podrás abrir Ventas, Caja, Informes, Trabajadoras, Catálogo y Configuración. Las trabajadoras seguirán usando Inicio, Agenda y Clientes.</value>
+  </data>
+  <data name="CurrentPin" xml:space="preserve">
+    <value>PIN actual</value>
+  </data>
+  <data name="NewPin" xml:space="preserve">
+    <value>PIN nuevo (de 4 a 6 cifras)</value>
+  </data>
+  <data name="RepeatPin" xml:space="preserve">
+    <value>Repite el PIN nuevo</value>
+  </data>
+  <data name="CreatePinButton" xml:space="preserve">
+    <value>Crear el PIN</value>
+  </data>
+  <data name="ChangePinTitle" xml:space="preserve">
+    <value>Cambiar el PIN de propietaria</value>
+  </data>
+  <data name="ChangePinButton" xml:space="preserve">
+    <value>Cambiar el PIN</value>
+  </data>
+  <data name="PinFormatInvalid" xml:space="preserve">
+    <value>El PIN debe tener de 4 a 6 cifras, sin letras ni espacios.</value>
+  </data>
+  <data name="PinsDoNotMatch" xml:space="preserve">
+    <value>Los dos PIN nuevos no coinciden. Vuelve a escribirlos.</value>
+  </data>
+  <data name="WrongCurrentPin" xml:space="preserve">
+    <value>El PIN actual no es correcto. Escribe el que usas ahora para entrar.</value>
+  </data>
+  <data name="RecoveryCodeTitle" xml:space="preserve">
+    <value>Código de recuperación</value>
+  </data>
+  <data name="RecoveryCodeMessage" xml:space="preserve">
+    <value>Apunta este código en un papel y guárdalo fuera de la tienda. Si algún día olvidas el PIN, es la única forma de crear uno nuevo. No se volverá a mostrar.</value>
+  </data>
+  <data name="RecoveryCodeWritten" xml:space="preserve">
+    <value>Ya lo he apuntado</value>
+  </data>
+  <data name="OwnerPinSection" xml:space="preserve">
+    <value>PIN de propietaria</value>
+  </data>
+  <data name="OwnerPinSectionHint" xml:space="preserve">
+    <value>El modo propietaria se cierra solo tras 5 minutos sin actividad, o al pulsar Bloquear.</value>
+  </data>
+  <data name="OwnerPinChanged" xml:space="preserve">
+    <value>PIN cambiado. El código de recuperación del papel sigue sirviendo.</value>
+  </data>
+  <data name="RestoreBringsBackPin" xml:space="preserve">
+    <value>La copia trae el PIN de propietaria que había cuando se hizo.</value>
+  </data>
 </root>

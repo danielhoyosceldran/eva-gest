@@ -186,6 +186,63 @@
         </Setter>
     </Style>
 
+    <!-- Link-looking action ("He oblidat el PIN"): underlined text, no box. For a side
+         path out of a form, so it does not compete with the form's real buttons. -->
+    <Style x:Key="LinkButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource BlueBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <!-- Transparent background so the whole text is clickable, not only the glyphs -->
+                    <Border Background="Transparent" Padding="0,4">
+                        <TextBlock x:Name="Label" Text="{TemplateBinding Content}" TextDecorations="Underline" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Label" Property="Foreground" Value="{StaticResource InkBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Label" Property="Foreground" Value="{StaticResource InkBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- PIN fields: same box as a TextBox, so a PIN dialog looks like any other form -->
+    <Style TargetType="PasswordBox">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
+        <Setter Property="MinHeight" Value="{StaticResource FieldHeight}" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Border x:Name="Outline" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource ControlRadius}">
+                        <ScrollViewer x:Name="PART_ContentHost" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Outline" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Outline" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Large figure surface — the only place with the blue rule -->
     <Style x:Key="HeroCard" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />

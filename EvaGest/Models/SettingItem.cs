@@ -32,4 +32,12 @@ public static class ConfigKeys
     /// <summary>Interface language, a <see cref="Models.Language"/> member. Read once at
     /// startup, so a change only shows after restarting.</summary>
     public const string Language                      = "language";
+
+    /// <summary>Salted hash of the owner's PIN (<see cref="Services.OwnerPin"/>). Missing
+    /// until the owner creates one; never the PIN itself.</summary>
+    public const string OwnerPin                      = "owner_pin";
+
+    /// <summary>Salted hash of the paper recovery code that lets the owner choose a new
+    /// PIN after forgetting it.</summary>
+    public const string OwnerRecoveryCode             = "owner_recovery_code";
 }

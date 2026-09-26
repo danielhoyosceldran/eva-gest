@@ -21,8 +21,10 @@
                 <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Style="{StaticResource DataLabel}" />
             </Border>
 
-            <!-- Summary cards -->
-            <UniformGrid Columns="6" Margin="0,0,0,16">
+            <!-- Summary cards. Rows="1" with no column count: UniformGrid skips collapsed
+                 children, so the row closes up when the four money cards are hidden
+                 (owner mode closed) instead of leaving gaps. -->
+            <UniformGrid Rows="1" Margin="0,0,0,16">
                 <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.AppointmentsToday}" Style="{StaticResource DataLabel}" />
@@ -35,25 +37,29 @@
                         <TextBlock Text="{Binding TodaySales}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0"
+                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.ChargedToday}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding ChargedTodayText}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0"
+                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.CashInPlural}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding CashInText}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0"
+                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.CashOutPlural}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding CashOutText}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource HeroCard}">
+                <Border Style="{StaticResource HeroCard}"
+                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.DayBalance}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding BalanceText}" Style="{StaticResource HeroFigure}" />

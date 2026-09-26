@@ -1,0 +1,22 @@
+<UserControl x:Class="EvaGest.Views.Dialogs.RecoveryCodeDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources">
+    <StackPanel Width="380">
+        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+
+        <TextBlock Text="{x:Static t:Texts.RecoveryCodeMessage}" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+        <!-- Selectable but read-only, in case the owner prefers to copy it somewhere too -->
+        <Border Style="{StaticResource HeroCard}" Margin="0,0,0,16">
+            <TextBox Text="{Binding Code, Mode=OneWay}" IsReadOnly="True" BorderThickness="0"
+                     Background="Transparent" HorizontalContentAlignment="Center"
+                     FontFamily="Consolas" FontSize="{StaticResource FontSizeSubhead}" FontWeight="SemiBold" />
+        </Border>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{x:Static t:Texts.RecoveryCodeWritten}" Style="{StaticResource PrimaryButton}"
+                    Command="{Binding DoneCommand}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

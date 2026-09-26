@@ -1400,4 +1400,100 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="ClientNotPicked" xml:space="preserve">
     <value>Tria un client de la llista, o canvia a Client nou per escriure'n el nom.</value>
   </data>
+  <data name="NavOwnerMode" xml:space="preserve">
+    <value>Mode propietària</value>
+  </data>
+  <data name="NavLock" xml:space="preserve">
+    <value>Bloquejar</value>
+  </data>
+  <data name="OwnerUnlockTitle" xml:space="preserve">
+    <value>Mode propietària</value>
+  </data>
+  <data name="OwnerUnlockIntro" xml:space="preserve">
+    <value>Escriu el PIN per obrir Vendes, Caixa, Informes, Treballadores, Catàleg i Configuració.</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>PIN</value>
+  </data>
+  <data name="UnlockButton" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="ForgotPin" xml:space="preserve">
+    <value>He oblidat el PIN</value>
+  </data>
+  <data name="RecoveryCode" xml:space="preserve">
+    <value>Codi de recuperació</value>
+  </data>
+  <data name="RecoveryIntro" xml:space="preserve">
+    <value>Escriu el codi de recuperació que vas apuntar en un paper quan vas crear el PIN. Després en podràs triar un de nou.</value>
+  </data>
+  <data name="CheckRecoveryCode" xml:space="preserve">
+    <value>Comprovar el codi</value>
+  </data>
+  <data name="BackToPin" xml:space="preserve">
+    <value>Tornar al PIN</value>
+  </data>
+  <data name="WrongPin" xml:space="preserve">
+    <value>Aquest PIN no és correcte. Torna-ho a provar.</value>
+  </data>
+  <data name="WrongRecoveryCode" xml:space="preserve">
+    <value>Aquest codi no és correcte. Revisa el paper on el vas apuntar.</value>
+  </data>
+  <data name="TooManyAttempts" xml:space="preserve">
+    <value>Massa intents seguits. Espera {0} segons i torna-ho a provar.</value>
+  </data>
+  <data name="CreateOwnerPinTitle" xml:space="preserve">
+    <value>Crea el PIN de propietària</value>
+  </data>
+  <data name="CreateOwnerPinIntro" xml:space="preserve">
+    <value>Amb aquest PIN només tu podràs obrir Vendes, Caixa, Informes, Treballadores, Catàleg i Configuració. Les treballadores continuaran fent servir Inici, Agenda i Clients.</value>
+  </data>
+  <data name="CurrentPin" xml:space="preserve">
+    <value>PIN actual</value>
+  </data>
+  <data name="NewPin" xml:space="preserve">
+    <value>PIN nou (de 4 a 6 xifres)</value>
+  </data>
+  <data name="RepeatPin" xml:space="preserve">
+    <value>Repeteix el PIN nou</value>
+  </data>
+  <data name="CreatePinButton" xml:space="preserve">
+    <value>Crear el PIN</value>
+  </data>
+  <data name="ChangePinTitle" xml:space="preserve">
+    <value>Canviar el PIN de propietària</value>
+  </data>
+  <data name="ChangePinButton" xml:space="preserve">
+    <value>Canviar el PIN</value>
+  </data>
+  <data name="PinFormatInvalid" xml:space="preserve">
+    <value>El PIN ha de tenir de 4 a 6 xifres, sense lletres ni espais.</value>
+  </data>
+  <data name="PinsDoNotMatch" xml:space="preserve">
+    <value>Els dos PIN nous no coincideixen. Torna'ls a escriure.</value>
+  </data>
+  <data name="WrongCurrentPin" xml:space="preserve">
+    <value>El PIN actual no és correcte. Escriu el que fas servir ara per entrar.</value>
+  </data>
+  <data name="RecoveryCodeTitle" xml:space="preserve">
+    <value>Codi de recuperació</value>
+  </data>
+  <data name="RecoveryCodeMessage" xml:space="preserve">
+    <value>Apunta aquest codi en un paper i guarda'l fora de la botiga. Si algun dia oblides el PIN, és l'única manera de crear-ne un de nou. No es tornarà a mostrar.</value>
+  </data>
+  <data name="RecoveryCodeWritten" xml:space="preserve">
+    <value>Ja l'he apuntat</value>
+  </data>
+  <data name="OwnerPinSection" xml:space="preserve">
+    <value>PIN de propietària</value>
+  </data>
+  <data name="OwnerPinSectionHint" xml:space="preserve">
+    <value>El mode propietària es tanca sol després de 5 minuts sense fer res, o quan prems Bloquejar.</value>
+  </data>
+  <data name="OwnerPinChanged" xml:space="preserve">
+    <value>PIN canviat. El codi de recuperació del paper continua servint.</value>
+  </data>
+  <data name="RestoreBringsBackPin" xml:space="preserve">
+    <value>La còpia porta el PIN de propietària que hi havia quan es va fer.</value>
+  </data>
 </root>

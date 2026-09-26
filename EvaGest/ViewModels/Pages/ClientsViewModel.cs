@@ -8,7 +8,8 @@ using EvaGest.Resources;
 
 namespace EvaGest.ViewModels.Pages;
 
-public partial class ClientsViewModel(IClientService clients, IReportsService reports, IDialogService dialogs) : PageViewModelBase
+public partial class ClientsViewModel(IClientService clients, IReportsService reports, IDialogService dialogs,
+    IOwnerAccessService owner) : PageViewModelBase
 {
     public override string Title => Texts.NavClients;
 
@@ -66,7 +67,7 @@ public partial class ClientsViewModel(IClientService clients, IReportsService re
     [RelayCommand]
     private async Task OpenRecord(Client client)
     {
-        var vm = new ClientRecordViewModel(clients, reports, dialogs, client);
+        var vm = new ClientRecordViewModel(clients, reports, dialogs, client, showAmounts: owner.IsUnlocked);
         await vm.Load();
         await dialogs.ShowDialog(vm);
         await Load();

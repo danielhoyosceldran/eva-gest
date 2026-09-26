@@ -17,6 +17,13 @@ public partial class ClientRecordViewModel : DialogViewModelBase
     private readonly IReportsService _reports;
     private readonly IDialogService _dialogs;
 
+    /// <summary>
+    /// Whether the record shows what the client has spent. Clients is a public page, but
+    /// money figures are the owner's: with owner mode closed the spend indicators are
+    /// hidden and the history's amount column reads "—". Fixed when the record opens.
+    /// </summary>
+    public bool ShowAmounts { get; }
+
     [ObservableProperty] private Client _client;
     [ObservableProperty] private ClientIndicators? _indicators;
 
@@ -48,8 +55,10 @@ public partial class ClientRecordViewModel : DialogViewModelBase
 
     public override string Title => Client.Name;
 
-    public ClientRecordViewModel(IClientService clients, IReportsService reports, IDialogService dialogs, Client client)
+    public ClientRecordViewModel(IClientService clients, IReportsService reports, IDialogService dialogs, Client client,
+        bool showAmounts)
     {
+        ShowAmounts = showAmounts;
         _clients = clients;
         _reports = reports;
         _dialogs = dialogs;
@@ -69,7 +78,7 @@ public partial class ClientRecordViewModel : DialogViewModelBase
                 isAppointment ? Texts.HistoryAppointment : Texts.HistorySale,
                 row.Concept ?? Texts.HistorySale,
                 Labels(row.Type, row.Status),
-                row.AmountCents is int cents ? Money.Format(cents) : "—"));
+                ShowAmounts && row.AmountCents is int cents ? Money.Format(cents) : "—"));
         }
     }
 

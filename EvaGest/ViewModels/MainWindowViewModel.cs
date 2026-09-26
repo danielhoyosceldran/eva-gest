@@ -13,6 +13,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IDialogService _dialogs;
     private readonly IAppointmentService _appointments;
+    private readonly IOwnerAccessService _owner;
 
     [ObservableProperty]
     private PageViewModelBase _currentPage;
@@ -43,10 +44,21 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly ReportsViewModel _reports;
     private readonly SettingsViewModel _settings;
 
+    /// <summary>
+    /// The owner's pages: only reachable while owner mode is open. Everything else
+    /// (Home, Agenda, Clients) is public to every worker.
+    /// </summary>
+    private readonly HashSet<PageViewModelBase> _privatePages;
+
+    /// <summary>True while owner mode is open: the private pages show in the sidebar and
+    /// the Home page shows the day's money.</summary>
+    public bool IsOwnerUnlocked => _owner.IsUnlocked;
+
     public MainWindowViewModel(HomeViewModel start, CatalogViewModel catalog, ClientsViewModel clients,
         WorkersViewModel workers, AgendaViewModel agenda, SalesViewModel sales,
         TillViewModel till, ReportsViewModel reports, SettingsViewModel settings,
-        IDialogService dialogs, IAppointmentService appointments, IAppointmentChangeNotifier appointmentChanges)
+        IDialogService dialogs, IAppointmentService appointments, IAppointmentChangeNotifier appointmentChanges,
+        IOwnerAccessService owner)
     {
         _start = start;
         _catalog = catalog;
@@ -59,7 +71,11 @@ public partial class MainWindowViewModel : ObservableObject
         _settings = settings;
         _dialogs = dialogs;
         _appointments = appointments;
+        _owner = owner;
         _currentPage = _start;
+        _privatePages = [_workers, _catalog, _sales, _till, _reports, _settings];
+
+        _owner.Changed += OnOwnerModeChanged;
 
         // Every page's IAppointmentService is its own transient instance; this singleton
         // is what lets an edit or delete made on the Agenda or Home page reach the
@@ -102,15 +118,84 @@ public partial class MainWindowViewModel : ObservableObject
         OverdueAppointmentsNotice = null;
     }
 
-    [RelayCommand] private void NavigateHome() => CurrentPage = _start;
-    [RelayCommand] private void NavigateAgenda() => CurrentPage = _agenda;
-    [RelayCommand] private void NavigateClients() => CurrentPage = _clients;
-    [RelayCommand] private void NavigateWorkers() => CurrentPage = _workers;
-    [RelayCommand] private void NavigateCatalog() => CurrentPage = _catalog;
-    [RelayCommand] private void NavigateSales() => CurrentPage = _sales;
-    [RelayCommand] private void NavigateTill() => CurrentPage = _till;
-    [RelayCommand] private void NavigateReports() => CurrentPage = _reports;
-    [RelayCommand] private void NavigateSettings() => CurrentPage = _settings;
+    [RelayCommand] private void NavigateHome() => Navigate(_start);
+    [RelayCommand] private void NavigateAgenda() => Navigate(_agenda);
+    [RelayCommand] private void NavigateClients() => Navigate(_clients);
+    [RelayCommand] private void NavigateWorkers() => Navigate(_workers);
+    [RelayCommand] private void NavigateCatalog() => Navigate(_catalog);
+    [RelayCommand] private void NavigateSales() => Navigate(_sales);
+    [RelayCommand] private void NavigateTill() => Navigate(_till);
+    [RelayCommand] private void NavigateReports() => Navigate(_reports);
+    [RelayCommand] private void NavigateSettings() => Navigate(_settings);
+
+    /// <summary>
+    /// The sidebar hides the private pages while owner mode is closed; this check is
+    /// the second lock, so a command fired some other way (a stale key binding, a
+    /// future shortcut) still cannot open one.
+    /// </summary>
+    private void Navigate(PageViewModelBase page)
+    {
+        if (_privatePages.Contains(page) && !_owner.IsUnlocked) return;
+        CurrentPage = page;
+    }
+
+    /// <summary>
+    /// Closing owner mode while a private page is open sends the user back to Home,
+    /// so the figures do not stay on screen after the lock. Home is told too, because
+    /// it hides its money cards when owner mode is closed.
+    /// </summary>
+    private void OnOwnerModeChanged()
+    {
+        OnPropertyChanged(nameof(IsOwnerUnlocked));
+        _start.OwnerModeChanged();
+
+        if (!_owner.IsUnlocked && _privatePages.Contains(CurrentPage))
+            CurrentPage = _start;
+    }
+
+    /// <summary>
+    /// Called by the shell once it is on screen. With no PIN yet (new install, or the
+    /// first start after owner mode arrived) the owner is asked to create one straight
+    /// away. Cancelling is allowed: the private pages then stay closed, and the sidebar
+    /// button asks again.
+    /// </summary>
+    public async Task EnsureOwnerPin()
+    {
+        if (!await _owner.HasPin()) await CreateOwnerPin();
+    }
+
+    /// <summary>The sidebar's "Mode propietària" button.</summary>
+    [RelayCommand]
+    private async Task UnlockOwner()
+    {
+        if (!await _owner.HasPin())
+        {
+            await CreateOwnerPin();
+            return;
+        }
+
+        var vm = new OwnerUnlockDialogViewModel(_owner);
+        if (await _dialogs.ShowDialog(vm) && vm.Recovered)
+            await CreateOwnerPin();
+    }
+
+    [RelayCommand]
+    private void LockOwner() => _owner.Lock();
+
+    /// <summary>New PIN, then its recovery code, shown the only time it can be.</summary>
+    private async Task CreateOwnerPin()
+    {
+        var vm = new OwnerPinDialogViewModel(_owner, OwnerPinMode.Create);
+        if (await _dialogs.ShowDialog(vm) && vm.NewRecoveryCode is { } code)
+            await _dialogs.ShowDialog(new RecoveryCodeDialogViewModel(code));
+    }
+
+    /// <summary>Any key or click anywhere in the app (hooked in the shell's code-behind)
+    /// restarts owner mode's idle countdown.</summary>
+    public void RegisterActivity() => _owner.RegisterActivity();
+
+    /// <summary>Polled from the shell's timer: closes owner mode after 5 idle minutes.</summary>
+    public void LockOwnerIfIdle() => _owner.LockIfIdle();
 
     [RelayCommand]
     private async Task OpenHelp()

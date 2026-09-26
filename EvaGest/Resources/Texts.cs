@@ -480,6 +480,38 @@ public static class Texts
         nameof(ClientBrowserEmpty),
         nameof(ChooseClient),
         nameof(ClientNotPicked),
+        nameof(NavOwnerMode),
+        nameof(NavLock),
+        nameof(OwnerUnlockTitle),
+        nameof(OwnerUnlockIntro),
+        nameof(Pin),
+        nameof(UnlockButton),
+        nameof(ForgotPin),
+        nameof(RecoveryCode),
+        nameof(RecoveryIntro),
+        nameof(CheckRecoveryCode),
+        nameof(BackToPin),
+        nameof(WrongPin),
+        nameof(WrongRecoveryCode),
+        nameof(TooManyAttempts),
+        nameof(CreateOwnerPinTitle),
+        nameof(CreateOwnerPinIntro),
+        nameof(CurrentPin),
+        nameof(NewPin),
+        nameof(RepeatPin),
+        nameof(CreatePinButton),
+        nameof(ChangePinTitle),
+        nameof(ChangePinButton),
+        nameof(PinFormatInvalid),
+        nameof(PinsDoNotMatch),
+        nameof(WrongCurrentPin),
+        nameof(RecoveryCodeTitle),
+        nameof(RecoveryCodeMessage),
+        nameof(RecoveryCodeWritten),
+        nameof(OwnerPinSection),
+        nameof(OwnerPinSectionHint),
+        nameof(OwnerPinChanged),
+        nameof(RestoreBringsBackPin),
     ];
 
     /// <summary>Pendent</summary>
@@ -1813,4 +1845,100 @@ public static class Texts
 
     /// <summary>Tria un client de la llista, o canvia a Client nou per escriure'n el nom.</summary>
     public static string ClientNotPicked => Get(nameof(ClientNotPicked));
+
+    /// <summary>Mode propietària</summary>
+    public static string NavOwnerMode => Get(nameof(NavOwnerMode));
+
+    /// <summary>Bloquejar</summary>
+    public static string NavLock => Get(nameof(NavLock));
+
+    /// <summary>Mode propietària</summary>
+    public static string OwnerUnlockTitle => Get(nameof(OwnerUnlockTitle));
+
+    /// <summary>Escriu el PIN per obrir Vendes, Caixa, Informes, Treballadores, Catàleg i Configuració.</summary>
+    public static string OwnerUnlockIntro => Get(nameof(OwnerUnlockIntro));
+
+    /// <summary>PIN</summary>
+    public static string Pin => Get(nameof(Pin));
+
+    /// <summary>Entrar</summary>
+    public static string UnlockButton => Get(nameof(UnlockButton));
+
+    /// <summary>He oblidat el PIN</summary>
+    public static string ForgotPin => Get(nameof(ForgotPin));
+
+    /// <summary>Codi de recuperació</summary>
+    public static string RecoveryCode => Get(nameof(RecoveryCode));
+
+    /// <summary>Escriu el codi de recuperació que vas apuntar en un paper quan vas crear el PIN. Després en podràs triar un de nou.</summary>
+    public static string RecoveryIntro => Get(nameof(RecoveryIntro));
+
+    /// <summary>Comprovar el codi</summary>
+    public static string CheckRecoveryCode => Get(nameof(CheckRecoveryCode));
+
+    /// <summary>Tornar al PIN</summary>
+    public static string BackToPin => Get(nameof(BackToPin));
+
+    /// <summary>Aquest PIN no és correcte. Torna-ho a provar.</summary>
+    public static string WrongPin => Get(nameof(WrongPin));
+
+    /// <summary>Aquest codi no és correcte. Revisa el paper on el vas apuntar.</summary>
+    public static string WrongRecoveryCode => Get(nameof(WrongRecoveryCode));
+
+    /// <summary>Massa intents seguits. Espera {0} segons i torna-ho a provar.</summary>
+    public static string TooManyAttempts => Get(nameof(TooManyAttempts));
+
+    /// <summary>Crea el PIN de propietària</summary>
+    public static string CreateOwnerPinTitle => Get(nameof(CreateOwnerPinTitle));
+
+    /// <summary>Amb aquest PIN només tu podràs obrir Vendes, Caixa, Informes, Treballadores, Catàleg i Configuració. Les treballadores continuaran fent servir Inici, Agenda i Clients.</summary>
+    public static string CreateOwnerPinIntro => Get(nameof(CreateOwnerPinIntro));
+
+    /// <summary>PIN actual</summary>
+    public static string CurrentPin => Get(nameof(CurrentPin));
+
+    /// <summary>PIN nou (de 4 a 6 xifres)</summary>
+    public static string NewPin => Get(nameof(NewPin));
+
+    /// <summary>Repeteix el PIN nou</summary>
+    public static string RepeatPin => Get(nameof(RepeatPin));
+
+    /// <summary>Crear el PIN</summary>
+    public static string CreatePinButton => Get(nameof(CreatePinButton));
+
+    /// <summary>Canviar el PIN de propietària</summary>
+    public static string ChangePinTitle => Get(nameof(ChangePinTitle));
+
+    /// <summary>Canviar el PIN</summary>
+    public static string ChangePinButton => Get(nameof(ChangePinButton));
+
+    /// <summary>El PIN ha de tenir de 4 a 6 xifres, sense lletres ni espais.</summary>
+    public static string PinFormatInvalid => Get(nameof(PinFormatInvalid));
+
+    /// <summary>Els dos PIN nous no coincideixen. Torna'ls a escriure.</summary>
+    public static string PinsDoNotMatch => Get(nameof(PinsDoNotMatch));
+
+    /// <summary>El PIN actual no és correcte. Escriu el que fas servir ara per entrar.</summary>
+    public static string WrongCurrentPin => Get(nameof(WrongCurrentPin));
+
+    /// <summary>Codi de recuperació</summary>
+    public static string RecoveryCodeTitle => Get(nameof(RecoveryCodeTitle));
+
+    /// <summary>Apunta aquest codi en un paper i guarda'l fora de la botiga. Si algun dia oblides el PIN, és l'única manera de crear-ne un de nou. No es tornarà a mostrar.</summary>
+    public static string RecoveryCodeMessage => Get(nameof(RecoveryCodeMessage));
+
+    /// <summary>Ja l'he apuntat</summary>
+    public static string RecoveryCodeWritten => Get(nameof(RecoveryCodeWritten));
+
+    /// <summary>PIN de propietària</summary>
+    public static string OwnerPinSection => Get(nameof(OwnerPinSection));
+
+    /// <summary>El mode propietària es tanca sol després de 5 minuts sense fer res, o quan prems Bloquejar.</summary>
+    public static string OwnerPinSectionHint => Get(nameof(OwnerPinSectionHint));
+
+    /// <summary>PIN canviat. El codi de recuperació del paper continua servint.</summary>
+    public static string OwnerPinChanged => Get(nameof(OwnerPinChanged));
+
+    /// <summary>La còpia porta el PIN de propietària que hi havia quan es va fer.</summary>
+    public static string RestoreBringsBackPin => Get(nameof(RestoreBringsBackPin));
 }

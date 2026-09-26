@@ -1,0 +1,66 @@
+<UserControl x:Class="EvaGest.Views.Dialogs.OwnerUnlockDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:t="clr-namespace:EvaGest.Resources">
+    <StackPanel Width="440" Margin="8">
+        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+
+        <!-- PIN step -->
+        <StackPanel Visibility="{Binding IsRecovering, Converter={StaticResource InverseVisibilityConverter}}">
+            <TextBlock Text="{x:Static t:Texts.OwnerUnlockIntro}" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+            <TextBlock Text="{x:Static t:Texts.Pin}" Style="{StaticResource DataLabel}" />
+            <!-- Enter submits through a key binding rather than IsDefault: the default
+                 button would still fire while the recovery step is showing. -->
+            <PasswordBox x:Name="PinBox" MaxLength="6" Margin="0,0,0,4"
+                         PasswordChanged="OnPinChanged">
+                <PasswordBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding UnlockCommand}" />
+                </PasswordBox.InputBindings>
+            </PasswordBox>
+
+            <!-- A way out of the form, not one of its actions: a link under the field -->
+            <Button Content="{x:Static t:Texts.ForgotPin}" Style="{StaticResource LinkButton}"
+                    Command="{Binding ForgotPinCommand}" Margin="0,0,0,16" />
+
+            <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+                       TextWrapping="Wrap" Margin="0,0,0,16"
+                       Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding CancelCommand}" IsCancel="True" />
+                <Button Content="{x:Static t:Texts.UnlockButton}" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding UnlockCommand}" Margin="8,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Recovery-code step -->
+        <StackPanel Visibility="{Binding IsRecovering, Converter={StaticResource BoolToVisibilityConverter}}">
+            <TextBlock Text="{x:Static t:Texts.RecoveryIntro}" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+            <TextBlock Text="{x:Static t:Texts.RecoveryCode}" Style="{StaticResource DataLabel}" />
+            <TextBox Text="{Binding RecoveryCode, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper"
+                     Tag="XXXX-XXXX-XXXX" Margin="0,0,0,4">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding CheckRecoveryCodeCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <!-- Same link look as "He oblidat el PIN": it is the way back along that path -->
+            <Button Content="{x:Static t:Texts.BackToPin}" Style="{StaticResource LinkButton}"
+                    Command="{Binding BackToPinCommand}" Margin="0,0,0,16" />
+
+            <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+                       TextWrapping="Wrap" Margin="0,0,0,16"
+                       Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding CancelCommand}" />
+                <Button Content="{x:Static t:Texts.CheckRecoveryCode}" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding CheckRecoveryCodeCommand}" Margin="8,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

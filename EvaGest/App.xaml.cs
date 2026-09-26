@@ -147,6 +147,10 @@ public partial class App : Application
         // grid asks for the slot granularity on every week load.
         s.AddSingleton<ISettingsService, SettingsService>();
         s.AddTransient<ISeedService, SeedService>();
+        // Singleton: one owner-mode state for the whole app. Built by hand so the
+        // optional clock and iteration count keep their production defaults.
+        s.AddSingleton<IOwnerAccessService>(sp =>
+            new OwnerAccessService(sp.GetRequiredService<ISettingsService>()));
 
         s.AddSingleton<MainWindowViewModel>();
         s.AddTransient<EvaGest.ViewModels.Pages.HomeViewModel>();

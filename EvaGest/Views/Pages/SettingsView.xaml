@@ -28,6 +28,21 @@
             </StackPanel>
         </Border>
 
+        <TextBlock Text="{x:Static t:Texts.OwnerPinSection}" Style="{StaticResource Subtitle}" />
+        <Border Style="{StaticResource DataCard}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="{x:Static t:Texts.OwnerPinSectionHint}"
+                           Style="{StaticResource DataLabel}" TextWrapping="Wrap" Margin="0,0,0,12" />
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="{x:Static t:Texts.ChangePinButton}" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ChangeOwnerPinCommand}" />
+                    <TextBlock Text="{Binding OwnerPinConfirmation}" VerticalAlignment="Center" Margin="12,0,0,0"
+                               Foreground="{StaticResource InkMutedBrush}" TextWrapping="Wrap"
+                               Visibility="{Binding OwnerPinConfirmation, Converter={StaticResource NullToVisibilityConverter}}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
         <TextBlock Text="{x:Static t:Texts.ShopDetails}" Style="{StaticResource Subtitle}" />
         <Border Style="{StaticResource DataCard}" Margin="0,0,0,16">
             <StackPanel>

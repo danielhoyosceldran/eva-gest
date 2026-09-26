@@ -30,11 +30,15 @@
                 <TextBlock Text="{x:Static t:Texts.NoShowPlural}" Style="{StaticResource DataLabel}" />
                 <TextBlock Text="{Binding Indicators.NoShows}" Style="{StaticResource Figure}" />
             </StackPanel>
-            <StackPanel Margin="0,0,12,0">
+            <!-- Hidden (not blanked) when owner mode is closed; the UniformGrid then
+                 closes the gap and frequency moves up next to the counts. -->
+            <StackPanel Margin="0,0,12,0"
+                        Visibility="{Binding ShowAmounts, Converter={StaticResource BoolToVisibilityConverter}}">
                 <TextBlock Text="{x:Static t:Texts.TotalSpent}" Style="{StaticResource DataLabel}" />
                 <TextBlock Text="{Binding TotalSpentText}" Style="{StaticResource Figure}" />
             </StackPanel>
-            <StackPanel Margin="0,0,12,0">
+            <StackPanel Margin="0,0,12,0"
+                        Visibility="{Binding ShowAmounts, Converter={StaticResource BoolToVisibilityConverter}}">
                 <TextBlock Text="{x:Static t:Texts.AveragePerVisit}" Style="{StaticResource DataLabel}" />
                 <TextBlock Text="{Binding AverageText}" Style="{StaticResource Figure}" />
             </StackPanel>

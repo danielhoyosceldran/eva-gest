@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
@@ -33,7 +33,7 @@ public class FluxAppointmentSaleTests
         var start = new HomeViewModel(
             appointments, sales, new TillService(factory), new ClientService(factory),
             new AvailabilityService(factory), new CatalogService(factory),
-            new WorkerService(factory), config, new TestSoundService(), dialogs);
+            new WorkerService(factory), config, new TestSoundService(), dialogs, TestOwner.New());
 
         return new Assembly(start, dialogs, appointments, sales);
     }

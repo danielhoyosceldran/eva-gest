@@ -33,6 +33,7 @@
             <h:PendingToVisibilityInverseConverter x:Key="PendingToVisibilityInverseConverter" />
             <h:DateOnlyConverter x:Key="DateOnlyConverter" />
             <h:LabelConverter x:Key="LabelConverter" />
+            <h:CurrentPageConverter x:Key="CurrentPageConverter" />
 
             <!-- Dialog content templates: DialogWindow only knows DialogViewModelBase,
                  the actual dialog layout is resolved from the ViewModel's runtime type. -->
@@ -50,6 +51,9 @@
             <DataTemplate DataType="{x:Type dvm:HelpViewModel}"><dv:HelpView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:WorkerDialogViewModel}"><dv:WorkerDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:ClientBrowserDialogViewModel}"><dv:ClientBrowserDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:OwnerUnlockDialogViewModel}"><dv:OwnerUnlockDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:OwnerPinDialogViewModel}"><dv:OwnerPinDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:RecoveryCodeDialogViewModel}"><dv:RecoveryCodeDialogView /></DataTemplate>
 
             <!-- The weekly grid is hosted both by the Agenda page and by the appointment dialog -->
             <DataTemplate DataType="{x:Type evm:WeekGridViewModel}"><ev:WeekGridView /></DataTemplate>

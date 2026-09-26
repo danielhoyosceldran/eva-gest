@@ -12,14 +12,14 @@ public class StartViewModelTests
 {
     private static readonly DateOnly Today = DateOnly.FromDateTime(DateTime.Today);
 
-    private static HomeViewModel CreatesViewModel(TestDatabase testDb)
+    private static HomeViewModel CreatesViewModel(TestDatabase testDb, IOwnerAccessService? owner = null)
     {
         var factory = new TestFactory(testDb.Options);
         return new HomeViewModel(
             new AppointmentService(factory), new SaleService(factory, new SettingsService(factory)), new TillService(factory),
             new ClientService(factory), new AvailabilityService(factory), new CatalogService(factory),
             new WorkerService(factory), new SettingsService(factory),
-            new TestSoundService(), new TestDialogService());
+            new TestSoundService(), new TestDialogService(), owner ?? TestOwner.New());
     }
 
     private static async Task<int> AddsMethod(TestDatabase testDb)
@@ -161,5 +161,23 @@ public class StartViewModelTests
         await vm.Load();
 
         vm.BirthdayNoticeText.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task The_days_money_shows_only_while_owner_mode_is_open()
+    {
+        await using var testDb = new TestDatabase();
+        var owner = await TestOwner.Unlocked();
+        var vm = CreatesViewModel(testDb, owner);
+        var raised = new List<string?>();
+        vm.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
+
+        vm.ShowMoney.Should().BeTrue();
+
+        owner.Lock();
+        vm.OwnerModeChanged();
+
+        vm.ShowMoney.Should().BeFalse();
+        raised.Should().Contain(nameof(HomeViewModel.ShowMoney));
     }
 }

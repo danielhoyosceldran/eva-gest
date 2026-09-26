@@ -23,7 +23,7 @@ public class SettingsPageTests
 
         return new SettingsViewModel(
             new BackupService(paths, config), new ExportService(factory), config,
-            new AvailabilityService(factory), dialogs ?? new TestDialogService());
+            new AvailabilityService(factory), dialogs ?? new TestDialogService(), TestOwner.New());
     }
 
     [Fact] // Q-01
@@ -312,7 +312,7 @@ public class SettingsPageTests
 
         return new SettingsViewModel(
             new BackupService(paths, config), new ExportService(factory), config,
-            new AvailabilityService(factory), dialogs);
+            new AvailabilityService(factory), dialogs, TestOwner.New());
     }
 
     [Fact]
@@ -394,7 +394,7 @@ public class SettingsPageTests
 
         return new SettingsViewModel(
             new BackupService(new AppPaths(folder.DbPath, folder.Path), config),
-            new ExportService(factory), config, new AvailabilityService(factory), dialogs);
+            new ExportService(factory), config, new AvailabilityService(factory), dialogs, TestOwner.New());
     }
 
     [Fact]

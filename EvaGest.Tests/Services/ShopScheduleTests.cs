@@ -17,7 +17,7 @@ public class ScheduleShopTests
         return new SettingsViewModel(
             new BackupService(paths, new SettingsService(factory)), new ExportService(factory),
             new SettingsService(factory), new AvailabilityService(factory),
-            new TestDialogService());
+            new TestDialogService(), TestOwner.New());
     }
 
     [Fact] // N-01

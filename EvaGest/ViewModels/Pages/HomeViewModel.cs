@@ -16,9 +16,20 @@ namespace EvaGest.ViewModels.Pages;
 public partial class HomeViewModel(
     IAppointmentService appointments, ISaleService sales, ITillService till, IClientService clients,
     IAvailabilityService availability, ICatalogService catalog, IWorkerService workers,
-    ISettingsService settings, ISoundService so, IDialogService dialogs) : PageViewModelBase
+    ISettingsService settings, ISoundService so, IDialogService dialogs,
+    IOwnerAccessService owner) : PageViewModelBase
 {
     public override string Title => Texts.NavHome;
+
+    /// <summary>
+    /// The day's money (charged, cash in, cash out, balance) is the owner's to see.
+    /// Home is public, so those four cards only show while owner mode is open; the
+    /// counts of appointments and sales stay for everyone.
+    /// </summary>
+    public bool ShowMoney => owner.IsUnlocked;
+
+    /// <summary>Called by the shell when owner mode opens or closes.</summary>
+    public void OwnerModeChanged() => OnPropertyChanged(nameof(ShowMoney));
 
     [ObservableProperty] private string _dateText = string.Empty;
     [ObservableProperty] private string? _birthdayNoticeText;

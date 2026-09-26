@@ -42,27 +42,57 @@
                        FontSize="{StaticResource FontSizeSubhead}" FontWeight="SemiBold"
                        Margin="20,16,20,16" />
 
+            <!-- IsChecked follows CurrentPage (one way) instead of being set once, so the
+                 highlight moves with the page even when the ViewModel changes it, as when
+                 owner mode closes on a private page and the shell falls back to Home. -->
             <StackPanel Grid.Row="2">
+                <!-- Public: every worker -->
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavHome}"
-                             IsChecked="True" Command="{Binding NavigateHomeCommand}" />
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=HomeViewModel}"
+                             Command="{Binding NavigateHomeCommand}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavAgenda}"
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=AgendaViewModel}"
                              Command="{Binding NavigateAgendaCommand}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavClients}"
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=ClientsViewModel}"
                              Command="{Binding NavigateClientsCommand}" />
+
+                <!-- Private: only while owner mode is open -->
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavWorkers}"
-                             Command="{Binding NavigateWorkersCommand}" />
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=WorkersViewModel}"
+                             Command="{Binding NavigateWorkersCommand}"
+                             Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavCatalog}"
-                             Command="{Binding NavigateCatalogCommand}" />
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=CatalogViewModel}"
+                             Command="{Binding NavigateCatalogCommand}"
+                             Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavSales}"
-                             Command="{Binding NavigateSalesCommand}" />
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=SalesViewModel}"
+                             Command="{Binding NavigateSalesCommand}"
+                             Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavTill}"
-                             Command="{Binding NavigateTillCommand}" />
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=TillViewModel}"
+                             Command="{Binding NavigateTillCommand}"
+                             Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavReports}"
-                             Command="{Binding NavigateReportsCommand}" />
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=ReportsViewModel}"
+                             Command="{Binding NavigateReportsCommand}"
+                             Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <RadioButton Style="{StaticResource ItemNav}" GroupName="Nav" Content="{x:Static t:Texts.NavSettings}"
-                             Command="{Binding NavigateSettingsCommand}" />
+                             IsChecked="{Binding CurrentPage, Mode=OneWay, Converter={StaticResource CurrentPageConverter}, ConverterParameter=SettingsViewModel}"
+                             Command="{Binding NavigateSettingsCommand}"
+                             Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                 <Button Style="{StaticResource NavActionItem}" Content="{x:Static t:Texts.NavHelp}"
                         Command="{Binding OpenHelpCommand}" />
+
+                <!-- Owner mode: opens with the PIN, closes by hand or after 5 idle minutes -->
+                <Button Style="{StaticResource NavActionItem}" Content="{x:Static t:Texts.NavOwnerMode}"
+                        Command="{Binding UnlockOwnerCommand}" Margin="0,16,0,0"
+                        Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource InverseVisibilityConverter}}" />
+                <Button Style="{StaticResource NavActionItem}" Content="{x:Static t:Texts.NavLock}"
+                        Command="{Binding LockOwnerCommand}" Margin="0,16,0,0"
+                        Visibility="{Binding IsOwnerUnlocked, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </Grid>
 
