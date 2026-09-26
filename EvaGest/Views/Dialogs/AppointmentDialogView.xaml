@@ -141,22 +141,34 @@
                        Margin="0,4,0,4" />
 
             <Grid Grid.Row="1" Margin="0,0,0,8">
+                <!-- Same navigation as the Agenda toolbar, on the same grid view model -->
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
-                        Command="{Binding Grid.WeekPreviousCommand}" />
-                <TextBlock Grid.Column="1" Text="{Binding Grid.RangeText}" Margin="12,0"
+                <Button Grid.Column="0" Content="«" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                        ToolTip="{x:Static t:Texts.ThreeDaysBack}" Command="{Binding Grid.JumpBackCommand}"
+                        Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
+                        ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
+                <TextBlock Grid.Column="2" Text="{Binding Grid.RangeText}" Margin="12,0"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
                            FontFamily="{StaticResource FontUi}" FontWeight="SemiBold"
                            Foreground="{StaticResource InkBrush}" />
-                <Button Grid.Column="2" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44"
-                        Command="{Binding Grid.WeekNextCommand}" Margin="0,0,8,0" />
-                <Button Grid.Column="3" Content="{x:Static t:Texts.Today}" Style="{StaticResource SecondaryButton}"
-                        Command="{Binding Grid.ThisWeekCommand}" />
+                <Button Grid.Column="3" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                        ToolTip="{Binding Grid.StepForwardTooltip}" Command="{Binding Grid.StepForwardCommand}" />
+                <Button Grid.Column="4" Content="»" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                        ToolTip="{x:Static t:Texts.ThreeDaysForward}" Command="{Binding Grid.JumpForwardCommand}"
+                        Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Button Grid.Column="5" Content="{x:Static t:Texts.Today}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding Grid.GoToTodayCommand}" Margin="0,0,8,0" />
+                <Button Grid.Column="6" Content="{Binding Grid.ToggleViewText}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding Grid.ToggleViewCommand}" />
             </Grid>
 
             <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"

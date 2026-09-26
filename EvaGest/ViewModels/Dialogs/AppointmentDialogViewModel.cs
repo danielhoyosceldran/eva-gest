@@ -193,7 +193,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         {
             SelectedAppointmentId = _id
         };
-        await Grid.LoadWeek(WeekHelper.MondayOfWeek(Date));
+        await Grid.LoadRange(Date);
         Grid.ShowGhost(Date, Time, DurationMin);
 
         ReviewGuestNotice();
@@ -306,8 +306,9 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     {
         if (Grid is not { } grid) return;
 
-        var monday = WeekHelper.MondayOfWeek(date);
-        if (grid.WeekStart != monday) await grid.LoadWeek(monday);
+        // Only reload when the date has left the days on screen: a click on another
+        // visible column must not shift the three-day view under the user's cursor.
+        if (!grid.Days.Any(d => d.Date == date)) await grid.LoadRange(date);
         grid.ShowGhost(date, Time, DurationMin);
     }
 

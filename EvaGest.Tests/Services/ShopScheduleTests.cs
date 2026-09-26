@@ -156,10 +156,11 @@ public class ScheduleShopTests
         await vm.SaveScheduleCommand.ExecuteAsync(null);
 
         var factory = new TestFactory(testDb.Options);
+        await new SettingsService(factory).Save(ConfigKeys.AgendaDays, "7");   // sunday must be on screen
         var grid = new EvaGest.ViewModels.Elements.WeekGridViewModel(
             new AppointmentService(factory), new AvailabilityService(factory), new SettingsService(factory),
             EvaGest.ViewModels.Elements.ModeGrid.Agenda, (_, _) => { });
-        await grid.LoadWeek(new DateOnly(2026, 9, 7));
+        await grid.LoadRange(new DateOnly(2026, 9, 7));
 
         (grid.GridStartMinute, grid.GridEndMinute).Should().Be((9 * 60, 19 * 60));   // plus the padding hours
         grid.Days[0].Bands.Should().HaveCount(2, "only the padding hours fall outside monday's schedule");

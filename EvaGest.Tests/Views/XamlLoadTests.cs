@@ -38,7 +38,7 @@ public class XamlLoadTests(ApplicationWpf app)
         var vm = new WeekGridViewModel(
             new AppointmentService(factory), new AvailabilityService(factory), new SettingsService(factory),
             ModeGrid.Agenda, (_, _) => { });
-        await vm.LoadWeek(new DateOnly(2026, 9, 7));
+        await vm.LoadRange(new DateOnly(2026, 9, 7));
 
         app.Runs(() =>
         {
@@ -149,7 +149,7 @@ public class XamlLoadTests(ApplicationWpf app)
             new AvailabilityService(factory), new ClientService(factory),
             new CatalogService(factory), new WorkerService(factory), config,
             new TestSoundService(), new TestDialogService());
-        await vm.Grid.LoadWeek(day);
+        await vm.Grid.LoadRange(day);
         await vm.SelectDayCommand.ExecuteAsync(day);
 
         app.Runs(() =>

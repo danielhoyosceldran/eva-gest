@@ -21,29 +21,41 @@
             </Border>
         </StackPanel>
 
-        <!-- Week header -->
+        <!-- Range header. ‹ › move one day in the three-day view (one week in the week
+             view); « » jump three days and only exist in the three-day view. -->
         <Grid Grid.Row="1" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="210" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="{x:Static t:Texts.PreviousWeek}" Style="{StaticResource SecondaryButton}"
-                    Command="{Binding Grid.WeekPreviousCommand}" />
-            <TextBlock Grid.Column="1" Text="{Binding Grid.RangeText}" Style="{StaticResource Subtitle}"
+            <Button Grid.Column="0" Content="«" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                    ToolTip="{x:Static t:Texts.ThreeDaysBack}" Command="{Binding Grid.JumpBackCommand}"
+                    Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+            <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
+                    ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
+            <TextBlock Grid.Column="2" Text="{Binding Grid.RangeText}" Style="{StaticResource Subtitle}"
                        Margin="16,0" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            <Button Grid.Column="2" Content="{x:Static t:Texts.NextWeek}" Style="{StaticResource SecondaryButton}"
-                    Command="{Binding Grid.WeekNextCommand}" Margin="0,0,12,0" />
-            <Button Grid.Column="3" Content="{x:Static t:Texts.ThisWeek}" Style="{StaticResource SecondaryButton}"
-                    Command="{Binding Grid.ThisWeekCommand}" Margin="0,0,12,0" />
+            <Button Grid.Column="3" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                    ToolTip="{Binding Grid.StepForwardTooltip}" Command="{Binding Grid.StepForwardCommand}" />
+            <Button Grid.Column="4" Content="»" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,12,0"
+                    ToolTip="{x:Static t:Texts.ThreeDaysForward}" Command="{Binding Grid.JumpForwardCommand}"
+                    Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+            <Button Grid.Column="5" Content="{x:Static t:Texts.Today}" Style="{StaticResource SecondaryButton}"
+                    Command="{Binding Grid.GoToTodayCommand}" Margin="0,0,12,0" />
+            <Button Grid.Column="6" Content="{Binding Grid.ToggleViewText}" Style="{StaticResource SecondaryButton}"
+                    Command="{Binding Grid.ToggleViewCommand}" Margin="0,0,12,0" />
             <!-- "All" and "Not defined" sit alongside the real workers in the same list. -->
-            <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,12,0"
+            <ComboBox Grid.Column="7" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,12,0"
                       ItemsSource="{Binding WorkerFilterOptions}" SelectedItem="{Binding SelectedWorkerFilter}"
                       DisplayMemberPath="Name" ToolTip="{x:Static t:Texts.Worker}" />
-            <Button Grid.Column="5" Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
+            <Button Grid.Column="8" Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
                     Command="{Binding NewAppointmentCommand}" />
         </Grid>
 

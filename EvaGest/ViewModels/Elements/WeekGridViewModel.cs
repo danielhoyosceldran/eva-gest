@@ -12,9 +12,14 @@ namespace EvaGest.ViewModels.Elements;
 public enum ModeGrid { Agenda, Selector }
 
 /// <summary>
-/// The weekly time grid, shared by the Agenda page and the appointment dialog. The only
+/// The time grid, shared by the Agenda page and the appointment dialog. The only
 /// behavioural difference between the two hosts is the pair of callbacks passed in,
 /// so the layout, the lane packing and the loading pipeline exist exactly once.
+///
+/// It shows either three days starting on any date (today and the next two, by default)
+/// or a whole Monday-to-Sunday week. The choice is one shared setting
+/// (<see cref="ConfigKeys.AgendaDays"/>), read on every load, so flipping it in the
+/// dialog's picker also changes the Agenda page and the other way round.
 ///
 /// Nothing here may touch Dispatcher, Brush or Application.Current: the tests build
 /// this off the UI thread. The now-line timer lives in the view's code-behind.
@@ -27,6 +32,7 @@ public partial class WeekGridViewModel : ObservableObject
     private readonly Action<DateOnly, TimeOnly> _onSlotClick;
     private readonly Action<Appointment>? _onAppointmentClick;
     private readonly Action<DateOnly>? _onDaySelected;
+    private readonly Func<DateOnly, Task>? _navigate;
 
     private GridAppointmentViewModel? _ghost;
     private DateOnly? _dateGhost;
@@ -35,7 +41,7 @@ public partial class WeekGridViewModel : ObservableObject
         IAppointmentService appointments, IAvailabilityService availability, ISettingsService settings,
         ModeGrid mode,
         Action<DateOnly, TimeOnly> onSlotClick, Action<Appointment>? onAppointmentClick = null,
-        Action<DateOnly>? onDaySelected = null)
+        Action<DateOnly>? onDaySelected = null, Func<DateOnly, Task>? navigate = null)
     {
         _appointments = appointments;
         _availability = availability;
@@ -43,21 +49,37 @@ public partial class WeekGridViewModel : ObservableObject
         _onSlotClick = onSlotClick;
         _onAppointmentClick = onAppointmentClick;
         _onDaySelected = onDaySelected;
+        _navigate = navigate;
 
         Mode = mode;
         SlotHeightPx = mode is ModeGrid.Agenda ? 44 : 26;
         RulerWidthPx = mode is ModeGrid.Agenda ? 64 : 44;
         MinAppointmentHeightPx = mode is ModeGrid.Agenda ? 22 : 14;
 
-        for (int i = 0; i < 7; i++) Days.Add(new GridDayViewModel(this));
+        // Columns are created for the default view; LoadRange adds or drops them if the
+        // stored setting says otherwise.
+        ResizeDays(ThreeDays);
     }
+
+    /// <summary>The two views the toggle switches between.</summary>
+    public const int ThreeDays = 3;
+    public const int WholeWeek = 7;
+
+    /// <summary>Anything stored other than 7 means the three-day view, so a missing or
+    /// hand-edited setting can never leave the grid with an odd number of columns.</summary>
+    public static int ValidDayCount(int stored) => stored == WholeWeek ? WholeWeek : ThreeDays;
 
     public ModeGrid Mode { get; }
     public double SlotHeightPx { get; }
     public double RulerWidthPx { get; }
     public double MinAppointmentHeightPx { get; }
 
-    [ObservableProperty] private DateOnly _weekStart;
+    /// <summary>First day shown: any date in the three-day view, always a Monday in the week view.</summary>
+    [ObservableProperty] private DateOnly _rangeStart;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StepBackTooltip), nameof(StepForwardTooltip), nameof(ToggleViewText))]
+    private bool _isThreeDayView = true;
     [ObservableProperty] private string _rangeText = string.Empty;
     [ObservableProperty] private bool _loading;
     [ObservableProperty] private int _slotMinutes = GridHelper.DefaultSlotMinutes;
@@ -74,7 +96,7 @@ public partial class WeekGridViewModel : ObservableObject
     public ObservableCollection<GridDayViewModel> Days { get; } = [];
     public ObservableCollection<RulerHourViewModel> Hours { get; } = [];
 
-    /// <summary>First opening minute of the week, used for the initial scroll position.</summary>
+    /// <summary>First opening minute of the days shown, used for the initial scroll position.</summary>
     private int _firstOpenMinute = GridHelper.DefaultRange.start;
 
     /// <summary>First opening minute per weekday, for "book on this day" defaults.</summary>
@@ -86,13 +108,43 @@ public partial class WeekGridViewModel : ObservableObject
         if (block?.Model is { } appointment) _onAppointmentClick?.Invoke(appointment);
     }
 
-    // Week navigation lives on the grid itself so both hosts get it: the Agenda toolbar
-    // and the picker embedded in the appointment dialog, which otherwise had no way to leave
-    // the current week.
-    [RelayCommand] private async Task WeekPrevious() => await LoadWeek(WeekStart.AddDays(-7));
-    [RelayCommand] private async Task WeekNext() => await LoadWeek(WeekStart.AddDays(7));
-    [RelayCommand] private async Task ThisWeek()
-        => await LoadWeek(WeekHelper.MondayOfWeek(DateOnly.FromDateTime(DateTime.Today)));
+    // Navigation lives on the grid itself so both hosts get it: the Agenda toolbar and
+    // the picker embedded in the appointment dialog, which otherwise had no way to leave
+    // the days on screen. The single arrows move one day in the three-day view (one week
+    // in the week view); the double arrows, shown only in the three-day view, jump three.
+    [RelayCommand] private Task StepBack() => Go(RangeStart.AddDays(IsThreeDayView ? -1 : -WholeWeek));
+    [RelayCommand] private Task StepForward() => Go(RangeStart.AddDays(IsThreeDayView ? 1 : WholeWeek));
+    [RelayCommand] private Task JumpBack() => Go(RangeStart.AddDays(-ThreeDays));
+    [RelayCommand] private Task JumpForward() => Go(RangeStart.AddDays(ThreeDays));
+    [RelayCommand] private Task GoToToday() => Go(DateOnly.FromDateTime(DateTime.Today));
+
+    public string StepBackTooltip => IsThreeDayView ? Texts.PreviousDay : Texts.WeekBack;
+    public string StepForwardTooltip => IsThreeDayView ? Texts.NextDay : Texts.WeekForward;
+
+    /// <summary>The toggle names the view it switches to, not the one on screen.</summary>
+    public string ToggleViewText => IsThreeDayView ? Texts.ShowWeekView : Texts.ShowThreeDayView;
+
+    /// <summary>
+    /// Flips between three days and the whole week and remembers the choice. Going to
+    /// three days keeps today on screen when the week shown contains it (the usual case),
+    /// otherwise it starts on the first day that was shown; going to the week snaps back
+    /// to that day's Monday inside <see cref="LoadRange"/>.
+    /// </summary>
+    [RelayCommand]
+    private async Task ToggleView()
+    {
+        bool toThreeDays = !IsThreeDayView;
+        await _settings.Save(ConfigKeys.AgendaDays, (toThreeDays ? ThreeDays : WholeWeek).ToString());
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var start = toThreeDays && Days.Any(d => d.Date == today) ? today : RangeStart;
+        await Go(start);
+    }
+
+    /// <summary>A host that must do more than redraw the grid (the Agenda keeps its
+    /// worker filter and its day detail in step) takes navigation over; the dialog's
+    /// picker lets the grid load itself.</summary>
+    private Task Go(DateOnly start) => _navigate is { } navigate ? navigate(start) : LoadRange(start);
 
     /// <summary>The whole day header books on that day, at its first opening slot.</summary>
     [RelayCommand]
@@ -167,50 +219,61 @@ public partial class WeekGridViewModel : ObservableObject
         }
     }
 
-    /// <summary>filter narrows the week to a subset of appointments (Agenda's toolbar
+    /// <summary>
+    /// Loads the days starting at <paramref name="start"/>: three of them from that exact
+    /// date, or the whole week containing it (from its Monday), depending on the stored
+    /// view. filter narrows the range to a subset of appointments (Agenda's toolbar
     /// worker filter); the appointment dialog's picker never passes one, so it keeps
-    /// showing everyone's bookings when checking for a free slot.</summary>
-    public async Task LoadWeek(DateOnly monday, Func<Appointment, bool>? filter = null)
+    /// showing everyone's bookings when checking for a free slot.
+    /// </summary>
+    public async Task LoadRange(DateOnly start, Func<Appointment, bool>? filter = null)
     {
         Loading = true;
         try
         {
-            WeekStart = monday;
-            var sunday = monday.AddDays(6);
-            RangeText = FormatRange(monday, sunday);
+            int dayCount = ValidDayCount(await _settings.GetInt(ConfigKeys.AgendaDays, ThreeDays));
+            IsThreeDayView = dayCount == ThreeDays;
+            if (!IsThreeDayView) start = WeekHelper.MondayOfWeek(start);
+            ResizeDays(dayCount);
 
-            // Three round trips for the whole week, never one per day.
-            var all = await _appointments.GetByRange(monday, sunday);
+            RangeStart = start;
+            var end = start.AddDays(dayCount - 1);
+            RangeText = FormatRange(start, end);
+
+            // Three round trips for the whole range, never one per day.
+            var all = await _appointments.GetByRange(start, end);
             if (filter is not null) all = all.Where(filter).ToList();
-            var closed = await _availability.ClosedDaysIn(monday, sunday);
+            var closed = await _availability.ClosedDaysIn(start, end);
             var intervalsPerDay = await _availability.WeeklyIntervals();
             SlotMinutes = GridHelper.IsValidSlotMinutes(
                 await _settings.GetInt(ConfigKeys.AgendaSlotMinutes, GridHelper.DefaultSlotMinutes));
 
-            var weekIntervals = new List<(TimeOnly start, TimeOnly fi)>();
-            for (int i = 0; i < 7; i++)
+            // Opening hours of the days on screen only, so the three-day view is not
+            // stretched to fit a longer day that is not even shown.
+            var rangeIntervals = new List<(TimeOnly start, TimeOnly fi)>();
+            for (int i = 0; i < dayCount; i++)
             {
-                var day = WeekHelper.ToWeekday(monday.AddDays(i));
-                if (intervalsPerDay.TryGetValue(day, out var intervals)) weekIntervals.AddRange(intervals);
+                var day = WeekHelper.ToWeekday(start.AddDays(i));
+                if (intervalsPerDay.TryGetValue(day, out var intervals)) rangeIntervals.AddRange(intervals);
             }
 
             var visible = all.Select(c => (c.Time, c.DurationMin));
             if (_ghost is { } f && _dateGhost is not null)
                 visible = visible.Append((GridHelper.ATime(GhostStartMinute), GhostDuration));
 
-            (GridStartMinute, GridEndMinute) = GridHelper.VisibleRange(weekIntervals, visible.ToList());
-            _firstOpenMinute = weekIntervals.Count == 0
+            (GridStartMinute, GridEndMinute) = GridHelper.VisibleRange(rangeIntervals, visible.ToList());
+            _firstOpenMinute = rangeIntervals.Count == 0
                 ? GridStartMinute
-                : weekIntervals.Min(f => GridHelper.DayMinutes(f.start));
+                : rangeIntervals.Min(f => GridHelper.DayMinutes(f.start));
             _openings = intervalsPerDay.ToDictionary(
                 p => p.Key, p => p.Value.Min(f => GridHelper.DayMinutes(f.start)));
 
             RecomputeMetrics();
             FillRuler();
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < dayCount; i++)
             {
-                var date = monday.AddDays(i);
+                var date = start.AddDays(i);
                 var day = Days[i];
                 day.Date = date;
                 day.IsToday = date == DateOnly.FromDateTime(DateTime.Today);
@@ -229,6 +292,23 @@ public partial class WeekGridViewModel : ObservableObject
             RefreshNow();
         }
         finally { Loading = false; }
+    }
+
+    /// <summary>
+    /// Grows or shrinks the column list to <paramref name="count"/>, keeping the columns
+    /// that survive: moving within the same view reuses every column, so WPF only
+    /// rebinds them instead of rebuilding the whole grid.
+    /// </summary>
+    private void ResizeDays(int count)
+    {
+        if (Days.Count == count) return;
+
+        while (Days.Count > count) Days.RemoveAt(Days.Count - 1);
+        while (Days.Count < count) Days.Add(new GridDayViewModel(this));
+
+        // The keyboard focus may point past the last column now.
+        _focusedDay = -1;
+        foreach (var day in Days) day.StopHover();
     }
 
     /// <summary>
@@ -280,15 +360,15 @@ public partial class WeekGridViewModel : ObservableObject
         NowTop = GridHelper.Top(now, GridStartMinute, PixelsPerMinute);
     }
 
-    private static string FormatRange(DateOnly monday, DateOnly sunday)
+    private static string FormatRange(DateOnly start, DateOnly end)
     {
         var culture = AppLanguage.Culture;
-        return monday.Month == sunday.Month
-            ? string.Format(Texts.WeekRangeSameMonth, monday.Day, sunday.Day,
-                            sunday.ToString("MMMM yyyy", culture))
+        return start.Month == end.Month
+            ? string.Format(Texts.WeekRangeSameMonth, start.Day, end.Day,
+                            end.ToString("MMMM yyyy", culture))
             : string.Format(Texts.WeekRangeAcrossMonths,
-                            monday.ToString("d MMM", culture),
-                            sunday.ToString("d MMM yyyy", culture));
+                            start.ToString("d MMM", culture),
+                            end.ToString("d MMM yyyy", culture));
     }
 
     private void RecomputeMetrics()

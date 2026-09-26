@@ -179,9 +179,15 @@ public static class Texts
         nameof(RegisteredClientOrFreeName),
         nameof(ClientNameAlreadyExists),
         nameof(CopyMondayToWeekdays),
-        nameof(PreviousWeek),
-        nameof(NextWeek),
         nameof(Today),
+        nameof(PreviousDay),
+        nameof(NextDay),
+        nameof(ThreeDaysBack),
+        nameof(ThreeDaysForward),
+        nameof(WeekBack),
+        nameof(WeekForward),
+        nameof(ShowWeekView),
+        nameof(ShowThreeDayView),
         nameof(Yesterday),
         nameof(ThisWeek),
         nameof(ThisMonth),
@@ -896,14 +902,32 @@ public static class Texts
     /// <summary>Copiar dilluns a dimarts–divendres</summary>
     public static string CopyMondayToWeekdays => Get(nameof(CopyMondayToWeekdays));
 
-    /// <summary>‹ Setmana anterior</summary>
-    public static string PreviousWeek => Get(nameof(PreviousWeek));
-
-    /// <summary>Setmana següent ›</summary>
-    public static string NextWeek => Get(nameof(NextWeek));
-
     /// <summary>Avui</summary>
     public static string Today => Get(nameof(Today));
+
+    /// <summary>Dia anterior</summary>
+    public static string PreviousDay => Get(nameof(PreviousDay));
+
+    /// <summary>Dia següent</summary>
+    public static string NextDay => Get(nameof(NextDay));
+
+    /// <summary>Tres dies enrere</summary>
+    public static string ThreeDaysBack => Get(nameof(ThreeDaysBack));
+
+    /// <summary>Tres dies endavant</summary>
+    public static string ThreeDaysForward => Get(nameof(ThreeDaysForward));
+
+    /// <summary>Setmana anterior</summary>
+    public static string WeekBack => Get(nameof(WeekBack));
+
+    /// <summary>Setmana següent</summary>
+    public static string WeekForward => Get(nameof(WeekForward));
+
+    /// <summary>Veure la setmana</summary>
+    public static string ShowWeekView => Get(nameof(ShowWeekView));
+
+    /// <summary>Veure 3 dies</summary>
+    public static string ShowThreeDayView => Get(nameof(ShowThreeDayView));
 
     /// <summary>Ahir</summary>
     public static string Yesterday => Get(nameof(Yesterday));

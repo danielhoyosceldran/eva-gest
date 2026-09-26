@@ -484,14 +484,32 @@
   <data name="CopyMondayToWeekdays" xml:space="preserve">
     <value>Copiar dilluns a dimarts–divendres</value>
   </data>
-  <data name="PreviousWeek" xml:space="preserve">
-    <value>‹ Setmana anterior</value>
-  </data>
-  <data name="NextWeek" xml:space="preserve">
-    <value>Setmana següent ›</value>
-  </data>
   <data name="Today" xml:space="preserve">
     <value>Avui</value>
+  </data>
+  <data name="PreviousDay" xml:space="preserve">
+    <value>Dia anterior</value>
+  </data>
+  <data name="NextDay" xml:space="preserve">
+    <value>Dia següent</value>
+  </data>
+  <data name="ThreeDaysBack" xml:space="preserve">
+    <value>Tres dies enrere</value>
+  </data>
+  <data name="ThreeDaysForward" xml:space="preserve">
+    <value>Tres dies endavant</value>
+  </data>
+  <data name="WeekBack" xml:space="preserve">
+    <value>Setmana anterior</value>
+  </data>
+  <data name="WeekForward" xml:space="preserve">
+    <value>Setmana següent</value>
+  </data>
+  <data name="ShowWeekView" xml:space="preserve">
+    <value>Veure la setmana</value>
+  </data>
+  <data name="ShowThreeDayView" xml:space="preserve">
+    <value>Veure 3 dies</value>
   </data>
   <data name="Yesterday" xml:space="preserve">
     <value>Ahir</value>

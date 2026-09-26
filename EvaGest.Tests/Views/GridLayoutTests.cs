@@ -43,7 +43,7 @@ public class GridLayoutTests(ApplicationWpf app)
         var vm = new WeekGridViewModel(
             new AppointmentService(factory), new AvailabilityService(factory), new SettingsService(factory),
             ModeGrid.Agenda, (_, _) => { });
-        await vm.LoadWeek(Monday);
+        await vm.LoadRange(Monday);
         return vm;
     }
 
@@ -145,11 +145,11 @@ public class GridLayoutTests(ApplicationWpf app)
         });
 
         await vm.Initialization;
-        vm.Grid!.Days.Should().HaveCount(7);
+        vm.Grid!.Days.Should().HaveCount(3, "the picker opens on the default three-day view");
     }
 
     [Fact] // L-06
-    public async Task The_dialog_picker_can_change_week()
+    public async Task The_dialog_picker_moves_by_one_day_and_jumps_by_three()
     {
         await using var testDb = new TestDatabase();
         var factory = new TestFactory(testDb.Options);
@@ -162,11 +162,17 @@ public class GridLayoutTests(ApplicationWpf app)
         var grid = vm.Grid!;
         grid.RangeText.Should().NotBeEmpty();
 
-        await grid.WeekNextCommand.ExecuteAsync(null);
-        grid.WeekStart.Should().Be(Monday.AddDays(7));
+        grid.RangeStart.Should().Be(Monday, "three days start on the appointment's own date");
 
-        await grid.WeekPreviousCommand.ExecuteAsync(null);
-        grid.WeekStart.Should().Be(Monday);
+        await grid.StepForwardCommand.ExecuteAsync(null);
+        grid.RangeStart.Should().Be(Monday.AddDays(1));
+
+        await grid.JumpForwardCommand.ExecuteAsync(null);
+        grid.RangeStart.Should().Be(Monday.AddDays(4));
+
+        await grid.JumpBackCommand.ExecuteAsync(null);
+        await grid.StepBackCommand.ExecuteAsync(null);
+        grid.RangeStart.Should().Be(Monday);
     }
 
     [Fact] // L-04

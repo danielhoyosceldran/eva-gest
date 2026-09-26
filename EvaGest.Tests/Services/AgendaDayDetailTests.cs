@@ -110,7 +110,7 @@ public class AgendaDetailDayTests
         await AddsAppointment(testDb, Monday, new TimeOnly(10, 0));
 
         var vm = await Build(testDb);
-        await vm.Grid.LoadWeek(Monday);
+        await vm.Grid.LoadRange(Monday);
         await vm.SelectDayCommand.ExecuteAsync(Monday);
 
         await vm.MarkNoShowCommand.ExecuteAsync(vm.DayAppointments[0].Appointment);
@@ -136,22 +136,62 @@ public class AgendaDetailDayTests
     }
 
     [Fact] // U-07
-    public async Task Changing_week_closes_the_detail_of_a_day_no_longer_shown()
+    public async Task Moving_the_grid_closes_the_detail_of_a_day_no_longer_shown()
     {
         await using var testDb = new TestDatabase();
         await AddsAppointment(testDb, Monday, new TimeOnly(10, 0));
 
         var vm = await Build(testDb);
-        await vm.Grid.LoadWeek(Monday);
+        await vm.Grid.LoadRange(Monday);
         await vm.SelectDayCommand.ExecuteAsync(Monday);
 
-        await vm.Grid.WeekNextCommand.ExecuteAsync(null);
+        // The grid hands its navigation to the page, which refreshes the detail at once
+        await vm.Grid.StepForwardCommand.ExecuteAsync(null);
 
-        // The grid loads the new week on its own; the page notices on its next refresh
-        vm.Grid.WeekStart.Should().Be(Monday.AddDays(7));
-        await vm.MarkCancelledCommand.ExecuteAsync(vm.DayAppointments[0].Appointment);
-
+        vm.Grid.RangeStart.Should().Be(Monday.AddDays(1));
         vm.HasSelectedDay.Should().BeFalse(
             "the panel must not keep showing a day that has left the grid");
+    }
+
+    [Fact] // U-08
+    public async Task Moving_the_grid_keeps_the_detail_of_a_day_still_shown()
+    {
+        await using var testDb = new TestDatabase();
+        await AddsAppointment(testDb, Monday.AddDays(2), new TimeOnly(10, 0));
+
+        var vm = await Build(testDb);
+        await vm.Grid.LoadRange(Monday);
+        await vm.SelectDayCommand.ExecuteAsync(Monday.AddDays(2));
+
+        await vm.Grid.StepForwardCommand.ExecuteAsync(null);
+
+        vm.HasSelectedDay.Should().BeTrue();
+        vm.DayAppointments.Should().ContainSingle();
+    }
+
+    [Fact] // U-09
+    public async Task Moving_the_grid_keeps_the_worker_filter()
+    {
+        // Load always opens on today, so the data sits relative to the real date.
+        var tomorrow = DateOnly.FromDateTime(DateTime.Today).AddDays(1);
+        await using var testDb = new TestDatabase();
+        await using (var db = testDb.Context())
+        {
+            db.Workers.Add(Make.Worker("Marta"));
+            await db.SaveChangesAsync(TestContext.Current.CancellationToken);
+        }
+        await AddsAppointment(testDb, tomorrow, new TimeOnly(10, 0));   // nobody assigned
+
+        var vm = await Build(testDb);
+        await vm.Load();
+        vm.SelectedWorkerFilter = vm.WorkerFilterOptions.Single(o => o.Worker?.Name == "Marta");
+        await vm.Grid.GoToTodayCommand.ExecuteAsync(null);
+
+        // Before the grid handed navigation to the page, moving reloaded without the filter
+        await vm.Grid.StepForwardCommand.ExecuteAsync(null);
+
+        vm.Grid.Days[0].Date.Should().Be(tomorrow);
+        vm.Grid.Days[0].Appointments.Should().BeEmpty(
+            "an unassigned appointment must stay hidden behind Marta's filter after moving");
     }
 }

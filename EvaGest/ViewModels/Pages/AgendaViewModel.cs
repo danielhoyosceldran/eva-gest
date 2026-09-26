@@ -12,7 +12,7 @@ using EvaGest.Resources;
 namespace EvaGest.ViewModels.Pages;
 
 /// <summary>
-/// Weekly agenda (pantalles 2.2). The week itself is drawn by the shared time grid,
+/// Agenda (pantalles 2.2): three days or a whole week, drawn by the shared time grid,
 /// which the appointment dialog also embeds; this page owns the toolbar, turns the grid's
 /// callbacks into "new appointment here" and "edit that appointment", and hosts the
 /// day detail that the compact grid cards deliberately leave out.
@@ -48,7 +48,8 @@ public partial class AgendaViewModel : PageViewModelBase
         Grid = new WeekGridViewModel(appointments, availability, settings, ModeGrid.Agenda,
             onSlotClick: (date, time) => _ = NewAppointmentAt(date, time),
             onAppointmentClick: appointment => _ = EditAppointment(appointment),
-            onDaySelected: date => _ = SelectDay(date));
+            onDaySelected: date => _ = SelectDay(date),
+            navigate: LoadRange);
     }
 
     public override string Title => Texts.NavAgenda;
@@ -88,9 +89,11 @@ public partial class AgendaViewModel : PageViewModelBase
     [ObservableProperty] private WorkerFilterItem? _selectedWorkerFilter;
     public ObservableCollection<WorkerFilterItem> WorkerFilterOptions { get; } = [];
 
-    /// <summary>Which week is shown and its label both live on the grid, so this toolbar
-    /// and the picker embedded in the appointment dialog drive exactly the same navigation.</summary>
-    private DateOnly WeekStart => Grid.WeekStart;
+    /// <summary>Which days are shown and their label both live on the grid, so this toolbar
+    /// and the picker embedded in the appointment dialog drive exactly the same navigation.
+    /// The grid hands its navigation back to <see cref="LoadRange"/> here, so moving
+    /// keeps the worker filter and refreshes the day detail.</summary>
+    private DateOnly RangeStart => Grid.RangeStart;
 
     public async Task Load()
     {
@@ -104,20 +107,20 @@ public partial class AgendaViewModel : PageViewModelBase
             SelectedWorkerFilter = WorkerFilterOptions[0];
         }
 
-        await LoadWeek(WeekHelper.MondayOfWeek(DateOnly.FromDateTime(DateTime.Today)));
+        await LoadRange(DateOnly.FromDateTime(DateTime.Today));
     }
 
-    partial void OnSelectedWorkerFilterChanged(WorkerFilterItem? value) => _ = LoadWeek(WeekStart);
+    partial void OnSelectedWorkerFilterChanged(WorkerFilterItem? value) => _ = LoadRange(RangeStart);
 
     /// <summary>Toolbar button: books on the day being examined if there is one, else on
-    /// today when today is in view, else on the Monday shown — and always at that day's
+    /// today when today is in view, else on the first day shown — and always at that day's
     /// first opening slot rather than a fixed hour.</summary>
     [RelayCommand]
     private async Task NewAppointment()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var date = SelectedDay
-                   ?? (Grid.Days.Any(d => d.Date == today) ? today : WeekStart);
+                   ?? (Grid.Days.Any(d => d.Date == today) ? today : RangeStart);
         await NewAppointmentAt(date, GridHelper.ATime(Grid.FirstSlotOf(date)));
     }
 
@@ -125,14 +128,14 @@ public partial class AgendaViewModel : PageViewModelBase
     {
         var vm = new AppointmentDialogViewModel(_appointments, _availability, _clients, _catalog,
             _workers, _settings, _dialogs, date, time);
-        if (await _dialogs.ShowDialog(vm)) await LoadWeek(WeekStart);
+        if (await _dialogs.ShowDialog(vm)) await LoadRange(RangeStart);
     }
 
     private async Task EditAppointment(Appointment appointment)
     {
         var vm = new AppointmentDialogViewModel(_appointments, _availability, _clients, _catalog,
             _workers, _settings, _dialogs, appointment);
-        if (await _dialogs.ShowDialog(vm)) await LoadWeek(WeekStart);
+        if (await _dialogs.ShowDialog(vm)) await LoadRange(RangeStart);
     }
 
     // ── Day detail ───────────────────────────────────────────────────────────
@@ -167,7 +170,7 @@ public partial class AgendaViewModel : PageViewModelBase
             _sales, _clients, _catalog, _workers, _so, _settings, _dialogs, appointment);
         await _dialogs.ShowDialog(vm);
 
-        await LoadWeek(WeekStart);
+        await LoadRange(RangeStart);
     }
 
     [RelayCommand] private Task MarkCancelled(Appointment appointment) => ChangeStatus(appointment, AppointmentStatus.Cancelled);
@@ -176,7 +179,7 @@ public partial class AgendaViewModel : PageViewModelBase
     private async Task ChangeStatus(Appointment appointment, AppointmentStatus newValue)
     {
         await _appointments.ChangeStatus(appointment.Id, newValue);
-        await LoadWeek(WeekStart);
+        await LoadRange(RangeStart);
     }
 
     /// <summary>
@@ -197,7 +200,7 @@ public partial class AgendaViewModel : PageViewModelBase
         if (!confirmed) return;
 
         var result = await _appointments.Delete(appointment.Id);
-        await LoadWeek(WeekStart);
+        await LoadRange(RangeStart);
 
         ShowNotice(result == DeleteResult.Blocked
             ? Texts.AppointmentNotDeletedHasSale
@@ -239,12 +242,12 @@ public partial class AgendaViewModel : PageViewModelBase
     private static string Capitalize(string text)
         => text.Length == 0 ? text : char.ToUpper(text[0], AppLanguage.Culture) + text[1..];
 
-    private async Task LoadWeek(DateOnly monday)
+    private async Task LoadRange(DateOnly start)
     {
         Loading = true;
         try
         {
-            await Grid.LoadWeek(monday, SelectedWorkerFilter is { } filter ? filter.Matches : null);
+            await Grid.LoadRange(start, SelectedWorkerFilter is { } filter ? filter.Matches : null);
 
             // The detail panel would otherwise keep showing the appointments of a day
             // that is no longer on screen, or stale rows after an edit.
