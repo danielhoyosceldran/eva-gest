@@ -349,9 +349,16 @@
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
+                        <!-- The closed box. DisplayMemberPath does not fill SelectionBoxItemTemplate:
+                             WPF turns it into an ItemTemplateSelector instead, so without the selector
+                             binding every DisplayMemberPath combo showed the item's ToString() once
+                             closed — the type name for PaymentMethod, Product, ExpenseCategory.
+                             Same three bindings as WPF's own ComboBox template. -->
                         <ContentPresenter x:Name="Body" IsHitTestVisible="False"
                                           Content="{TemplateBinding SelectionBoxItem}"
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                          ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
                                           Margin="{TemplateBinding Padding}" HorizontalAlignment="Left"
                                           VerticalAlignment="Center" />
                         <Popup x:Name="Dropdown" IsOpen="{TemplateBinding IsDropDownOpen}"
