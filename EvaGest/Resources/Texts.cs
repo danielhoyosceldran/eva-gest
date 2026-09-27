@@ -369,6 +369,7 @@ public static class Texts
         nameof(CatalogItemDeleted),
         nameof(BirthdaysToday),
         nameof(AppointmentHasSaleCannotReopen),
+        nameof(AppointmentHasSaleCannotCancel),
         nameof(OverdueAppointmentsNotice),
         nameof(NoSalesThisMonth),
         nameof(ClientOfTheMonthLine),
@@ -1511,6 +1512,9 @@ public static class Texts
 
     /// <summary>La cita té una venda associada i no s'ha pogut tornar a p...</summary>
     public static string AppointmentHasSaleCannotReopen => Get(nameof(AppointmentHasSaleCannotReopen));
+
+    /// <summary>Aquesta cita ja està cobrada, i una venda no pot quedar lligada...</summary>
+    public static string AppointmentHasSaleCannotCancel => Get(nameof(AppointmentHasSaleCannotCancel));
 
     /// <summary>Fa més d'una hora que hauria d'haver acabat i encara és p...</summary>
     public static string OverdueAppointmentsNotice => Get(nameof(OverdueAppointmentsNotice));

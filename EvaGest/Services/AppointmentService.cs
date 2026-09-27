@@ -102,6 +102,13 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         if (newStatus == AppointmentStatus.Pending && appointment.Sale is { Status: SaleStatus.Active })
             return false;
 
+        // F-05: a cancelled or no-show appointment can never carry a sale. Only the
+        // step to Pending used to be guarded, so an appointment already charged could
+        // be marked cancelled while its sale kept counting in the till.
+        if (newStatus is AppointmentStatus.Cancelled or AppointmentStatus.NoShow
+            && appointment.Sale is { Status: SaleStatus.Active })
+            return false;
+
         appointment.Status = newStatus;
         await db.SaveChangesAsync();
 

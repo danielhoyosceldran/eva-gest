@@ -27,10 +27,10 @@ public interface IAppointmentService
     Task Update(Appointment appointment);
 
     /// <summary>
-    /// Changes state. Cancelled and no-show can never carry a sale (RF-02). Resetting a
-    /// Completed appointment back to Pending is refused when it still carries an active
-    /// sale (returns <c>false</c>): the sale names the appointment and already moved
-    /// money, so it has to be voided first.
+    /// Changes state. Cancelled and no-show can never carry a sale (RF-02, F-05).
+    /// Returns <c>false</c> and changes nothing when the appointment still carries an
+    /// active sale and the new state is Pending, Cancelled or NoShow: the sale names
+    /// the appointment and already moved money, so it has to be voided first.
     /// </summary>
     Task<bool> ChangeStatus(int appointmentId, AppointmentStatus newStatus);
 

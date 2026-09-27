@@ -354,4 +354,29 @@ public class AppointmentServiceTests
         appointment.EndTime.Should().Be(EvaGest.Helpers.GridHelper.ClampedEnd(start, durationMin));
         appointment.EndTime.Should().BeOnOrAfter(start, "an appointment never ends before it starts");
     }
+
+    [Theory] // F-05
+    [InlineData(AppointmentStatus.Cancelled)]
+    [InlineData(AppointmentStatus.NoShow)]
+    public async Task A_charged_appointment_can_not_be_cancelled_or_marked_no_show(AppointmentStatus newStatus)
+    {
+        await using var testDb = new TestDatabase();
+        var appointments = CreatesService(testDb);
+        int id = await appointments.Create(new Appointment { Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, GuestName = "C" });
+
+        int methodId;
+        await using (var db = testDb.Context())
+        {
+            var method = Make.Method();
+            db.PaymentMethods.Add(method);
+            await db.SaveChangesAsync();
+            methodId = method.Id;
+        }
+        var sale = Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(1500));
+        sale.AppointmentId = id;
+        await new SaleService(new TestFactory(testDb.Options), new TestSettings()).Create(sale, [Make.Line(1500)]);
+
+        (await appointments.ChangeStatus(id, newStatus)).Should().BeFalse();
+        (await appointments.GetById(id))!.Status.Should().Be(AppointmentStatus.Completed);
+    }
 }

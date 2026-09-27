@@ -178,8 +178,12 @@ public partial class AgendaViewModel : PageViewModelBase
 
     private async Task ChangeStatus(Appointment appointment, AppointmentStatus newValue)
     {
-        await _appointments.ChangeStatus(appointment.Id, newValue);
+        bool changed = await _appointments.ChangeStatus(appointment.Id, newValue);
         await LoadRange(RangeStart);
+
+        // Refused when the appointment was already charged (F-05).
+        if (!changed)
+            ShowNotice(Texts.AppointmentHasSaleCannotCancel);
     }
 
     /// <summary>

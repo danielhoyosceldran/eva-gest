@@ -120,8 +120,12 @@ public partial class HomeViewModel(
 
     private async Task ChangeAppointmentStatus(Appointment appointment, AppointmentStatus newStatus)
     {
-        await appointments.ChangeStatus(appointment.Id, newStatus);
+        bool changed = await appointments.ChangeStatus(appointment.Id, newStatus);
         await Load();
+
+        // Refused when the appointment was already charged (F-05).
+        if (!changed)
+            ShowNotice(Texts.AppointmentHasSaleCannotCancel);
     }
 
     [RelayCommand]
