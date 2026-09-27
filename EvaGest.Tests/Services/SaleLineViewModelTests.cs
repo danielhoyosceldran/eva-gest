@@ -15,7 +15,7 @@ public class SaleLineViewModelTests
     [Fact]
     public void The_vat_box_is_a_percentage_not_basis_points()
     {
-        var line = SaleLineViewModel.Free();
+        var line = SaleLineViewModel.Free(0);
 
         line.VatText = "21";
 
@@ -39,7 +39,7 @@ public class SaleLineViewModelTests
     [InlineData("")]
     public void A_quantity_that_is_not_a_whole_positive_number_makes_the_line_invalid(string typed)
     {
-        var line = SaleLineViewModel.Free();
+        var line = SaleLineViewModel.Free(0);
         line.Description = "Tall";
         line.PriceText = "15,00";
         line.VatText = "21";
@@ -56,7 +56,7 @@ public class SaleLineViewModelTests
     [InlineData("")]
     public void A_vat_rate_outside_0_to_100_makes_the_line_invalid(string typed)
     {
-        var line = SaleLineViewModel.Free();
+        var line = SaleLineViewModel.Free(0);
         line.Description = "Tall";
         line.PriceText = "15,00";
         line.QuantityText = "1";
@@ -69,7 +69,7 @@ public class SaleLineViewModelTests
     [Fact]
     public void A_line_with_no_concept_is_invalid()
     {
-        var line = SaleLineViewModel.Free();
+        var line = SaleLineViewModel.Free(0);
         line.QuantityText = "1";
         line.PriceText = "15,00";
         line.VatText = "21";
@@ -80,7 +80,7 @@ public class SaleLineViewModelTests
     [Fact]
     public void A_fully_filled_line_is_valid_and_totals_up()
     {
-        var line = SaleLineViewModel.Free();
+        var line = SaleLineViewModel.Free(0);
         line.Description = "Tall";
         line.QuantityText = "3";
         line.PriceText = "15,00";
@@ -95,7 +95,7 @@ public class SaleLineViewModelTests
            // have frozen a wrong/negative total onto the sale.
     public void A_price_and_quantity_whose_product_overflows_int_cents_makes_the_line_invalid()
     {
-        var line = SaleLineViewModel.Free();
+        var line = SaleLineViewModel.Free(0);
         line.Description = "Tall";
         line.PriceText = "99999,99";
         line.VatText = "21";
@@ -108,7 +108,7 @@ public class SaleLineViewModelTests
     [Fact]
     public void A_half_typed_quantity_does_not_move_the_amount()
     {
-        var line = SaleLineViewModel.Free();
+        var line = SaleLineViewModel.Free(0);
         line.Description = "Tall";
         line.PriceText = "15,00";
         line.QuantityText = "2";

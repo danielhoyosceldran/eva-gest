@@ -25,6 +25,9 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     /// <summary>Whether the guest reminder is switched on (RF-05bis).</summary>
     private bool _guestNoticeEnabled;
 
+    /// <summary>The rate a custom concept line starts on (ConfigKeys.DefaultVatBp).</summary>
+    private int _defaultVatBp = 2100;
+
     /// <summary>
     /// The VAT mode the live footer computes in. Read once when the dialog opens and
     /// held, so the totals the user is shown match what SaleService will freeze onto
@@ -251,6 +254,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         IWorkerService workers, ISettingsService settings)
     {
         _guestNoticeEnabled = await settings.GetBool(ConfigKeys.ShowGuestNotice, true);
+        _defaultVatBp = await settings.GetInt(ConfigKeys.DefaultVatBp, 2100);
 
         ClientPicker.SetClients(await clients.GetActive());
         foreach (var s in await catalog.GetServices(onlyActive: true)) ActiveServices.Add(s);
@@ -273,7 +277,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
 
     [RelayCommand] private void AddService(Service service) => AddExistingLine(SaleLineViewModel.FromService(service));
     [RelayCommand] private void AddProduct(Product product) => AddExistingLine(SaleLineViewModel.FromProduct(product));
-    [RelayCommand] private void AddCustomConcept() => AddExistingLine(SaleLineViewModel.Free());
+    [RelayCommand] private void AddCustomConcept() => AddExistingLine(SaleLineViewModel.Free(_defaultVatBp));
 
     [RelayCommand]
     private void RemoveLine(SaleLineViewModel line)

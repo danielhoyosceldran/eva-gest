@@ -99,6 +99,34 @@ public class HostileFlowTests
         sale.Date.Should().Be(yesterday, "the sale belongs to the slot, not to the till session");
     }
 
+    [Fact]
+    public async Task A_custom_concept_starts_on_the_shop_default_vat_rate_not_zero()
+    {
+        // It used to start on 0 %: charged as typed, the whole amount became base and
+        // the VAT on it never reached the quarter's export.
+        await using var testDb = new TestDatabase();
+        var (factory, settings, _) = await Build(testDb);
+        await settings.Save(ConfigKeys.DefaultVatBp, "1000");
+
+        var vm = await SaleDialogViewModel.New(
+            new SaleService(factory, settings), new ClientService(factory), new CatalogService(factory),
+            new WorkerService(factory), new TestSoundService(), settings, new TestDialogService());
+
+        vm.TextClient = "Anna";
+        vm.PaymentMethod = vm.ActiveMethods[0];
+        vm.AddCustomConceptCommand.Execute(null);
+        vm.Lines[0].Description = "Tall especial";
+        vm.Lines[0].PriceText = "11,00";
+
+        vm.Lines[0].VatText.Should().Be("10");
+        vm.ChargeCommand.Execute(null);
+
+        await using var check = testDb.Context();
+        var sale = await check.Sales.SingleAsync();
+        sale.TotalCents.Should().Be(1100);
+        sale.VatCents.Should().Be(100, "11,00 with 10 % VAT included is 10,00 + 1,00");
+    }
+
     // ── The sale dialog must refuse to freeze a value it cannot trust ────────
 
     [Fact]

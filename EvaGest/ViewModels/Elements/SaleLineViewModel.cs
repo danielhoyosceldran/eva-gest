@@ -132,5 +132,12 @@ public partial class SaleLineViewModel : ObservableObject
         VatBp = product.VatBp
     };
 
-    public static SaleLineViewModel Free() => new() { Description = string.Empty };
+    /// <summary>A custom concept, starting on the shop's default VAT rate. It used to
+    /// start on 0 %, so unless the user retyped the rate the whole amount was booked as
+    /// base with no quota, and the VAT owed on it never reached the export.</summary>
+    public static SaleLineViewModel Free(int defaultVatBp) => new()
+    {
+        Description = string.Empty,
+        VatBp = defaultVatBp
+    };
 }
