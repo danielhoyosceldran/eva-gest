@@ -121,7 +121,13 @@ public static class Percentages
             return false;
         if (percent < 0 || percent > 100) return false;
 
-        bp = (int)Math.Round(percent * 100m, MidpointRounding.AwayFromZero);
+        // Basis points hold two decimals of a percent. A third one used to be rounded
+        // away in silence ("21,005" became 21,01 %), and the rate typed is frozen onto
+        // every sale that uses it, so it is refused the way Money refuses a third
+        // decimal of a euro.
+        if (percent * 100m != decimal.Truncate(percent * 100m)) return false;
+
+        bp = (int)(percent * 100m);
         return true;
     }
 }
