@@ -216,6 +216,14 @@ public class SaleService(
                 $"A sale line cannot have a negative price or a quantity below one ({bad.Description}).",
                 nameof(lines));
 
+        // AmountCents is what every total is built from, and it arrives from the caller.
+        // It must be exactly price x quantity: a line whose stored amount disagrees with
+        // its own price and quantity could never be reconciled afterwards.
+        if (lines.FirstOrDefault(l => l.AmountCents != (long)l.UnitPriceCents * l.Quantity) is { } inconsistent)
+            throw new ArgumentException(
+                $"A sale line's amount must be its unit price times its quantity ({inconsistent.Description}).",
+                nameof(lines));
+
         var broken = VatCalculator.Compute(lines, mode);
         sale.BaseCents = broken.BaseCents;
         sale.VatCents = broken.VatCents;

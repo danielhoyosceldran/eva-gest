@@ -347,4 +347,19 @@ public class SaleServiceTests
 
         (await sales.GetById(id))!.CreatedAtUtc.Should().Be(createdAt);
     }
+
+    [Fact]
+    public async Task A_line_whose_amount_is_not_price_times_quantity_is_refused()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        var sales = CreatesService(testDb);
+
+        var tampered = new SaleLine { Description = "Tall", Quantity = 2, UnitPriceCents = 1500, VatBp = 2100, AmountCents = 1500 };
+        var act = () => sales.Create(NewSale(methodId), [tampered]);
+
+        await act.Should().ThrowAsync<ArgumentException>();
+        await using var db = testDb.Context();
+        (await db.Sales.CountAsync()).Should().Be(0);
+    }
 }
