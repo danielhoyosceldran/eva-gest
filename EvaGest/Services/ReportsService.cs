@@ -174,7 +174,7 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
     ///
     /// Lines are read here to count units and to tell a service from a product, which is
     /// all block B allows them to be used for; every amount comes from the frozen totals
-    /// on the sale itself.
+    /// on the sale itself (see <see cref="AllocatedCents"/>).
     /// </summary>
     private static WorkerDetail Detail(
         int workerId, string name, List<Sale> sales, long periodTotalCents)
@@ -182,8 +182,8 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
         long incomeCents = sales.Sum(v => (long)v.TotalCents);
         var allLines = sales.SelectMany(v => v.Lines).ToList();
 
-        long productsCents = allLines.Where(l => l.Type == LineType.Product).Sum(l => (long)l.AmountCents);
-        long otherCents = allLines.Where(l => l.Type == LineType.Other).Sum(l => (long)l.AmountCents);
+        long productsCents = AllocatedCents(sales, LineType.Product);
+        long otherCents = AllocatedCents(sales, LineType.Other);
 
         var services = allLines.Where(l => l.Type == LineType.Service)
             .GroupBy(l => l.Description)
@@ -207,6 +207,25 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
             Indicators.ProductsPercentage(productsCents, incomeCents),
             services, products, otherCents, activity);
     }
+
+    /// <summary>
+    /// The part of each sale's frozen total that belongs to one kind of line, summed.
+    ///
+    /// Line amounts are in catalogue units: VAT included or not, depending on the sale's
+    /// mode. Summing them straight and dividing by TotalCents (always VAT included) put
+    /// a net figure over a gross one, so a worker who only sold products showed about
+    /// 83 % products in a VAT-exclusive shop. Here the lines only give each sale's split,
+    /// and the money is the sale's own frozen total, shared out in that proportion.
+    /// Rounded once, at the end, away from zero.
+    /// </summary>
+    private static long AllocatedCents(IEnumerable<Sale> sales, LineType type)
+        => (long)Math.Round(sales.Sum(v =>
+        {
+            long all = v.Lines.Sum(l => (long)l.AmountCents);
+            if (all == 0) return 0m;
+            long part = v.Lines.Where(l => l.Type == type).Sum(l => (long)l.AmountCents);
+            return (decimal)v.TotalCents * part / all;
+        }), MidpointRounding.AwayFromZero);
 
     public async Task<List<(int year, int month, long totalCents)>> MonthlyEvolution(int months = 12)
     {

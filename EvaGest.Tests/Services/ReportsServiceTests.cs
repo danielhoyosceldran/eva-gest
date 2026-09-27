@@ -306,4 +306,33 @@ public class ReportsServiceTests
         // 6000 of a 10000 period, not 6000 of the 6000 that has a worker on it.
         ranking.Single(r => r.WorkerId == busy).WorkPercentage.Should().Be(60m);
     }
+
+    [Fact]
+    public async Task In_a_vat_exclusive_sale_a_worker_who_only_sold_products_shows_100_percent_products()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        int workerId, productId;
+        await using (var db = testDb.Context())
+        {
+            var w = Make.Worker();
+            var p = Make.Product("Cera", priceCents: 10000);
+            db.Workers.Add(w);
+            db.Products.Add(p);
+            await db.SaveChangesAsync();
+            workerId = w.Id;
+            productId = p.Id;
+        }
+
+        var settings = new TestSettings((ConfigKeys.CurrentVatMode, nameof(VatMode.NotIncluded)));
+        var day = new DateOnly(2026, 1, 15);
+        await new SaleService(new TestFactory(testDb.Options), settings).Create(
+            new Sale { Date = day, Time = new TimeOnly(10, 0), GuestName = "Anna", PaymentMethodId = methodId, WorkerId = workerId },
+            [new SaleLine { ProductId = productId, Description = "Cera", Quantity = 1, UnitPriceCents = 10000, VatBp = 2100, AmountCents = 10000 }]);
+
+        var detail = await CreatesService(testDb).GetWorkerDetail(workerId, day, day);
+
+        detail.IncomeCents.Should().Be(12100);
+        detail.ProductsPercentage.Should().Be(100m, "the line's net amount used to be divided by the gross total (82,6 %)");
+    }
 }
