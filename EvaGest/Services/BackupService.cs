@@ -72,7 +72,8 @@ public class BackupService(
             ConfigKeys.BackupsToKeep, FallbackRetention));
 
         var backups = await ListAll(); // newest first
-        foreach (var old in backups.Skip(toKeep))
+        var retained = Retained(backups, toKeep);
+        foreach (var old in backups.Where(b => !retained.Contains(b)))
         {
             // Caught per file rather than round the loop: one copy held open by an
             // antivirus scan or an Explorer preview used to abort the whole prune and,
@@ -88,6 +89,32 @@ public class BackupService(
                 Log.Warning(ex, "Could not delete old backup {BackupPath}", old.Path);
             }
         }
+    }
+
+    /// <summary>
+    /// Which backups survive a prune. Keeping only the newest N meant that, with the
+    /// default of 15, nothing older than about two weeks existed: damage noticed late
+    /// (a wrong restore, a corrupted file, a sale deleted by mistake) was already in
+    /// every copy. So on top of the newest <paramref name="toKeep"/>, the newest copy of
+    /// each of the last 12 months that have one is kept, and the newest copy of every
+    /// year, for good: at most a handful of extra files, and the books stay recoverable
+    /// for as long as they have to be kept.
+    /// </summary>
+    /// <param name="backups">Every backup, newest first, as <see cref="ListAll"/> returns them.</param>
+    public static HashSet<BackupInfo> Retained(IReadOnlyList<BackupInfo> backups, int toKeep)
+    {
+        var retained = backups.Take(Math.Max(1, toKeep)).ToHashSet();
+
+        // Newest first, so the first of each group is that period's newest copy.
+        foreach (var monthly in backups
+                     .GroupBy(b => (b.Date.Year, b.Date.Month))
+                     .Take(12))
+            retained.Add(monthly.First());
+
+        foreach (var yearly in backups.GroupBy(b => b.Date.Year))
+            retained.Add(yearly.First());
+
+        return retained;
     }
 
     private async Task<TimeOnly> BackupTime()
