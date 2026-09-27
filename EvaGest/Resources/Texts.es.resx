@@ -1361,6 +1361,9 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="ExportVatHeader" xml:space="preserve">
     <value>tipo_iva;base;cuota;total</value>
   </data>
+  <data name="ExportMovementsVatHeader" xml:space="preserve">
+    <value>movimiento;tipo_iva;base;cuota;total</value>
+  </data>
   <data name="ClosedDayFormat" xml:space="preserve">
     <value>Día cerrado: {0}</value>
   </data>

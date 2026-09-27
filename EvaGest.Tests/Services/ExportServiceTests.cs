@@ -189,4 +189,53 @@ public class ExportServiceTests : IDisposable
         written[0].Should().Be(written[1], "the assessoria's figures are not part of the interface");
         written[0].Should().Contain("5,2 %", "including the rate, which is not always whole");
     }
+
+    [Fact]
+    public async Task Vat_split_on_cash_movements_is_exported_per_direction_and_rate()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        await using (var db = testDb.Context())
+        {
+            db.CashMovements.Add(new CashMovement
+            {
+                Date = Today, Type = MovementType.In, AmountCents = 12100, BaseCents = 10000, VatCents = 2100,
+                VatBp = 2100, PaymentMethodId = methodId, Concept = "Lloguer de cadira"
+            });
+            db.CashMovements.Add(new CashMovement
+            {
+                Date = Today, Type = MovementType.Out, AmountCents = 6050, BaseCents = 5000, VatCents = 1050,
+                VatBp = 2100, PaymentMethodId = methodId, Concept = "Productes"
+            });
+            // Not split, and voided: neither belongs in the VAT file.
+            db.CashMovements.Add(new CashMovement
+            {
+                Date = Today, Type = MovementType.In, AmountCents = 500, PaymentMethodId = methodId, Concept = "Propina"
+            });
+            db.CashMovements.Add(new CashMovement
+            {
+                Date = Today, Type = MovementType.In, AmountCents = 1210, BaseCents = 1000, VatCents = 210,
+                VatBp = 2100, PaymentMethodId = methodId, Concept = "Error", Status = MovementStatus.Voided
+            });
+            await db.SaveChangesAsync();
+        }
+
+        await new ExportService(new TestFactory(testDb.Options)).ExportSales(Today, Today, _folder);
+
+        var lines = await File.ReadAllLinesAsync(Path.Combine(_folder, $"iva_caixa_{Today:yyyyMMdd}-{Today:yyyyMMdd}.csv"));
+        lines.Should().HaveCount(3);
+        lines[1].Should().EndWith(";100,00;21,00;121,00");
+        lines[2].Should().EndWith(";50,00;10,50;60,50");
+    }
+
+    [Fact]
+    public async Task No_cash_movement_vat_file_is_written_when_nothing_was_split()
+    {
+        await using var testDb = new TestDatabase();
+        await AddsMethod(testDb);
+
+        await new ExportService(new TestFactory(testDb.Options)).ExportSales(Today, Today, _folder);
+
+        File.Exists(Path.Combine(_folder, $"iva_caixa_{Today:yyyyMMdd}-{Today:yyyyMMdd}.csv")).Should().BeFalse();
+    }
 }

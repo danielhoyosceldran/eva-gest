@@ -1361,6 +1361,9 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="ExportVatHeader" xml:space="preserve">
     <value>tipus_iva;base;quota;total</value>
   </data>
+  <data name="ExportMovementsVatHeader" xml:space="preserve">
+    <value>moviment;tipus_iva;base;quota;total</value>
+  </data>
   <data name="ClosedDayFormat" xml:space="preserve">
     <value>Dia tancat: {0}</value>
   </data>

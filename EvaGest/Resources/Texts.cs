@@ -467,6 +467,7 @@ public static class Texts
         nameof(FaqExportAnswer),
         nameof(ExportSalesHeader),
         nameof(ExportVatHeader),
+        nameof(ExportMovementsVatHeader),
         nameof(ClosedDayFormat),
         nameof(EmailFormat),
         nameof(ExistingClient),
@@ -1804,6 +1805,9 @@ public static class Texts
 
     /// <summary>tipus_iva;base;quota;total</summary>
     public static string ExportVatHeader => Get(nameof(ExportVatHeader));
+
+    /// <summary>moviment;tipus_iva;base;quota;total — header of iva_caixa_*.csv.</summary>
+    public static string ExportMovementsVatHeader => Get(nameof(ExportMovementsVatHeader));
 
     /// <summary>Dia tancat: {0}</summary>
     public static string ClosedDayFormat => Get(nameof(ClosedDayFormat));

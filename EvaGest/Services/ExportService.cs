@@ -67,10 +67,52 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
         await WriteVat(Path.Combine(destinationFolder, $"iva_{period}.csv"),
             breakdowns.Select(d => (d.VatBp, d.Base, d.Vat, d.Total)).ToList());
 
+        // Cash movements whose VAT was split (RF-13). Their base and quota were stored
+        // but never reached any export, so VAT charged on a cash-in, or paid on a
+        // cash-out, was invisible to the accountant. Kept in a file of their own: a
+        // cash-in is output VAT like a sale, a cash-out is input VAT, and mixing either
+        // into iva_*.csv would change what that file has always meant.
+        var movementVat = (await db.CashMovements.AsNoTracking()
+            .Where(m => m.Status == MovementStatus.Active && m.VatBp != null
+                     && m.Date >= from && m.Date <= to)
+            .Select(m => new { m.Type, m.VatBp, m.BaseCents, m.VatCents, m.AmountCents })
+            .ToListAsync())
+            .GroupBy(m => (m.Type, VatBp: m.VatBp!.Value))
+            .OrderBy(g => g.Key.Type).ThenBy(g => g.Key.VatBp)
+            .Select(g => (g.Key.Type, g.Key.VatBp,
+                          Base: g.Sum(m => (long)(m.BaseCents ?? 0)),
+                          Vat: g.Sum(m => (long)(m.VatCents ?? 0)),
+                          Total: g.Sum(m => (long)m.AmountCents)))
+            .ToList();
+
+        // Only written when there is something in it: most shops never switch the
+        // split on, and an empty extra file would only raise questions.
+        if (movementVat.Count > 0)
+            await WriteMovementVat(Path.Combine(destinationFolder, $"iva_caixa_{period}.csv"), movementVat);
+
         // The file the accountant is given: worth being able to say afterwards which
         // period was exported, when, and how many sales it covered (CU-08).
-        Log.Information("Exported {SaleCount} sales for {From}..{To} to {Folder}",
-            sales.Count, from, to, destinationFolder);
+        Log.Information("Exported {SaleCount} sales and {MovementVatRows} cash-movement VAT rows for {From}..{To} to {Folder}",
+            sales.Count, movementVat.Count, from, to, destinationFolder);
+    }
+
+    private static async Task WriteMovementVat(string path,
+        List<(MovementType type, int vatBp, long baseCents, long vatCents, long totalCents)> rows)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(Texts.ExportMovementsVatHeader);
+
+        foreach (var r in rows)
+        {
+            sb.AppendLine(string.Join(';',
+                r.type == MovementType.In ? Texts.CashIn : Texts.CashOut,
+                Percentages.Format(r.vatBp, Culture),
+                Amount(r.baseCents),
+                Amount(r.vatCents),
+                Amount(r.totalCents)));
+        }
+
+        await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
     }
 
     private static async Task WriteSales(string path, List<Sale> sales)
