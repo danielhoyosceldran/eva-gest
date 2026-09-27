@@ -58,7 +58,9 @@ public static class VatCalculator
                 else
                 {
                     int quota = RoundCents((decimal)sum * vatBp / 10000m);
-                    return new RateBreakdown(vatBp, sum, quota, sum + quota);
+                    // checked: C# int addition wraps silently by default, and a wrapped
+                    // total would be frozen onto the sale as a negative figure.
+                    return new RateBreakdown(vatBp, sum, quota, checked(sum + quota));
                 }
             })
             .ToList();
@@ -83,8 +85,11 @@ public static class VatCalculator
             long sum = group.Sum(l => (long)l.AmountCents);
 
             // A VAT-exclusive sale adds its quota on top, so the group's total is what
-            // has to fit, not just the base.
-            long withVat = sum + sum * group.Key / 10000;
+            // has to fit, not just the base. The quota is rounded exactly the way
+            // ComputeByRate rounds it: estimating it with integer division truncated,
+            // and a group landing on int.MaxValue passed here while the real total,
+            // one cent higher, did not fit.
+            long withVat = sum + (long)Math.Round((decimal)sum * group.Key / 10000m, MidpointRounding.AwayFromZero);
             if (sum is < int.MinValue or > int.MaxValue) return false;
             if (withVat is < int.MinValue or > int.MaxValue) return false;
 

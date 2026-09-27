@@ -197,6 +197,19 @@ public class VatStressTests
     }
 
     [Fact]
+    public void A_group_whose_rounded_quota_crosses_int_max_by_one_cent_does_not_fit()
+    {
+        // 1 774 779 874 + 21 % truncated is exactly int.MaxValue; rounded away from
+        // zero, as the sale is actually computed, it is one cent more.
+        var lines = new[] { Make.Line(1_774_779_874, 2100) };
+
+        VatCalculator.FitsInOneSale(lines).Should().BeFalse();
+
+        var act = () => VatCalculator.Compute(lines, VatMode.NotIncluded);
+        act.Should().Throw<OverflowException>("a total must never wrap to a negative figure");
+    }
+
+    [Fact]
     public void A_group_that_only_overflows_once_its_vat_is_added_does_not_fit()
     {
         // Under int.MaxValue as a base, over it once 21 % is added on top, which is
