@@ -63,14 +63,21 @@ public class SaleService(
         await using var db = await factory.CreateDbContextAsync();
         sale.Lines = lines;
         db.Sales.Add(sale);
-        await db.SaveChangesAsync();
 
+        // The sale and the appointment it closes are saved by one SaveChanges, which EF
+        // runs as one transaction. They used to be two: a failure in between left a
+        // charged appointment still pending, offered to be charged a second time.
         if (sale.AppointmentId is int appointmentId)
         {
             var appointment = await db.Appointments.FirstAsync(c => c.Id == appointmentId);
             appointment.Status = AppointmentStatus.Completed;
-            await db.SaveChangesAsync();
-            Log.Information("Appointment {AppointmentId} completed by sale {SaleId}", appointmentId, sale.Id);
+        }
+
+        await db.SaveChangesAsync();
+
+        if (sale.AppointmentId is int completedId)
+        {
+            Log.Information("Appointment {AppointmentId} completed by sale {SaleId}", completedId, sale.Id);
 
             // Charging an appointment closes it; without this the shell's overdue notice
             // kept naming it until the next timer tick.

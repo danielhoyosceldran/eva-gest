@@ -279,4 +279,52 @@ public class SaleServiceTests
         await act.Should().ThrowAsync<InvalidOperationException>();
         (await sales.GetById(id))!.TotalCents.Should().Be(1000);
     }
+
+    [Fact]
+    public async Task Charging_an_appointment_saves_the_sale_and_closes_the_appointment_in_one_save()
+    {
+        // One SaveChanges is one transaction: the sale can never be recorded while the
+        // appointment it charged stays pending (they used to be two separate saves).
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        int appointmentId;
+        await using (var db = testDb.Context())
+        {
+            var appointment = new Appointment
+            {
+                Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, GuestName = "Pere"
+            };
+            db.Appointments.Add(appointment);
+            await db.SaveChangesAsync();
+            appointmentId = appointment.Id;
+        }
+
+        var counter = new SaveCounter();
+        var options = new DbContextOptionsBuilder<EvaGest.Data.ShopDbContext>(testDb.Options)
+            .AddInterceptors(counter).Options;
+        var sales = new SaleService(new TestFactory(options), new TestSettings());
+
+        var sale = NewSale(methodId);
+        sale.GuestName = "Pere";
+        sale.AppointmentId = appointmentId;
+        await sales.Create(sale, [Line(1500)]);
+
+        counter.Saves.Should().Be(1);
+        await using var check = testDb.Context();
+        (await check.Appointments.SingleAsync()).Status.Should().Be(AppointmentStatus.Completed);
+    }
+
+    private sealed class SaveCounter : Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesInterceptor
+    {
+        public int Saves { get; private set; }
+
+        public override ValueTask<Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int>> SavingChangesAsync(
+            Microsoft.EntityFrameworkCore.Diagnostics.DbContextEventData eventData,
+            Microsoft.EntityFrameworkCore.Diagnostics.InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
+        {
+            Saves++;
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
+    }
 }
