@@ -14,8 +14,6 @@ namespace EvaGest.ViewModels.Dialogs;
 /// </summary>
 public partial class MovementDialogViewModel : DialogViewModelBase
 {
-    private readonly int? _id;
-
     [ObservableProperty] private MovementType _type;
 
     /// <summary>
@@ -85,18 +83,6 @@ public partial class MovementDialogViewModel : DialogViewModelBase
         return vm;
     }
 
-    public MovementDialogViewModel(CashMovement movement)
-    {
-        _id = movement.Id;
-        Type = movement.Type;
-        Date = movement.Date;
-        PriceText = Money.FormatExport(movement.AmountCents);
-        Concept = movement.Concept;
-        Notes = movement.Notes;
-        SplitVat = movement.BaseCents is not null;
-        if (movement.VatBp is int bp) VatText = Percentages.Format(bp).Replace(" %", "");
-    }
-
     public async Task LoadMethods(ICatalogService catalog)
     {
         foreach (var m in await catalog.GetMethods(onlyActive: true)) ActiveMethods.Add(m);
@@ -115,16 +101,16 @@ public partial class MovementDialogViewModel : DialogViewModelBase
 
     /// <summary>
     /// Brings across the two settings this dialog is supposed to follow: whether the VAT
-    /// split is offered at all, and which rate it starts on. An existing movement keeps
-    /// the rate it was saved with — a default must never move a figure already recorded.
+    /// split is offered at all, and which rate it starts on. The dialog only ever creates
+    /// movements: a recorded one is never edited, only voided (TillService.Delete), so
+    /// there is no saved rate to preserve here.
     /// </summary>
     public async Task LoadDefaults(ISettingsService settings)
     {
         ShowVatSplit = await settings.GetBool(ConfigKeys.ApplyVatToTill, false);
 
-        if (_id is null)
-            VatText = Percentages.FormatWithoutUnit(
-                await settings.GetInt(ConfigKeys.DefaultVatBp, 2100));
+        VatText = Percentages.FormatWithoutUnit(
+            await settings.GetInt(ConfigKeys.DefaultVatBp, 2100));
 
         // SplitVat stays the single source of truth for whether the VAT is split; this
         // is the one place the setting can clear it. Guarding AModel and Save on
@@ -183,7 +169,6 @@ public partial class MovementDialogViewModel : DialogViewModelBase
 
         return new CashMovement
         {
-            Id = _id ?? 0,
             Date = Date,
             Type = Type,
             AmountCents = amountCents,
