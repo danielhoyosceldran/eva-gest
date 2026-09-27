@@ -931,9 +931,12 @@ Caldrà reiniciar l'aplicació perquè els canvis tinguin efecte.</value>
     <value>Vols eliminar {0}?</value>
   </data>
   <data name="DeleteClientMessage" xml:space="preserve">
-    <value>S'esborrarà la seva fitxa i tot el seu historial: {0} cites i {1} vendes. Aquesta acció no es pot desfer.
+    <value>S'esborrarà la seva fitxa i les seves {0} cites. Les seves {1} vendes es conserven a la caixa i als informes, però sense el seu nom ni el seu telèfon. Aquesta acció no es pot desfer.
 
 Si només vols que deixi d'aparèixer a les cerques, pots adormir-lo i conservar les dades.</value>
+  </data>
+  <data name="DeletedClientName" xml:space="preserve">
+    <value>Client eliminat</value>
   </data>
   <data name="DeleteForever" xml:space="preserve">
     <value>Eliminar definitivament</value>

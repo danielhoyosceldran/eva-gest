@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using EvaGest.Data;
 using EvaGest.Models;
+using EvaGest.Resources;
 using Microsoft.EntityFrameworkCore;
 
 using Serilog;
@@ -86,12 +87,36 @@ public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientSe
         await db.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Removes the client's record and appointments, but never their sales: a sale is
+    /// part of the till and of VAT quarters that may already be filed, so deleting it
+    /// would change past totals without a trace. Each sale is turned into a guest sale
+    /// under a neutral name instead, with the phone dropped, so the personal data goes
+    /// and the money stays. Both steps run in one transaction.
+    /// </summary>
     public async Task Delete(int clientId)
     {
         await using var db = await factory.CreateDbContextAsync();
+        await using var transaction = await db.Database.BeginTransactionAsync();
+
         var client = await db.Clients.FirstAsync(c => c.Id == clientId);
-        db.Clients.Remove(client); // cascades to Appointments and Sales (DbContext OnModelCreating)
+
+        // Voided sales are kept too: they are history just like active ones.
+        var sales = await db.Sales.Where(v => v.ClientId == clientId).ToListAsync();
+        foreach (var sale in sales)
+        {
+            // ck_sales_client_xor: a sale without a client must carry a guest name.
+            sale.ClientId = null;
+            sale.GuestName = Texts.DeletedClientName;
+            sale.GuestPhone = null;
+        }
+
+        db.Clients.Remove(client); // cascades to Appointments only (DbContext OnModelCreating)
         await db.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        Log.Information("Client {ClientId} deleted; {SaleCount} sales kept as guest sales",
+            clientId, sales.Count);
     }
 
     public async Task<(int appointments, int sales)> CountHistory(int clientId)

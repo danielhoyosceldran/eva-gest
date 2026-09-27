@@ -322,6 +322,50 @@ public class HostileFlowTests
         }
     }
 
+    [Fact]
+    public async Task Upgrading_an_existing_database_keeps_its_sales_and_stops_the_client_cascade()
+    {
+        // KeepSalesWhenClientDeleted rebuilds the sales table (SQLite cannot alter a
+        // foreign key in place). Run it over a database that already holds a sale, the
+        // way it will run on the shop's machine, and check nothing was lost on the way.
+        string file = Path.Combine(Path.GetTempPath(), $"EvaGestMigrate_{Guid.NewGuid():N}.db");
+        var options = new DbContextOptionsBuilder<ShopDbContext>()
+            .UseSqlite($"Data Source={file}")
+            .UseSnakeCaseNamingConvention()
+            .Options;
+
+        try
+        {
+            await using (var db = new ShopDbContext(options))
+            {
+                await db.Database.MigrateAsync("20260917204335_AddExpenseCategoryAndCashMovementLinks");
+
+                await db.Database.ExecuteSqlRawAsync(
+                    "INSERT INTO payment_methods (id, name, active) VALUES (1, 'Efectiu', 1);" +
+                    "INSERT INTO clients (id, name, mobile, client_key, asleep) VALUES (1, 'Joan', '612345678', 'joan', 0);" +
+                    "INSERT INTO sales (id, date, time, client_id, payment_method_id, base_cents, vat_cents, total_cents, vat_mode, status) " +
+                    "VALUES (1, '2026-01-15', '10:00:00', 1, 1, 1000, 210, 1210, 'Included', 'Active');");
+
+                await db.Database.MigrateAsync();
+            }
+
+            await using (var reopened = new ShopDbContext(options))
+            {
+                var sale = await reopened.Sales.SingleAsync();
+                sale.ClientId.Should().Be(1);
+                sale.TotalCents.Should().Be(1210);
+
+                var cascade = () => reopened.Database.ExecuteSqlRawAsync("DELETE FROM clients WHERE id = 1");
+                await cascade.Should().ThrowAsync<Microsoft.Data.Sqlite.SqliteException>();
+            }
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            if (File.Exists(file)) File.Delete(file);
+        }
+    }
+
     /// <summary>Issues one SELECT per mapped entity type. Empty results are fine; the
     /// point is that every table and column the model declares must exist.</summary>
     private static async Task ReadsEverySet(ShopDbContext db)

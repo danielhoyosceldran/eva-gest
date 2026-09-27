@@ -327,6 +327,7 @@ public static class Texts
         nameof(Sleep),
         nameof(DeleteClientTitle),
         nameof(DeleteClientMessage),
+        nameof(DeletedClientName),
         nameof(DeleteForever),
         nameof(HistoryAppointment),
         nameof(HistorySale),
@@ -1384,8 +1385,11 @@ public static class Texts
     /// <summary>Vols eliminar {0}?</summary>
     public static string DeleteClientTitle => Get(nameof(DeleteClientTitle));
 
-    /// <summary>S'esborrarà la seva fitxa i tot el seu historial: {0} cit...</summary>
+    /// <summary>S'esborrarà la seva fitxa i les seves {0} cites. Les seves...</summary>
     public static string DeleteClientMessage => Get(nameof(DeleteClientMessage));
+
+    /// <summary>Client eliminat — the guest name a deleted client's sales keep.</summary>
+    public static string DeletedClientName => Get(nameof(DeletedClientName));
 
     /// <summary>Eliminar definitivament</summary>
     public static string DeleteForever => Get(nameof(DeleteForever));

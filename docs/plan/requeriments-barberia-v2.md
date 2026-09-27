@@ -93,9 +93,9 @@ Dues opcions diferenciades:
 | Acció | Efecte | Reversible |
 |---|---|---|
 | Adormir | El client no apareix a les cerques ni com a opció en cites/vendes. Es manté l'historial i continua comptant a les estadístiques | Sí, es pot despertar |
-| Eliminar | S'esborra la fitxa **i tot el seu historial** (cites i vendes vinculades) | No |
+| Eliminar | S'esborra la fitxa i les seves cites. Les vendes **es conserven** (són registre comptable i poden formar part d'un trimestre d'IVA ja presentat) com a vendes de convidat sense nom ni telèfon | No |
 
-Totes dues accions requereixen confirmació explícita. L'eliminació ha d'advertir clarament que es perdrà l'historial.
+Totes dues accions requereixen confirmació explícita. L'eliminació ha d'advertir clarament que es perdran les cites i que les vendes quedaran anònimes.
 
 ### RF-05. Fitxa del client
 

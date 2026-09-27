@@ -146,7 +146,7 @@ public interface IClientService
     Task Adormir(int clientId);
     Task Despertar(int clientId);
 
-    /// <summary>Physical delete. Cascades to appointments and sales (RF-04).</summary>
+    /// <summary>Physical delete. Cascades to appointments; sales are kept as anonymous guest sales (RF-04).</summary>
     Task Eliminar(int clientId);
 
     /// <summary>Counts used by the delete confirmation message.</summary>

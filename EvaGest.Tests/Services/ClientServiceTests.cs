@@ -147,7 +147,7 @@ public class ClientServiceTests
     }
 
     [Fact]
-    public async Task Deleting_a_client_also_deletes_their_appointments_and_sales()
+    public async Task Deleting_a_client_deletes_their_appointments_but_keeps_their_sales_as_guest_sales()
     {
         await using var testDb = new TestDatabase();
         await using (var db = testDb.Context())
@@ -179,7 +179,84 @@ public class ClientServiceTests
         await using var check = testDb.Context();
         (await check.Clients.CountAsync()).Should().Be(0);
         (await check.Appointments.CountAsync()).Should().Be(0);
-        (await check.Sales.CountAsync()).Should().Be(0);
+
+        // The sale is an accounting record: it stays, with its amounts untouched, and
+        // only loses the link to the person (and their phone).
+        var sale = await check.Sales.SingleAsync();
+        sale.ClientId.Should().BeNull();
+        sale.GuestName.Should().Be(EvaGest.Resources.Texts.DeletedClientName);
+        sale.GuestPhone.Should().BeNull();
+        sale.TotalCents.Should().Be(121);
+    }
+
+    [Fact]
+    public async Task Deleting_a_client_does_not_change_the_till_total_of_a_past_period()
+    {
+        await using var testDb = new TestDatabase();
+        int clientId;
+        var day = new DateOnly(2026, 1, 15);
+        await using (var db = testDb.Context())
+        {
+            var method = Make.Method();
+            db.PaymentMethods.Add(method);
+            var client = new Client { Name = "Joan", Mobile = "612345678" };
+            db.Clients.Add(client);
+            await db.SaveChangesAsync();
+            clientId = client.Id;
+
+            db.Sales.Add(new Sale
+            {
+                ClientId = client.Id, Date = day, Time = new TimeOnly(10, 0),
+                PaymentMethodId = method.Id, BaseCents = 1000, VatCents = 210, TotalCents = 1210,
+                VatMode = VatMode.Included,
+                Breakdowns = [new SaleBreakdown { VatBp = 2100, BaseCents = 1000, VatCents = 210, TotalCents = 1210 }]
+            });
+            db.Sales.Add(new Sale
+            {
+                ClientId = client.Id, Date = day, Time = new TimeOnly(11, 0),
+                PaymentMethodId = method.Id, BaseCents = 500, VatCents = 105, TotalCents = 605,
+                VatMode = VatMode.Included, Status = SaleStatus.Voided
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var till = new TillService(new TestFactory(testDb.Options));
+        var before = await till.Summary(day, day);
+
+        await CreatesService(testDb).Delete(clientId);
+
+        var after = await till.Summary(day, day);
+        after.SalesCents.Should().Be(before.SalesCents).And.Be(1210);
+        after.VatCents.Should().Be(before.VatCents);
+
+        // The voided sale is history too and is kept as well.
+        await using var check = testDb.Context();
+        (await check.Sales.CountAsync()).Should().Be(2);
+    }
+
+    [Fact]
+    public async Task The_database_refuses_to_cascade_a_client_delete_onto_their_sales()
+    {
+        // Guards the schema itself: a future code path that removes a client without
+        // going through ClientService.Delete must fail, not silently take the sales.
+        await using var testDb = new TestDatabase();
+        await using var db = testDb.Context();
+        var method = Make.Method();
+        db.PaymentMethods.Add(method);
+        var client = new Client { Name = "Joan", Mobile = "612345678" };
+        db.Clients.Add(client);
+        await db.SaveChangesAsync();
+        db.Sales.Add(new Sale
+        {
+            ClientId = client.Id, Date = new DateOnly(2026, 1, 1), Time = new TimeOnly(10, 0),
+            PaymentMethodId = method.Id, BaseCents = 100, VatCents = 21, TotalCents = 121,
+            VatMode = VatMode.Included
+        });
+        await db.SaveChangesAsync();
+
+        var act = () => db.Database.ExecuteSqlRawAsync("DELETE FROM clients WHERE id = {0}", client.Id);
+
+        await act.Should().ThrowAsync<Microsoft.Data.Sqlite.SqliteException>();
     }
 
 }

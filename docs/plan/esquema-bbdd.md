@@ -307,7 +307,8 @@ Parella clau-valor per a totes les preferències editables (RF-23).
 
 | Relació | Comportament | Motiu |
 |---|---|---|
-| `Clients` → `Cites`/`Vendes` | `CASCADE` | Eliminar un client esborra el seu historial (RF-04) |
+| `Clients` → `Cites` | `CASCADE` | Eliminar un client esborra les seves cites (RF-04) |
+| `Clients` → `Vendes` | `RESTRICT` | Les vendes són registre comptable: abans d'eliminar el client passen a venda de convidat anònima (RF-04, auditoria C1) |
 | `Treballadores` → `Cites`/`Vendes` | `SET NULL` | Les treballadores no s'eliminen des de l'app (només s'inactiven), però es protegeix per si de cas |
 | `Treballadores` → `HorarisTreballadora` | `CASCADE` | L'horari no té sentit sense la treballadora |
 | `Serveis`/`Productes` → `Cites`/`VendaLinies` | `SET NULL` | El catàleg tampoc s'elimina (només s'inactiva); les línies ja guarden còpia pròpia de preu i IVA |

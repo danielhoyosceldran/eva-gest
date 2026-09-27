@@ -931,9 +931,12 @@ Habrá que reiniciar la aplicación para que los cambios tengan efecto.</value>
     <value>¿Quieres eliminar a {0}?</value>
   </data>
   <data name="DeleteClientMessage" xml:space="preserve">
-    <value>Se borrará su ficha y todo su historial: {0} citas y {1} ventas. Esta acción no se puede deshacer.
+    <value>Se borrará su ficha y sus {0} citas. Sus {1} ventas se conservan en la caja y en los informes, pero sin su nombre ni su teléfono. Esta acción no se puede deshacer.
 
 Si solo quieres que deje de aparecer en las búsquedas, puedes dormirlo y conservar los datos.</value>
+  </data>
+  <data name="DeletedClientName" xml:space="preserve">
+    <value>Cliente eliminado</value>
   </data>
   <data name="DeleteForever" xml:space="preserve">
     <value>Eliminar definitivamente</value>

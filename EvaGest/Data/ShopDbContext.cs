@@ -48,12 +48,16 @@ public class ShopDbContext : DbContext
         b.Entity<CashMovement>().HasIndex(e => e.Date);
         b.Entity<SaleBreakdown>().HasIndex(e => e.SaleId);
 
-        // Deleting a client wipes their history; catalogue items are only deactivated,
-        // so their references are nulled rather than cascaded.
+        // Deleting a client wipes their appointments. Their sales are accounting records
+        // and must outlive them: ClientService.Delete turns each one into a guest sale
+        // first, and Restrict makes the database refuse a delete that skipped that step
+        // rather than silently taking charged sales (and filed VAT) with it.
+        // Catalogue items are only deactivated, so their references are nulled rather
+        // than cascaded.
         b.Entity<Appointment>().HasOne(e => e.Client).WithMany(c => c.Appointments)
             .OnDelete(DeleteBehavior.Cascade);
         b.Entity<Sale>().HasOne(e => e.Client).WithMany(c => c.Sales)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
         b.Entity<SaleLine>().HasOne(e => e.Sale).WithMany(v => v.Lines)
             .OnDelete(DeleteBehavior.Cascade);
         b.Entity<SaleBreakdown>().HasOne(e => e.Sale).WithMany(v => v.Breakdowns)
