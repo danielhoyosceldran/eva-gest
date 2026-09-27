@@ -111,6 +111,8 @@ public class TillServiceTests
             Date = Today, Type = MovementType.Out, AmountCents = 700, PaymentMethodId = methodId, Concept = "Error"
         });
 
+        (await till.GetByPeriod(Today, Today)).Should().OnlyContain(m => m.CreatedAtUtc != null);
+
         await till.Delete(removed);
 
         (await till.Summary(Today, Today)).CashOutCents.Should().Be(5000);

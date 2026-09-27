@@ -79,6 +79,7 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
     public async Task<int> Create(CashMovement movement)
     {
         await using var db = await factory.CreateDbContextAsync();
+        movement.CreatedAtUtc = DateTime.UtcNow;
         db.CashMovements.Add(movement);
         await db.SaveChangesAsync();
         Log.Information("Cash movement {MovementId} created: {MovementType} {AmountCents} cents",

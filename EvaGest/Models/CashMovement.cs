@@ -7,6 +7,10 @@ public class CashMovement
     public int Id { get; set; }
 
     public DateOnly Date { get; set; }
+
+    /// <summary>When the movement was recorded, in UTC, set once by TillService. Null on
+    /// movements recorded before the column existed.</summary>
+    public DateTime? CreatedAtUtc { get; set; }
     public MovementType Type { get; set; }
 
     /// <summary>Voided instead of deleted, like a sale: every balance filters on Active.</summary>

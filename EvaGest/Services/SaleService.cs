@@ -62,6 +62,7 @@ public class SaleService(
 
         await using var db = await factory.CreateDbContextAsync();
         sale.Lines = lines;
+        sale.CreatedAtUtc = DateTime.UtcNow;
         db.Sales.Add(sale);
 
         // The sale and the appointment it closes are saved by one SaveChanges, which EF

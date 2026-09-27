@@ -6,8 +6,15 @@ public class Sale
 {
     public int Id { get; set; }
 
+    /// <summary>When the sale happened, as the user sees it (local, editable).</summary>
     public DateOnly Date { get; set; }
     public TimeOnly Time { get; set; }
+
+    /// <summary>When the sale was actually recorded, in UTC, set once by SaleService and
+    /// never edited. Date/Time can be corrected; this cannot, so a sale typed in after
+    /// the fact is told apart from one charged on the spot. Null on sales recorded
+    /// before the column existed.</summary>
+    public DateTime? CreatedAtUtc { get; set; }
 
     // Registered client XOR guest client.
     public int? ClientId { get; set; }

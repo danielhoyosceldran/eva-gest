@@ -327,4 +327,24 @@ public class SaleServiceTests
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
     }
+
+    [Fact]
+    public async Task A_sale_records_when_it_was_entered_and_an_edit_never_moves_that()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        var sales = CreatesService(testDb);
+
+        var before = DateTime.UtcNow;
+        int id = await sales.Create(NewSale(methodId), [Line(1000)]);
+        var createdAt = (await sales.GetById(id))!.CreatedAtUtc;
+
+        createdAt.Should().NotBeNull();
+        createdAt!.Value.Should().BeOnOrAfter(before).And.BeOnOrBefore(DateTime.UtcNow);
+
+        var updated = new Sale { Id = id, Date = Today.AddDays(-3), Time = new TimeOnly(9, 0), GuestName = "C", PaymentMethodId = methodId };
+        await sales.Update(updated, [Line(1200)]);
+
+        (await sales.GetById(id))!.CreatedAtUtc.Should().Be(createdAt);
+    }
 }
