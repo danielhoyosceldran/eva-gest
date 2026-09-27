@@ -124,8 +124,11 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
         {
             string concept = string.Join(" + ", v.Lines.Select(l => l.Description));
             sb.AppendLine(string.Join(';',
-                v.Date.ToString("dd/MM/yyyy"),
-                v.Time.ToString("HH:mm"),
+                // Invariant: "/" and ":" in a format string are the current culture's
+                // date and time separators, not literals, so the file's dates would
+                // otherwise change shape with the machine's regional settings.
+                v.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+                v.Time.ToString("HH:mm", CultureInfo.InvariantCulture),
                 Csv(v.DisplayName),
                 Csv(v.Worker?.Name ?? ""),
                 Csv(concept),

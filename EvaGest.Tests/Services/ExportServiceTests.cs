@@ -262,4 +262,31 @@ public class ExportServiceTests : IDisposable
         var clientField = row.Split(';')[2].Trim('"');
         clientField.Should().StartWith("'", "a spreadsheet must not run it as a formula");
     }
+
+    [Fact]
+    public async Task Dates_and_times_keep_their_shape_whatever_the_machine_culture()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        await using (var db = testDb.Context())
+        {
+            db.Sales.Add(Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(1000)));
+            await db.SaveChangesAsync();
+        }
+
+        // de-DE writes dates with dots; the file must not follow it.
+        var previous = System.Globalization.CultureInfo.CurrentCulture;
+        System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("de-DE");
+        try
+        {
+            await new ExportService(new TestFactory(testDb.Options)).ExportSales(Today, Today, _folder);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = previous;
+        }
+
+        var row = (await File.ReadAllLinesAsync(Path.Combine(_folder, $"vendes_{Today:yyyyMMdd}-{Today:yyyyMMdd}.csv")))[1];
+        row.Should().StartWith("07/09/2026;10:00;");
+    }
 }
