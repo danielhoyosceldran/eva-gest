@@ -155,10 +155,24 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
         await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
     }
 
-    /// <summary>Quotes a field only when it actually contains the separator, a quote
-    /// or a newline — keeps the common case readable in a plain text editor.</summary>
+    /// <summary>
+    /// Makes a free-text field safe to put in the CSV.
+    ///
+    /// A field starting with = + - @ (or a tab or carriage return) is read by Excel as a
+    /// formula, so a client or concept named "=HYPERLINK(...)" ran as one on the
+    /// accountant's machine. Such a field gets a leading apostrophe, which spreadsheets
+    /// treat as "this is text" and do not show. Amounts never pass through here.
+    ///
+    /// Then the field is quoted only when it contains the separator, a quote or a line
+    /// break, which keeps the common case readable in a plain text editor.
+    /// </summary>
     private static string Csv(string value)
-        => value.Contains(';') || value.Contains('"') || value.Contains('\n')
+    {
+        if (value.Length > 0 && value[0] is '=' or '+' or '-' or '@' or '\t' or '\r')
+            value = "'" + value;
+
+        return value.Contains(';') || value.Contains('"') || value.Contains('\n') || value.Contains('\r')
             ? $"\"{value.Replace("\"", "\"\"")}\""
             : value;
+    }
 }

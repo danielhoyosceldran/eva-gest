@@ -238,4 +238,28 @@ public class ExportServiceTests : IDisposable
 
         File.Exists(Path.Combine(_folder, $"iva_caixa_{Today:yyyyMMdd}-{Today:yyyyMMdd}.csv")).Should().BeFalse();
     }
+
+    [Theory]
+    [InlineData("=HYPERLINK(\"http://x\")")]
+    [InlineData("+34 600")]
+    [InlineData("-1+1")]
+    [InlineData("@SUM(A1)")]
+    public async Task A_name_that_looks_like_a_formula_is_exported_as_text(string name)
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        await using (var db = testDb.Context())
+        {
+            var sale = Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(1000));
+            sale.GuestName = name;
+            db.Sales.Add(sale);
+            await db.SaveChangesAsync();
+        }
+
+        await new ExportService(new TestFactory(testDb.Options)).ExportSales(Today, Today, _folder);
+
+        var row = (await File.ReadAllLinesAsync(Path.Combine(_folder, $"vendes_{Today:yyyyMMdd}-{Today:yyyyMMdd}.csv")))[1];
+        var clientField = row.Split(';')[2].Trim('"');
+        clientField.Should().StartWith("'", "a spreadsheet must not run it as a formula");
+    }
 }
