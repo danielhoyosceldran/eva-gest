@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace EvaGest.Tests.Services;
@@ -92,6 +93,36 @@ public class TillServiceTests
         var summary = await till.Summary(Today, to);
 
         summary.SalesCents.Should().Be(2000);
+    }
+
+    [Fact]
+    public async Task Deleting_a_movement_voids_it_out_of_the_till_but_keeps_it_on_record()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        var till = CreatesService(testDb);
+
+        int keep = await till.Create(new CashMovement
+        {
+            Date = Today, Type = MovementType.Out, AmountCents = 5000, PaymentMethodId = methodId, Concept = "Lloguer"
+        });
+        int removed = await till.Create(new CashMovement
+        {
+            Date = Today, Type = MovementType.Out, AmountCents = 700, PaymentMethodId = methodId, Concept = "Error"
+        });
+
+        await till.Delete(removed);
+
+        (await till.Summary(Today, Today)).CashOutCents.Should().Be(5000);
+        (await till.GetByPeriod(Today, Today)).Should().ContainSingle(m => m.Id == keep);
+
+        await using var db = testDb.Context();
+        (await db.CashMovements.SingleAsync(m => m.Id == removed)).Status.Should().Be(MovementStatus.Voided);
+        var entry = await db.AuditEntries.SingleAsync();
+        entry.Entity.Should().Be("CashMovement");
+        entry.EntityId.Should().Be(removed);
+        entry.Action.Should().Be("Void");
+        entry.Before.Should().Contain("\"AmountCents\":700").And.Contain("\"Status\":\"Active\"");
     }
 
     [Fact] // H-05

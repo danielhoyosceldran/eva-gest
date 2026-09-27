@@ -9,6 +9,9 @@ public class CashMovement
     public DateOnly Date { get; set; }
     public MovementType Type { get; set; }
 
+    /// <summary>Voided instead of deleted, like a sale: every balance filters on Active.</summary>
+    public MovementStatus Status { get; set; } = MovementStatus.Active;
+
     /// <summary>Final amount, equivalent to a sale's TotalCents.</summary>
     public int AmountCents { get; set; }
 

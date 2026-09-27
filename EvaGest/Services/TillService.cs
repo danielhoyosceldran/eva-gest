@@ -18,7 +18,7 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
             .Include(m => m.PaymentMethod)
             .Include(m => m.Category)
             .Include(m => m.Worker)
-            .Where(m => m.Date >= from && m.Date <= to)
+            .Where(m => m.Status == MovementStatus.Active && m.Date >= from && m.Date <= to)
             .OrderByDescending(m => m.Date)
             .ToListAsync();
     }
@@ -34,11 +34,13 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
             .SumAsync(v => (long)v.TotalCents);
 
         long cashInCents = await db.CashMovements
-            .Where(m => m.Type == MovementType.In && m.Date >= from && m.Date <= to)
+            .Where(m => m.Status == MovementStatus.Active && m.Type == MovementType.In
+                     && m.Date >= from && m.Date <= to)
             .SumAsync(m => (long)m.AmountCents);
 
         long cashOutCents = await db.CashMovements
-            .Where(m => m.Type == MovementType.Out && m.Date >= from && m.Date <= to)
+            .Where(m => m.Status == MovementStatus.Active && m.Type == MovementType.Out
+                     && m.Date >= from && m.Date <= to)
             .SumAsync(m => (long)m.AmountCents);
 
         // Per-rate breakdown straight from the frozen rows (never from SaleLines, Block B).
@@ -84,24 +86,34 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
         return movement.Id;
     }
 
-    public async Task Update(CashMovement movement)
-    {
-        await using var db = await factory.CreateDbContextAsync();
-        db.CashMovements.Update(movement);
-        await db.SaveChangesAsync();
-        Log.Information("Cash movement {MovementId} updated", movement.Id);
-    }
-
+    /// <summary>
+    /// What "delete" does to a movement: it is voided, like a sale, so it leaves the
+    /// till and the table but never the database. It used to be removed outright,
+    /// which left a rotating log line as the only sign it had ever existed. The
+    /// movement as it was goes into the audit trail in the same SaveChanges.
+    /// </summary>
     public async Task Delete(int movementId)
     {
         await using var db = await factory.CreateDbContextAsync();
         var movement = await db.CashMovements.FirstAsync(m => m.Id == movementId);
-        db.CashMovements.Remove(movement);
+        if (movement.Status == MovementStatus.Voided) return;
+
+        string before = Snapshot(movement);
+        movement.Status = MovementStatus.Voided;
+        AuditTrail.Record(db, AuditTrail.CashMovementEntity, movementId, "Void",
+            before, Snapshot(movement));
         await db.SaveChangesAsync();
 
-        // A cash movement is deleted outright, not voided like a sale, so the log line
-        // is the only record left that it ever existed.
-        Log.Information("Cash movement {MovementId} deleted: {MovementType} {AmountCents} cents",
+        Log.Information("Cash movement {MovementId} voided: {MovementType} {AmountCents} cents",
             movementId, movement.Type, movement.AmountCents);
     }
+
+    /// <summary>The movement's own fields as JSON, without its navigation properties.</summary>
+    private static string Snapshot(CashMovement m)
+        => System.Text.Json.JsonSerializer.Serialize(new
+        {
+            m.Date, Type = m.Type.ToString(), Status = m.Status.ToString(),
+            m.AmountCents, m.BaseCents, m.VatCents, m.VatBp,
+            m.PaymentMethodId, m.CategoryId, m.WorkerId, m.Concept, m.Notes
+        });
 }

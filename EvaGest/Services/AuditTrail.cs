@@ -12,6 +12,7 @@ namespace EvaGest.Services;
 public static class AuditTrail
 {
     public const string SaleEntity = "Sale";
+    public const string CashMovementEntity = "CashMovement";
 
     /// <summary>A sale's full state as the audit keeps it: every field an edit can
     /// touch, and every line with its frozen price and VAT rate.</summary>

@@ -27,6 +27,7 @@ public interface ITillService
     Task<TillSummary> Summary(DateOnly from, DateOnly to);
 
     Task<int> Create(CashMovement movement);
-    Task Update(CashMovement movement);
+
+    /// <summary>Voids the movement; it is never physically deleted.</summary>
     Task Delete(int movementId);
 }

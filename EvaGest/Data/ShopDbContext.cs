@@ -32,6 +32,7 @@ public class ShopDbContext : DbContext
         b.Entity<Sale>().Property(e => e.Status).HasConversion<string>();
         b.Entity<Sale>().Property(e => e.VatMode).HasConversion<string>();
         b.Entity<CashMovement>().Property(e => e.Type).HasConversion<string>();
+        b.Entity<CashMovement>().Property(e => e.Status).HasConversion<string>();
         b.Entity<WorkerSchedule>().Property(e => e.Weekday).HasConversion<string>();
         b.Entity<ShopSchedule>().Property(e => e.Weekday).HasConversion<string>();
 

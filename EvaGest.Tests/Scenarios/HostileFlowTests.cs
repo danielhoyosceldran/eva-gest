@@ -323,7 +323,7 @@ public class HostileFlowTests
     }
 
     [Fact]
-    public async Task Upgrading_an_existing_database_keeps_its_sales_and_stops_the_client_cascade()
+    public async Task Upgrading_an_existing_database_keeps_its_records_and_stops_the_client_cascade()
     {
         // KeepSalesWhenClientDeleted rebuilds the sales table (SQLite cannot alter a
         // foreign key in place). Run it over a database that already holds a sale, the
@@ -344,7 +344,9 @@ public class HostileFlowTests
                     "INSERT INTO payment_methods (id, name, active) VALUES (1, 'Efectiu', 1);" +
                     "INSERT INTO clients (id, name, mobile, client_key, asleep) VALUES (1, 'Joan', '612345678', 'joan', 0);" +
                     "INSERT INTO sales (id, date, time, client_id, payment_method_id, base_cents, vat_cents, total_cents, vat_mode, status) " +
-                    "VALUES (1, '2026-01-15', '10:00:00', 1, 1, 1000, 210, 1210, 'Included', 'Active');");
+                    "VALUES (1, '2026-01-15', '10:00:00', 1, 1, 1000, 210, 1210, 'Included', 'Active');" +
+                    "INSERT INTO cash_movements (id, date, type, amount_cents, payment_method_id, concept) " +
+                    "VALUES (1, '2026-01-15', 'Out', 5000, 1, 'Lloguer');");
 
                 await db.Database.MigrateAsync();
             }
@@ -354,6 +356,9 @@ public class HostileFlowTests
                 var sale = await reopened.Sales.SingleAsync();
                 sale.ClientId.Should().Be(1);
                 sale.TotalCents.Should().Be(1210);
+
+                // AddCashMovementStatus: a movement that existed before voiding did is live.
+                (await reopened.CashMovements.SingleAsync()).Status.Should().Be(MovementStatus.Active);
 
                 var cascade = () => reopened.Database.ExecuteSqlRawAsync("DELETE FROM clients WHERE id = 1");
                 await cascade.Should().ThrowAsync<Microsoft.Data.Sqlite.SqliteException>();

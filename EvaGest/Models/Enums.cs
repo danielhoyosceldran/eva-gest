@@ -23,6 +23,14 @@ public enum VatMode
     NotIncluded
 }
 
+/// <summary>State of a cash movement. A removed movement is voided, never deleted:
+/// it drops out of the till and the table but stays in the database.</summary>
+public enum MovementStatus
+{
+    Active,
+    Voided
+}
+
 /// <summary>Direction of a cash movement that is not a sale.</summary>
 public enum MovementType
 {
