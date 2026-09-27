@@ -89,6 +89,11 @@ public class SaleService(
             .Include(v => v.Breakdowns)
             .FirstAsync(v => v.Id == sale.Id);
 
+        // Taken before anything is touched: the edit replaces lines and totals in place,
+        // so this is the only copy of what the ticket said before it was corrected.
+        string before = AuditTrail.Snapshot(existing);
+        int beforeTotal = existing.TotalCents;
+
         // Recompute in the mode this sale was taken in, not the one in force today:
         // correcting a typo on an old ticket must not silently reinterpret its prices
         // because the shop switched to VAT-exclusive since (decision 6.4).
@@ -111,17 +116,24 @@ public class SaleService(
         existing.Lines = lines;
         existing.Breakdowns = sale.Breakdowns;
 
+        // Audit trail required by CU-04: a sale's edit history must be traceable. Saved
+        // by the same SaveChanges as the edit, so one never exists without the other.
+        AuditTrail.Record(db, AuditTrail.SaleEntity, existing.Id, "Update",
+            before, AuditTrail.Snapshot(existing));
+
         await db.SaveChangesAsync();
 
-        // Audit trail required by CU-04: a sale's edit history must be traceable.
-        Log.Information("Sale {SaleId} updated", sale.Id);
+        Log.Information("Sale {SaleId} updated: total {BeforeCents} -> {AfterCents} cents",
+            sale.Id, beforeTotal, existing.TotalCents);
     }
 
     public async Task Void(int saleId)
     {
         await using var db = await factory.CreateDbContextAsync();
-        var sale = await db.Sales.FirstAsync(v => v.Id == saleId);
+        var sale = await db.Sales.Include(v => v.Lines).FirstAsync(v => v.Id == saleId);
+        string before = AuditTrail.Snapshot(sale);
         sale.Status = SaleStatus.Voided;
+        AuditTrail.Record(db, AuditTrail.SaleEntity, saleId, "Void", before, AuditTrail.Snapshot(sale));
         await db.SaveChangesAsync();
 
         // Audit trail required by CU-04: a voided sale must be traceable in the log.
@@ -132,7 +144,7 @@ public class SaleService(
     {
         await using var db = await factory.CreateDbContextAsync();
 
-        var sale = await db.Sales.FirstOrDefaultAsync(v => v.Id == saleId);
+        var sale = await db.Sales.Include(v => v.Lines).FirstOrDefaultAsync(v => v.Id == saleId);
         if (sale is null) return DeleteResult.Deleted;
 
         // A voided sale is already as far as a sale can go. It used to be removed for
@@ -144,7 +156,9 @@ public class SaleService(
             return DeleteResult.Blocked;
         }
 
+        string before = AuditTrail.Snapshot(sale);
         sale.Status = SaleStatus.Voided;
+        AuditTrail.Record(db, AuditTrail.SaleEntity, saleId, "Void", before, AuditTrail.Snapshot(sale));
         await db.SaveChangesAsync();
         Log.Information("Sale {SaleId} voided instead of deleted (was Active)", saleId);
         return DeleteResult.Deactivated;

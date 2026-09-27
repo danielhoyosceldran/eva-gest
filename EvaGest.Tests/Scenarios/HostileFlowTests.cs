@@ -385,5 +385,6 @@ public class HostileFlowTests
         await db.ShopSchedule.ToListAsync();
         await db.ClosedDays.ToListAsync();
         await db.Settings.ToListAsync();
+        await db.AuditEntries.ToListAsync();
     }
 }

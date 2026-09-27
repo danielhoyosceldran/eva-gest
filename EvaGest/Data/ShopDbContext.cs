@@ -22,6 +22,7 @@ public class ShopDbContext : DbContext
     public DbSet<ShopSchedule> ShopSchedule => Set<ShopSchedule>();
     public DbSet<ClosedDay> ClosedDays => Set<ClosedDay>();
     public DbSet<SettingItem> Settings => Set<SettingItem>();
+    public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -47,6 +48,7 @@ public class ShopDbContext : DbContext
         b.Entity<Sale>().HasIndex(e => e.Status);
         b.Entity<CashMovement>().HasIndex(e => e.Date);
         b.Entity<SaleBreakdown>().HasIndex(e => e.SaleId);
+        b.Entity<AuditEntry>().HasIndex(e => new { e.Entity, e.EntityId });
 
         // Deleting a client wipes their appointments. Their sales are accounting records
         // and must outlive them: ClientService.Delete turns each one into a guest sale

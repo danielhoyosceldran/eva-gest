@@ -203,4 +203,49 @@ public class SaleServiceTests
 
         await action.Should().ThrowAsync<InvalidOperationException>();
     }
+
+    [Fact]
+    public async Task Editing_a_sale_keeps_what_it_said_before_and_after_in_the_audit_trail()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        var sales = CreatesService(testDb);
+
+        int id = await sales.Create(NewSale(methodId), [Line(1000, 2100)]);
+
+        var updated = new Sale { Id = id, Date = Today.AddDays(-40), Time = new TimeOnly(11, 0), GuestName = "C", PaymentMethodId = methodId };
+        await sales.Update(updated, [Line(2500, 2100)]);
+
+        await using var db = testDb.Context();
+        var entry = await db.AuditEntries.SingleAsync();
+        entry.Entity.Should().Be("Sale");
+        entry.EntityId.Should().Be(id);
+        entry.Action.Should().Be("Update");
+
+        var before = System.Text.Json.JsonSerializer.Deserialize<AuditTrail.SaleSnapshot>(entry.Before!)!;
+        var after = System.Text.Json.JsonSerializer.Deserialize<AuditTrail.SaleSnapshot>(entry.After!)!;
+        before.TotalCents.Should().Be(1000);
+        before.Date.Should().Be(Today);
+        before.Lines.Should().ContainSingle(l => l.AmountCents == 1000);
+        after.TotalCents.Should().Be(2500);
+        after.Date.Should().Be(Today.AddDays(-40));
+        after.Lines.Should().ContainSingle(l => l.AmountCents == 2500);
+    }
+
+    [Fact]
+    public async Task Voiding_a_sale_leaves_an_audit_entry()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        var sales = CreatesService(testDb);
+
+        int id = await sales.Create(NewSale(methodId), [Line(1000, 2100)]);
+        await sales.Void(id);
+
+        await using var db = testDb.Context();
+        var entry = await db.AuditEntries.SingleAsync();
+        entry.Action.Should().Be("Void");
+        entry.Before.Should().Contain("\"Status\":\"Active\"");
+        entry.After.Should().Contain("\"Status\":\"Voided\"");
+    }
 }
