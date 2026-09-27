@@ -26,10 +26,9 @@ public interface ISaleService
     Task Void(int saleId);
 
     /// <summary>
-    /// An active sale is the history, so deleting it only cancels it (RF-10) and reports
-    /// <see cref="DeleteResult.Deactivated"/>. Asking again on an already cancelled
-    /// sale removes it for good, together with its lines and VAT breakdown: by then the
-    /// user has seen it excluded from the totals and asked twice.
+    /// A sale is never deleted (RF-10). Asking to delete an active one voids it and
+    /// reports <see cref="DeleteResult.Deactivated"/>; asking on an already voided one
+    /// changes nothing and reports <see cref="DeleteResult.Blocked"/>.
     /// </summary>
     Task<DeleteResult> Delete(int saleId);
 

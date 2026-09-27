@@ -132,28 +132,22 @@ public class SaleService(
     {
         await using var db = await factory.CreateDbContextAsync();
 
-        var sale = await db.Sales
-            .Include(v => v.Lines)
-            .Include(v => v.Breakdowns)
-            .FirstOrDefaultAsync(v => v.Id == saleId);
+        var sale = await db.Sales.FirstOrDefaultAsync(v => v.Id == saleId);
         if (sale is null) return DeleteResult.Deleted;
 
-        if (sale.Status == SaleStatus.Active)
+        // A voided sale is already as far as a sale can go. It used to be removed for
+        // good on a second request, which erased an accounting record and left only a
+        // log line that rotates away; RF-10 says a sale is never deleted.
+        if (sale.Status == SaleStatus.Voided)
         {
-            sale.Status = SaleStatus.Voided;
-            await db.SaveChangesAsync();
-            Log.Information("Sale {SaleId} deactivated instead of deleted (was Active)", saleId);
-            return DeleteResult.Deactivated;
+            Log.Warning("Refused to delete voided sale {SaleId}: sales are never deleted", saleId);
+            return DeleteResult.Blocked;
         }
 
-        // Lines and breakdown cascade in the schema; removing them here as well keeps
-        // the intent visible and does not depend on the provider honouring it.
-        db.SaleLines.RemoveRange(sale.Lines);
-        db.SaleBreakdowns.RemoveRange(sale.Breakdowns);
-        db.Sales.Remove(sale);
+        sale.Status = SaleStatus.Voided;
         await db.SaveChangesAsync();
-        Log.Information("Sale {SaleId} permanently deleted", saleId);
-        return DeleteResult.Deleted;
+        Log.Information("Sale {SaleId} voided instead of deleted (was Active)", saleId);
+        return DeleteResult.Deactivated;
     }
 
     public async Task<Sale> PrepareFromAppointment(int appointmentId)

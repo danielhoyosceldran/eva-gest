@@ -374,13 +374,9 @@ public static class Texts
         nameof(MoreLinesSuffix),
         nameof(ConfirmVoidSaleTitle),
         nameof(ConfirmVoidSaleMessage),
-        nameof(DeleteForeverTitle),
         nameof(DeleteSaleTitle),
-        nameof(DeleteVoidedSaleMessage),
         nameof(DeleteActiveSaleMessage),
-        nameof(DeleteButton),
         nameof(SaleVoidedNotDeleted),
-        nameof(SaleDeletedForever),
         nameof(VatIncludedExplanation),
         nameof(VatExcludedExplanation),
         nameof(NoBackupYet),
@@ -1529,26 +1525,14 @@ public static class Texts
     /// <summary>La venda de {0} passarà a l'estat Anul·lada. Es manté vis...</summary>
     public static string ConfirmVoidSaleMessage => Get(nameof(ConfirmVoidSaleMessage));
 
-    /// <summary>Esborrar definitivament?</summary>
-    public static string DeleteForeverTitle => Get(nameof(DeleteForeverTitle));
-
     /// <summary>Eliminar venda?</summary>
     public static string DeleteSaleTitle => Get(nameof(DeleteSaleTitle));
-
-    /// <summary>La venda de {0} ja està anul·lada. S'esborrarà del tot, a...</summary>
-    public static string DeleteVoidedSaleMessage => Get(nameof(DeleteVoidedSaleMessage));
 
     /// <summary>La venda de {0} forma part de l'historial, així que passa...</summary>
     public static string DeleteActiveSaleMessage => Get(nameof(DeleteActiveSaleMessage));
 
-    /// <summary>Esborrar</summary>
-    public static string DeleteButton => Get(nameof(DeleteButton));
-
     /// <summary>La venda s'ha anul·lat en lloc d'esborrar-se, per no perd...</summary>
     public static string SaleVoidedNotDeleted => Get(nameof(SaleVoidedNotDeleted));
-
-    /// <summary>La venda s'ha esborrat definitivament.</summary>
-    public static string SaleDeletedForever => Get(nameof(SaleDeletedForever));
 
     /// <summary>Els preus del catàleg ja porten l'IVA inclòs. Un servei d...</summary>
     public static string VatIncludedExplanation => Get(nameof(VatIncludedExplanation));

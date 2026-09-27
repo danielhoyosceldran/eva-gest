@@ -127,10 +127,12 @@
                                                 Command="{Binding DataContext.VoidSaleCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Sale}" />
-                                        <!-- On an active sale this only cancels it and says so;
-                                             on an already cancelled one it wipes it for good -->
+                                        <!-- On an active sale this only cancels it and says so.
+                                             A cancelled sale is never deleted (RF-10), so the
+                                             button is not offered on its row -->
                                         <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Visibility="{Binding CanVoid, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Command="{Binding DataContext.DeleteSaleCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Sale}" />

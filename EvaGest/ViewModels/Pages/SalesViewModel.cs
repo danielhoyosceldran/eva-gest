@@ -193,29 +193,25 @@ public partial class SalesViewModel(
 
     /// <summary>
     /// An active sale is the accounting record, so "eliminar" cancels it and says so
-    /// (RF-10). Repeating it on an already cancelled sale wipes it for good: by then the
-    /// user has seen it sitting outside the totals and confirmed twice.
+    /// (RF-10). A voided sale has no delete at all: the button is hidden on its row, and
+    /// the service refuses it anyway, so an already voided sale is left untouched here.
     /// </summary>
     [RelayCommand]
     private async Task DeleteSale(Sale sale)
     {
-        bool voided = sale.Status == SaleStatus.Voided;
+        if (sale.Status == SaleStatus.Voided) return;
 
         bool confirmed = await dialogs.Confirm(
-            voided ? Texts.DeleteForeverTitle : Texts.DeleteSaleTitle,
-            voided
-                ? string.Format(Texts.DeleteVoidedSaleMessage, Money.Format(sale.TotalCents))
-                : string.Format(Texts.DeleteActiveSaleMessage, Money.Format(sale.TotalCents)),
-            voided ? Texts.DeleteButton : Texts.Void);
+            Texts.DeleteSaleTitle,
+            string.Format(Texts.DeleteActiveSaleMessage, Money.Format(sale.TotalCents)),
+            Texts.Void);
 
         if (!confirmed) return;
 
-        var result = await sales.Delete(sale.Id);
+        await sales.Delete(sale.Id);
         await Load();
 
-        ShowNotice(result == DeleteResult.Deactivated
-            ? Texts.SaleVoidedNotDeleted
-            : Texts.SaleDeletedForever);
+        ShowNotice(Texts.SaleVoidedNotDeleted);
     }
 
     [RelayCommand]

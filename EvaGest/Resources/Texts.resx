@@ -1080,26 +1080,14 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
   <data name="ConfirmVoidSaleMessage" xml:space="preserve">
     <value>La venda de {0} passarà a l'estat Anul·lada. Es manté visible a l'historial però queda exclosa dels totals.</value>
   </data>
-  <data name="DeleteForeverTitle" xml:space="preserve">
-    <value>Esborrar definitivament?</value>
-  </data>
   <data name="DeleteSaleTitle" xml:space="preserve">
     <value>Eliminar venda?</value>
-  </data>
-  <data name="DeleteVoidedSaleMessage" xml:space="preserve">
-    <value>La venda de {0} ja està anul·lada. S'esborrarà del tot, amb les seves línies i el desglossament d'IVA. Això no es pot desfer.</value>
   </data>
   <data name="DeleteActiveSaleMessage" xml:space="preserve">
     <value>La venda de {0} forma part de l'historial, així que passarà a Anul·lada en lloc d'esborrar-se: es manté visible però queda fora dels totals.</value>
   </data>
-  <data name="DeleteButton" xml:space="preserve">
-    <value>Esborrar</value>
-  </data>
   <data name="SaleVoidedNotDeleted" xml:space="preserve">
     <value>La venda s'ha anul·lat en lloc d'esborrar-se, per no perdre l'historial. Si la vols treure del tot, torna a eliminar-la ara que està anul·lada.</value>
-  </data>
-  <data name="SaleDeletedForever" xml:space="preserve">
-    <value>La venda s'ha esborrat definitivament.</value>
   </data>
   <data name="VatIncludedExplanation" xml:space="preserve">
     <value>Els preus del catàleg ja porten l'IVA inclòs. Un servei de 15,00 € es cobra a 15,00 €.</value>

@@ -261,7 +261,7 @@ public class DeletionTests
     // ── Sales ──────────────────────────────────────────────────────────────
 
     [Fact]
-    public async Task Deleting_an_active_sale_voids_it_and_deleting_the_voided_one_removes_it()
+    public async Task Deleting_an_active_sale_voids_it_and_a_voided_sale_is_never_removed()
     {
         await using var testDb = new TestDatabase();
         var catalog = Catalog(testDb);
@@ -273,11 +273,12 @@ public class DeletionTests
         (await sales.Delete(id)).Should().Be(DeleteResult.Deactivated);
         (await sales.GetById(id))!.Status.Should().Be(SaleStatus.Voided);
 
-        (await sales.Delete(id)).Should().Be(DeleteResult.Deleted);
-        (await sales.GetById(id)).Should().BeNull();
+        // RF-10: a sale is never deleted. Asking again used to wipe it for good.
+        (await sales.Delete(id)).Should().Be(DeleteResult.Blocked);
+        (await sales.GetById(id))!.Status.Should().Be(SaleStatus.Voided);
 
         await using var db = testDb.Context();
-        (await db.SaleLines.CountAsync()).Should().Be(0);
-        (await db.SaleBreakdowns.CountAsync()).Should().Be(0);
+        (await db.SaleLines.CountAsync()).Should().Be(1);
+        (await db.SaleBreakdowns.CountAsync()).Should().Be(1);
     }
 }

@@ -1080,26 +1080,14 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
   <data name="ConfirmVoidSaleMessage" xml:space="preserve">
     <value>La venta de {0} pasará al estado Anulada. Se mantiene visible en el historial pero queda excluida de los totales.</value>
   </data>
-  <data name="DeleteForeverTitle" xml:space="preserve">
-    <value>¿Borrar definitivamente?</value>
-  </data>
   <data name="DeleteSaleTitle" xml:space="preserve">
     <value>¿Eliminar venta?</value>
-  </data>
-  <data name="DeleteVoidedSaleMessage" xml:space="preserve">
-    <value>La venta de {0} ya está anulada. Se borrará del todo, con sus líneas y el desglose de IVA. Esto no se puede deshacer.</value>
   </data>
   <data name="DeleteActiveSaleMessage" xml:space="preserve">
     <value>La venta de {0} forma parte del historial, así que pasará a Anulada en lugar de borrarse: se mantiene visible pero queda fuera de los totales.</value>
   </data>
-  <data name="DeleteButton" xml:space="preserve">
-    <value>Borrar</value>
-  </data>
   <data name="SaleVoidedNotDeleted" xml:space="preserve">
     <value>La venta se ha anulado en lugar de borrarse, para no perder el historial. Si la quieres quitar del todo, vuelve a eliminarla ahora que está anulada.</value>
-  </data>
-  <data name="SaleDeletedForever" xml:space="preserve">
-    <value>La venta se ha borrado definitivamente.</value>
   </data>
   <data name="VatIncludedExplanation" xml:space="preserve">
     <value>Los precios del catálogo ya llevan el IVA incluido. Un servicio de 15,00 € se cobra a 15,00 €.</value>
