@@ -173,6 +173,9 @@ public partial class SalesViewModel(
     [RelayCommand]
     private async Task EditSale(Sale sale)
     {
+        // A voided sale is kept exactly as it was voided; its row offers no Edit.
+        if (sale.Status == SaleStatus.Voided) return;
+
         var vm = await SaleDialogViewModel.Edit(sales, clients, catalog, workers, so, settings, dialogs, sale);
         if (await dialogs.ShowDialog(vm)) await Load();
     }

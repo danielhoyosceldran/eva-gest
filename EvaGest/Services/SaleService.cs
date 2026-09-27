@@ -89,6 +89,12 @@ public class SaleService(
             .Include(v => v.Breakdowns)
             .FirstAsync(v => v.Id == sale.Id);
 
+        // A voided sale is history: it stays out of every total, and rewriting its lines
+        // afterwards would change what the record says was voided. The Sales page does
+        // not offer Edit on it; this refuses any other path.
+        if (existing.Status == SaleStatus.Voided)
+            throw new InvalidOperationException($"Sale {existing.Id} is voided and cannot be edited.");
+
         // Taken before anything is touched: the edit replaces lines and totals in place,
         // so this is the only copy of what the ticket said before it was corrected.
         string before = AuditTrail.Snapshot(existing);

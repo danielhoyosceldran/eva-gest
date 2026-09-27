@@ -113,8 +113,10 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <!-- A cancelled sale is history: it is shown, never rewritten -->
                                         <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
                                                 Padding="10,0" MinHeight="32"
+                                                Visibility="{Binding CanVoid, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Command="{Binding DataContext.EditSaleCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Sale}" />

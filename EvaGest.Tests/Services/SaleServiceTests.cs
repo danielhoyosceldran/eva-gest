@@ -262,4 +262,21 @@ public class SaleServiceTests
         await using var db = testDb.Context();
         (await db.Sales.CountAsync()).Should().Be(0);
     }
+
+    [Fact]
+    public async Task A_voided_sale_can_not_be_edited()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        var sales = CreatesService(testDb);
+
+        int id = await sales.Create(NewSale(methodId), [Line(1000, 2100)]);
+        await sales.Void(id);
+
+        var updated = new Sale { Id = id, Date = Today, Time = new TimeOnly(10, 0), GuestName = "C", PaymentMethodId = methodId };
+        var act = () => sales.Update(updated, [Line(9900, 2100)]);
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+        (await sales.GetById(id))!.TotalCents.Should().Be(1000);
+    }
 }
