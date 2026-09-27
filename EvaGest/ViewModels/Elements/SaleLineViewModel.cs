@@ -35,7 +35,7 @@ public partial class SaleLineViewModel : ObservableObject
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(Description)
         && NumberValidator.TryParseAtLeast(QuantityText, 1, out _)
-        && Money.TryParse(PriceText, out _)
+        && Money.TryParse(PriceText, out int priceCents) && priceCents >= 0
         && Percentages.TryParse(VatText, out _)
         && AmountCentsExact is >= int.MinValue and <= int.MaxValue;
 

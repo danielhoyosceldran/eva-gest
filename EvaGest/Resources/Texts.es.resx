@@ -820,6 +820,9 @@
   <data name="PriceInvalid" xml:space="preserve">
     <value>El precio debe ser un número con cifras (0-9), con los decimales separados por coma, por ejemplo 15,50.</value>
   </data>
+  <data name="PriceNegative" xml:space="preserve">
+    <value>El precio no puede ser negativo. Escríbelo sin el signo menos, por ejemplo 15,50.</value>
+  </data>
   <data name="VatOutOfRange" xml:space="preserve">
     <value>El IVA debe ser un porcentaje entre 0 y 100, solo cifras (0-9), por ejemplo 21.</value>
   </data>

@@ -195,6 +195,13 @@ public class SaleService(
     /// Never recomputed later: this is the one place BaseCents/VatCents/TotalCents are set.</summary>
     private static void FreezeTotals(Sale sale, List<SaleLine> lines, VatMode mode)
     {
+        // The dialogs refuse these already; this is the last line of defence before a
+        // figure is frozen for good. A negative price or a zero quantity is not a sale.
+        if (lines.FirstOrDefault(l => l.UnitPriceCents < 0 || l.AmountCents < 0 || l.Quantity < 1) is { } bad)
+            throw new ArgumentException(
+                $"A sale line cannot have a negative price or a quantity below one ({bad.Description}).",
+                nameof(lines));
+
         var broken = VatCalculator.Compute(lines, mode);
         sale.BaseCents = broken.BaseCents;
         sale.VatCents = broken.VatCents;

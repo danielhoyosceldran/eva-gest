@@ -248,4 +248,18 @@ public class SaleServiceTests
         entry.Before.Should().Contain("\"Status\":\"Active\"");
         entry.After.Should().Contain("\"Status\":\"Voided\"");
     }
+
+    [Fact]
+    public async Task A_sale_with_a_negative_line_is_refused_and_nothing_is_saved()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        var sales = CreatesService(testDb);
+
+        var act = () => sales.Create(NewSale(methodId), [Line(1500), Line(-500)]);
+
+        await act.Should().ThrowAsync<ArgumentException>();
+        await using var db = testDb.Context();
+        (await db.Sales.CountAsync()).Should().Be(0);
+    }
 }

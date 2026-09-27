@@ -66,6 +66,20 @@ public class SaleLineViewModelTests
         line.IsValid.Should().BeFalse();
     }
 
+    [Theory]
+    [InlineData("-15,00")]
+    [InlineData("-0,01")]
+    public void A_negative_price_makes_the_line_invalid(string typed)
+    {
+        var line = SaleLineViewModel.Free(2100);
+        line.Description = "Tall";
+        line.QuantityText = "1";
+
+        line.PriceText = typed;
+
+        line.IsValid.Should().BeFalse("a negative price would freeze a negative total onto the sale");
+    }
+
     [Fact]
     public void A_line_with_no_concept_is_invalid()
     {

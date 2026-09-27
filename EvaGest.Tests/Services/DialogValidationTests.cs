@@ -126,6 +126,26 @@ public class DialogValidationTests
         vm.ErrorValidation.Should().Be(Texts.VatOutOfRange);
     }
 
+    [Fact]
+    public void A_product_with_a_negative_price_is_refused()
+    {
+        var vm = new ProductDialogViewModel { Name = "Cera", PriceText = "-9,00", VatText = "21" };
+
+        vm.SaveCommand.Execute(null);
+
+        vm.ErrorValidation.Should().Be(Texts.PriceNegative);
+    }
+
+    [Fact]
+    public void A_service_with_a_negative_price_is_refused()
+    {
+        var vm = new ServiceDialogViewModel { Name = "Tall", PriceText = "-15", VatText = "21" };
+
+        vm.SaveCommand.Execute(null);
+
+        vm.ErrorValidation.Should().Be(Texts.PriceNegative);
+    }
+
     // ── The two settings the movement dialog is supposed to follow ───────────
     // pantalles 3.5: the VAT-split box is "Només visible si `aplicar_iva_caixa` està
     // activat", and the rate it starts on is the configured default. Both were written

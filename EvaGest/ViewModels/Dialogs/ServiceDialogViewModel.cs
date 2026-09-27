@@ -41,9 +41,16 @@ public partial class ServiceDialogViewModel : DialogViewModelBase
             ErrorValidation = Texts.ServiceNameRequired;
             return;
         }
-        if (!Money.TryParse(PriceText, out _))
+        if (!Money.TryParse(PriceText, out int priceCents))
         {
             ErrorValidation = Texts.PriceInvalid;
+            return;
+        }
+        // Money.TryParse accepts a sign; a negative catalogue price would be frozen
+        // onto every sale that uses the item.
+        if (priceCents < 0)
+        {
+            ErrorValidation = Texts.PriceNegative;
             return;
         }
         if (!Percentages.TryParse(VatText, out _))

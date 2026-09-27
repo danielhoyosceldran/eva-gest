@@ -291,6 +291,7 @@ public static class Texts
         nameof(EditProductTitle),
         nameof(ProductNameRequired),
         nameof(PriceInvalid),
+        nameof(PriceNegative),
         nameof(VatOutOfRange),
         nameof(NewMethodTitle),
         nameof(EditMethodTitle),
@@ -1274,6 +1275,9 @@ public static class Texts
 
     /// <summary>El preu no és vàlid.</summary>
     public static string PriceInvalid => Get(nameof(PriceInvalid));
+
+    /// <summary>El preu no pot ser negatiu. Escriu-lo sense el signe menys...</summary>
+    public static string PriceNegative => Get(nameof(PriceNegative));
 
     /// <summary>L'IVA ha de ser un percentatge entre 0 i 100.</summary>
     public static string VatOutOfRange => Get(nameof(VatOutOfRange));

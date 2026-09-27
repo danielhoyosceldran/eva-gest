@@ -345,7 +345,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         {
             ErrorValidation = string.IsNullOrWhiteSpace(wrong.Description) ? Texts.LineDescriptionRequired
                 : !NumberValidator.TryParseAtLeast(wrong.QuantityText, 1, out _) ? Texts.QuantityInvalid
-                : !Money.TryParse(wrong.PriceText, out _) ? Texts.PriceInvalid
+                : !Money.TryParse(wrong.PriceText, out int wrongPrice) ? Texts.PriceInvalid
+                : wrongPrice < 0 ? Texts.PriceNegative
                 : !Percentages.TryParse(wrong.VatText, out _) ? Texts.VatOutOfRange
                 : Texts.LineAmountTooLarge;
             return;

@@ -820,6 +820,9 @@
   <data name="PriceInvalid" xml:space="preserve">
     <value>El preu ha de ser un número amb xifres (0-9), amb els decimals separats per coma, per exemple 15,50.</value>
   </data>
+  <data name="PriceNegative" xml:space="preserve">
+    <value>El preu no pot ser negatiu. Escriu-lo sense el signe menys, per exemple 15,50.</value>
+  </data>
   <data name="VatOutOfRange" xml:space="preserve">
     <value>L'IVA ha de ser un percentatge entre 0 i 100, només xifres (0-9), per exemple 21.</value>
   </data>
