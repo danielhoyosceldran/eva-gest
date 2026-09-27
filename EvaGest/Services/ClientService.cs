@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
 using EvaGest.Data;
 using EvaGest.Models;
 using EvaGest.Resources;
@@ -109,6 +110,12 @@ public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientSe
             sale.ClientId = null;
             sale.GuestName = Texts.DeletedClientName;
             sale.GuestPhone = null;
+
+            // Only the id goes into the audit, never the name or phone: keeping them
+            // here would undo the point of deleting the client.
+            AuditTrail.Record(db, AuditTrail.SaleEntity, sale.Id, "Anonymize",
+                JsonSerializer.Serialize(new { ClientId = clientId }),
+                JsonSerializer.Serialize(new { sale.GuestName }));
         }
 
         db.Clients.Remove(client); // cascades to Appointments only (DbContext OnModelCreating)

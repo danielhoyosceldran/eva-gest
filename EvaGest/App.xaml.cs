@@ -74,10 +74,15 @@ public partial class App : Application
         Directory.CreateDirectory(Path.Combine(baseFolder, "Backups"));
         Directory.CreateDirectory(Path.Combine(baseFolder, "Logs"));
 
+        // Never pruned. The log is part of the audit trail CU-04 asks for (sale edits and
+        // voids, client deletions, cash movements), and the books it backs up have to be
+        // kept for years; 30 files used to erase that record a month later. One small
+        // text file a day costs next to nothing. The durable copy of each change lives
+        // in the audit_entries table, which also travels inside every backup.
         Log.Logger = new LoggerConfiguration()
             .WriteTo.File(Path.Combine(baseFolder, "Logs", "log-.txt"),
                           rollingInterval: RollingInterval.Day,
-                          retainedFileCountLimit: 30)
+                          retainedFileCountLimit: null)
             .CreateLogger();
 
         Log.Information("Application started");

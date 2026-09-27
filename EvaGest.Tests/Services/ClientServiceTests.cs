@@ -187,6 +187,12 @@ public class ClientServiceTests
         sale.GuestName.Should().Be(EvaGest.Resources.Texts.DeletedClientName);
         sale.GuestPhone.Should().BeNull();
         sale.TotalCents.Should().Be(121);
+
+        // The change is on record, but without the personal data it just removed.
+        var entry = await check.AuditEntries.SingleAsync();
+        entry.Action.Should().Be("Anonymize");
+        entry.EntityId.Should().Be(sale.Id);
+        (entry.Before + entry.After).Should().NotContain("Joan").And.NotContain("612345678");
     }
 
     [Fact]
