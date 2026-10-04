@@ -152,4 +152,42 @@ public class FluxAppointmentSaleTests
         sale.AppointmentId.Should().Be(appointment.Id);
         sale.TotalCents.Should().Be(1500);
     }
+
+    [Fact] // R-06
+    public async Task An_appointment_whose_sale_was_voided_can_be_charged_again()
+    {
+        // The flow the UI offers: charge, void the sale on the Sales page, send the
+        // appointment back to Pending (allowed once its sale is no longer active), and
+        // charge it again. Sales.appointment_id is unique, so the voided sale must not
+        // keep holding the appointment or the second charge dies on the index.
+        await using var testDb = new TestDatabase();
+        var dialogs = new TestDialogService
+        {
+            ResultDialog = true,
+            FillDialog = async d =>
+            {
+                if (d is not SaleDialogViewModel sale) return;
+                sale.PaymentMethod = sale.ActiveMethods[0];
+                await sale.ChargeCommand.ExecuteAsync(null);
+            }
+        };
+
+        var m = await Build(testDb, dialogs);
+        var appointment = await AddsAppointment(testDb);
+        await m.Start.Load();
+
+        await m.Start.MarkCompletedCommand.ExecuteAsync(m.Start.DayAppointments.Single());
+        var first = (await m.Sales.Search(new SalesFilter())).Single();
+        await m.Sales.Void(first.Id);
+
+        (await m.Appointments.ChangeStatus(appointment.Id, AppointmentStatus.Pending)).Should().BeTrue();
+        await m.Start.Load();
+
+        await m.Start.MarkCompletedCommand.ExecuteAsync(m.Start.DayAppointments.Single());
+
+        var all = await m.Sales.Search(new SalesFilter());
+        all.Should().HaveCount(2);
+        all.Single(s => s.Status == SaleStatus.Active).AppointmentId.Should().Be(appointment.Id);
+        (await m.Appointments.GetById(appointment.Id))!.Status.Should().Be(AppointmentStatus.Completed);
+    }
 }

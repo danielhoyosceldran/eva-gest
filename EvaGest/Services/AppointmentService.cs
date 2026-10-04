@@ -99,8 +99,18 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         await using var db = await factory.CreateDbContextAsync();
         var appointment = await db.Appointments.Include(c => c.Sale).FirstAsync(c => c.Id == appointmentId);
 
-        if (newStatus == AppointmentStatus.Pending && appointment.Sale is { Status: SaleStatus.Active })
-            return false;
+        if (newStatus == AppointmentStatus.Pending && appointment.Sale is { } sale)
+        {
+            if (sale.Status == SaleStatus.Active) return false;
+
+            // Reopening an appointment whose sale was voided means it is going to be
+            // charged again. sales.appointment_id is unique, so while the voided sale
+            // kept pointing here the new charge died on the index and the sale was lost.
+            // The voided sale stays in the history; it just no longer claims the slot.
+            appointment.Sale = null;
+            Log.Information("Voided sale {SaleId} released from reopened appointment {AppointmentId}",
+                sale.Id, appointmentId);
+        }
 
         // F-05: a cancelled or no-show appointment can never carry a sale. Only the
         // step to Pending used to be guarded, so an appointment already charged could
