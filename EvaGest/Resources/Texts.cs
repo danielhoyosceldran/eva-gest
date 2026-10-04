@@ -1379,8 +1379,10 @@ public static class Texts
     /// <summary>Còpia restaurada</summary>
     public static string BackupRestoredTitle => Get(nameof(BackupRestoredTitle));
 
-    /// <summary>Les dades s'han restaurat correctament. Tanca i torna a o...</summary>
+    /// <summary>Aquesta còpia està malmesa i no es pot restaurar. Les da...</summary>
     public static string BackupNotRestorable => Get(nameof(BackupNotRestorable));
+
+    /// <summary>Les dades s'han restaurat correctament. Tanca i torna a o...</summary>
     public static string BackupRestoredMessage => Get(nameof(BackupRestoredMessage));
 
     /// <summary>Adormir</summary>
