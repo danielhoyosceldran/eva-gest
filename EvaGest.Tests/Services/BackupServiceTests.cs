@@ -34,13 +34,15 @@ public class BackupServiceTests : IDisposable
     }
 
     /// <summary>A one-row database standing for the shop's, written without pooling so
-    /// nothing keeps the file open behind the test's back.</summary>
+    /// nothing keeps the file open behind the test's back. It carries EF's migration
+    /// history table, which is how a restore recognises an EvaGest database.</summary>
     private static void WriteContent(string path, string value)
     {
         using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
         connection.Open();
         using var command = connection.CreateCommand();
-        command.CommandText = "CREATE TABLE IF NOT EXISTS content (v TEXT); DELETE FROM content; " +
+        command.CommandText = "CREATE TABLE IF NOT EXISTS __EFMigrationsHistory (id TEXT); " +
+                              "CREATE TABLE IF NOT EXISTS content (v TEXT); DELETE FROM content; " +
                               "INSERT INTO content VALUES ($v);";
         command.Parameters.AddWithValue("$v", value);
         command.ExecuteNonQuery();
@@ -284,6 +286,27 @@ public class BackupServiceTests : IDisposable
         await File.WriteAllTextAsync(damaged, "not a database");
 
         var restore = () => backup.Restore(damaged);
+
+        await restore.Should().ThrowAsync<InvalidDataException>();
+        ReadContent(_pathDb).Should().Be("contingut original");
+    }
+
+    [Fact]
+    public async Task A_sound_database_that_is_not_EvaGest_is_refused()
+    {
+        // quick_check passes any healthy SQLite file, an empty one included.
+        var backup = CreatesService();
+        string foreign = Path.Combine(_folder, "Backups", "20260101_120000000_manual.db");
+        Directory.CreateDirectory(Path.GetDirectoryName(foreign)!);
+        using (var connection = new SqliteConnection($"Data Source={foreign};Pooling=False"))
+        {
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = "CREATE TABLE notes (text TEXT)";
+            command.ExecuteNonQuery();
+        }
+
+        var restore = () => backup.Restore(foreign);
 
         await restore.Should().ThrowAsync<InvalidDataException>();
         ReadContent(_pathDb).Should().Be("contingut original");

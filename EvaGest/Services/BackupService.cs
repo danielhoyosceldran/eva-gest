@@ -219,7 +219,7 @@ public class BackupService(
         command.ExecuteNonQuery();
     }
 
-    /// <summary>Throws unless SQLite reads the file as a sound database.</summary>
+    /// <summary>Throws unless SQLite reads the file as a sound EvaGest database.</summary>
     private static void EnsureReadable(string path)
     {
         string result;
@@ -230,6 +230,14 @@ public class BackupService(
             using var command = connection.CreateCommand();
             command.CommandText = "PRAGMA quick_check";
             result = command.ExecuteScalar() as string ?? string.Empty;
+
+            // quick_check also says "ok" for an empty database or another program's. Every
+            // EvaGest database has EF's migration history table, so a file without it is
+            // not one of ours, however sound.
+            command.CommandText =
+                "SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = '__EFMigrationsHistory'";
+            if (result == "ok" && Convert.ToInt32(command.ExecuteScalar()) == 0)
+                result = "not an EvaGest database";
         }
         catch (SqliteException ex)
         {
