@@ -174,15 +174,19 @@ effort looking for what is not yet on this list. Remove each line as it is close
 - `MovementDialogViewModel(CashMovement)` is dead and incomplete — it restores 6 of 9
   fields, silently dropping the payment method, category and worker. It will lose data the
   day "edit a cash movement" is wired up.
-- `ToWeekday` is duplicated three times (`WeekHelper`, `AvailabilityService`,
-  `ReportsService`); the midnight end-time clamp is duplicated twice
-  (`Appointment.EndTime`, `AvailabilityService.ClampedEnd`). One past bugfix had to patch
-  two copies at once.
 - Eleven service interfaces have a single implementation and are never substituted in any
   test; only `IDialogService`, `ISettingsService` and `ISoundService` are faked.
 - `Texts.cs` lists every key twice (in `Keys` and as a property). `Keys` could be derived by
   reflection, removing the one omission `LanguageTests` cannot detect.
-- `BackupService.Restore` copies over the live database file with no WAL/`-shm` handling and
-  no post-copy integrity check. Not confirmed as a defect — needs verifying.
-- `ITillService.Update`, `IAvailabilityService.IsDayOpen` and
-  `IAvailabilityService.OpeningIntervals` have no callers.
+- `ITillService.Update`, `IAvailabilityService.IsDayOpen`,
+  `IAvailabilityService.OpeningIntervals`, `IReportsService.GetWorkerDetail` and
+  `IAppointmentService.GetCompletedWithoutSale` have no callers. `WorkerDetail`'s
+  `ProductsPercentage`, `OtherConceptsCents`, `Services`, `Products` and `ActivityByDay` are
+  computed and never shown; `ProductsPercentage` divides line amounts by VAT-inclusive
+  totals, so it would read wrong in VAT-exclusive mode the day it is wired back up.
+- Deleting a client cascades to their active sales (RF-04, by design) but is unlogged and is
+  reachable from the public Clients page with owner mode closed (`bugs.csv`).
+- Several pages still clear an `ObservableCollection` and then await (`HomeViewModel`,
+  `CatalogViewModel`, `ClientsViewModel`, `SettingsViewModel` closed days), and `TillViewModel`
+  / `SalesViewModel` have no generation guard, so overlapping loads can duplicate rows or let
+  a stale query win. No reachable trigger confirmed.
