@@ -25,7 +25,7 @@ dotnet test  EvaGest.slnx --filter "FullyQualifiedName~VatCalculator"
 dotnet ef migrations add <Name>
 ```
 
-The build is warning-free. Keep it that way. All 730 tests run in about two seconds
+The build is warning-free. Keep it that way. The whole test suite runs in about five seconds
 (test execution itself — `dotnet test` including build/restore takes longer), so
 run the whole suite rather than guessing which part is affected.
 
