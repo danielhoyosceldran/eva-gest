@@ -4,6 +4,7 @@ using EvaGest.Services;
 using EvaGest.Tests.Infra;
 using EvaGest.ViewModels.Dialogs;
 using EvaGest.ViewModels.Pages;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace EvaGest.Tests.Services;
@@ -187,7 +188,35 @@ public class FluxAppointmentSaleTests
 
         var all = await m.Sales.Search(new SalesFilter());
         all.Should().HaveCount(2);
-        all.Single(s => s.Status == SaleStatus.Active).AppointmentId.Should().Be(appointment.Id);
+        // Both stay on the appointment: the voided one is history, not an orphan.
+        all.Should().OnlyContain(s => s.AppointmentId == appointment.Id);
+        all.Should().ContainSingle(s => s.Status == SaleStatus.Active);
         (await m.Appointments.GetById(appointment.Id))!.Status.Should().Be(AppointmentStatus.Completed);
+    }
+
+    [Fact]
+    public async Task An_appointment_cannot_hold_two_active_sales()
+    {
+        // The unique index on sales.appointment_id only counts active sales, so voided
+        // ones can stay linked; it must still refuse a second live charge.
+        await using var testDb = new TestDatabase();
+        await Build(testDb);
+        var appointment = await AddsAppointment(testDb);
+
+        await using var db = testDb.Context();
+        int methodId = db.PaymentMethods.First().Id;
+        Sale Charge(SaleStatus status)
+        {
+            var sale = Make.Sale(Today, methodId, status, Make.Line(1500));
+            sale.AppointmentId = appointment.Id;
+            return sale;
+        }
+
+        db.Sales.AddRange(Charge(SaleStatus.Voided), Charge(SaleStatus.Active));
+        await db.SaveChangesAsync();
+
+        db.Sales.Add(Charge(SaleStatus.Active));
+        Func<Task> second = () => db.SaveChangesAsync();
+        await second.Should().ThrowAsync<DbUpdateException>();
     }
 }

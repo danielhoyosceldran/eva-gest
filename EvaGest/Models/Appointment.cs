@@ -27,8 +27,12 @@ public class Appointment
     public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
     public string? Notes { get; set; }
 
-    /// <summary>At most one sale per appointment.</summary>
-    public Sale? Sale { get; set; }
+    /// <summary>
+    /// Every sale ever charged for this appointment. At most one is Active (a filtered
+    /// unique index enforces it); the others were voided and stay linked so the history
+    /// still shows the visit was charged, voided and charged again.
+    /// </summary>
+    public List<Sale> Sales { get; set; } = [];
 
     [NotMapped]
     public string DisplayName => Client?.Name ?? GuestName ?? string.Empty;

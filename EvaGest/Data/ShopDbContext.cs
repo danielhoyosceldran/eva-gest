@@ -41,7 +41,11 @@ public class ShopDbContext : DbContext
         b.Entity<PaymentMethod>().HasIndex(e => e.Name).IsUnique();
         b.Entity<ExpenseCategory>().HasIndex(e => e.Name).IsUnique();
         b.Entity<ClosedDay>().HasIndex(e => e.Date).IsUnique();
-        b.Entity<Sale>().HasIndex(e => e.AppointmentId).IsUnique();
+        // One ACTIVE sale per appointment. Voided sales keep their appointment_id, so a
+        // reopened appointment can be charged again without erasing which visit the
+        // voided charge belonged to.
+        b.Entity<Sale>().HasIndex(e => e.AppointmentId).IsUnique()
+            .HasFilter("status = 'Active'");
 
         // Query indexes
         b.Entity<Appointment>().HasIndex(e => new { e.Date, e.Time });
@@ -69,7 +73,7 @@ public class ShopDbContext : DbContext
             .OnDelete(DeleteBehavior.SetNull);
         b.Entity<Appointment>().HasOne(e => e.Worker).WithMany(t => t.Appointments)
             .OnDelete(DeleteBehavior.SetNull);
-        b.Entity<Sale>().HasOne(e => e.Appointment).WithOne(c => c.Sale)
+        b.Entity<Sale>().HasOne(e => e.Appointment).WithMany(c => c.Sales)
             .OnDelete(DeleteBehavior.SetNull);
         b.Entity<CashMovement>().HasOne(e => e.Category).WithMany()
             .OnDelete(DeleteBehavior.SetNull);
