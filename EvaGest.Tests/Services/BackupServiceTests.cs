@@ -305,4 +305,34 @@ public class BackupServiceTests : IDisposable
 
         ReadContent(_pathDb).Should().Be("contingut original");
     }
+
+    [Fact] // L-15
+    public async Task Backups_of_a_WAL_database_leave_no_side_files_behind()
+    {
+        // SQLite's backup API copies page 1 as it is, so a backup of the WAL-mode live
+        // database came out marked WAL too, and opening it again (the check before a
+        // restore) could leave -wal/-shm files that pruning, which only deletes *.db,
+        // never removes.
+        string live = Path.Combine(_folder, "live.db");
+        var factory = await LiveDatabase(live);
+        await AddClient(factory, "Anna");
+
+        var backup = new BackupService(new AppPaths(live, _folder), new TestSettings());
+        var backupFile = await backup.MakeManualBackup();
+        await backup.Restore(backupFile.Path);
+
+        Directory.GetFiles(Path.Combine(_folder, "Backups"))
+            .Should().OnlyContain(f => f.EndsWith(".db"));
+        JournalMode(backupFile.Path).Should().Be("delete");
+        JournalMode(live).Should().Be("wal", "restoring a plain copy must not take the live database out of WAL");
+    }
+
+    private static string JournalMode(string path)
+    {
+        using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA journal_mode";
+        return (string)command.ExecuteScalar()!;
+    }
 }

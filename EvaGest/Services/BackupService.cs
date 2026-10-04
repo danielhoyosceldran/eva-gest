@@ -172,7 +172,11 @@ public class BackupService(
         // commits live in barberia.db-wal until a checkpoint, so copying the main file
         // alone produced a backup missing the day's latest sales (or, on a young
         // database, missing the tables altogether).
-        await Task.Run(() => Snapshot(paths.DbPath, destination));
+        await Task.Run(() =>
+        {
+            Snapshot(paths.DbPath, destination);
+            UseRollbackJournal(destination);
+        });
         Log.Information("{BackupKind} backup taken: {BackupPath}",
             isAutomatic ? "Automatic" : "Manual", destination);
 
@@ -197,6 +201,22 @@ public class BackupService(
         source.Open();
         destination.Open();
         source.BackupDatabase(destination);
+    }
+
+    /// <summary>
+    /// Turns a fresh backup into a plain single-file database. The backup API copies
+    /// page 1 as it is, so a copy of the WAL-mode live database came out marked WAL, and
+    /// every later open of it (the check before a restore) could create -wal/-shm side
+    /// files that pruning, which only deletes *.db, would never remove. Restoring is
+    /// unaffected: the backup API keeps the live database's own WAL mode.
+    /// </summary>
+    private static void UseRollbackJournal(string path)
+    {
+        using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA journal_mode=DELETE";
+        command.ExecuteNonQuery();
     }
 
     /// <summary>Throws unless SQLite reads the file as a sound database.</summary>
