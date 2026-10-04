@@ -69,6 +69,29 @@ public class BindingGuardTests
     }
 
     [Fact]
+    public void No_view_prints_a_bare_date_or_time()
+    {
+        // A DateOnly or TimeOnly bound with no format goes through WPF's own converter,
+        // which formats with the binding culture - en-US, since nothing sets
+        // FrameworkElement.Language - so the client history read 9/26/2026 (month first)
+        // and the Start page's appointments read 10:00 AM in a Catalan interface.
+        var offending = new List<string>();
+        var bare = new Regex(@"\{Binding\s+(?:Path=)?(?<path>[A-Za-z0-9_.]*(?:Date|Time))\s*\}",
+            RegexOptions.Compiled);
+
+        foreach (var file in ViewFiles())
+        {
+            string[] lines = File.ReadAllLines(file.FullName);
+            for (int i = 0; i < lines.Length; i++)
+                foreach (Match match in bare.Matches(lines[i]))
+                    offending.Add($"{file.Name}:{i + 1} binds {match.Groups["path"].Value} with no format");
+        }
+
+        offending.Should().BeEmpty(
+            "dates and times reach the screen through an explicit format, never WPF's default");
+    }
+
+    [Fact]
     public void No_view_formats_a_number_with_a_hardcoded_currency_symbol()
     {
         // The symbol comes from AppLanguage.Culture through Money.Format. Typed into XAML
