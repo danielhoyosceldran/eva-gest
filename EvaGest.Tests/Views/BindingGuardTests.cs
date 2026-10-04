@@ -72,9 +72,10 @@ public class BindingGuardTests
     public void No_view_prints_a_bare_date_or_time()
     {
         // A DateOnly or TimeOnly bound with no format goes through WPF's own converter,
-        // which formats with the binding culture - en-US, since nothing sets
+        // which formats with the binding culture - en-US before App set
         // FrameworkElement.Language - so the client history read 9/26/2026 (month first)
-        // and the Start page's appointments read 10:00 AM in a Catalan interface.
+        // and the Start page's appointments read 10:00 AM in a Catalan interface. Even
+        // with the right culture the default pattern varies, so every view states one.
         var offending = new List<string>();
         var bare = new Regex(@"\{Binding\s+(?:Path=)?(?<path>[A-Za-z0-9_.]*(?:Date|Time))\s*\}",
             RegexOptions.Compiled);

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Markup;
 using EvaGest.Data;
 using EvaGest.Models;
 using EvaGest.Services;
@@ -107,6 +108,12 @@ public partial class App : Application
         // {x:Static} as it loads, so the language has to be settled by now (RF-23).
         AppLanguage.Use(AppLanguage.Parse(
             await Services.GetRequiredService<ISettingsService>().Get(ConfigKeys.Language)));
+
+        // Bindings format with FrameworkElement.Language, which is en-US unless set,
+        // whatever the thread culture says. Without this a StringFormat like dd/MM/yyyy
+        // or HH:mm took its separators from en-US instead of AppLanguage.Culture.
+        FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(AppLanguage.Culture.IetfLanguageTag)));
 
         // The machine may have been off at the configured hour, so this is checked
         // at every startup instead of relying on a running timer (CU-11). A failure here
