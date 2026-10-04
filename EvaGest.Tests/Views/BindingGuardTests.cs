@@ -76,20 +76,58 @@ public class BindingGuardTests
         // FrameworkElement.Language - so the client history read 9/26/2026 (month first)
         // and the Start page's appointments read 10:00 AM in a Catalan interface. Even
         // with the right culture the default pattern varies, so every view states one.
+        //
+        // Every {Binding ...} is read whole, nested braces included, so extra arguments
+        // (Mode=OneWay, Path=..., UpdateSourceTrigger=...) cannot hide a bare one. Its path
+        // counts as a date or time when the last segment ends in Date, Time or At
+        // (StartsAt); it passes only with a StringFormat or a Converter.
         var offending = new List<string>();
-        var bare = new Regex(@"\{Binding\s+(?:Path=)?(?<path>[A-Za-z0-9_.]*(?:Date|Time))\s*\}",
-            RegexOptions.Compiled);
+        var dateLike = new Regex(@"(?:Date|Time|At)$", RegexOptions.Compiled);
 
         foreach (var file in ViewFiles())
         {
             string[] lines = File.ReadAllLines(file.FullName);
             for (int i = 0; i < lines.Length; i++)
-                foreach (Match match in bare.Matches(lines[i]))
-                    offending.Add($"{file.Name}:{i + 1} binds {match.Groups["path"].Value} with no format");
+                foreach (string binding in Bindings(lines[i]))
+                {
+                    string? path = BindingPath(binding);
+                    if (path is null || !dateLike.IsMatch(path.Split('.')[^1])) continue;
+                    if (binding.Contains("StringFormat=") || binding.Contains("Converter=")) continue;
+                    offending.Add($"{file.Name}:{i + 1} binds {path} with no format");
+                }
         }
 
         offending.Should().BeEmpty(
             "dates and times reach the screen through an explicit format, never WPF's default");
+    }
+
+    /// <summary>Every "{Binding ...}" markup extension on a line, from its opening brace to
+    /// the brace that closes it, so StringFormat={}{0:...} and Converter={...} stay inside.</summary>
+    private static IEnumerable<string> Bindings(string line)
+    {
+        int start = 0;
+        while ((start = line.IndexOf("{Binding", start, StringComparison.Ordinal)) >= 0)
+        {
+            int depth = 0, end = start;
+            for (; end < line.Length; end++)
+            {
+                if (line[end] == '{') depth++;
+                else if (line[end] == '}' && --depth == 0) break;
+            }
+            yield return line[start..Math.Min(end + 1, line.Length)];
+            start = end;
+        }
+    }
+
+    /// <summary>The binding's path: "Path=X" wherever it sits, else the first positional
+    /// argument. Null for a binding to the DataContext itself.</summary>
+    private static string? BindingPath(string binding)
+    {
+        var named = Regex.Match(binding, @"Path=(?<p>[A-Za-z0-9_.]+)");
+        if (named.Success) return named.Groups["p"].Value;
+
+        var positional = Regex.Match(binding, @"^\{Binding\s+(?<p>[A-Za-z0-9_.]+)\s*[,}]");
+        return positional.Success ? positional.Groups["p"].Value : null;
     }
 
     [Fact]
