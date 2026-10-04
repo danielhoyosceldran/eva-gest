@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO;
 using EvaGest.Models;
+using Microsoft.Data.Sqlite;
 
 using Serilog;
 
@@ -125,11 +126,22 @@ public class BackupService(
 
     public async Task Restore(string backupPath)
     {
-        // Back up the CURRENT state first, so an accidental restore can still be
-        // undone (CU-09b) — this must happen before the file is overwritten.
-        await Copy(isAutomatic: false);
+        // A copy that SQLite itself cannot read must never replace the live database:
+        // checked before anything is touched, so a damaged file leaves the shop's data
+        // exactly as it was.
+        EnsureReadable(backupPath);
 
-        File.Copy(backupPath, paths.DbPath, overwrite: true);
+        // Back up the CURRENT state first, so an accidental restore can still be
+        // undone (CU-09b) — this must happen before the file is overwritten. Not pruned
+        // yet: with the folder at its limit, pruning here deleted the oldest backup,
+        // which is the one being restored whenever the user picked the oldest.
+        await Copy(isAutomatic: false, prune: false);
+
+        // Written through SQLite, not over the file. The database runs in WAL mode and
+        // the app keeps pooled connections open, so a File.Copy over barberia.db left
+        // the live -wal file behind: the next read replayed it on top of the restored
+        // pages, and a restore could come out unchanged or as a mix of the two.
+        Snapshot(backupPath, paths.DbPath);
 
         // The settings live inside the file that was just replaced, so anything cached
         // in memory now describes a database that no longer exists.
@@ -139,9 +151,11 @@ public class BackupService(
         // nothing between "Application started" and "Application closed" to explain
         // why a day's work is missing (CU-09b).
         Log.Information("Database restored from backup {BackupPath}", backupPath);
+
+        await DeleteOldBackups();
     }
 
-    private async Task<BackupInfo> Copy(bool isAutomatic)
+    private async Task<BackupInfo> Copy(bool isAutomatic, bool prune = true)
     {
         Directory.CreateDirectory(paths.BackupsFolder);
 
@@ -150,13 +164,58 @@ public class BackupService(
         string name = $"{now.ToString(Format, CultureInfo.InvariantCulture)}_{suffix}.db";
         string destination = Path.Combine(paths.BackupsFolder, name);
 
-        File.Copy(paths.DbPath, destination, overwrite: false);
+        // Never overwrite: two backups landing on the same name would lose one.
+        if (File.Exists(destination))
+            throw new IOException($"A backup named {name} already exists.");
+
+        // Through SQLite's online backup, not File.Copy: in WAL mode the most recent
+        // commits live in barberia.db-wal until a checkpoint, so copying the main file
+        // alone produced a backup missing the day's latest sales (or, on a young
+        // database, missing the tables altogether).
+        Snapshot(paths.DbPath, destination);
         Log.Information("{BackupKind} backup taken: {BackupPath}",
             isAutomatic ? "Automatic" : "Manual", destination);
 
-        await DeleteOldBackups();
+        if (prune) await DeleteOldBackups();
 
         return ReadBackup(destination)!;
+    }
+
+    /// <summary>
+    /// Copies one whole database onto another with SQLite's online backup API, which
+    /// reads committed pages from the WAL as well as the main file and writes them under
+    /// SQLite's own locking, so connections already open on the destination see the
+    /// result. Pooling is off on both ends: a pooled handle would keep a backup file
+    /// open, and pruning or restoring it later would fail on the lock.
+    /// </summary>
+    private static void Snapshot(string sourcePath, string destinationPath)
+    {
+        using var source = new SqliteConnection($"Data Source={sourcePath};Pooling=False");
+        using var destination = new SqliteConnection($"Data Source={destinationPath};Pooling=False");
+        source.Open();
+        destination.Open();
+        source.BackupDatabase(destination);
+    }
+
+    /// <summary>Throws unless SQLite reads the file as a sound database.</summary>
+    private static void EnsureReadable(string path)
+    {
+        string result;
+        try
+        {
+            using var connection = new SqliteConnection($"Data Source={path};Mode=ReadOnly;Pooling=False");
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = "PRAGMA quick_check";
+            result = command.ExecuteScalar() as string ?? string.Empty;
+        }
+        catch (SqliteException ex)
+        {
+            throw new InvalidDataException($"The backup {path} is not a readable database.", ex);
+        }
+
+        if (result != "ok")
+            throw new InvalidDataException($"The backup {path} failed its integrity check: {result}");
     }
 
     private static BackupInfo? ReadBackup(string path)

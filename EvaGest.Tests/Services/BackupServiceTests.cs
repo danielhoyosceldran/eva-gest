@@ -1,12 +1,19 @@
 using AwesomeAssertions;
+using EvaGest.Data;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace EvaGest.Tests.Services;
 
-/// <summary>Block L (backups): pure file I/O, no database involved.</summary>
+/// <summary>
+/// Block L (backups). The database is a real SQLite file: the service copies through
+/// SQLite's backup API, and a plain text file standing in for it is what let a
+/// File.Copy that ignored the WAL pass every test here.
+/// </summary>
 public class BackupServiceTests : IDisposable
 {
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "EvaGestTests_" + Guid.NewGuid());
@@ -16,10 +23,37 @@ public class BackupServiceTests : IDisposable
     {
         Directory.CreateDirectory(_folder);
         _pathDb = Path.Combine(_folder, "barberia.db");
-        File.WriteAllText(_pathDb, "contingut original");
+        WriteContent(_pathDb, "contingut original");
     }
 
-    public void Dispose() => Directory.Delete(_folder, recursive: true);
+    public void Dispose()
+    {
+        // The WAL tests go through EF's pooled connections, which keep the file open.
+        SqliteConnection.ClearAllPools();
+        Directory.Delete(_folder, recursive: true);
+    }
+
+    /// <summary>A one-row database standing for the shop's, written without pooling so
+    /// nothing keeps the file open behind the test's back.</summary>
+    private static void WriteContent(string path, string value)
+    {
+        using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "CREATE TABLE IF NOT EXISTS content (v TEXT); DELETE FROM content; " +
+                              "INSERT INTO content VALUES ($v);";
+        command.Parameters.AddWithValue("$v", value);
+        command.ExecuteNonQuery();
+    }
+
+    private static string ReadContent(string path)
+    {
+        using var connection = new SqliteConnection($"Data Source={path};Mode=ReadOnly;Pooling=False");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT v FROM content";
+        return (string)command.ExecuteScalar()!;
+    }
 
     /// <summary>Defaults to an hour already past, so the tests that are not about the
     /// schedule do not depend on what time of day they happen to run. The ones that ARE
@@ -45,10 +79,10 @@ public class BackupServiceTests : IDisposable
         var backup = CreatesService();
         var backupFile = await backup.MakeManualBackup();
 
-        File.WriteAllText(_pathDb, "dades malmeses");
+        WriteContent(_pathDb, "dades malmeses");
         await backup.Restore(backupFile.Path);
 
-        File.ReadAllText(_pathDb).Should().Be("contingut original");
+        ReadContent(_pathDb).Should().Be("contingut original");
     }
 
     [Fact] // L-03
@@ -175,5 +209,100 @@ public class BackupServiceTests : IDisposable
         // The settings table lives inside the file that was just overwritten, so keeping
         // the old cache would describe a database that no longer exists.
         config.TimesInvalidated.Should().Be(1);
+    }
+
+    /// <summary>The shop's database as the app opens it: a file, migrated by EF (which
+    /// puts it in WAL mode), read and written through pooled connections.</summary>
+    private async Task<TestFactory> LiveDatabase(string path)
+    {
+        var factory = new TestFactory(new DbContextOptionsBuilder<ShopDbContext>()
+            .UseSqlite($"Data Source={path}")
+            .UseSnakeCaseNamingConvention()
+            .Options);
+        await using var db = factory.CreateDbContext();
+        await db.Database.MigrateAsync();
+        return factory;
+    }
+
+    private static async Task AddClient(TestFactory factory, string name)
+    {
+        await using var db = factory.CreateDbContext();
+        db.Clients.Add(Make.Client(name));
+        await db.SaveChangesAsync();
+    }
+
+    private static int CountClients(string path)
+    {
+        using var connection = new SqliteConnection($"Data Source={path};Mode=ReadOnly;Pooling=False");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT count(*) FROM clients";
+        return Convert.ToInt32(command.ExecuteScalar());
+    }
+
+    [Fact] // L-11
+    public async Task A_backup_taken_while_the_app_is_running_holds_the_latest_changes()
+    {
+        // The last commits sit in barberia.db-wal until SQLite checkpoints, and the app's
+        // pooled connections keep that from happening on close. Copying the main file
+        // alone produced a backup without them - on a young database, without the tables.
+        string live = Path.Combine(_folder, "live.db");
+        var factory = await LiveDatabase(live);
+        await AddClient(factory, "Anna");
+
+        var backup = new BackupService(new AppPaths(live, _folder), new TestSettings());
+        var backupFile = await backup.MakeManualBackup();
+
+        CountClients(backupFile.Path).Should().Be(1);
+    }
+
+    [Fact] // L-12
+    public async Task A_restore_is_what_the_running_app_reads_afterwards()
+    {
+        // Overwriting the file left the live -wal behind; the next read replayed it over
+        // the restored pages, so the restore silently did nothing.
+        string live = Path.Combine(_folder, "live.db");
+        var factory = await LiveDatabase(live);
+        await AddClient(factory, "Anna");
+
+        var backup = new BackupService(new AppPaths(live, _folder), new TestSettings());
+        var backupFile = await backup.MakeManualBackup();
+        await AddClient(factory, "Bernat");
+
+        await backup.Restore(backupFile.Path);
+
+        await using var db = factory.CreateDbContext();
+        (await db.Clients.Select(c => c.Name).ToListAsync()).Should().Equal("Anna");
+    }
+
+    [Fact] // L-13
+    public async Task A_damaged_backup_is_refused_and_the_database_is_left_alone()
+    {
+        var backup = CreatesService();
+        string damaged = Path.Combine(_folder, "Backups", "20260101_120000000_manual.db");
+        Directory.CreateDirectory(Path.GetDirectoryName(damaged)!);
+        await File.WriteAllTextAsync(damaged, "not a database");
+
+        var restore = () => backup.Restore(damaged);
+
+        await restore.Should().ThrowAsync<InvalidDataException>();
+        ReadContent(_pathDb).Should().Be("contingut original");
+    }
+
+    [Fact] // L-14
+    public async Task Restoring_the_oldest_backup_at_the_retention_limit_still_restores_it()
+    {
+        // The pre-restore safety copy used to prune straight away, so with the folder at
+        // its limit it deleted the oldest backup - the very one being restored - before
+        // it was read.
+        var backup = CreatesService(new TestSettings(
+            (ConfigKeys.BackupTime, "00:00"),
+            (ConfigKeys.BackupsToKeep, "1")));
+        var only = await backup.MakeManualBackup();
+        WriteContent(_pathDb, "dades malmeses");
+
+        await backup.Restore(only.Path);
+
+        ReadContent(_pathDb).Should().Be("contingut original");
     }
 }

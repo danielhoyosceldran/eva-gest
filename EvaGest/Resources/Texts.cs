@@ -324,6 +324,7 @@ public static class Texts
         nameof(ConfirmRestoreTitle),
         nameof(ConfirmRestoreMessage),
         nameof(BackupRestoredTitle),
+        nameof(BackupNotRestorable),
         nameof(BackupRestoredMessage),
         nameof(Sleep),
         nameof(DeleteClientTitle),
@@ -1379,6 +1380,7 @@ public static class Texts
     public static string BackupRestoredTitle => Get(nameof(BackupRestoredTitle));
 
     /// <summary>Les dades s'han restaurat correctament. Tanca i torna a o...</summary>
+    public static string BackupNotRestorable => Get(nameof(BackupNotRestorable));
     public static string BackupRestoredMessage => Get(nameof(BackupRestoredMessage));
 
     /// <summary>Adormir</summary>

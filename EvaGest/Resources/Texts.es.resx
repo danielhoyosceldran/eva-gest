@@ -924,6 +924,9 @@ Habrá que reiniciar la aplicación para que los cambios tengan efecto.</value>
   <data name="BackupRestoredTitle" xml:space="preserve">
     <value>Copia restaurada</value>
   </data>
+  <data name="BackupNotRestorable" xml:space="preserve">
+    <value>Esta copia está dañada y no se puede restaurar. Los datos actuales no se han tocado: elige otra copia.</value>
+  </data>
   <data name="BackupRestoredMessage" xml:space="preserve">
     <value>Los datos se han restaurado correctamente. Cierra y vuelve a abrir la aplicación.</value>
   </data>

@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EvaGest.Services;
 using EvaGest.Resources;
+using Serilog;
 
 namespace EvaGest.ViewModels.Dialogs;
 
@@ -46,7 +48,19 @@ public partial class RestoreDialogViewModel : DialogViewModelBase
 
         if (!confirmed) return;
 
-        await _backup.Restore(Selected.Path);
+        try
+        {
+            await _backup.Restore(Selected.Path);
+        }
+        catch (InvalidDataException ex)
+        {
+            // Refused before the live database was touched, so the user only needs to
+            // pick another copy - not the generic unexpected-error dialog.
+            Log.Error(ex, "Backup {BackupPath} refused for restore", Selected.Path);
+            ErrorValidation = Texts.BackupNotRestorable;
+            return;
+        }
+
         await _dialogs.Inform(Texts.BackupRestoredTitle, Texts.BackupRestoredMessage);
 
         ErrorValidation = null;

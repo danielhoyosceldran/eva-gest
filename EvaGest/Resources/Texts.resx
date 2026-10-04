@@ -924,6 +924,9 @@ Caldrà reiniciar l'aplicació perquè els canvis tinguin efecte.</value>
   <data name="BackupRestoredTitle" xml:space="preserve">
     <value>Còpia restaurada</value>
   </data>
+  <data name="BackupNotRestorable" xml:space="preserve">
+    <value>Aquesta còpia està malmesa i no es pot restaurar. Les dades actuals no s'han tocat: tria una altra còpia.</value>
+  </data>
   <data name="BackupRestoredMessage" xml:space="preserve">
     <value>Les dades s'han restaurat correctament. Tanca i torna a obrir l'aplicació.</value>
   </data>
