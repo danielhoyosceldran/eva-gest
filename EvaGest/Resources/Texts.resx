@@ -818,7 +818,7 @@
     <value>Cal indicar el nom del producte per guardar.</value>
   </data>
   <data name="PriceInvalid" xml:space="preserve">
-    <value>El preu ha de ser un número amb xifres (0-9), amb els decimals separats per coma, per exemple 15,50.</value>
+    <value>El preu ha de ser un número amb xifres (0-9), amb els decimals separats per coma i sense punt de milers, per exemple 15,50 o 1200.</value>
   </data>
   <data name="PriceNegative" xml:space="preserve">
     <value>El preu no pot ser negatiu. Escriu-lo sense el signe menys, per exemple 15,50.</value>
@@ -871,7 +871,7 @@ Si vols conservar-la a l'historial, marca-la com a cancel·lada o no assistida.<
     <value>Nova sortida</value>
   </data>
   <data name="AmountMustBePositive" xml:space="preserve">
-    <value>L'import ha de ser un número més gran que zero, amb els decimals separats per coma, per exemple 15,50.</value>
+    <value>L'import ha de ser un número més gran que zero, amb els decimals separats per coma i sense punt de milers, per exemple 15,50 o 1200.</value>
   </data>
   <data name="PaymentMethodRequired" xml:space="preserve">
     <value>Cal triar un mètode de pagament.</value>

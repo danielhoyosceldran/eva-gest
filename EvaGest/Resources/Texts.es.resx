@@ -818,7 +818,7 @@
     <value>Hay que indicar el nombre del producto para guardar.</value>
   </data>
   <data name="PriceInvalid" xml:space="preserve">
-    <value>El precio debe ser un número con cifras (0-9), con los decimales separados por coma, por ejemplo 15,50.</value>
+    <value>El precio debe ser un número con cifras (0-9), con los decimales separados por coma y sin punto de millares, por ejemplo 15,50 o 1200.</value>
   </data>
   <data name="PriceNegative" xml:space="preserve">
     <value>El precio no puede ser negativo. Escríbelo sin el signo menos, por ejemplo 15,50.</value>
@@ -871,7 +871,7 @@ Si quieres conservarla en el historial, márcala como cancelada o no asistida.</
     <value>Nueva salida</value>
   </data>
   <data name="AmountMustBePositive" xml:space="preserve">
-    <value>El importe debe ser un número mayor que cero, con los decimales separados por coma, por ejemplo 15,50.</value>
+    <value>El importe debe ser un número mayor que cero, con los decimales separados por coma y sin punto de millares, por ejemplo 15,50 o 1200.</value>
   </data>
   <data name="PaymentMethodRequired" xml:space="preserve">
     <value>Hay que elegir un método de pago.</value>
