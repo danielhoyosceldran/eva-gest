@@ -129,7 +129,7 @@ public class BackupService(
         // A copy that SQLite itself cannot read must never replace the live database:
         // checked before anything is touched, so a damaged file leaves the shop's data
         // exactly as it was.
-        EnsureReadable(backupPath);
+        await Task.Run(() => EnsureReadable(backupPath));
 
         // Back up the CURRENT state first, so an accidental restore can still be
         // undone (CU-09b) — this must happen before the file is overwritten. Not pruned
@@ -141,7 +141,7 @@ public class BackupService(
         // the app keeps pooled connections open, so a File.Copy over barberia.db left
         // the live -wal file behind: the next read replayed it on top of the restored
         // pages, and a restore could come out unchanged or as a mix of the two.
-        Snapshot(backupPath, paths.DbPath);
+        await Task.Run(() => Snapshot(backupPath, paths.DbPath));
 
         // The settings live inside the file that was just replaced, so anything cached
         // in memory now describes a database that no longer exists.
@@ -172,7 +172,7 @@ public class BackupService(
         // commits live in barberia.db-wal until a checkpoint, so copying the main file
         // alone produced a backup missing the day's latest sales (or, on a young
         // database, missing the tables altogether).
-        Snapshot(paths.DbPath, destination);
+        await Task.Run(() => Snapshot(paths.DbPath, destination));
         Log.Information("{BackupKind} backup taken: {BackupPath}",
             isAutomatic ? "Automatic" : "Manual", destination);
 
@@ -187,6 +187,8 @@ public class BackupService(
     /// SQLite's own locking, so connections already open on the destination see the
     /// result. Pooling is off on both ends: a pooled handle would keep a backup file
     /// open, and pruning or restoring it later would fail on the lock.
+    /// Synchronous and proportional to the database size, so callers run it (and
+    /// EnsureReadable) through Task.Run: awaited from the UI thread, it froze the window.
     /// </summary>
     private static void Snapshot(string sourcePath, string destinationPath)
     {
