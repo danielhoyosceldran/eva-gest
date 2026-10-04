@@ -31,6 +31,9 @@ public class HostileInputTests
     [InlineData("1/2")]
     [InlineData("12,,50")]
     [InlineData("0x10")]
+    [InlineData("1.200")]      // one thousand two hundred, or 1,20? Refused, never guessed
+    [InlineData("1.000.000")]  // was read as 1.000,00
+    [InlineData("15,999")]     // more precision than a cent is the same shape as "1.200"
     public void Nonsense_in_a_price_box_is_refused_and_never_throws(string typed)
     {
         Action parse = () => Money.TryParse(typed, out _);
@@ -49,8 +52,6 @@ public class HostileInputTests
     [InlineData("  15,50  ", 1550)]
     [InlineData(",50", 50)]          // leading separator
     [InlineData("15,", 1500)]        // trailing separator, mid-typing
-    [InlineData("15,999", 1600)]     // more precision than a cent: rounds away from zero
-    [InlineData("15,995", 1600)]     // the midpoint must not round to even (1599)
     [InlineData("-15,50", -1550)]    // a correction line is allowed to be negative
     public void A_plausible_amount_is_read_exactly_as_written(string typed, int expectedCents)
     {

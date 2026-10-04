@@ -22,7 +22,12 @@ public static class Money
     /// Parses user input into cents. Accepts both comma and dot as decimal separator,
     /// and tolerates a group separator: "15", "15,50", "15.50" and "1.234,56" all work.
     /// The last comma or dot is treated as the decimal separator; earlier ones are
-    /// group separators. For this domain that is unambiguous, since prices are small.
+    /// group separators.
+    ///
+    /// At most two decimals. "1.200" is how a Catalan or Spanish user writes one thousand
+    /// two hundred, and reading its last dot as the decimal point froze 1,20 EUR onto a
+    /// rent paid out of the till. The shape cannot be told apart from "15,999" (a cent
+    /// and a bit), so neither is guessed at: both are refused and the user retypes.
     /// </summary>
     public static bool TryParse(string? text, out int cents)
     {
@@ -41,7 +46,7 @@ public static class Money
         string whole = posDecimal < 0 ? text : text[..posDecimal];
         string decimals = posDecimal < 0 ? "" : text[(posDecimal + 1)..];
 
-        if (!decimals.All(char.IsAsciiDigit)) return false;
+        if (decimals.Length > 2 || !decimals.All(char.IsAsciiDigit)) return false;
         if (!IsWholePart(whole)) return false;
 
         string normalized = $"{whole.Replace(",", "").Replace(".", "")}.{(decimals.Length == 0 ? "0" : decimals)}";
