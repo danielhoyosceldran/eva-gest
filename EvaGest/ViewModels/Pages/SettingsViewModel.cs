@@ -278,7 +278,7 @@ public partial class SettingsViewModel(
         SaveAsEdited("apply VAT to till",
             () => settings.SaveBool(ConfigKeys.ApplyVatToTill, newValue),
             revert: () => ApplyVatToTill = oldValue,
-            showError: e => VatError = e);
+            error: (() => VatError, e => VatError = e));
     }
 
     // ── Saving as edited ─────────────────────────────────────────────────────
@@ -297,10 +297,13 @@ public partial class SettingsViewModel(
     /// <param name="setting">Which setting, for the log.</param>
     /// <param name="write">The save itself.</param>
     /// <param name="revert">Puts the control back to the value still stored.</param>
-    /// <param name="showError">Sets (or clears, with null) the error line of that section.</param>
+    /// <param name="error">Reads and sets the error line of that section. A success clears
+    /// it only when it holds this method's own "not saved" message: the line is shared with
+    /// the section's other fields (the VAT one also says when the default rate is invalid),
+    /// and a checkbox saving fine says nothing about those.</param>
     /// <param name="onSaved">Anything to do only once the value is really stored.</param>
     private void SaveAsEdited(string setting, Func<Task> write, Action revert,
-        Action<string?> showError, Action? onSaved = null)
+        (Func<string?> Get, Action<string?> Set) error, Action? onSaved = null)
     {
         PendingSave = Run();
 
@@ -318,11 +321,11 @@ public partial class SettingsViewModel(
                 _loaded = false;
                 revert();
                 _loaded = true;
-                showError(Texts.SettingNotSaved);
+                error.Set(Texts.SettingNotSaved);
                 return;
             }
 
-            showError(null);
+            if (error.Get() == Texts.SettingNotSaved) error.Set(null);
             onSaved?.Invoke();
         }
     }
@@ -336,7 +339,7 @@ public partial class SettingsViewModel(
             () => settings.Save(ConfigKeys.AgendaSlotMinutes,
                 GridHelper.IsValidSlotMinutes(newValue).ToString()),
             revert: () => SlotMinutes = oldValue,
-            showError: e => ErrorAgenda = e);
+            error: (() => ErrorAgenda, e => ErrorAgenda = e));
     }
 
     [RelayCommand]
@@ -514,7 +517,7 @@ public partial class SettingsViewModel(
         SaveAsEdited("show guest notice",
             () => settings.SaveBool(ConfigKeys.ShowGuestNotice, newValue),
             revert: () => ShowGuestNotice = oldValue,
-            showError: e => ErrorNotices = e);
+            error: (() => ErrorNotices, e => ErrorNotices = e));
     }
 
     partial void OnConfirmationSoundChanged(bool oldValue, bool newValue)
@@ -523,7 +526,7 @@ public partial class SettingsViewModel(
         SaveAsEdited("confirmation sound",
             () => settings.SaveBool(ConfigKeys.ConfirmationSound, newValue),
             revert: () => ConfirmationSound = oldValue,
-            showError: e => ErrorNotices = e);
+            error: (() => ErrorNotices, e => ErrorNotices = e));
     }
 
     // ── Language ─────────────────────────────────────────────────────────────
@@ -537,7 +540,7 @@ public partial class SettingsViewModel(
         SaveAsEdited("language",
             () => settings.Save(ConfigKeys.Language, newValue.ToString()),
             revert: () => Language = oldValue,
-            showError: e => ErrorLanguage = e,
+            error: (() => ErrorLanguage, e => ErrorLanguage = e),
             // Only promise the restart will switch language once the choice is stored.
             onSaved: () => LanguageConfirmation =
                 newValue == AppLanguage.Current ? null : Texts.LanguageSaved);
