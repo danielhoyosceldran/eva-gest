@@ -41,10 +41,16 @@ public interface ICatalogService
     Task<bool> CanDeactivateMethod(int id);
     Task ChangeMethodStatus(int id, bool active);
 
+    /// <summary>How many sales and cash movements were paid with the method: what loses its
+    /// method if it is deleted, so the page can warn before it does.</summary>
+    Task<int> CountMethodUses(int id);
+
     /// <summary>
-    /// Removes the payment method, or deactivates it when a sale or a cash movement uses
-    /// it. Returns <see cref="DeleteResult.Blocked"/> for the last active one:
-    /// with none left there would be no way to take money (pantalles 2.5).
+    /// Removes the payment method for good. Sales and cash movements paid with it are kept,
+    /// with no method (each change recorded in the audit trail); the owner is warned first.
+    /// To stop offering a method while keeping the history intact, it is deactivated
+    /// instead. Returns <see cref="DeleteResult.Blocked"/> for the last active one: with
+    /// none left there would be no way to take money (pantalles 2.5).
     /// </summary>
     Task<DeleteResult> DeleteMethod(int id);
 

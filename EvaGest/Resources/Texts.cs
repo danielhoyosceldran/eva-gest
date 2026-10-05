@@ -538,6 +538,9 @@ public static class Texts
         nameof(KeepEditing),
         nameof(ExportFileInUse),
         nameof(ExportFolderNotWritable),
+        nameof(DeletedPaymentMethod),
+        nameof(Deactivate),
+        nameof(DeleteUsedMethodMessage),
     ];
 
     /// <summary>Pendent</summary>
@@ -2045,4 +2048,13 @@ public static class Texts
 
     /// <summary>No s'ha pogut escriure a la carpeta triada. Tria'n una altra i torna a exportar.</summary>
     public static string ExportFolderNotWritable => Get(nameof(ExportFolderNotWritable));
+
+    /// <summary>Mètode eliminat</summary>
+    public static string DeletedPaymentMethod => Get(nameof(DeletedPaymentMethod));
+
+    /// <summary>Desactivar</summary>
+    public static string Deactivate => Get(nameof(Deactivate));
+
+    /// <summary>«{0}» s'ha fet servir en {1} vendes o moviments de caixa. Si l'elimines, en tots aquests registres el mètode de pagament quedarà buit i es mostrarà com a «Mètode eliminat»; els imports no canvien. Si només vols deixar d'oferir-lo, desactiva'l: el podràs tornar a activar.</summary>
+    public static string DeleteUsedMethodMessage => Get(nameof(DeleteUsedMethodMessage));
 }

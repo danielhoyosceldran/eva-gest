@@ -187,7 +187,16 @@ public partial class CatalogViewModel(
     [RelayCommand]
     private async Task DeleteMethod(PaymentMethod method)
     {
-        if (!await ConfirmDeletion(Texts.TypePaymentMethod, method.Name)) return;
+        // A used method is deleted for good too (F-04), so the question says what that does
+        // to the history before the owner confirms, and points to deactivating instead.
+        int uses = await catalog.CountMethodUses(method.Id);
+        bool confirmed = uses == 0
+            ? await ConfirmDeletion(Texts.TypePaymentMethod, method.Name)
+            : await dialogs.Confirm(
+                string.Format(Texts.DeleteCatalogItemTitle, Texts.TypePaymentMethod),
+                string.Format(Texts.DeleteUsedMethodMessage, method.Name, uses),
+                Texts.Delete);
+        if (!confirmed) return;
 
         var result = await catalog.DeleteMethod(method.Id);
         await Load();

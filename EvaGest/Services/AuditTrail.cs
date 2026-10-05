@@ -35,7 +35,7 @@ public static class AuditTrail
     public record SaleSnapshot(
         DateOnly Date, TimeOnly Time,
         int? ClientId, string? GuestName, string? GuestPhone,
-        int? WorkerId, int PaymentMethodId, int? AppointmentId,
+        int? WorkerId, int? PaymentMethodId, int? AppointmentId,
         string Status, string VatMode,
         int BaseCents, int VatCents, int TotalCents,
         string? Notes,

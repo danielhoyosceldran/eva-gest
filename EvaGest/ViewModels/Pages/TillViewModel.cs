@@ -133,7 +133,7 @@ public partial class TillViewModel(
         m.Concept,
         m.Category?.Name ?? "—",
         m.Worker?.Name ?? "—",
-        m.PaymentMethod?.Name ?? "—",
+        m.PaymentMethod?.Name ?? Texts.DeletedPaymentMethod,
         Money.Format(m.SignedAmountCents));
 
     [RelayCommand]

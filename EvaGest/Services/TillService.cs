@@ -78,6 +78,10 @@ public class TillService(IDbContextFactory<ShopDbContext> factory) : ITillServic
 
     public async Task<int> Create(CashMovement movement)
     {
+        // Nullable only so a deleted method can leave its movements behind (F-04).
+        if (movement.PaymentMethodId is null)
+            throw new ArgumentException("A cash movement must have a payment method.", nameof(movement));
+
         await using var db = await factory.CreateDbContextAsync();
         movement.CreatedAtUtc = DateTime.UtcNow;
         db.CashMovements.Add(movement);

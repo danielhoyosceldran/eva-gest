@@ -117,11 +117,23 @@
                                                 Command="{Binding DataContext.EditMethodCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}" />
-                                        <Button Content="{x:Static t:Texts.ToggleActive}" Style="{StaticResource SecondaryButton}"
-                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                        <!-- Names what it will do, like the workers page: Desactivar on an
+                                             active method, Reactivar on an inactive one (F-04) -->
+                                        <Button Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.ChangeMethodStatusCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}" />
+                                                CommandParameter="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+                                                    <Setter Property="Content" Value="{x:Static t:Texts.Deactivate}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Active}" Value="False">
+                                                            <Setter Property="Content" Value="{x:Static t:Texts.Reactivate}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                         <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
                                                 Padding="10,0" MinHeight="32" Margin="8,0,0,0"
                                                 Command="{Binding DataContext.DeleteMethodCommand,

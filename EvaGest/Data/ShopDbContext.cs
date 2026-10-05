@@ -79,6 +79,13 @@ public class ShopDbContext : DbContext
             .OnDelete(DeleteBehavior.SetNull);
         b.Entity<CashMovement>().HasOne(e => e.Worker).WithMany(t => t.CashMovements)
             .OnDelete(DeleteBehavior.SetNull);
+        // Deleting a payment method keeps every sale and cash movement charged with it,
+        // with no method (shown as "Mètode eliminat"). This used to cascade: only a check in
+        // CatalogService stood between a delete and the loss of every sale paid that way.
+        b.Entity<Sale>().HasOne(e => e.PaymentMethod).WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
+        b.Entity<CashMovement>().HasOne(e => e.PaymentMethod).WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
 
         b.Entity<SettingItem>().HasKey(e => e.Key);
 

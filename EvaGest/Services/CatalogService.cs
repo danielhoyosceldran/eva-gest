@@ -1,6 +1,8 @@
+using System.Text.Json;
 using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace EvaGest.Services;
 
@@ -10,7 +12,8 @@ namespace EvaGest.Services;
 /// Deleting is conditional: an entry nothing points at is removed for real, while one
 /// already used by an appointment or a sale is only deactivated, so those rows keep
 /// their meaning. Either way it disappears from the pickers, which is what the user
-/// wanted out of "delete".
+/// wanted out of "delete". Payment methods are the exception: they are deleted for good
+/// even when used, after a warning, and their records keep no method (F-04).
 /// </summary>
 public class CatalogService(IDbContextFactory<ShopDbContext> factory) : ICatalogService
 {
@@ -185,21 +188,45 @@ public class CatalogService(IDbContextFactory<ShopDbContext> factory) : ICatalog
                             && !await db.PaymentMethods.AnyAsync(m => m.Active && m.Id != id);
         if (isLastActive) return DeleteResult.Blocked;
 
-        // The foreign keys from sales and cash movements cascade: deleting a used method
-        // would take the sales themselves with it, which is the opposite of the intent.
-        bool used = await db.Sales.AnyAsync(v => v.PaymentMethodId == id)
-                    || await db.CashMovements.AnyAsync(m => m.PaymentMethodId == id);
+        // A used method is no longer just deactivated: the owner asked to be able to remove
+        // one for good, once warned that its sales and movements lose it (F-04). They are
+        // kept, with no method. Cleared here rather than left to the foreign key's
+        // SET NULL so that each record that changes gets its audit row, in the same
+        // transaction as the delete.
+        await using var transaction = await db.Database.BeginTransactionAsync();
 
-        if (used)
+        var sales = await db.Sales.Where(v => v.PaymentMethodId == id).ToListAsync();
+        foreach (var sale in sales)
         {
-            method.Active = false;
-            await db.SaveChangesAsync();
-            return DeleteResult.Deactivated;
+            sale.PaymentMethodId = null;
+            AuditTrail.Record(db, AuditTrail.SaleEntity, sale.Id, "PaymentMethodDeleted",
+                JsonSerializer.Serialize(new { PaymentMethodId = id, method.Name }),
+                JsonSerializer.Serialize(new { PaymentMethodId = (int?)null }));
+        }
+
+        var movements = await db.CashMovements.Where(m => m.PaymentMethodId == id).ToListAsync();
+        foreach (var movement in movements)
+        {
+            movement.PaymentMethodId = null;
+            AuditTrail.Record(db, AuditTrail.CashMovementEntity, movement.Id, "PaymentMethodDeleted",
+                JsonSerializer.Serialize(new { PaymentMethodId = id, method.Name }),
+                JsonSerializer.Serialize(new { PaymentMethodId = (int?)null }));
         }
 
         db.PaymentMethods.Remove(method);
         await db.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        Log.Information("Payment method {MethodId} ({Name}) deleted; {SaleCount} sales and {MovementCount} cash movements kept without a method",
+            id, method.Name, sales.Count, movements.Count);
         return DeleteResult.Deleted;
+    }
+
+    public async Task<int> CountMethodUses(int id)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        return await db.Sales.CountAsync(v => v.PaymentMethodId == id)
+             + await db.CashMovements.CountAsync(m => m.PaymentMethodId == id);
     }
 
     public async Task<List<ExpenseCategory>> GetCategories(bool onlyActive = false)

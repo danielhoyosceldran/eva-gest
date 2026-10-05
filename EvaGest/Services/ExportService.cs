@@ -193,7 +193,7 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
                 Csv(v.DisplayName),
                 Csv(v.Worker?.Name ?? ""),
                 Csv(concept),
-                Csv(v.PaymentMethod.Name),
+                Csv(v.PaymentMethod?.Name ?? Texts.DeletedPaymentMethod),
                 Amount(v.BaseCents),
                 Amount(v.VatCents),
                 Amount(v.TotalCents)));

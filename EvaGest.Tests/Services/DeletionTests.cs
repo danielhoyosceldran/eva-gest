@@ -128,7 +128,7 @@ public class DeletionTests
     /// removing a used method would delete the sales along with it.
     /// </summary>
     [Fact]
-    public async Task A_payment_method_used_by_a_sale_is_deactivated_and_does_not_drag_the_sale_with_it()
+    public async Task A_payment_method_used_by_a_sale_is_deleted_and_the_sale_stays_without_a_method()
     {
         await using var testDb = new TestDatabase();
         var catalog = Catalog(testDb);
@@ -139,10 +139,11 @@ public class DeletionTests
 
         var result = await catalog.DeleteMethod(cash);
 
-        result.Should().Be(DeleteResult.Deactivated);
+        // F-04: the owner deletes it for good, warned first; the sale is kept, with no method.
+        result.Should().Be(DeleteResult.Deleted);
         await using var db = testDb.Context();
-        (await db.Sales.CountAsync()).Should().Be(1);
-        (await db.PaymentMethods.SingleAsync(m => m.Id == cash)).Active.Should().BeFalse();
+        (await db.Sales.SingleAsync()).PaymentMethodId.Should().BeNull();
+        (await db.PaymentMethods.AnyAsync(m => m.Id == cash)).Should().BeFalse();
     }
 
     [Fact]
@@ -158,7 +159,7 @@ public class DeletionTests
     }
 
     [Fact]
-    public async Task A_payment_method_used_by_a_till_movement_is_deactivated()
+    public async Task A_payment_method_used_by_a_till_movement_is_deleted_and_the_movement_stays_without_a_method()
     {
         await using var testDb = new TestDatabase();
         var catalog = Catalog(testDb);
@@ -172,10 +173,10 @@ public class DeletionTests
             PaymentMethodId = cash, Concept = "Compra material"
         });
 
-        (await catalog.DeleteMethod(cash)).Should().Be(DeleteResult.Deactivated);
+        (await catalog.DeleteMethod(cash)).Should().Be(DeleteResult.Deleted);
 
         await using var db = testDb.Context();
-        (await db.CashMovements.CountAsync()).Should().Be(1);
+        (await db.CashMovements.SingleAsync()).PaymentMethodId.Should().BeNull();
     }
 
     // ── Workers ───────────────────────────────────────────────────────

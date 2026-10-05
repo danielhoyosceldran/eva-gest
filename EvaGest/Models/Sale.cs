@@ -29,8 +29,10 @@ public class Sale
     public int? WorkerId { get; set; }
     public Worker? Worker { get; set; }
 
-    public int PaymentMethodId { get; set; }
-    public PaymentMethod PaymentMethod { get; set; } = null!;
+    /// <summary>Always set when the record is saved. Null only once the method itself was
+    /// deleted afterwards: the record keeps its amounts, shown as "Mètode eliminat" (F-04).</summary>
+    public int? PaymentMethodId { get; set; }
+    public PaymentMethod? PaymentMethod { get; set; }
 
     // Frozen totals, computed once by VatCalculator when the sale is saved.
     // Invariant: BaseCents + VatCents == TotalCents

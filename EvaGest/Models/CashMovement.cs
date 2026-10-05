@@ -25,8 +25,10 @@ public class CashMovement
     public int? VatCents { get; set; }
     public int? VatBp { get; set; }
 
-    public int PaymentMethodId { get; set; }
-    public PaymentMethod PaymentMethod { get; set; } = null!;
+    /// <summary>Always set when the record is saved. Null only once the method itself was
+    /// deleted afterwards: the record keeps its amounts, shown as "Mètode eliminat" (F-04).</summary>
+    public int? PaymentMethodId { get; set; }
+    public PaymentMethod? PaymentMethod { get; set; }
 
     /// <summary>Only meaningful for a cash-out; unset for a cash-in and for movements
     /// entered before the category list existed.</summary>

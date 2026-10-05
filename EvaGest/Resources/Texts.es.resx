@@ -1574,4 +1574,13 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="ExportFolderNotWritable" xml:space="preserve">
     <value>No se ha podido escribir en la carpeta elegida. Elige otra y vuelve a exportar.</value>
   </data>
+  <data name="DeletedPaymentMethod" xml:space="preserve">
+    <value>Método eliminado</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Desactivar</value>
+  </data>
+  <data name="DeleteUsedMethodMessage" xml:space="preserve">
+    <value>«{0}» se ha usado en {1} ventas o movimientos de caja. Si lo eliminas, en todos esos registros el método de pago quedará vacío y se mostrará como «Método eliminado»; los importes no cambian. Si solo quieres dejar de ofrecerlo, desactívalo: podrás volver a activarlo.</value>
+  </data>
 </root>

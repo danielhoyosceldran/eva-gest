@@ -105,7 +105,7 @@ public partial class SalesViewModel(
         Money.Format(v.BaseCents),
         Money.Format(v.VatCents),
         Money.Format(v.TotalCents),
-        v.PaymentMethod?.Name ?? "—",
+        v.PaymentMethod?.Name ?? Texts.DeletedPaymentMethod,
         Labels.Text(v.Status),
         v.Status == SaleStatus.Active);
 

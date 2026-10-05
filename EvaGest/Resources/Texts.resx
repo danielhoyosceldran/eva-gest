@@ -1574,4 +1574,13 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="ExportFolderNotWritable" xml:space="preserve">
     <value>No s'ha pogut escriure a la carpeta triada. Tria'n una altra i torna a exportar.</value>
   </data>
+  <data name="DeletedPaymentMethod" xml:space="preserve">
+    <value>Mètode eliminat</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Desactivar</value>
+  </data>
+  <data name="DeleteUsedMethodMessage" xml:space="preserve">
+    <value>«{0}» s'ha fet servir en {1} vendes o moviments de caixa. Si l'elimines, en tots aquests registres el mètode de pagament quedarà buit i es mostrarà com a «Mètode eliminat»; els imports no canvien. Si només vols deixar d'oferir-lo, desactiva'l: el podràs tornar a activar.</value>
+  </data>
 </root>

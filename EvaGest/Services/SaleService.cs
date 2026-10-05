@@ -209,6 +209,11 @@ public class SaleService(
     /// Never recomputed later: this is the one place BaseCents/VatCents/TotalCents are set.</summary>
     private static void FreezeTotals(Sale sale, List<SaleLine> lines, VatMode mode)
     {
+        // The column is nullable only so a deleted method can leave its sales behind
+        // (F-04). A sale being saved, new or edited, always says how it was paid.
+        if (sale.PaymentMethodId is null)
+            throw new ArgumentException("A sale must have a payment method.", nameof(sale));
+
         // The dialogs refuse these already; this is the last line of defence before a
         // figure is frozen for good. A negative price or a zero quantity is not a sale.
         if (lines.FirstOrDefault(l => l.UnitPriceCents < 0 || l.AmountCents < 0 || l.Quantity < 1) is { } bad)
