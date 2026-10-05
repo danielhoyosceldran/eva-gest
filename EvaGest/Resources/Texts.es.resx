@@ -1538,4 +1538,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="ConfirmOverlapWorkerMessage" xml:space="preserve">
     <value>{0} ya tiene otra cita que se solapa con esta. Puedes guardarla igualmente o cambiarle la hora.</value>
   </data>
+  <data name="AutomaticBackupFailedNotice" xml:space="preserve">
+    <value>La copia de seguridad automática de hoy no se ha podido hacer. Abre el Modo propietaria y, en Configuración, pulsa «Hacer copia ahora». Si tampoco sale, comprueba que el disco tenga espacio libre.</value>
+  </data>
 </root>

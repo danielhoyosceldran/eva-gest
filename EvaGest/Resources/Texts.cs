@@ -526,6 +526,7 @@ public static class Texts
         nameof(SaveAnyway),
         nameof(ChangeTheTime),
         nameof(ConfirmOverlapWorkerMessage),
+        nameof(AutomaticBackupFailedNotice),
     ];
 
     /// <summary>Pendent</summary>
@@ -1997,4 +1998,7 @@ public static class Texts
 
     /// <summary>{0} ja té una altra cita que se solapa amb aquesta. La pots guardar igualment o canviar-ne l'hora.</summary>
     public static string ConfirmOverlapWorkerMessage => Get(nameof(ConfirmOverlapWorkerMessage));
+
+    /// <summary>La còpia de seguretat automàtica d'avui no s'ha pogut fer. Obre el Mode propietària i, a Configuració, prem «Fer còpia ara». Si tampoc no surt, comprova que el disc tingui espai lliure.</summary>
+    public static string AutomaticBackupFailedNotice => Get(nameof(AutomaticBackupFailedNotice));
 }

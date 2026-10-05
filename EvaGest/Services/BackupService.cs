@@ -217,8 +217,16 @@ public class BackupService(
 
         if (prune) await DeleteOldBackups();
 
-        return ReadBackup(destination)!;
+        var backup = ReadBackup(destination)!;
+
+        // Only a checked copy counts as "a good backup exists again". The unchecked ones
+        // (before a restore, before an update) may be as damaged as the database they copy.
+        if (verify) BackupTaken?.Invoke(backup);
+
+        return backup;
     }
+
+    public event Action<BackupInfo>? BackupTaken;
 
     /// <summary>
     /// Copies one whole database onto another with SQLite's online backup API, which

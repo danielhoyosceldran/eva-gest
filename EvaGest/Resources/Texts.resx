@@ -1538,4 +1538,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="ConfirmOverlapWorkerMessage" xml:space="preserve">
     <value>{0} ja té una altra cita que se solapa amb aquesta. La pots guardar igualment o canviar-ne l'hora.</value>
   </data>
+  <data name="AutomaticBackupFailedNotice" xml:space="preserve">
+    <value>La còpia de seguretat automàtica d'avui no s'ha pogut fer. Obre el Mode propietària i, a Configuració, prem «Fer còpia ara». Si tampoc no surt, comprova que el disc tingui espai lliure.</value>
+  </data>
 </root>

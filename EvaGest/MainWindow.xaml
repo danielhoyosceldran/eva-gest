@@ -99,14 +99,30 @@
         <!-- Content area -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" /> <!-- Automatic backup failed -->
                 <RowDefinition Height="Auto" /> <!-- Overdue appointments warning -->
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <!-- Today's automatic backup failed at startup. Stays up until a checked
+                 backup is taken from Settings, or until closed. -->
+            <Border Grid.Row="0" Background="{StaticResource DangerBgBrush}" BorderBrush="{StaticResource DangerBrush}"
+                    BorderThickness="0,0,0,1" Padding="16,10,8,10"
+                    Visibility="{Binding BackupFailedNotice, Converter={StaticResource NullToVisibilityConverter}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource NoticeCloseButton}"
+                            Command="{Binding DismissBackupNoticeCommand}"
+                            ToolTip="{x:Static t:Texts.Close}"
+                            AutomationProperties.Name="{x:Static t:Texts.Close}" />
+                    <TextBlock Text="{Binding BackupFailedNotice}" Foreground="{StaticResource DangerBrush}"
+                               TextWrapping="Wrap" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </DockPanel>
+            </Border>
+
             <!-- Stays up no matter which page is open, until every cite past the hour
                  mark is closed (pantalles 1). The cross hides it for a while; it comes
                  back if those cites are still pending. -->
-            <Border Grid.Row="0" Background="{StaticResource DangerBgBrush}" BorderBrush="{StaticResource DangerBrush}"
+            <Border Grid.Row="1" Background="{StaticResource DangerBgBrush}" BorderBrush="{StaticResource DangerBrush}"
                     BorderThickness="0,0,0,1" Padding="16,10,8,10"
                     Visibility="{Binding OverdueAppointmentsNotice, Converter={StaticResource NullToVisibilityConverter}}">
                 <DockPanel>
@@ -119,7 +135,7 @@
                 </DockPanel>
             </Border>
 
-            <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
+            <ContentControl Grid.Row="2" Content="{Binding CurrentPage}" />
         </Grid>
     </Grid>
 </Window>

@@ -33,6 +33,19 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly OverdueNoticeSnooze _snooze = new();
     private List<int> _overdueIds = [];
 
+    private readonly IBackupService? _backups;
+
+    /// <summary>
+    /// Set when today's automatic backup failed at startup. It used to be written to the
+    /// log only, so the shop could go days without a new copy (every daily one failing,
+    /// for instance, once the live database is damaged and each copy fails its check)
+    /// and only notice from the last-backup line in Settings. Shown in the shell so it is
+    /// seen whoever is at the counter; it goes away as soon as any checked backup is
+    /// taken (<see cref="IBackupService.BackupTaken"/>), or when closed.
+    /// </summary>
+    [ObservableProperty]
+    private string? _backupFailedNotice;
+
     // Kept alive for the session so navigating away and back does not lose state.
     private readonly HomeViewModel _start;
     private readonly AgendaViewModel _agenda;
@@ -58,8 +71,13 @@ public partial class MainWindowViewModel : ObservableObject
         WorkersViewModel workers, AgendaViewModel agenda, SalesViewModel sales,
         TillViewModel till, ReportsViewModel reports, SettingsViewModel settings,
         IDialogService dialogs, IAppointmentService appointments, IAppointmentChangeNotifier appointmentChanges,
-        IOwnerAccessService owner)
+        IOwnerAccessService owner, IBackupService? backups = null)
     {
+        // Optional only so tests that are not about backups need not build one; the
+        // container always passes it.
+        _backups = backups;
+        if (_backups is not null) _backups.BackupTaken += _ => BackupFailedNotice = null;
+
         _start = start;
         _catalog = catalog;
         _clients = clients;
@@ -82,6 +100,30 @@ public partial class MainWindowViewModel : ObservableObject
         // overdue check here right away, instead of waiting for the next timer tick.
         appointmentChanges.Changed += async () => await CheckOverdueAppointments();
     }
+
+    /// <summary>
+    /// The daily automatic backup, run once at startup by App before the window shows
+    /// (CU-11: the machine is usually off at the configured hour). A failure must not
+    /// stop the app from opening — the shop still has to work — so it is caught here,
+    /// logged, and turned into <see cref="BackupFailedNotice"/> instead of vanishing.
+    /// </summary>
+    public async Task RunAutomaticBackup()
+    {
+        if (_backups is null) return;
+
+        try
+        {
+            await _backups.RunAutomaticBackupIfDue();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Automatic backup failed");
+            BackupFailedNotice = Texts.AutomaticBackupFailedNotice;
+        }
+    }
+
+    [RelayCommand]
+    private void DismissBackupNotice() => BackupFailedNotice = null;
 
     /// <summary>
     /// Polled from the shell's code-behind on a timer (UI-thread concern, not a

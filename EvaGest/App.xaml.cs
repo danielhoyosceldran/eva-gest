@@ -133,19 +133,14 @@ public partial class App : Application
             new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(AppLanguage.Culture.IetfLanguageTag)));
 
         // The machine may have been off at the configured hour, so this is checked
-        // at every startup instead of relying on a running timer (CU-11). A failure here
-        // (locked/unwritable backup folder, full disk...) must not stop the app from
-        // opening — the user still needs to work, just without today's automatic copy.
-        try
-        {
-            await Services.GetRequiredService<IBackupService>().RunAutomaticBackupIfDue();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Automatic backup failed");
-        }
+        // at every startup instead of relying on a running timer (CU-11). A failure
+        // (locked/unwritable backup folder, full disk, a copy that fails its check...)
+        // does not stop the app from opening: the shell catches it, logs it and keeps a
+        // notice up until a good copy is taken.
+        var shell = Services.GetRequiredService<MainWindowViewModel>();
+        await shell.RunAutomaticBackup();
 
-        new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() }.Show();
+        new MainWindow { DataContext = shell }.Show();
     }
 
     private static ServiceProvider Configure(string dbPath, string baseFolder)

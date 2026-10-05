@@ -7,6 +7,13 @@ public record BackupInfo(string Path, DateTime Date, bool IsAutomatic, long Size
 
 public interface IBackupService
 {
+    /// <summary>
+    /// Raised after a backup has been written and has passed its check (automatic or
+    /// manual). Lets the shell take down its "today's automatic backup failed" notice as
+    /// soon as a good copy exists again, whichever page took it.
+    /// </summary>
+    event Action<BackupInfo>? BackupTaken;
+
     Task<List<BackupInfo>> ListAll();
 
     /// <summary>Takes a backup now. Every new backup is read back and checked before it
