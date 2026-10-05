@@ -239,12 +239,37 @@ public class BackupService(
     /// </summary>
     private static void Snapshot(string sourcePath, string destinationPath)
     {
-        using var source = new SqliteConnection($"Data Source={sourcePath};Pooling=False");
-        using var destination = new SqliteConnection($"Data Source={destinationPath};Pooling=False");
-        source.Open();
-        destination.Open();
-        source.BackupDatabase(destination);
+        // The backup API never waits on a lock: it returns SQLITE_BUSY/SQLITE_LOCKED at
+        // once if a checkpoint or a write on one of the app's own connections holds the
+        // file at that instant. Such a lock lasts milliseconds, so the copy is retried a
+        // few times before the failure is let through to the caller.
+        for (int attempt = 1; ; attempt++)
+        {
+            try
+            {
+                using var source = new SqliteConnection($"Data Source={sourcePath};Pooling=False");
+                using var destination = new SqliteConnection($"Data Source={destinationPath};Pooling=False");
+                source.Open();
+                destination.Open();
+                source.BackupDatabase(destination);
+                return;
+            }
+            catch (SqliteException ex) when (IsLock(ex) && attempt < SnapshotAttempts)
+            {
+                Log.Warning(ex, "Backup copy {Source} -> {Destination} hit a lock (attempt {Attempt} of {Attempts}); retrying",
+                    sourcePath, destinationPath, attempt, SnapshotAttempts);
+                Thread.Sleep(SnapshotRetryDelay);
+            }
+        }
     }
+
+    /// <summary>How many times <see cref="Snapshot"/> tries before giving up on a lock.
+    /// With <see cref="SnapshotRetryDelay"/> that is about two seconds of waiting in all.</summary>
+    private const int SnapshotAttempts = 10;
+    private static readonly TimeSpan SnapshotRetryDelay = TimeSpan.FromMilliseconds(200);
+
+    // SQLITE_BUSY (5) and SQLITE_LOCKED (6): someone else holds the file right now.
+    private static bool IsLock(SqliteException ex) => ex.SqliteErrorCode is 5 or 6;
 
     /// <summary>
     /// Turns a fresh backup into a plain single-file database. The backup API copies
