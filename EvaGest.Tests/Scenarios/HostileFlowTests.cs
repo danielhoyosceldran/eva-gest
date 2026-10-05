@@ -345,7 +345,7 @@ public class HostileFlowTests
         }
         finally
         {
-            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            SqlitePools.Release(file);
             if (File.Exists(file)) File.Delete(file);
         }
     }
@@ -394,7 +394,7 @@ public class HostileFlowTests
         }
         finally
         {
-            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            SqlitePools.Release(file);
             if (File.Exists(file)) File.Delete(file);
         }
     }

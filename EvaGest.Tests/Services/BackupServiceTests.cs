@@ -28,8 +28,8 @@ public class BackupServiceTests : IDisposable
 
     public void Dispose()
     {
-        // The WAL tests go through EF's pooled connections, which keep the file open.
-        SqliteConnection.ClearAllPools();
+        // The WAL tests go through EF's pooled connections, which keep live.db open.
+        SqlitePools.Release(Path.Combine(_folder, "live.db"));
         Directory.Delete(_folder, recursive: true);
     }
 

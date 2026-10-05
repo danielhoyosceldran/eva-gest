@@ -36,7 +36,7 @@ public sealed class BackupVerificationTests : IDisposable
 
     public void Dispose()
     {
-        SqliteConnection.ClearAllPools();
+        SqlitePools.Release(_live);
         Directory.Delete(_folder, recursive: true);
     }
 

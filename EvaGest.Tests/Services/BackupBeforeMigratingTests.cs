@@ -30,7 +30,7 @@ public sealed class BackupBeforeMigratingTests : IDisposable
 
     public void Dispose()
     {
-        SqliteConnection.ClearAllPools();
+        SqlitePools.Release(_live);
         Directory.Delete(_folder, recursive: true);
     }
 
