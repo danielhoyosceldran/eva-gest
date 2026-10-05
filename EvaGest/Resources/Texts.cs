@@ -516,6 +516,7 @@ public static class Texts
         nameof(OverdueAppointmentsMore),
         nameof(SettingNotSaved),
         nameof(BackupNotVerified),
+        nameof(BackupFromNewerVersion),
     ];
 
     /// <summary>Pendent</summary>
@@ -1957,4 +1958,7 @@ public static class Texts
 
     /// <summary>La còpia no ha superat la comprovació i s'ha descartat: ara mateix no s'ha fet cap còpia nova. Comprova que el disc tingui espai lliure i torna-ho a provar.</summary>
     public static string BackupNotVerified => Get(nameof(BackupNotVerified));
+
+    /// <summary>Aquesta còpia es va fer amb una versió més nova de l'aplicació i aquesta no la pot llegir. Les dades actuals no s'han tocat: actualitza l'aplicació o tria una còpia més antiga.</summary>
+    public static string BackupFromNewerVersion => Get(nameof(BackupFromNewerVersion));
 }

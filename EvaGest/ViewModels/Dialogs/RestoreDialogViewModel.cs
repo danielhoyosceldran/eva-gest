@@ -52,6 +52,14 @@ public partial class RestoreDialogViewModel : DialogViewModelBase
         {
             await _backup.Restore(Selected.Path);
         }
+        catch (BackupFromNewerVersionException ex)
+        {
+            // Sound, but from a later version: picking another copy is not the only way
+            // out, updating the app is — so it gets its own message.
+            Log.Error(ex, "Backup {BackupPath} refused for restore: made by a newer version", Selected.Path);
+            ErrorValidation = Texts.BackupFromNewerVersion;
+            return;
+        }
         catch (InvalidDataException ex)
         {
             // Refused before the live database was touched, so the user only needs to

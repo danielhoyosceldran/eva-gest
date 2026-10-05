@@ -1,7 +1,10 @@
 using System.Globalization;
 using System.IO;
+using System.Reflection;
+using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 using Serilog;
 
@@ -129,7 +132,11 @@ public class BackupService(
         // A copy that SQLite itself cannot read must never replace the live database:
         // checked before anything is touched, so a damaged file leaves the shop's data
         // exactly as it was.
-        await Task.Run(() => EnsureReadable(backupPath));
+        await Task.Run(() =>
+        {
+            EnsureReadable(backupPath);
+            EnsureNotNewer(backupPath);
+        });
 
         // Back up the CURRENT state first, so an accidental restore can still be
         // undone (CU-09b) — this must happen before the file is overwritten. Not pruned
@@ -254,6 +261,44 @@ public class BackupService(
             }
             throw;
         }
+    }
+
+    /// <summary>
+    /// The id of every migration compiled into this build, read from the
+    /// <see cref="MigrationAttribute"/> EF puts on each one. A backup's history listing an
+    /// id outside this set came from a later version of the app.
+    /// </summary>
+    private static readonly HashSet<string> KnownMigrations =
+        typeof(ShopDbContext).Assembly.GetTypes()
+            .Select(t => t.GetCustomAttribute<MigrationAttribute>()?.Id)
+            .OfType<string>()
+            .ToHashSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Throws <see cref="BackupFromNewerVersionException"/> when the backup's migration
+    /// history names a migration this build does not have. Without it a copy made after
+    /// an update could be restored by the older version still installed (or reinstalled)
+    /// on this PC, which would then run against a schema it does not know; and its next
+    /// startup migration would not put that right, since nothing is pending as far as it
+    /// can see. Reads the first column of the history table, which is where EF keeps the
+    /// migration id.
+    /// </summary>
+    private static void EnsureNotNewer(string path)
+    {
+        var unknown = new List<string>();
+        using (var connection = new SqliteConnection($"Data Source={path};Mode=ReadOnly;Pooling=False"))
+        {
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM __EFMigrationsHistory";
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+                if (reader.GetValue(0) is string id && !KnownMigrations.Contains(id))
+                    unknown.Add(id);
+        }
+
+        if (unknown.Count > 0)
+            throw new BackupFromNewerVersionException(path, unknown);
     }
 
     /// <summary>Throws unless SQLite reads the file as a sound EvaGest database.</summary>

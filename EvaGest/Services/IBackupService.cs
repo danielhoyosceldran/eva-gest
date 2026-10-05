@@ -21,7 +21,9 @@ public interface IBackupService
 
     /// <summary>
     /// Restores a backup. Always backs up the CURRENT state first, so an accidental
-    /// restore can still be undone (CU-09b).
+    /// restore can still be undone (CU-09b). Refuses, before touching anything, a file
+    /// that is not a sound EvaGest database (<see cref="System.IO.InvalidDataException"/>)
+    /// or one made by a newer version of the app (<see cref="BackupFromNewerVersionException"/>).
     /// </summary>
     Task Restore(string backupPath);
 }

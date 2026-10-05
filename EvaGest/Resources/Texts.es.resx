@@ -1508,4 +1508,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="BackupNotVerified" xml:space="preserve">
     <value>La copia no ha superado la comprobación y se ha descartado: ahora mismo no se ha hecho ninguna copia nueva. Comprueba que el disco tenga espacio libre y vuelve a intentarlo.</value>
   </data>
+  <data name="BackupFromNewerVersion" xml:space="preserve">
+    <value>Esta copia se hizo con una versión más nueva de la aplicación y esta no la puede leer. Los datos actuales no se han tocado: actualiza la aplicación o elige una copia más antigua.</value>
+  </data>
 </root>

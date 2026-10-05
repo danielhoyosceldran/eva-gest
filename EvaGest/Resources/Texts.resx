@@ -1508,4 +1508,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="BackupNotVerified" xml:space="preserve">
     <value>La còpia no ha superat la comprovació i s'ha descartat: ara mateix no s'ha fet cap còpia nova. Comprova que el disc tingui espai lliure i torna-ho a provar.</value>
   </data>
+  <data name="BackupFromNewerVersion" xml:space="preserve">
+    <value>Aquesta còpia es va fer amb una versió més nova de l'aplicació i aquesta no la pot llegir. Les dades actuals no s'han tocat: actualitza l'aplicació o tria una còpia més antiga.</value>
+  </data>
 </root>
