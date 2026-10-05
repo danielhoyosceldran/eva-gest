@@ -5,3 +5,6 @@ obj/
 *.db
 *.db-shm
 *.db-wal
+
+# dotnet test output: blame hang dumps (hundreds of MB) and sequence files
+TestResults/

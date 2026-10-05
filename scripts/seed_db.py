@@ -9,6 +9,10 @@ Clears ALL tables, then populates with realistic data:
   - Walk-in sales (no appointment)
   - Monthly salary payments + tax consultory cash movements
 
+Follows the schema up to migration FilterAppointmentSaleIndexToActive: sales and
+cash movements get created_at_utc, cash movements get status, audit_entries is
+emptied, and the owner PIN rows in settings survive a re-seed.
+
 Usage:
     python scripts/seed_db.py
     python scripts/seed_db.py --db-path "C:/custom/path/barberia.db"
@@ -66,6 +70,11 @@ def compute_sale_totals(lines: list[tuple]) -> tuple[int, int, int, list[tuple]]
         breakdowns.append((vbp, base, vat, tot))
 
     return total_base, total_vat, total_total, breakdowns
+
+def _created_at(date_str: str, time_str: str) -> str:
+    """created_at_utc for a seeded row: recorded at the moment it happened (the
+    seed treats local time as UTC; only the ordering matters)."""
+    return f"{date_str} {time_str}"
 
 # ---------------------------------------------------------------------------
 # Catalogue
@@ -179,6 +188,14 @@ def seed(db_path: str) -> None:
 
     rng = random.Random(SEED)
     conn = sqlite3.connect(db_path)
+    # The script targets the latest schema; an older database must be migrated first.
+    have = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(cash_movements)")}
+    if "audit_entries" not in have or "created_at_utc" not in cols:
+        print("ERROR: the database schema is out of date.")
+        print("Start the app once so it applies the pending migrations, then rerun.")
+        conn.close()
+        return
     conn.execute("PRAGMA foreign_keys = OFF")  # skip FK checks during bulk insert
     cur = conn.cursor()
 
@@ -187,12 +204,14 @@ def seed(db_path: str) -> None:
     # ------------------------------------------------------------------
     print("Clearing tables …")
     for tbl in [
-        "sale_breakdowns", "sale_lines", "sales", "appointments",
+        "audit_entries", "sale_breakdowns", "sale_lines", "sales", "appointments",
         "cash_movements", "worker_schedules", "shop_schedule",
         "clients", "workers", "services", "products",
-        "payment_methods", "expense_categories", "closed_days", "settings",
+        "payment_methods", "expense_categories", "closed_days",
     ]:
         cur.execute(f"DELETE FROM {tbl}")
+    # Keep the owner's PIN and recovery code so a re-seed does not lock them out.
+    cur.execute("DELETE FROM settings WHERE key NOT IN ('owner_pin', 'owner_recovery_code')")
     # Reset autoincrement counters so IDs start at 1 on each run
     cur.execute("DELETE FROM sqlite_sequence")
     conn.commit()
@@ -200,7 +219,7 @@ def seed(db_path: str) -> None:
     # ------------------------------------------------------------------
     # 2. Settings
     # ------------------------------------------------------------------
-    cur.executemany("INSERT INTO settings (key, value) VALUES (?,?)", [
+    cur.executemany("INSERT OR REPLACE INTO settings (key, value) VALUES (?,?)", [
         ("shop_name",                      "Barberia El Racó"),
         ("shop_address",                   "Carrer Major, 12"),
         ("shop_phone",                     "931234567"),
@@ -215,6 +234,7 @@ def seed(db_path: str) -> None:
         ("confirmation_sound",             "1"),
         ("language",                       "Catalan"),
         ("agenda_slot_minutes",            "15"),
+        ("agenda_days",                    "3"),
     ])
 
     # ------------------------------------------------------------------
@@ -671,9 +691,10 @@ def seed(db_path: str) -> None:
         """INSERT INTO sales
            (id, date, time, client_id, guest_name, guest_phone,
             appointment_id, worker_id, payment_method_id,
-            base_cents, vat_cents, total_cents, vat_mode, status, notes)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        sale_rows,
+            base_cents, vat_cents, total_cents, vat_mode, status, notes,
+            created_at_utc)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        [r + (_created_at(r[1], r[2]),) for r in sale_rows],
     )
     cur.executemany(
         """INSERT INTO sale_lines
@@ -732,9 +753,10 @@ def seed(db_path: str) -> None:
     cur.executemany(
         """INSERT INTO cash_movements
            (date, type, amount_cents, base_cents, vat_cents, vat_bp,
-            payment_method_id, category_id, worker_id, concept)
-           VALUES (?,?,?,?,?,?,?,?,?,?)""",
-        mov_rows,
+            payment_method_id, category_id, worker_id, concept,
+            status, created_at_utc)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+        [r + ("Active", _created_at(r[0], "09:00:00")) for r in mov_rows],
     )
     conn.commit()
     conn.execute("PRAGMA foreign_keys = ON")
