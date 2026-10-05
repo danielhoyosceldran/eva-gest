@@ -220,7 +220,8 @@ public class SettingsPageTests
     public async Task Removing_a_closed_day_opens_it_again()
     {
         await using var testDb = new TestDatabase();
-        var vm = Build(testDb);
+        // Removing one now asks with the owner's PIN (F-05); the test answers yes.
+        var vm = Build(testDb, new TestDialogService { ResultPinConfirm = true });
         await vm.Load();
         vm.NewClosedDate = new DateOnly(2026, 12, 25);
         await vm.AddClosedDayCommand.ExecuteAsync(null);
@@ -410,7 +411,8 @@ public class SettingsPageTests
         vm.BackupsToKeepText = "1";
         await vm.SaveBackupOptionsCommand.ExecuteAsync(null);
 
-        dialogs.ConfirmacionsRequested.Should().ContainSingle();
+        // Deleting backups asks with the owner's PIN now (F-05).
+        dialogs.PinConfirmationsRequested.Should().ContainSingle();
         folder.Count().Should().Be(5, "nothing may be deleted without confirmation");
 
         dialogs.ResultConfirm = true;
@@ -433,6 +435,7 @@ public class SettingsPageTests
         await vm.SaveBackupOptionsCommand.ExecuteAsync(null);
 
         dialogs.ConfirmacionsRequested.Should().BeEmpty("nothing is being lost");
+        dialogs.PinConfirmationsRequested.Should().BeEmpty("nothing is being lost");
         folder.Count().Should().Be(3);
     }
 }

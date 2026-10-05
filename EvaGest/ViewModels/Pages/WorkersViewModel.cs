@@ -97,7 +97,7 @@ public partial class WorkersViewModel(IWorkerService workers, IDialogService dia
     [RelayCommand]
     private async Task DeleteWorker(Worker worker)
     {
-        bool confirmed = await dialogs.Confirm(
+        bool confirmed = await dialogs.ConfirmWithOwnerPin(
             Texts.DeleteWorkerTitle,
             string.Format(Texts.DeleteWorkerMessage, worker.Name),
             Texts.Delete);

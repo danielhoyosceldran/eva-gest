@@ -168,7 +168,7 @@ public partial class TillViewModel(
     [RelayCommand]
     private async Task Delete(MovementRow row)
     {
-        bool confirmed = await dialogs.Confirm(Texts.DeleteMovementTitle,
+        bool confirmed = await dialogs.ConfirmWithOwnerPin(Texts.DeleteMovementTitle,
             string.Format(Texts.DeleteMovementMessage, Money.Format(row.Movement.AmountCents)),
             Texts.Delete);
         if (!confirmed) return;

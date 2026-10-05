@@ -192,7 +192,7 @@ public partial class CatalogViewModel(
         int uses = await catalog.CountMethodUses(method.Id);
         bool confirmed = uses == 0
             ? await ConfirmDeletion(Texts.TypePaymentMethod, method.Name)
-            : await dialogs.Confirm(
+            : await dialogs.ConfirmWithOwnerPin(
                 string.Format(Texts.DeleteCatalogItemTitle, Texts.TypePaymentMethod),
                 string.Format(Texts.DeleteUsedMethodMessage, method.Name, uses),
                 Texts.Delete);
@@ -258,7 +258,7 @@ public partial class CatalogViewModel(
     /// rather than surprising the user with it.
     /// </summary>
     private Task<bool> ConfirmDeletion(string type, string name)
-        => dialogs.Confirm(
+        => dialogs.ConfirmWithOwnerPin(
             string.Format(Texts.DeleteCatalogItemTitle, type),
             string.Format(Texts.DeleteCatalogItemMessage, name),
             Texts.Delete);

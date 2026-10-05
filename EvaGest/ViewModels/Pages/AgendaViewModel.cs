@@ -194,7 +194,7 @@ public partial class AgendaViewModel : PageViewModelBase
     [RelayCommand]
     private async Task DeleteAppointment(Appointment appointment)
     {
-        bool confirmed = await _dialogs.Confirm(
+        bool confirmed = await _dialogs.ConfirmWithOwnerPin(
             Texts.DeleteAppointmentTitle,
             string.Format(Texts.DeleteAppointmentOfMessage, appointment.DisplayName,
                           appointment.Date.ToString("dd/MM/yyyy"),

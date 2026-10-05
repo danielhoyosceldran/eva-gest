@@ -541,6 +541,10 @@ public static class Texts
         nameof(DeletedPaymentMethod),
         nameof(Deactivate),
         nameof(DeleteUsedMethodMessage),
+        nameof(OwnerPinConfirmIntro),
+        nameof(ConfirmRemoveClosedDayTitle),
+        nameof(ConfirmRemoveClosedDayMessage),
+        nameof(RemoveClosedDay),
     ];
 
     /// <summary>Pendent</summary>
@@ -2057,4 +2061,16 @@ public static class Texts
 
     /// <summary>«{0}» s'ha fet servir en {1} vendes o moviments de caixa. Si l'elimines, en tots aquests registres el mètode de pagament quedarà buit i es mostrarà com a «Mètode eliminat»; els imports no canvien. Si només vols deixar d'oferir-lo, desactiva'l: el podràs tornar a activar.</summary>
     public static string DeleteUsedMethodMessage => Get(nameof(DeleteUsedMethodMessage));
+
+    /// <summary>Per confirmar-ho, escriu el PIN de la propietària.</summary>
+    public static string OwnerPinConfirmIntro => Get(nameof(OwnerPinConfirmIntro));
+
+    /// <summary>Treure aquest dia tancat?</summary>
+    public static string ConfirmRemoveClosedDayTitle => Get(nameof(ConfirmRemoveClosedDayTitle));
+
+    /// <summary>El {0} tornarà a sortir com a dia obert a l'agenda.</summary>
+    public static string ConfirmRemoveClosedDayMessage => Get(nameof(ConfirmRemoveClosedDayMessage));
+
+    /// <summary>Treure</summary>
+    public static string RemoveClosedDay => Get(nameof(RemoveClosedDay));
 }

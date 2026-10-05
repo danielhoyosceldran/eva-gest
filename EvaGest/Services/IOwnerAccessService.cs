@@ -43,6 +43,13 @@ public interface IOwnerAccessService
     Task<AccessResult> Unlock(string pin);
 
     /// <summary>
+    /// Checks the PIN without opening or closing owner mode: the confirmation every
+    /// delete and void asks for, even with owner mode already open (F-05). Shares the
+    /// attempt counter and lockout with <see cref="Unlock"/>.
+    /// </summary>
+    Task<AccessResult> VerifyPin(string pin);
+
+    /// <summary>
     /// Checks the paper recovery code. On success owner mode stays closed, but
     /// <see cref="CreatePin"/> is allowed once, so the owner can choose a new PIN.
     /// </summary>

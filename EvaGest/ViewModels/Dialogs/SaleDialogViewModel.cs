@@ -395,6 +395,14 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     {
         if (_id is int id)
         {
+            // Voided straight from the button with no question at all; now it asks with
+            // the owner's PIN, like every other void and delete (F-05).
+            bool confirmed = await _dialogs.ConfirmWithOwnerPin(
+                Texts.ConfirmVoidSaleTitle,
+                string.Format(Texts.ConfirmVoidSaleMessage, Money.Format(TotalCents)),
+                Texts.Void);
+            if (!confirmed) return;
+
             await _sales.Void(id);
             RequestClose(true);
         }

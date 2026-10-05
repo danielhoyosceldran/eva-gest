@@ -41,6 +41,23 @@ public class TestDialogService : IDialogService
         return Task.FromResult(ResultConfirm);
     }
 
+    /// <summary>
+    /// What <see cref="ConfirmWithOwnerPin"/> reports: true stands for "the PIN was typed
+    /// and accepted". Left null it follows <see cref="ResultConfirm"/>, so the tests about
+    /// what a delete does, written before the PIN was asked for, keep confirming the same
+    /// way; a test about the PIN itself sets it.
+    /// </summary>
+    public bool? ResultPinConfirm { get; set; }
+
+    /// <summary>The titles of the PIN confirmations asked for, in order.</summary>
+    public List<string> PinConfirmationsRequested { get; } = [];
+
+    public Task<bool> ConfirmWithOwnerPin(string title, string message, string textConfirm)
+    {
+        PinConfirmationsRequested.Add(title);
+        return Task.FromResult(ResultPinConfirm ?? ResultConfirm);
+    }
+
     public Task Inform(string title, string message)
     {
         InfoDisplayed.Add(title);

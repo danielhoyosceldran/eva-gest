@@ -183,7 +183,7 @@ public partial class SalesViewModel(
     [RelayCommand]
     private async Task VoidSale(Sale sale)
     {
-        bool confirmed = await dialogs.Confirm(
+        bool confirmed = await dialogs.ConfirmWithOwnerPin(
             Texts.ConfirmVoidSaleTitle,
             string.Format(Texts.ConfirmVoidSaleMessage, Money.Format(sale.TotalCents)),
             Texts.Void);
@@ -204,7 +204,7 @@ public partial class SalesViewModel(
     {
         if (sale.Status == SaleStatus.Voided) return;
 
-        bool confirmed = await dialogs.Confirm(
+        bool confirmed = await dialogs.ConfirmWithOwnerPin(
             Texts.DeleteSaleTitle,
             string.Format(Texts.DeleteActiveSaleMessage, Money.Format(sale.TotalCents)),
             Texts.Void);

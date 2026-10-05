@@ -67,6 +67,8 @@ public class OwnerAccessService(
         return result;
     }
 
+    public Task<AccessResult> VerifyPin(string pin) => Check(pin, ConfigKeys.OwnerPin, "PIN");
+
     public async Task<AccessResult> CheckRecoveryCode(string code)
     {
         var result = await Check(OwnerPin.NormaliseRecoveryCode(code), ConfigKeys.OwnerRecoveryCode, "recovery code");

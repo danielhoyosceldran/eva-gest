@@ -103,7 +103,7 @@ public partial class ClientRecordViewModel : DialogViewModelBase
     {
         var (appointments, sales) = await _clients.CountHistory(Client.Id);
 
-        bool confirmed = await _dialogs.Confirm(
+        bool confirmed = await _dialogs.ConfirmWithOwnerPin(
             string.Format(Texts.DeleteClientTitle, Client.Name),
             string.Format(Texts.DeleteClientMessage, appointments, sales),
             Texts.DeleteForever);

@@ -1,6 +1,7 @@
 using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 using EvaGest.Helpers;
 namespace EvaGest.Services;
@@ -162,6 +163,7 @@ public class AvailabilityService(IDbContextFactory<ShopDbContext> factory) : IAv
 
         db.ClosedDays.Remove(day);
         await db.SaveChangesAsync();
+        Log.Information("Closed day {ClosedDayId} ({Date}) removed", id, day.Date);
     }
 
     private async Task<bool> IsInsideSchedule(ShopDbContext db, DateOnly date, TimeOnly time, int durationMin)

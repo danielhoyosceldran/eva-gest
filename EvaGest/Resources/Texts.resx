@@ -1583,4 +1583,16 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="DeleteUsedMethodMessage" xml:space="preserve">
     <value>«{0}» s'ha fet servir en {1} vendes o moviments de caixa. Si l'elimines, en tots aquests registres el mètode de pagament quedarà buit i es mostrarà com a «Mètode eliminat»; els imports no canvien. Si només vols deixar d'oferir-lo, desactiva'l: el podràs tornar a activar.</value>
   </data>
+  <data name="OwnerPinConfirmIntro" xml:space="preserve">
+    <value>Per confirmar-ho, escriu el PIN de la propietària.</value>
+  </data>
+  <data name="ConfirmRemoveClosedDayTitle" xml:space="preserve">
+    <value>Treure aquest dia tancat?</value>
+  </data>
+  <data name="ConfirmRemoveClosedDayMessage" xml:space="preserve">
+    <value>El {0} tornarà a sortir com a dia obert a l'agenda.</value>
+  </data>
+  <data name="RemoveClosedDay" xml:space="preserve">
+    <value>Treure</value>
+  </data>
 </root>

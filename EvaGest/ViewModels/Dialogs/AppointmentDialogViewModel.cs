@@ -438,7 +438,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     {
         if (_id is not int id) return;
 
-        bool confirmed = await _dialogs.Confirm(
+        bool confirmed = await _dialogs.ConfirmWithOwnerPin(
             Texts.DeleteAppointmentTitle,
             Texts.DeleteAppointmentMessage,
             Texts.Delete);

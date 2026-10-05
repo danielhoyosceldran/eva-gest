@@ -1583,4 +1583,16 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="DeleteUsedMethodMessage" xml:space="preserve">
     <value>«{0}» se ha usado en {1} ventas o movimientos de caja. Si lo eliminas, en todos esos registros el método de pago quedará vacío y se mostrará como «Método eliminado»; los importes no cambian. Si solo quieres dejar de ofrecerlo, desactívalo: podrás volver a activarlo.</value>
   </data>
+  <data name="OwnerPinConfirmIntro" xml:space="preserve">
+    <value>Para confirmarlo, escribe el PIN de la propietaria.</value>
+  </data>
+  <data name="ConfirmRemoveClosedDayTitle" xml:space="preserve">
+    <value>¿Quitar este día cerrado?</value>
+  </data>
+  <data name="ConfirmRemoveClosedDayMessage" xml:space="preserve">
+    <value>El {0} volverá a aparecer como día abierto en la agenda.</value>
+  </data>
+  <data name="RemoveClosedDay" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
 </root>

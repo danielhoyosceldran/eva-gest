@@ -409,6 +409,13 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private async Task RemoveClosedDay(ClosedDay day)
     {
+        // Removed with no question before; every delete now asks with the PIN (F-05).
+        bool confirmed = await dialogs.ConfirmWithOwnerPin(
+            Texts.ConfirmRemoveClosedDayTitle,
+            string.Format(Texts.ConfirmRemoveClosedDayMessage, day.Date.ToString("dd/MM/yyyy")),
+            Texts.RemoveClosedDay);
+        if (!confirmed) return;
+
         await availability.DeleteClosedDay(day.Id);
         await LoadClosedDays();
     }
@@ -443,7 +450,7 @@ public partial class SettingsViewModel(
         int existing = (await backup.ListAll()).Count;
         if (existing > howmany)
         {
-            bool confirmed = await dialogs.Confirm(
+            bool confirmed = await dialogs.ConfirmWithOwnerPin(
                 string.Format(Texts.ConfirmDeleteBackupsTitle, howmany),
                 string.Format(Texts.ConfirmDeleteBackupsMessage, existing - howmany, howmany),
                 Texts.DeleteBackups);
