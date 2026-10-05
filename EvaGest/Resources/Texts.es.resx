@@ -1541,4 +1541,10 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="AutomaticBackupFailedNotice" xml:space="preserve">
     <value>La copia de seguridad automática de hoy no se ha podido hacer. Abre el Modo propietaria y, en Configuración, pulsa «Hacer copia ahora». Si tampoco sale, comprueba que el disco tenga espacio libre.</value>
   </data>
+  <data name="StartupFailedTitle" xml:space="preserve">
+    <value>EvaGest no se ha podido abrir</value>
+  </data>
+  <data name="StartupFailedMessage" xml:space="preserve">
+    <value>Los datos no se han tocado. Vuelve a abrir EvaGest; si sigue pasando, avisa a quien te instaló el programa.</value>
+  </data>
 </root>

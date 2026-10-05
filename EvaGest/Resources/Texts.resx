@@ -1541,4 +1541,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="AutomaticBackupFailedNotice" xml:space="preserve">
     <value>La còpia de seguretat automàtica d'avui no s'ha pogut fer. Obre el Mode propietària i, a Configuració, prem «Fer còpia ara». Si tampoc no surt, comprova que el disc tingui espai lliure.</value>
   </data>
+  <data name="StartupFailedTitle" xml:space="preserve">
+    <value>EvaGest no s'ha pogut obrir</value>
+  </data>
+  <data name="StartupFailedMessage" xml:space="preserve">
+    <value>Les dades no s'han tocat. Torna a obrir EvaGest; si continua passant, avisa qui t'ha instal·lat el programa.</value>
+  </data>
 </root>

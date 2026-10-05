@@ -121,6 +121,28 @@ public partial class App : Application
             return;
         }
 
+        // Everything from here to the first window is guarded too. An exception in it used
+        // to reach DispatcherUnhandledException, which shows its message and marks it
+        // handled; but with no window ever opened the process then stayed alive, invisible,
+        // holding the single-instance mutex, so every later launch said EvaGest was
+        // already open until someone ended it in Task Manager.
+        try
+        {
+            await OpenShell();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Startup failed after the database was opened");
+            MessageBox.Show(Texts.StartupFailedMessage, Texts.StartupFailedTitle,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            Shutdown();
+        }
+    }
+
+    /// <summary>The steps of startup that come after the database is ready: the
+    /// interface language, the daily automatic backup and the main window.</summary>
+    private static async Task OpenShell()
+    {
         // Before the first window is built: every view resolves its texts through
         // {x:Static} as it loads, so the language has to be settled by now (RF-23).
         AppLanguage.Use(AppLanguage.Parse(

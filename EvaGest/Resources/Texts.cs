@@ -527,6 +527,8 @@ public static class Texts
         nameof(ChangeTheTime),
         nameof(ConfirmOverlapWorkerMessage),
         nameof(AutomaticBackupFailedNotice),
+        nameof(StartupFailedTitle),
+        nameof(StartupFailedMessage),
     ];
 
     /// <summary>Pendent</summary>
@@ -2001,4 +2003,10 @@ public static class Texts
 
     /// <summary>La còpia de seguretat automàtica d'avui no s'ha pogut fer. Obre el Mode propietària i, a Configuració, prem «Fer còpia ara». Si tampoc no surt, comprova que el disc tingui espai lliure.</summary>
     public static string AutomaticBackupFailedNotice => Get(nameof(AutomaticBackupFailedNotice));
+
+    /// <summary>EvaGest no s'ha pogut obrir</summary>
+    public static string StartupFailedTitle => Get(nameof(StartupFailedTitle));
+
+    /// <summary>Les dades no s'han tocat. Torna a obrir EvaGest; si continua passant, avisa qui t'ha instal·lat el programa.</summary>
+    public static string StartupFailedMessage => Get(nameof(StartupFailedMessage));
 }
