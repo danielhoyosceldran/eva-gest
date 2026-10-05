@@ -104,12 +104,14 @@ public partial class SettingsViewModel(
     // ── Notices and sounds ───────────────────────────────────────────────────
     [ObservableProperty] private bool _showGuestNotice = true;
     [ObservableProperty] private bool _confirmationSound = true;
+    [ObservableProperty] private string? _errorNotices;
 
     // ── Language ─────────────────────────────────────────────────────────────
     public IReadOnlyList<Language> Languages { get; } = [Language.Catalan, Language.Spanish];
 
     [ObservableProperty] private Language _language = AppLanguage.Current;
     [ObservableProperty] private string? _languageConfirmation;
+    [ObservableProperty] private string? _errorLanguage;
 
     public async Task Load()
     {
@@ -161,6 +163,8 @@ public partial class SettingsViewModel(
             VatConfirmation = null;
             ErrorAgenda = null;
             ErrorBackup = null;
+            ErrorNotices = null;
+            ErrorLanguage = null;
             ShopConfirmation = null;
             ErrorShop = null;
         }
@@ -264,19 +268,71 @@ public partial class SettingsViewModel(
         VatConfirmation = Texts.VatModeSaved;
     }
 
-    partial void OnApplyVatToTillChanged(bool value)
+    partial void OnApplyVatToTillChanged(bool oldValue, bool newValue)
     {
         if (!_loaded) return;
-        _ = settings.SaveBool(ConfigKeys.ApplyVatToTill, value);
+        SaveAsEdited("apply VAT to till",
+            () => settings.SaveBool(ConfigKeys.ApplyVatToTill, newValue),
+            revert: () => ApplyVatToTill = oldValue,
+            showError: e => VatError = e);
+    }
+
+    // ── Saving as edited ─────────────────────────────────────────────────────
+
+    /// <summary>The write in flight from the last checkbox or picker that saves as it is
+    /// changed. Awaited by the tests; the view lets it run, like <see cref="VatModeChange"/>.</summary>
+    public Task PendingSave { get; private set; } = Task.CompletedTask;
+
+    /// <summary>
+    /// Saves a setting the moment its control changes. These writes used to be discarded
+    /// with <c>_ = settings.Save(...)</c>: a failure was never seen, the control kept
+    /// showing a value that was never stored, and the exception only reached the log
+    /// whenever the finaliser got round to it. Now a failure puts the control back to the
+    /// stored value, says so next to it, and is logged at once.
+    /// </summary>
+    /// <param name="setting">Which setting, for the log.</param>
+    /// <param name="write">The save itself.</param>
+    /// <param name="revert">Puts the control back to the value still stored.</param>
+    /// <param name="showError">Sets (or clears, with null) the error line of that section.</param>
+    /// <param name="onSaved">Anything to do only once the value is really stored.</param>
+    private void SaveAsEdited(string setting, Func<Task> write, Action revert,
+        Action<string?> showError, Action? onSaved = null)
+    {
+        PendingSave = Run();
+
+        async Task Run()
+        {
+            try
+            {
+                await write();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not save the {Setting} setting", setting);
+                // _loaded off while reverting, so putting the old value back does not
+                // trigger another save of it.
+                _loaded = false;
+                revert();
+                _loaded = true;
+                showError(Texts.SettingNotSaved);
+                return;
+            }
+
+            showError(null);
+            onSaved?.Invoke();
+        }
     }
 
     // ── Agenda ───────────────────────────────────────────────────────────────
 
-    partial void OnSlotMinutesChanged(int value)
+    partial void OnSlotMinutesChanged(int oldValue, int newValue)
     {
         if (!_loaded) return;
-        _ = settings.Save(ConfigKeys.AgendaSlotMinutes,
-            GridHelper.IsValidSlotMinutes(value).ToString());
+        SaveAsEdited("agenda slot minutes",
+            () => settings.Save(ConfigKeys.AgendaSlotMinutes,
+                GridHelper.IsValidSlotMinutes(newValue).ToString()),
+            revert: () => SlotMinutes = oldValue,
+            showError: e => ErrorAgenda = e);
     }
 
     [RelayCommand]
@@ -428,16 +484,22 @@ public partial class SettingsViewModel(
 
     // ── Notices and sounds ───────────────────────────────────────────────────
 
-    partial void OnShowGuestNoticeChanged(bool value)
+    partial void OnShowGuestNoticeChanged(bool oldValue, bool newValue)
     {
         if (!_loaded) return;
-        _ = settings.SaveBool(ConfigKeys.ShowGuestNotice, value);
+        SaveAsEdited("show guest notice",
+            () => settings.SaveBool(ConfigKeys.ShowGuestNotice, newValue),
+            revert: () => ShowGuestNotice = oldValue,
+            showError: e => ErrorNotices = e);
     }
 
-    partial void OnConfirmationSoundChanged(bool value)
+    partial void OnConfirmationSoundChanged(bool oldValue, bool newValue)
     {
         if (!_loaded) return;
-        _ = settings.SaveBool(ConfigKeys.ConfirmationSound, value);
+        SaveAsEdited("confirmation sound",
+            () => settings.SaveBool(ConfigKeys.ConfirmationSound, newValue),
+            revert: () => ConfirmationSound = oldValue,
+            showError: e => ErrorNotices = e);
     }
 
     // ── Language ─────────────────────────────────────────────────────────────
@@ -445,10 +507,15 @@ public partial class SettingsViewModel(
     /// <summary>Saved straight away, but only read at startup: everything already on
     /// screen keeps the wording it was built with, so the page says so instead of
     /// half-translating itself.</summary>
-    partial void OnLanguageChanged(Language value)
+    partial void OnLanguageChanged(Language oldValue, Language newValue)
     {
         if (!_loaded) return;
-        _ = settings.Save(ConfigKeys.Language, value.ToString());
-        LanguageConfirmation = value == AppLanguage.Current ? null : Texts.LanguageSaved;
+        SaveAsEdited("language",
+            () => settings.Save(ConfigKeys.Language, newValue.ToString()),
+            revert: () => Language = oldValue,
+            showError: e => ErrorLanguage = e,
+            // Only promise the restart will switch language once the choice is stored.
+            onSaved: () => LanguageConfirmation =
+                newValue == AppLanguage.Current ? null : Texts.LanguageSaved);
     }
 }

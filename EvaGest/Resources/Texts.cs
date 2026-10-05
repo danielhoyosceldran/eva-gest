@@ -514,6 +514,7 @@ public static class Texts
         nameof(OwnerPinChanged),
         nameof(RestoreBringsBackPin),
         nameof(OverdueAppointmentsMore),
+        nameof(SettingNotSaved),
     ];
 
     /// <summary>Pendent</summary>
@@ -1949,4 +1950,7 @@ public static class Texts
 
     /// <summary>i {0} més</summary>
     public static string OverdueAppointmentsMore => Get(nameof(OverdueAppointmentsMore));
+
+    /// <summary>Aquest canvi no s'ha guardat i s'ha tornat a deixar com estava. Torna-ho a provar; si continua passant, tanca i torna a obrir l'aplicació.</summary>
+    public static string SettingNotSaved => Get(nameof(SettingNotSaved));
 }

@@ -25,6 +25,9 @@
                 <TextBlock Text="{Binding LanguageConfirmation}" Margin="0,8,0,0" TextWrapping="Wrap"
                            Foreground="{StaticResource InkMutedBrush}"
                            Visibility="{Binding LanguageConfirmation, Converter={StaticResource NullToVisibilityConverter}}" />
+                <TextBlock Text="{Binding ErrorLanguage}" Foreground="{StaticResource DangerBrush}"
+                           TextWrapping="Wrap" Margin="0,8,0,0"
+                           Visibility="{Binding ErrorLanguage, Converter={StaticResource NullToVisibilityConverter}}" />
             </StackPanel>
         </Border>
 
@@ -271,6 +274,10 @@
 
                 <CheckBox IsChecked="{Binding ConfirmationSound}"
                           Content="{x:Static t:Texts.ConfirmationSoundOption}" />
+
+                <TextBlock Text="{Binding ErrorNotices}" Foreground="{StaticResource DangerBrush}"
+                           TextWrapping="Wrap" Margin="0,8,0,0"
+                           Visibility="{Binding ErrorNotices, Converter={StaticResource NullToVisibilityConverter}}" />
             </StackPanel>
         </Border>
 

@@ -1502,4 +1502,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="OverdueAppointmentsMore" xml:space="preserve">
     <value>i {0} més</value>
   </data>
+  <data name="SettingNotSaved" xml:space="preserve">
+    <value>Aquest canvi no s'ha guardat i s'ha tornat a deixar com estava. Torna-ho a provar; si continua passant, tanca i torna a obrir l'aplicació.</value>
+  </data>
 </root>
