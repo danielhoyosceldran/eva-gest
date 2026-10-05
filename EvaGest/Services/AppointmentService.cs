@@ -131,7 +131,12 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         if (newStatus is AppointmentStatus.Cancelled or AppointmentStatus.NoShow && charged)
             return false;
 
+        // Recorded in audit_entries as well as the log: the log stays on this PC, while
+        // the audit table travels inside every backup, like the sale edits it sits beside.
+        string before = AuditTrail.Snapshot(appointment);
         appointment.Status = newStatus;
+        AuditTrail.Record(db, AuditTrail.AppointmentEntity, appointmentId, "Status",
+            before, AuditTrail.Snapshot(appointment));
         await db.SaveChangesAsync();
 
         // Cancelling an appointment is a business event CU-04 requires to be traceable.
@@ -153,6 +158,10 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         if (await db.Sales.AnyAsync(v => v.AppointmentId == appointmentId))
             return DeleteResult.Blocked;
 
+        // The row is about to disappear, so this snapshot is the only record left of
+        // which visit was booked. Saved by the same SaveChanges as the delete.
+        AuditTrail.Record(db, AuditTrail.AppointmentEntity, appointmentId, "Delete",
+            AuditTrail.Snapshot(appointment), null);
         db.Appointments.Remove(appointment);
         await db.SaveChangesAsync();
         Log.Information("Appointment {AppointmentId} deleted", appointmentId);

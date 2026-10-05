@@ -13,6 +13,22 @@ public static class AuditTrail
 {
     public const string SaleEntity = "Sale";
     public const string CashMovementEntity = "CashMovement";
+    public const string AppointmentEntity = "Appointment";
+
+    /// <summary>An appointment as the audit keeps it: enough to tell which visit it was
+    /// and what state it was in, once the row itself has been changed or deleted.</summary>
+    public record AppointmentSnapshot(
+        DateOnly Date, TimeOnly Time, int DurationMin,
+        int? ClientId, string? GuestName, string? GuestPhone,
+        int? ServiceId, int? WorkerId, string Status, string? Notes);
+
+    /// <summary>Takes the snapshot of an appointment.</summary>
+    public static string Snapshot(Appointment appointment)
+        => JsonSerializer.Serialize(new AppointmentSnapshot(
+            appointment.Date, appointment.Time, appointment.DurationMin,
+            appointment.ClientId, appointment.GuestName, appointment.GuestPhone,
+            appointment.ServiceId, appointment.WorkerId,
+            appointment.Status.ToString(), appointment.Notes));
 
     /// <summary>A sale's full state as the audit keeps it: every field an edit can
     /// touch, and every line with its frozen price and VAT rate.</summary>
