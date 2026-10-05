@@ -1499,4 +1499,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="RestoreBringsBackPin" xml:space="preserve">
     <value>La còpia porta el PIN de propietària que hi havia quan es va fer.</value>
   </data>
+  <data name="OverdueAppointmentsMore" xml:space="preserve">
+    <value>i {0} més</value>
+  </data>
 </root>

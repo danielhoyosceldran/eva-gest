@@ -52,11 +52,13 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
     public async Task<List<Appointment>> GetOverduePending(DateTime asOf)
     {
         await using var db = await factory.CreateDbContextAsync();
-        var since = DateOnly.FromDateTime(asOf.AddDays(-1));
         var today = DateOnly.FromDateTime(asOf);
 
+        // No lower bound. It used to look back a single day, so an appointment left
+        // Pending on a Friday had vanished from the notice by Sunday and then stayed
+        // Pending for good, unnoticed — which is exactly what the notice exists to stop.
         var candidates = await Query(db)
-            .Where(c => c.Status == AppointmentStatus.Pending && c.Date >= since && c.Date <= today)
+            .Where(c => c.Status == AppointmentStatus.Pending && c.Date <= today)
             .ToListAsync();
 
         return candidates

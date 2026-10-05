@@ -513,6 +513,7 @@ public static class Texts
         nameof(OwnerPinSectionHint),
         nameof(OwnerPinChanged),
         nameof(RestoreBringsBackPin),
+        nameof(OverdueAppointmentsMore),
     ];
 
     /// <summary>Pendent</summary>
@@ -1945,4 +1946,7 @@ public static class Texts
 
     /// <summary>La còpia porta el PIN de propietària que hi havia quan es va fer.</summary>
     public static string RestoreBringsBackPin => Get(nameof(RestoreBringsBackPin));
+
+    /// <summary>i {0} més</summary>
+    public static string OverdueAppointmentsMore => Get(nameof(OverdueAppointmentsMore));
 }

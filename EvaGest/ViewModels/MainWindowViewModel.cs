@@ -98,13 +98,28 @@ public partial class MainWindowViewModel : ObservableObject
             _overdueIds = overdue.Select(a => a.Id).ToList();
 
             OverdueAppointmentsNotice = _snooze.ShouldShow(_overdueIds, now)
-                ? Texts.OverdueAppointmentsNotice + string.Join(", ", overdue.Select(a => a.DisplayName))
+                ? Texts.OverdueAppointmentsNotice + OverdueNames(overdue)
                 : null;
         }
         catch (Exception ex)
         {
             Log.Warning(ex, "Overdue appointment check failed");
         }
+    }
+
+    /// <summary>How many names the notice spells out before summing up the rest.</summary>
+    public const int OverdueNamesShown = 5;
+
+    /// <summary>
+    /// The names for the notice, oldest first. The check has no lower date bound, so a
+    /// backlog of appointments never marked can be long; past <see cref="OverdueNamesShown"/>
+    /// the rest are counted ("i 12 més") instead of filling the banner.
+    /// </summary>
+    private static string OverdueNames(List<Models.Appointment> overdue)
+    {
+        string names = string.Join(", ", overdue.Take(OverdueNamesShown).Select(a => a.DisplayName));
+        int rest = overdue.Count - OverdueNamesShown;
+        return rest > 0 ? $"{names} {string.Format(Texts.OverdueAppointmentsMore, rest)}" : names;
     }
 
     /// <summary>
