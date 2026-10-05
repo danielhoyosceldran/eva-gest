@@ -155,6 +155,7 @@ public partial class App : Application
         s.AddSingleton<IBackupService, BackupService>();
         s.AddTransient<IExportService, ExportService>();
         s.AddSingleton<IDialogService, DialogService>();
+        s.AddSingleton<IAppShutdown, AppShutdown>();
         s.AddTransient<ICatalogService, CatalogService>();
         s.AddTransient<IClientService, ClientService>();
         s.AddSingleton<IAppointmentChangeNotifier, AppointmentChangeNotifier>();

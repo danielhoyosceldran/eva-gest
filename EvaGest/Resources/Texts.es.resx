@@ -928,7 +928,7 @@ Habrá que reiniciar la aplicación para que los cambios tengan efecto.</value>
     <value>Esta copia está dañada y no se puede restaurar. Los datos actuales no se han tocado: elige otra copia.</value>
   </data>
   <data name="BackupRestoredMessage" xml:space="preserve">
-    <value>Los datos se han restaurado correctamente. Cierra y vuelve a abrir la aplicación.</value>
+    <value>Los datos se han restaurado. La aplicación se cerrará ahora para que todo se vuelva a leer de la copia: vuelve a abrirla para continuar.</value>
   </data>
   <data name="Sleep" xml:space="preserve">
     <value>Dormir</value>
@@ -1179,9 +1179,6 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
   <data name="BackupDoneMessage" xml:space="preserve">
     <value>Se ha creado la copia de seguridad del {0}.</value>
   </data>
-  <data name="BackupRestoredReopen" xml:space="preserve">
-    <value>Se han recuperado los datos de la copia. Cierra y vuelve a abrir la aplicación para que todo se lea de nuevo.</value>
-  </data>
   <data name="DeleteMovementTitle" xml:space="preserve">
     <value>¿Eliminar movimiento?</value>
   </data>
@@ -1329,7 +1326,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
     <value>¿Cómo recupero una copia de seguridad?</value>
   </data>
   <data name="FaqRestoreAnswer" xml:space="preserve">
-    <value>En Configuración, pulsa «Restaurar copia», elígela de la lista y confirma. Antes de restaurar, el estado actual se guarda igualmente por si hay que deshacerlo.</value>
+    <value>En Configuración, pulsa «Restaurar copia», elígela de la lista y confirma. Antes de restaurar, el estado actual se guarda igualmente por si hay que deshacerlo. Al terminar, la aplicación se cierra: vuelve a abrirla para continuar.</value>
   </data>
   <data name="FaqWorkerNewQuestion" xml:space="preserve">
     <value>¿Cómo añado una trabajadora?</value>

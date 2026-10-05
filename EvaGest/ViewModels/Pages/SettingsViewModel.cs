@@ -20,9 +20,12 @@ namespace EvaGest.ViewModels.Pages;
 /// Flags and free-text fields save as they are edited; the opening hours and the VAT
 /// mode do not, because both need validating or confirming first.
 /// </summary>
+/// <param name="shutdown">Closes the app after a restore. Optional so the tests that
+/// never restore need not pass one; the container always supplies it.</param>
 public partial class SettingsViewModel(
     IBackupService backup, IExportService export, ISettingsService settings,
-    IAvailabilityService availability, IDialogService dialogs, IOwnerAccessService owner)
+    IAvailabilityService availability, IDialogService dialogs, IOwnerAccessService owner,
+    IAppShutdown? shutdown = null)
     : PageViewModelBase
 {
     public override string Title => Texts.NavSettings;
@@ -486,8 +489,14 @@ public partial class SettingsViewModel(
         await vm.Load();
         if (!await dialogs.ShowDialog(vm)) return;
 
-        await dialogs.Inform(Texts.BackupRestoredTitle, Texts.BackupRestoredReopen);
-        await Load();
+        // The restore dialog has already told the user the app closes now. It has to:
+        // every page is kept alive for the session (MainWindowViewModel holds one of
+        // each), so the Agenda, the Sales list and the rest still show rows from the
+        // database that was just replaced, and anything saved from them would be written
+        // against records that may no longer exist. The pending migrations of an older
+        // backup also only run at startup. Asking the user to reopen was not enough.
+        Log.Information("Closing the application after a restore");
+        shutdown?.Shutdown();
     }
 
     [RelayCommand]

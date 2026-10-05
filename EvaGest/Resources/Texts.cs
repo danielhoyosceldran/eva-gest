@@ -407,7 +407,6 @@ public static class Texts
         nameof(KeepAtLeastOneBackup),
         nameof(BackupDoneTitle),
         nameof(BackupDoneMessage),
-        nameof(BackupRestoredReopen),
         nameof(DeleteMovementTitle),
         nameof(DeleteMovementMessage),
         nameof(Inactive),
@@ -1389,7 +1388,7 @@ public static class Texts
     /// <summary>Aquesta còpia està malmesa i no es pot restaurar. Les da...</summary>
     public static string BackupNotRestorable => Get(nameof(BackupNotRestorable));
 
-    /// <summary>Les dades s'han restaurat correctament. Tanca i torna a o...</summary>
+    /// <summary>Les dades s'han restaurat. L'aplicació es tancarà ara perquè tot es t...</summary>
     public static string BackupRestoredMessage => Get(nameof(BackupRestoredMessage));
 
     /// <summary>Adormir</summary>
@@ -1634,9 +1633,6 @@ public static class Texts
 
     /// <summary>S'ha creat la còpia de seguretat del {0}.</summary>
     public static string BackupDoneMessage => Get(nameof(BackupDoneMessage));
-
-    /// <summary>S'han recuperat les dades de la còpia. Tanca i torna a ob...</summary>
-    public static string BackupRestoredReopen => Get(nameof(BackupRestoredReopen));
 
     /// <summary>Eliminar moviment?</summary>
     public static string DeleteMovementTitle => Get(nameof(DeleteMovementTitle));

@@ -928,7 +928,7 @@ Caldrà reiniciar l'aplicació perquè els canvis tinguin efecte.</value>
     <value>Aquesta còpia està malmesa i no es pot restaurar. Les dades actuals no s'han tocat: tria una altra còpia.</value>
   </data>
   <data name="BackupRestoredMessage" xml:space="preserve">
-    <value>Les dades s'han restaurat correctament. Tanca i torna a obrir l'aplicació.</value>
+    <value>Les dades s'han restaurat. L'aplicació es tancarà ara perquè tot es torni a llegir de la còpia: torna-la a obrir per continuar.</value>
   </data>
   <data name="Sleep" xml:space="preserve">
     <value>Adormir</value>
@@ -1179,9 +1179,6 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
   <data name="BackupDoneMessage" xml:space="preserve">
     <value>S'ha creat la còpia de seguretat del {0}.</value>
   </data>
-  <data name="BackupRestoredReopen" xml:space="preserve">
-    <value>S'han recuperat les dades de la còpia. Tanca i torna a obrir l'aplicació perquè tot es llegeixi de nou.</value>
-  </data>
   <data name="DeleteMovementTitle" xml:space="preserve">
     <value>Eliminar moviment?</value>
   </data>
@@ -1329,7 +1326,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
     <value>Com recupero una còpia de seguretat?</value>
   </data>
   <data name="FaqRestoreAnswer" xml:space="preserve">
-    <value>A Configuració, prem «Restaurar còpia», tria-la de la llista i confirma. Abans de restaurar, l'estat actual es guarda igualment per si cal desfer-ho.</value>
+    <value>A Configuració, prem «Restaurar còpia», tria-la de la llista i confirma. Abans de restaurar, l'estat actual es guarda igualment per si cal desfer-ho. Quan acaba, l'aplicació es tanca: torna-la a obrir per continuar.</value>
   </data>
   <data name="FaqWorkerNewQuestion" xml:space="preserve">
     <value>Com afegeixo una treballadora?</value>
