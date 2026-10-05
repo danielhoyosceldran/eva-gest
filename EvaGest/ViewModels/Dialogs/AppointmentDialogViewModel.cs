@@ -32,6 +32,10 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     private readonly int? _originalWorkerId;
     private readonly AppointmentStatus _originalStatus = AppointmentStatus.Pending;
 
+    /// <summary>The slot an edited appointment was saved with, so Save only asks about an
+    /// overlap the edit itself created, not one the user already accepted before.</summary>
+    private readonly (DateOnly Date, TimeOnly Time, int DurationMin)? _originalSlot;
+
     [ObservableProperty] private DateOnly _date;
     [ObservableProperty] private TimeOnly _time;
     [ObservableProperty] private int _durationMin = 30;
@@ -147,6 +151,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
             _originalStatus = appointment.Status;
             _originalServiceId = appointment.ServiceId;
             _originalWorkerId = appointment.WorkerId;
+            _originalSlot = (appointment.Date, appointment.Time, appointment.DurationMin);
             TextClient = appointment.GuestName ?? string.Empty;
             if (appointment.Client is null) GuestPhone = appointment.GuestPhone;
             Notes = appointment.Notes;
@@ -364,6 +369,8 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
 
         ErrorValidation = null;
 
+        if (!await ConfirmOverlap(time, durationMin)) return;
+
         var appointment = new Appointment
         {
             Id = _id ?? 0,
@@ -383,6 +390,39 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         else await _appointments.Update(appointment);
 
         RequestClose(true);
+    }
+
+    /// <summary>
+    /// CU-01b: an overlap never blocks saving ("es pot guardar igualment"), and it still
+    /// does not. But it used to be only the red line above the buttons, which a busy
+    /// counter clicks straight past, and that line was refreshed fire-and-forget as the
+    /// boxes changed, so it could lag the values actually being saved. Now Save checks
+    /// again with exactly those values and, if the slot has no room, asks once.
+    /// Not asked when nothing that decides an overlap changed in an edit (the user
+    /// already accepted it), nor for a cancelled or no-show appointment, which takes
+    /// no room.
+    /// </summary>
+    /// <returns>True to go on saving.</returns>
+    private async Task<bool> ConfirmOverlap(TimeOnly time, int durationMin)
+    {
+        if (_originalStatus is AppointmentStatus.Cancelled or AppointmentStatus.NoShow) return true;
+
+        bool slotUnchanged = _originalSlot == (Date, time, durationMin) && _originalWorkerId == Worker?.Id;
+        if (_id is not null && slotUnchanged) return true;
+
+        var check = await _availability.Check(Date, time, durationMin, Worker?.Id, _id);
+        OverlapNotice = check.HasOverlap;
+        if (!check.HasOverlap) return true;
+
+        // With a worker chosen the clash is that worker's own diary; without one it is
+        // the whole shop's capacity at that hour.
+        return await _dialogs.Confirm(
+            Texts.ConfirmOverlapTitle,
+            Worker is { } worker
+                ? string.Format(Texts.ConfirmOverlapWorkerMessage, worker.Name)
+                : Texts.ConfirmOverlapMessage,
+            Texts.SaveAnyway,
+            Texts.ChangeTheTime);
     }
 
     /// <summary>Only an appointment that exists can be deleted; a half-filled new one is

@@ -521,6 +521,11 @@ public static class Texts
         nameof(BackupBeforeUpdateFailedMessage),
         nameof(AlreadyRunningTitle),
         nameof(AlreadyRunningMessage),
+        nameof(ConfirmOverlapTitle),
+        nameof(ConfirmOverlapMessage),
+        nameof(SaveAnyway),
+        nameof(ChangeTheTime),
+        nameof(ConfirmOverlapWorkerMessage),
     ];
 
     /// <summary>Pendent</summary>
@@ -1977,4 +1982,19 @@ public static class Texts
 
     /// <summary>EvaGest ja està obert en aquest ordinador. Busca'l a la barra de tasques, a la part de baix de la pantalla.</summary>
     public static string AlreadyRunningMessage => Get(nameof(AlreadyRunningMessage));
+
+    /// <summary>Aquesta franja ja està plena</summary>
+    public static string ConfirmOverlapTitle => Get(nameof(ConfirmOverlapTitle));
+
+    /// <summary>A aquesta hora no queda ningú lliure: o qui hi treballa ja té cita, o ningú no té horari en aquesta franja. La pots guardar igualment o canviar-ne l'hora.</summary>
+    public static string ConfirmOverlapMessage => Get(nameof(ConfirmOverlapMessage));
+
+    /// <summary>Guardar igualment</summary>
+    public static string SaveAnyway => Get(nameof(SaveAnyway));
+
+    /// <summary>Canviar l'hora</summary>
+    public static string ChangeTheTime => Get(nameof(ChangeTheTime));
+
+    /// <summary>{0} ja té una altra cita que se solapa amb aquesta. La pots guardar igualment o canviar-ne l'hora.</summary>
+    public static string ConfirmOverlapWorkerMessage => Get(nameof(ConfirmOverlapWorkerMessage));
 }

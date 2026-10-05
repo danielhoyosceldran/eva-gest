@@ -237,7 +237,9 @@ public class AppointmentDialogViewModelTests
     {
         await using var testDb = new TestDatabase();
         var s = Build(testDb);
-        var vm = New(s);
+        // No worker has a schedule in this empty shop, so no slot has capacity and Save
+        // asks about the overlap (CU-01b); answering "save anyway" keeps this test on its subject.
+        var vm = New(s, dialogs: new TestDialogService { ResultConfirm = true });
         await vm.Initialization;
         vm.TextClient = "Algú de pas";
         vm.TimeText = "16:45";
@@ -319,7 +321,9 @@ public class AppointmentDialogViewModelTests
     {
         await using var testDb = new TestDatabase();
         var s = Build(testDb);
-        var vm = New(s);
+        // No worker has a schedule in this empty shop, so no slot has capacity and Save
+        // asks about the overlap (CU-01b); answering "save anyway" keeps this test on its subject.
+        var vm = New(s, dialogs: new TestDialogService { ResultConfirm = true });
         await vm.Initialization;
         vm.TextClient = "Algú de pas";
         vm.GuestPhone = "61 23 45 678";
@@ -337,12 +341,15 @@ public class AppointmentDialogViewModelTests
         var s = Build(testDb);
         int clientId = await s.Clients.Create(Make.Client("Joan García"));
 
-        var guest = New(s);
+        // No worker has a schedule in this empty shop, so no slot has capacity and Save
+        // asks about the overlap (CU-01b); answering "save anyway" keeps this test on its subject.
+        var saveAnyway = new TestDialogService { ResultConfirm = true };
+        var guest = New(s, dialogs: saveAnyway);
         await guest.Initialization;
         guest.TextClient = "Algú de pas";
         await guest.SaveCommand.ExecuteAsync(null);
 
-        var registered = New(s);
+        var registered = New(s, dialogs: saveAnyway);
         await registered.Initialization;
         registered.ClientPicker.Text = "joan";
         registered.ClientPicker.PickHighlightedCommand.Execute(null);

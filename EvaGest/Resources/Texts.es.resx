@@ -1523,4 +1523,19 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="AlreadyRunningMessage" xml:space="preserve">
     <value>EvaGest ya está abierto en este ordenador. Búscalo en la barra de tareas, en la parte de abajo de la pantalla.</value>
   </data>
+  <data name="ConfirmOverlapTitle" xml:space="preserve">
+    <value>Esta franja ya está llena</value>
+  </data>
+  <data name="ConfirmOverlapMessage" xml:space="preserve">
+    <value>A esta hora no queda nadie libre: o quien trabaja ya tiene cita, o nadie tiene horario en esta franja. Puedes guardarla igualmente o cambiarle la hora.</value>
+  </data>
+  <data name="SaveAnyway" xml:space="preserve">
+    <value>Guardar igualmente</value>
+  </data>
+  <data name="ChangeTheTime" xml:space="preserve">
+    <value>Cambiar la hora</value>
+  </data>
+  <data name="ConfirmOverlapWorkerMessage" xml:space="preserve">
+    <value>{0} ya tiene otra cita que se solapa con esta. Puedes guardarla igualmente o cambiarle la hora.</value>
+  </data>
 </root>
