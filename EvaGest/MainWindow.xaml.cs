@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using EvaGest.Services;
 using EvaGest.ViewModels;
 
 namespace EvaGest
@@ -41,6 +43,7 @@ namespace EvaGest
                 if (DataContext is MainWindowViewModel vm)
                     await vm.EnsureOwnerPin();
             };
+            Closing += OnClosing;
             Closed += (_, _) =>
             {
                 _overdueCheck.Stop();
@@ -59,6 +62,37 @@ namespace EvaGest
             if (e.StagingItem.Input is KeyEventArgs or MouseButtonEventArgs or MouseWheelEventArgs or TouchEventArgs
                 && DataContext is MainWindowViewModel vm)
                 vm.RegisterActivity();
+        }
+
+        // Set once the closing backup has run, so the second Close() below goes through.
+        private bool _backupDoneOnClose;
+
+        /// <summary>
+        /// Holds the first close back until the day's automatic backup has run (F-01): the
+        /// close is cancelled, the window is disabled with a wait cursor while the copy is
+        /// taken, and then the window closes for real. A second click on the close button
+        /// meanwhile is ignored. Skipped when the app is closing itself after a restore.
+        /// </summary>
+        private async void OnClosing(object? sender, CancelEventArgs e)
+        {
+            if (_backupDoneOnClose || AppShutdown.Requested || DataContext is not MainWindowViewModel vm)
+                return;
+
+            e.Cancel = true;
+            if (!IsEnabled) return; // already backing up
+
+            IsEnabled = false;
+            Mouse.OverrideCursor = Cursors.Wait;
+            try
+            {
+                await vm.RunBackupOnClose();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+                _backupDoneOnClose = true;
+            }
+            Close();
         }
 
         private async Task RunOverdueCheck()

@@ -2,8 +2,10 @@ namespace EvaGest.Services;
 
 /// <param name="IsBeforeUpdate">Taken by the app itself right before a new version
 /// changed the database's schema (see <see cref="IBackupService.MakeBackupBeforeUpdate"/>).</param>
+/// <param name="IsOnClose">An automatic copy taken as the app closed
+/// (see <see cref="IBackupService.RunBackupOnCloseIfDue"/>). Also <c>IsAutomatic</c>.</param>
 public record BackupInfo(string Path, DateTime Date, bool IsAutomatic, long SizeBytes,
-                         bool IsBeforeUpdate = false);
+                         bool IsBeforeUpdate = false, bool IsOnClose = false);
 
 public interface IBackupService
 {
@@ -29,9 +31,18 @@ public interface IBackupService
 
     /// <summary>
     /// Runs the daily backup if it is due. Called at startup, because the machine may
-    /// have been off at the configured hour (CU-11).
+    /// have been off at the configured hour (CU-11). Due when no automatic copy covers
+    /// the most recent configured moment already passed, so a day that ended without
+    /// its copy is caught up the next morning. Returns null when nothing was due.
     /// </summary>
     Task<BackupInfo?> RunAutomaticBackupIfDue();
+
+    /// <summary>
+    /// Called as the app closes: takes the day's automatic copy if it has not been taken
+    /// yet, whatever the configured hour, since closing is the end of the day's work.
+    /// Returns null when today's copy already existed.
+    /// </summary>
+    Task<BackupInfo?> RunBackupOnCloseIfDue();
 
     /// <summary>Deletes the oldest backups beyond the configured retention.</summary>
     Task DeleteOldBackups();

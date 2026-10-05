@@ -529,6 +529,8 @@ public static class Texts
         nameof(AutomaticBackupFailedNotice),
         nameof(StartupFailedTitle),
         nameof(StartupFailedMessage),
+        nameof(CloseBackupFailedTitle),
+        nameof(CloseBackupFailedMessage),
     ];
 
     /// <summary>Pendent</summary>
@@ -2009,4 +2011,10 @@ public static class Texts
 
     /// <summary>Les dades no s'han tocat. Torna a obrir EvaGest; si continua passant, avisa qui t'ha instal·lat el programa.</summary>
     public static string StartupFailedMessage => Get(nameof(StartupFailedMessage));
+
+    /// <summary>No s'ha pogut fer la còpia d'avui</summary>
+    public static string CloseBackupFailedTitle => Get(nameof(CloseBackupFailedTitle));
+
+    /// <summary>EvaGest es tanca igualment. Es tornarà a provar quan l'obris; si torna a fallar, comprova que el disc tingui espai lliure i fes-ne una amb «Fer còpia ara» a Configuració.</summary>
+    public static string CloseBackupFailedMessage => Get(nameof(CloseBackupFailedMessage));
 }

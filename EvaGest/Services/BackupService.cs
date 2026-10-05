@@ -34,6 +34,8 @@ public class BackupService(
     private const string AutomaticSuffix = "auto";
     private const string ManualSuffix = "manual";
     private const string BeforeUpdateSuffix = "update";
+    // Automatic too, but taken as the app closed (see RunBackupOnCloseIfDue).
+    private const string OnCloseSuffix = "close";
 
     // Fallbacks only, for a database whose settings row is missing or unreadable.
     // The real values come from Configuració (esquema-bbdd 2.14).
@@ -70,16 +72,51 @@ public class BackupService(
 
     public async Task<BackupInfo?> RunAutomaticBackupIfDue()
     {
-        // Checked at startup rather than by a timer, because the machine is usually off
-        // at the configured hour (CU-11). Waiting for the hour to pass means the copy
-        // lands on the first launch after it, which is the intended behaviour.
-        if (TimeOnly.FromDateTime(_now()) < await BackupTime()) return null;
+        // Checked at startup, because the machine is usually off at the configured hour
+        // (CU-11). It used to run only when the app was started after that hour on a day
+        // with no copy yet, so a shop that opens the app every morning and shuts down
+        // before 20:00 never got a single automatic copy. Now it compares against the most
+        // recent configured moment that has already passed — yesterday's, before today's
+        // hour — so a day that ended without its copy (the PC switched off with the app
+        // open, a power cut) is caught up the next morning.
+        var now = _now();
+        var slot = now.Date + (await BackupTime()).ToTimeSpan();
+        if (now < slot) slot = slot.AddDays(-1);
 
-        var backups = await ListAll();
-        bool alreadyDoneToday = backups.Any(c => c.IsAutomatic && c.Date.Date == _now().Date);
-        if (alreadyDoneToday) return null;
+        // ListAll is newest first: this is the most recent automatic copy of any kind.
+        var last = (await ListAll()).FirstOrDefault(b => b.IsAutomatic);
 
-        var backupFile = await Copy(AutomaticSuffix);
+        // That moment is covered by a copy taken at or after it, or by the copy taken on
+        // closing the app that day: closing is the end of the day's work, even when it
+        // happens before the configured hour, and a second copy the next morning would
+        // only repeat it.
+        bool covered = last is not null
+            && (last.Date >= slot || (last.IsOnClose && last.Date.Date == slot.Date));
+        if (covered) return null;
+
+        return await TakeAutomatic(AutomaticSuffix);
+    }
+
+    public async Task<BackupInfo?> RunBackupOnCloseIfDue()
+    {
+        // The day's automatic copy is done when the app was already closed once today
+        // (the copy taken then) or when a copy was taken at or after the configured hour.
+        // A copy taken at startup before the hour does not count: it was catching up the
+        // previous day and holds none of today's work.
+        var now = _now();
+        var slot = now.Date + (await BackupTime()).ToTimeSpan();
+        bool doneToday = (await ListAll()).Any(b =>
+            b.IsAutomatic && b.Date.Date == now.Date && (b.IsOnClose || b.Date >= slot));
+        if (doneToday) return null;
+
+        return await TakeAutomatic(OnCloseSuffix);
+    }
+
+    /// <summary>Takes a checked automatic copy and records its date in the settings,
+    /// where Configuració reads the "last automatic backup" line from.</summary>
+    private async Task<BackupInfo> TakeAutomatic(string suffix)
+    {
+        var backupFile = await Copy(suffix);
 
         await settings.Save(ConfigKeys.LastAutomaticBackup,
             DateOnly.FromDateTime(backupFile.Date).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
@@ -212,7 +249,7 @@ public class BackupService(
             if (verify) VerifyOrDiscard(destination);
         });
         Log.Information("{BackupKind} backup taken: {BackupPath}",
-            suffix switch { AutomaticSuffix => "Automatic", BeforeUpdateSuffix => "Before-update", _ => "Manual" },
+            suffix switch { AutomaticSuffix => "Automatic", OnCloseSuffix => "On-close", BeforeUpdateSuffix => "Before-update", _ => "Manual" },
             destination);
 
         if (prune) await DeleteOldBackups();
@@ -392,7 +429,8 @@ public class BackupService(
             return null;
 
         long size = new FileInfo(path).Length;
-        return new BackupInfo(path, date, parts[2] == AutomaticSuffix, size,
-                              IsBeforeUpdate: parts[2] == BeforeUpdateSuffix);
+        return new BackupInfo(path, date, parts[2] is AutomaticSuffix or OnCloseSuffix, size,
+                              IsBeforeUpdate: parts[2] == BeforeUpdateSuffix,
+                              IsOnClose: parts[2] == OnCloseSuffix);
     }
 }

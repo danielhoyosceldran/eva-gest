@@ -122,6 +122,28 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// The day's automatic copy, taken as the window closes if it has not been taken yet
+    /// (the startup check alone only ran after the configured hour, which a shop that
+    /// closes before 20:00 never reaches). Called by the window's code-behind before it
+    /// lets itself close. A failure is logged and told, but never keeps the app open: the
+    /// next startup tries again, since no copy covers the day.
+    /// </summary>
+    public async Task RunBackupOnClose()
+    {
+        if (_backups is null) return;
+
+        try
+        {
+            await _backups.RunBackupOnCloseIfDue();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Backup on closing the app failed");
+            await _dialogs.Inform(Texts.CloseBackupFailedTitle, Texts.CloseBackupFailedMessage);
+        }
+    }
+
     [RelayCommand]
     private void DismissBackupNotice() => BackupFailedNotice = null;
 

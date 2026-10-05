@@ -1547,4 +1547,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="StartupFailedMessage" xml:space="preserve">
     <value>Les dades no s'han tocat. Torna a obrir EvaGest; si continua passant, avisa qui t'ha instal·lat el programa.</value>
   </data>
+  <data name="CloseBackupFailedTitle" xml:space="preserve">
+    <value>No s'ha pogut fer la còpia d'avui</value>
+  </data>
+  <data name="CloseBackupFailedMessage" xml:space="preserve">
+    <value>EvaGest es tanca igualment. Es tornarà a provar quan l'obris; si torna a fallar, comprova que el disc tingui espai lliure i fes-ne una amb «Fer còpia ara» a Configuració.</value>
+  </data>
 </root>

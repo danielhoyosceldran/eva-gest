@@ -167,12 +167,16 @@ public class BackupServiceTests : IDisposable
         // The clock is pinned rather than reasoned about. This used to configure "23:59"
         // and call it an hour that could not have passed yet, which was false for the one
         // minute a day the suite happened to start inside it.
+        // Yesterday's moment is covered by its own copy, so before today's hour there is
+        // nothing to catch up (with no copy at all, the morning start now catches up).
+        Directory.CreateDirectory(Path.Combine(_folder, "Backups"));
+        File.WriteAllText(Path.Combine(_folder, "Backups", "20260303_200500000_auto.db"), "x");
         var backup = CreatesService(new TestSettings((ConfigKeys.BackupTime, "20:00")),
                                     now: new DateTime(2026, 3, 4, 19, 59, 0));
 
         var result = await backup.RunAutomaticBackupIfDue();
 
-        result.Should().BeNull("the daily backup only runs from the configured hour on");
+        result.Should().BeNull("today's copy only runs from the configured hour on");
     }
 
     [Fact] // L-08b

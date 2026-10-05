@@ -226,8 +226,13 @@ public sealed class AutomaticBackupNoticeTests : IDisposable
     [Fact]
     public async Task An_automatic_backup_not_due_yet_shows_no_notice()
     {
-        // Damaged, but before the configured hour nothing is attempted, so nothing failed.
+        // Damaged, but before today's configured hour, with yesterday's moment already
+        // covered by a copy, nothing is attempted, so nothing failed.
         DamageAPage(_live);
+        string folderBackups = Path.Combine(_folder, "Backups");
+        Directory.CreateDirectory(folderBackups);
+        string yesterday = DateTime.Today.AddDays(-1).AddHours(23).AddMinutes(30).ToString("yyyyMMdd_HHmmssfff");
+        File.WriteAllText(Path.Combine(folderBackups, $"{yesterday}_auto.db"), "x");
         await using var testDb = new TestDatabase();
         var backups = Backups(backupTime: "23:00");
         var app = await Build(testDb, backups);
@@ -235,7 +240,7 @@ public sealed class AutomaticBackupNoticeTests : IDisposable
         await app.Shell.RunAutomaticBackup();
 
         app.Shell.BackupFailedNotice.Should().BeNull();
-        (await backups.ListAll()).Should().BeEmpty();
+        (await backups.ListAll()).Should().ContainSingle("only yesterday's copy, nothing new");
     }
 
     [Fact]
