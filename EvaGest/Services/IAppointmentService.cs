@@ -24,6 +24,10 @@ public interface IAppointmentService
     Task<int> CountByStatus(DateOnly from, DateOnly to, AppointmentStatus status);
 
     Task<int> Create(Appointment appointment);
+
+    /// <summary>Saves the appointment's details (date, time, duration, client, service,
+    /// worker, notes). Never its <see cref="Appointment.Status"/>: that only moves through
+    /// <see cref="ChangeStatus"/> or a sale, whatever the passed object carries.</summary>
     Task Update(Appointment appointment);
 
     /// <summary>

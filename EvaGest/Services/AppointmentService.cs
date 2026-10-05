@@ -90,7 +90,23 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
     public async Task Update(Appointment appointment)
     {
         await using var db = await factory.CreateDbContextAsync();
-        db.Appointments.Update(appointment);
+        var existing = await db.Appointments.FirstAsync(c => c.Id == appointment.Id);
+
+        // Field by field rather than db.Appointments.Update(appointment), which marked
+        // every column modified and so wrote back the Status the edit dialog read when it
+        // opened: an appointment charged or cancelled meanwhile was silently put back to
+        // Pending, with its Active sale still attached. Status belongs to ChangeStatus
+        // (which guards it) and to SaleService.Create, never to an edit of the details.
+        existing.Date = appointment.Date;
+        existing.Time = appointment.Time;
+        existing.DurationMin = appointment.DurationMin;
+        existing.ClientId = appointment.ClientId;
+        existing.GuestName = appointment.GuestName;
+        existing.GuestPhone = appointment.GuestPhone;
+        existing.ServiceId = appointment.ServiceId;
+        existing.WorkerId = appointment.WorkerId;
+        existing.Notes = appointment.Notes;
+
         await db.SaveChangesAsync();
         Log.Information("Appointment {AppointmentId} updated to {Date} {Time}",
             appointment.Id, appointment.Date, appointment.Time);
