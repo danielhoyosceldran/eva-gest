@@ -519,6 +519,8 @@ public static class Texts
         nameof(BackupBeforeUpdate),
         nameof(BackupBeforeUpdateFailedTitle),
         nameof(BackupBeforeUpdateFailedMessage),
+        nameof(AlreadyRunningTitle),
+        nameof(AlreadyRunningMessage),
     ];
 
     /// <summary>Pendent</summary>
@@ -1969,4 +1971,10 @@ public static class Texts
 
     /// <summary>Aquesta versió de l'aplicació ha d'actualitzar el fitxer de dades i abans en fa una còpia, però la còpia no s'ha pogut fer. Les dades no s'han tocat. Comprova que el disc tingui espai lliure i torna a obrir l'aplicació.</summary>
     public static string BackupBeforeUpdateFailedMessage => Get(nameof(BackupBeforeUpdateFailedMessage));
+
+    /// <summary>EvaGest ja està obert</summary>
+    public static string AlreadyRunningTitle => Get(nameof(AlreadyRunningTitle));
+
+    /// <summary>EvaGest ja està obert en aquest ordinador. Busca'l a la barra de tasques, a la part de baix de la pantalla.</summary>
+    public static string AlreadyRunningMessage => Get(nameof(AlreadyRunningMessage));
 }

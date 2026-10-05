@@ -1517,4 +1517,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="BackupBeforeUpdateFailedMessage" xml:space="preserve">
     <value>Aquesta versió de l'aplicació ha d'actualitzar el fitxer de dades i abans en fa una còpia, però la còpia no s'ha pogut fer. Les dades no s'han tocat. Comprova que el disc tingui espai lliure i torna a obrir l'aplicació.</value>
   </data>
+  <data name="AlreadyRunningTitle" xml:space="preserve">
+    <value>EvaGest ja està obert</value>
+  </data>
+  <data name="AlreadyRunningMessage" xml:space="preserve">
+    <value>EvaGest ja està obert en aquest ordinador. Busca'l a la barra de tasques, a la part de baix de la pantalla.</value>
+  </data>
 </root>

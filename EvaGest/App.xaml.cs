@@ -56,6 +56,13 @@ public partial class App : Application
         _instance = new Mutex(true, "EvaGest.SingleInstance", out bool isFirst);
         if (!isFirst)
         {
+            // Show the copy that is already open rather than vanish without a word. The
+            // log is not configured in this process on purpose: the open copy holds the
+            // day's log file. The message is in the system language, since this copy never
+            // opens the database the chosen language is stored in.
+            if (!Helpers.SingleInstance.ActivateExisting())
+                MessageBox.Show(Texts.AlreadyRunningMessage, Texts.AlreadyRunningTitle,
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             Shutdown();
             return;
         }
