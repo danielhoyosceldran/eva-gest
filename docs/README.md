@@ -57,6 +57,7 @@ Migration `RenameToEnglish` moves an existing database across.
 | Build order the project followed | [`plan/pla-desenvolupament.md`](plan/pla-desenvolupament.md) |
 | Project/solution setup, `.csproj`, migrations | [`plan/setup-projecte.md`](plan/setup-projecte.md) |
 | What the October 2026 review found, what was accepted as is, and what changed | [`review-2026-10.md`](review-2026-10.md) |
+| What the second October 2026 review found, what the owner decided, and the commits | [`review-2026-10b.md`](review-2026-10b.md) |
 | What was promised to the client, in plain words | [`plan/propuesta-cliente-barberia.md`](plan/propuesta-cliente-barberia.md) · [`plan/resumen-rapido-clienta.md`](plan/resumen-rapido-clienta.md) |
 
 ---
