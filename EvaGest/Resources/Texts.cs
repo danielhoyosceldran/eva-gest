@@ -531,6 +531,7 @@ public static class Texts
         nameof(StartupFailedMessage),
         nameof(CloseBackupFailedTitle),
         nameof(CloseBackupFailedMessage),
+        nameof(BackgroundActionFailed),
     ];
 
     /// <summary>Pendent</summary>
@@ -2017,4 +2018,7 @@ public static class Texts
 
     /// <summary>EvaGest es tanca igualment. Es tornarà a provar quan l'obris; si torna a fallar, comprova que el disc tingui espai lliure i fes-ne una amb «Fer còpia ara» a Configuració.</summary>
     public static string CloseBackupFailedMessage => Get(nameof(CloseBackupFailedMessage));
+
+    /// <summary>No s'ha pogut completar l'última acció. Torna-ho a provar; les dades ja guardades no s'han vist afectades.</summary>
+    public static string BackgroundActionFailed => Get(nameof(BackgroundActionFailed));
 }

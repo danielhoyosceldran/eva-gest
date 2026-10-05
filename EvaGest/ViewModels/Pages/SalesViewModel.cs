@@ -131,7 +131,7 @@ public partial class SalesViewModel(
 
     private void FilterChanged()
     {
-        if (!_changingSeveralFilters) _ = Load();
+        if (!_changingSeveralFilters) RunInBackground(Load);
     }
 
     partial void OnFromChanged(DateOnly? value) => FilterChanged();

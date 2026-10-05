@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using EvaGest.Resources;
+using Serilog;
 
 namespace EvaGest.ViewModels.Pages;
 
@@ -35,6 +37,28 @@ public abstract partial class PageViewModelBase : ObservableObject
             .ContinueWith(_ => Notice = null, token,
                 TaskContinuationOptions.OnlyOnRanToCompletion,
                 TaskScheduler.Default);
+    }
+
+    /// <summary>
+    /// Starts an action that nothing awaits (a reload on a filter change, a click on the
+    /// agenda grid) without losing its failure. A bare <c>_ = Load()</c> left an exception
+    /// unobserved: the user saw nothing happen, and the log only got a line whenever the
+    /// garbage collector happened to finalise the task, if ever. Here it is logged at once
+    /// and the page says the action did not complete.
+    /// </summary>
+    protected void RunInBackground(Func<Task> action) => _ = Observe(action);
+
+    private async Task Observe(Func<Task> action)
+    {
+        try
+        {
+            await action();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Background action on {Page} failed", GetType().Name);
+            ShowNotice(Texts.BackgroundActionFailed);
+        }
     }
 
     /// <summary>Drops the note early, for the pages that reload on every keystroke.</summary>

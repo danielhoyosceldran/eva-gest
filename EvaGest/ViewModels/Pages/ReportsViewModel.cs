@@ -140,13 +140,13 @@ public partial class ReportsViewModel(IReportsService reports)
     partial void OnFromChanged(DateOnly value)
     {
         if (value > To) To = value;
-        else _ = Load();
+        else RunInBackground(Load);
     }
 
     partial void OnToChanged(DateOnly value)
     {
         if (value < From) From = value;
-        else _ = Load();
+        else RunInBackground(Load);
     }
 
     /// <summary>Shortcut next to the range pickers: jumps straight to the 1st of the

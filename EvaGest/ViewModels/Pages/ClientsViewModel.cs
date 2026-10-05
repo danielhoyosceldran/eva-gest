@@ -37,7 +37,7 @@ public partial class ClientsViewModel(IClientService clients, IReportsService re
         finally { Loading = false; }
     }
 
-    partial void OnSearchTextChanged(string value) => _ = Load();
+    partial void OnSearchTextChanged(string value) => RunInBackground(Load);
 
     [RelayCommand]
     private async Task NewClient()

@@ -46,9 +46,9 @@ public partial class AgendaViewModel : PageViewModelBase
         _dialogs = dialogs;
 
         Grid = new WeekGridViewModel(appointments, availability, settings, ModeGrid.Agenda,
-            onSlotClick: (date, time) => _ = NewAppointmentAt(date, time),
-            onAppointmentClick: appointment => _ = EditAppointment(appointment),
-            onDaySelected: date => _ = SelectDay(date),
+            onSlotClick: (date, time) => RunInBackground(() => NewAppointmentAt(date, time)),
+            onAppointmentClick: appointment => RunInBackground(() => EditAppointment(appointment)),
+            onDaySelected: date => RunInBackground(() => SelectDay(date)),
             navigate: LoadRange);
     }
 
@@ -110,7 +110,7 @@ public partial class AgendaViewModel : PageViewModelBase
         await LoadRange(DateOnly.FromDateTime(DateTime.Today));
     }
 
-    partial void OnSelectedWorkerFilterChanged(WorkerFilterItem? value) => _ = LoadRange(RangeStart);
+    partial void OnSelectedWorkerFilterChanged(WorkerFilterItem? value) => RunInBackground(() => LoadRange(RangeStart));
 
     /// <summary>Toolbar button: books on the day being examined if there is one, else on
     /// today when today is in view, else on the first day shown — and always at that day's

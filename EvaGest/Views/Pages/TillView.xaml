@@ -12,6 +12,13 @@
         <StackPanel Margin="{StaticResource PagePad}">
             <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
 
+            <!-- Quiet note: mostly that a background reload failed -->
+            <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                    BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding Notice, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Style="{StaticResource DataLabel}" />
+            </Border>
+
             <!-- Period selector (pantalles 2.7) -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                 <ComboBox SelectedValue="{Binding Period, Converter={StaticResource PeriodConverter}}"

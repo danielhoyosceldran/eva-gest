@@ -1553,4 +1553,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="CloseBackupFailedMessage" xml:space="preserve">
     <value>EvaGest se cierra igualmente. Se volverá a intentar cuando lo abras; si vuelve a fallar, comprueba que el disco tenga espacio libre y haz una con «Hacer copia ahora» en Configuración.</value>
   </data>
+  <data name="BackgroundActionFailed" xml:space="preserve">
+    <value>No se ha podido completar la última acción. Vuelve a intentarlo; los datos ya guardados no se han visto afectados.</value>
+  </data>
 </root>

@@ -1553,4 +1553,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="CloseBackupFailedMessage" xml:space="preserve">
     <value>EvaGest es tanca igualment. Es tornarà a provar quan l'obris; si torna a fallar, comprova que el disc tingui espai lliure i fes-ne una amb «Fer còpia ara» a Configuració.</value>
   </data>
+  <data name="BackgroundActionFailed" xml:space="preserve">
+    <value>No s'ha pogut completar l'última acció. Torna-ho a provar; les dades ja guardades no s'han vist afectades.</value>
+  </data>
 </root>
