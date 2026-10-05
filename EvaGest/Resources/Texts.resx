@@ -1505,4 +1505,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="SettingNotSaved" xml:space="preserve">
     <value>Aquest canvi no s'ha guardat i s'ha tornat a deixar com estava. Torna-ho a provar; si continua passant, tanca i torna a obrir l'aplicació.</value>
   </data>
+  <data name="BackupNotVerified" xml:space="preserve">
+    <value>La còpia no ha superat la comprovació i s'ha descartat: ara mateix no s'ha fet cap còpia nova. Comprova que el disc tingui espai lliure i torna-ho a provar.</value>
+  </data>
 </root>

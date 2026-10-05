@@ -515,6 +515,7 @@ public static class Texts
         nameof(RestoreBringsBackPin),
         nameof(OverdueAppointmentsMore),
         nameof(SettingNotSaved),
+        nameof(BackupNotVerified),
     ];
 
     /// <summary>Pendent</summary>
@@ -1953,4 +1954,7 @@ public static class Texts
 
     /// <summary>Aquest canvi no s'ha guardat i s'ha tornat a deixar com estava. Torna-ho a provar; si continua passant, tanca i torna a obrir l'aplicació.</summary>
     public static string SettingNotSaved => Get(nameof(SettingNotSaved));
+
+    /// <summary>La còpia no ha superat la comprovació i s'ha descartat: ara mateix no s'ha fet cap còpia nova. Comprova que el disc tingui espai lliure i torna-ho a provar.</summary>
+    public static string BackupNotVerified => Get(nameof(BackupNotVerified));
 }

@@ -6,6 +6,8 @@ public interface IBackupService
 {
     Task<List<BackupInfo>> ListAll();
 
+    /// <summary>Takes a backup now. Every new backup is read back and checked before it
+    /// counts; one that fails is deleted and this throws <see cref="System.IO.InvalidDataException"/>.</summary>
     Task<BackupInfo> MakeManualBackup();
 
     /// <summary>

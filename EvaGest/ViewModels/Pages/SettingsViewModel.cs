@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EvaGest.Helpers;
@@ -457,7 +458,21 @@ public partial class SettingsViewModel(
     [RelayCommand]
     private async Task BackupNow()
     {
-        var backupFile = await backup.MakeManualBackup();
+        BackupInfo backupFile;
+        try
+        {
+            backupFile = await backup.MakeManualBackup();
+        }
+        catch (InvalidDataException)
+        {
+            // The copy was written but did not read back as sound, so the service
+            // already deleted and logged it. Say so, rather than the generic error dialog:
+            // the user needs to know no backup was taken and what to try.
+            ErrorBackup = Texts.BackupNotVerified;
+            return;
+        }
+
+        ErrorBackup = null;
         await dialogs.Inform(Texts.BackupDoneTitle,
             string.Format(Texts.BackupDoneMessage,
                           backupFile.Date.ToString("dd/MM/yyyy HH:mm")));

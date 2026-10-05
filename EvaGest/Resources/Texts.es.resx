@@ -1505,4 +1505,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="SettingNotSaved" xml:space="preserve">
     <value>Este cambio no se ha guardado y ha vuelto a quedar como estaba. Vuelve a intentarlo; si sigue pasando, cierra y vuelve a abrir la aplicación.</value>
   </data>
+  <data name="BackupNotVerified" xml:space="preserve">
+    <value>La copia no ha superado la comprobación y se ha descartado: ahora mismo no se ha hecho ninguna copia nueva. Comprueba que el disco tenga espacio libre y vuelve a intentarlo.</value>
+  </data>
 </root>

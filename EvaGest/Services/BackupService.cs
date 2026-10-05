@@ -135,7 +135,10 @@ public class BackupService(
         // undone (CU-09b) — this must happen before the file is overwritten. Not pruned
         // yet: with the folder at its limit, pruning here deleted the oldest backup,
         // which is the one being restored whenever the user picked the oldest.
-        await Copy(isAutomatic: false, prune: false);
+        // Not verified either: a damaged live database is the commonest reason to
+        // restore, and refusing its safety copy would refuse the restore with it. A copy
+        // of exactly what was there is still worth keeping.
+        await Copy(isAutomatic: false, prune: false, verify: false);
 
         // Written through SQLite, not over the file. The database runs in WAL mode and
         // the app keeps pooled connections open, so a File.Copy over barberia.db left
@@ -155,7 +158,14 @@ public class BackupService(
         await DeleteOldBackups();
     }
 
-    private async Task<BackupInfo> Copy(bool isAutomatic, bool prune = true)
+    /// <param name="verify">
+    /// Reads the new file back through <see cref="EnsureReadable"/> before calling it a
+    /// backup. Without it a copy truncated by a full disk, or damaged by an antivirus
+    /// holding it mid-write, was reported as taken and only found out on the day it had
+    /// to be restored. A copy that fails is deleted and the call throws
+    /// <see cref="InvalidDataException"/>, so it never sits in the list looking usable.
+    /// </param>
+    private async Task<BackupInfo> Copy(bool isAutomatic, bool prune = true, bool verify = true)
     {
         Directory.CreateDirectory(paths.BackupsFolder);
 
@@ -176,6 +186,7 @@ public class BackupService(
         {
             Snapshot(paths.DbPath, destination);
             UseRollbackJournal(destination);
+            if (verify) VerifyOrDiscard(destination);
         });
         Log.Information("{BackupKind} backup taken: {BackupPath}",
             isAutomatic ? "Automatic" : "Manual", destination);
@@ -217,6 +228,32 @@ public class BackupService(
         using var command = connection.CreateCommand();
         command.CommandText = "PRAGMA journal_mode=DELETE";
         command.ExecuteNonQuery();
+    }
+
+    /// <summary>
+    /// Checks a backup just written and deletes it if it is not sound, then rethrows.
+    /// The delete is best effort: if the file cannot even be removed it is logged, and
+    /// the restore check still refuses it should anyone pick it later.
+    /// </summary>
+    private static void VerifyOrDiscard(string path)
+    {
+        try
+        {
+            EnsureReadable(path);
+        }
+        catch (InvalidDataException ex)
+        {
+            Log.Error(ex, "Backup {BackupPath} failed its check after writing and is discarded", path);
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception deleteEx)
+            {
+                Log.Warning(deleteEx, "Could not delete the unsound backup {BackupPath}", path);
+            }
+            throw;
+        }
     }
 
     /// <summary>Throws unless SQLite reads the file as a sound EvaGest database.</summary>
