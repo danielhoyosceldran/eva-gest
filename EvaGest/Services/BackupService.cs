@@ -30,6 +30,11 @@ public class BackupService(
     // second — second-only precision made those two collide on the same filename.
     private const string Format = "yyyyMMdd_HHmmssfff";
 
+    // The last part of each file name, after the timestamp: who took the copy.
+    private const string AutomaticSuffix = "auto";
+    private const string ManualSuffix = "manual";
+    private const string BeforeUpdateSuffix = "update";
+
     // Fallbacks only, for a database whose settings row is missing or unreadable.
     // The real values come from Configuració (esquema-bbdd 2.14).
     private const int FallbackRetention = 15;
@@ -49,7 +54,19 @@ public class BackupService(
         return Task.FromResult(backups);
     }
 
-    public async Task<BackupInfo> MakeManualBackup() => await Copy(isAutomatic: false);
+    public async Task<BackupInfo> MakeManualBackup() => await Copy(ManualSuffix);
+
+    public async Task<BackupInfo> MakeBackupBeforeUpdate()
+    {
+        // Not pruned: pruning reads the retention from the settings table, and this runs
+        // before the migrations, on a schema the current EF model may not match (the
+        // settings table itself was renamed once). The next ordinary backup prunes.
+        // Not verified, for the same reason as the safety copy before a restore: the
+        // point is a copy of exactly what was there before the schema changes, and a
+        // database that fails the check is no reason to keep the shop from opening.
+        var backupFile = await Copy(BeforeUpdateSuffix, prune: false, verify: false);
+        return backupFile;
+    }
 
     public async Task<BackupInfo?> RunAutomaticBackupIfDue()
     {
@@ -62,7 +79,7 @@ public class BackupService(
         bool alreadyDoneToday = backups.Any(c => c.IsAutomatic && c.Date.Date == _now().Date);
         if (alreadyDoneToday) return null;
 
-        var backupFile = await Copy(isAutomatic: true);
+        var backupFile = await Copy(AutomaticSuffix);
 
         await settings.Save(ConfigKeys.LastAutomaticBackup,
             DateOnly.FromDateTime(backupFile.Date).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
@@ -145,7 +162,7 @@ public class BackupService(
         // Not verified either: a damaged live database is the commonest reason to
         // restore, and refusing its safety copy would refuse the restore with it. A copy
         // of exactly what was there is still worth keeping.
-        await Copy(isAutomatic: false, prune: false, verify: false);
+        await Copy(ManualSuffix, prune: false, verify: false);
 
         // Written through SQLite, not over the file. The database runs in WAL mode and
         // the app keeps pooled connections open, so a File.Copy over barberia.db left
@@ -172,12 +189,11 @@ public class BackupService(
     /// to be restored. A copy that fails is deleted and the call throws
     /// <see cref="InvalidDataException"/>, so it never sits in the list looking usable.
     /// </param>
-    private async Task<BackupInfo> Copy(bool isAutomatic, bool prune = true, bool verify = true)
+    private async Task<BackupInfo> Copy(string suffix, bool prune = true, bool verify = true)
     {
         Directory.CreateDirectory(paths.BackupsFolder);
 
         var now = _now();
-        string suffix = isAutomatic ? "auto" : "manual";
         string name = $"{now.ToString(Format, CultureInfo.InvariantCulture)}_{suffix}.db";
         string destination = Path.Combine(paths.BackupsFolder, name);
 
@@ -196,7 +212,8 @@ public class BackupService(
             if (verify) VerifyOrDiscard(destination);
         });
         Log.Information("{BackupKind} backup taken: {BackupPath}",
-            isAutomatic ? "Automatic" : "Manual", destination);
+            suffix switch { AutomaticSuffix => "Automatic", BeforeUpdateSuffix => "Before-update", _ => "Manual" },
+            destination);
 
         if (prune) await DeleteOldBackups();
 
@@ -341,8 +358,8 @@ public class BackupService(
                 DateTimeStyles.None, out var date))
             return null;
 
-        bool isAutomatic = parts[2] == "auto";
         long size = new FileInfo(path).Length;
-        return new BackupInfo(path, date, isAutomatic, size);
+        return new BackupInfo(path, date, parts[2] == AutomaticSuffix, size,
+                              IsBeforeUpdate: parts[2] == BeforeUpdateSuffix);
     }
 }

@@ -13,7 +13,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding Date, StringFormat={}{0:dd/MM/yyyy}}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                     <DataGridTextColumn Header="{x:Static t:Texts.Time}" Binding="{Binding Date, StringFormat={}{0:HH:mm}}" Width="70" ElementStyle="{StaticResource CellWithTooltip}" />
-                    <DataGridTextColumn Header="{x:Static t:Texts.Type}" Binding="{Binding IsAutomatic, Converter={StaticResource BackupTypeConverter}}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                    <DataGridTextColumn Header="{x:Static t:Texts.Type}" Binding="{Binding Converter={StaticResource BackupTypeConverter}}" Width="150" ElementStyle="{StaticResource CellWithTooltip}" />
                     <DataGridTextColumn Header="{x:Static t:Texts.Size}" Binding="{Binding SizeBytes, Converter={StaticResource BytesToSizeConverter}}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
                 </DataGrid.Columns>
             </DataGrid>

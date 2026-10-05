@@ -1,6 +1,9 @@
 namespace EvaGest.Services;
 
-public record BackupInfo(string Path, DateTime Date, bool IsAutomatic, long SizeBytes);
+/// <param name="IsBeforeUpdate">Taken by the app itself right before a new version
+/// changed the database's schema (see <see cref="IBackupService.MakeBackupBeforeUpdate"/>).</param>
+public record BackupInfo(string Path, DateTime Date, bool IsAutomatic, long SizeBytes,
+                         bool IsBeforeUpdate = false);
 
 public interface IBackupService
 {
@@ -9,6 +12,13 @@ public interface IBackupService
     /// <summary>Takes a backup now. Every new backup is read back and checked before it
     /// counts; one that fails is deleted and this throws <see cref="System.IO.InvalidDataException"/>.</summary>
     Task<BackupInfo> MakeManualBackup();
+
+    /// <summary>
+    /// Copies the database as it is before the startup migrations change its schema
+    /// (CU-12), so a new version that damages the data can still be undone. Not pruned
+    /// and not verified; throws if the copy cannot be written at all.
+    /// </summary>
+    Task<BackupInfo> MakeBackupBeforeUpdate();
 
     /// <summary>
     /// Runs the daily backup if it is due. Called at startup, because the machine may

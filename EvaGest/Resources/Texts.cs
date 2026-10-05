@@ -517,6 +517,9 @@ public static class Texts
         nameof(SettingNotSaved),
         nameof(BackupNotVerified),
         nameof(BackupFromNewerVersion),
+        nameof(BackupBeforeUpdate),
+        nameof(BackupBeforeUpdateFailedTitle),
+        nameof(BackupBeforeUpdateFailedMessage),
     ];
 
     /// <summary>Pendent</summary>
@@ -1961,4 +1964,13 @@ public static class Texts
 
     /// <summary>Aquesta còpia es va fer amb una versió més nova de l'aplicació i aquesta no la pot llegir. Les dades actuals no s'han tocat: actualitza l'aplicació o tria una còpia més antiga.</summary>
     public static string BackupFromNewerVersion => Get(nameof(BackupFromNewerVersion));
+
+    /// <summary>Abans d'actualitzar</summary>
+    public static string BackupBeforeUpdate => Get(nameof(BackupBeforeUpdate));
+
+    /// <summary>No s'han pogut actualitzar les dades</summary>
+    public static string BackupBeforeUpdateFailedTitle => Get(nameof(BackupBeforeUpdateFailedTitle));
+
+    /// <summary>Aquesta versió de l'aplicació ha d'actualitzar el fitxer de dades i abans en fa una còpia, però la còpia no s'ha pogut fer. Les dades no s'han tocat. Comprova que el disc tingui espai lliure i torna a obrir l'aplicació.</summary>
+    public static string BackupBeforeUpdateFailedMessage => Get(nameof(BackupBeforeUpdateFailedMessage));
 }

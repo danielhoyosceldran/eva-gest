@@ -151,7 +151,7 @@ public partial class SettingsViewModel(
                 ? Texts.NoBackupYet
                 : string.Format(Texts.LastBackupLine,
                                 last.Date.ToString("dd/MM/yyyy HH:mm"),
-                                last.IsAutomatic ? Texts.BackupAutomatic : Texts.BackupManual);
+                                BackupTypeConverter.Label(last));
 
             var schedule = await availability.WeeklyIntervals();
             foreach (var day in ScheduleDays) day.Fill(schedule.GetValueOrDefault(day.Day, []));

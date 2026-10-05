@@ -1511,4 +1511,13 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="BackupFromNewerVersion" xml:space="preserve">
     <value>Esta copia se hizo con una versión más nueva de la aplicación y esta no la puede leer. Los datos actuales no se han tocado: actualiza la aplicación o elige una copia más antigua.</value>
   </data>
+  <data name="BackupBeforeUpdate" xml:space="preserve">
+    <value>Antes de actualizar</value>
+  </data>
+  <data name="BackupBeforeUpdateFailedTitle" xml:space="preserve">
+    <value>No se han podido actualizar los datos</value>
+  </data>
+  <data name="BackupBeforeUpdateFailedMessage" xml:space="preserve">
+    <value>Esta versión de la aplicación tiene que actualizar el fichero de datos y antes hace una copia, pero la copia no se ha podido hacer. Los datos no se han tocado. Comprueba que el disco tenga espacio libre y vuelve a abrir la aplicación.</value>
+  </data>
 </root>

@@ -95,6 +95,16 @@ public partial class App : Application
         {
             await PrepareDatabase();
         }
+        catch (BackupBeforeUpdateFailedException ex)
+        {
+            // Nothing was migrated: the database is exactly as the previous version left
+            // it. Say what actually happened instead of calling the file unreadable.
+            Log.Fatal(ex, "Could not back up the database before migrating it; nothing was migrated");
+            MessageBox.Show(Texts.BackupBeforeUpdateFailedMessage, Texts.BackupBeforeUpdateFailedTitle,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            Shutdown();
+            return;
+        }
         catch (Exception ex)
         {
             Log.Fatal(ex, "Could not open the database");
@@ -183,6 +193,12 @@ public partial class App : Application
         var factory = Services.GetRequiredService<IDbContextFactory<ShopDbContext>>();
 
         await using var db = await factory.CreateDbContextAsync();
+        // A copy of the data as the previous version left it, before the schema moves.
+        // Throws BackupBeforeUpdateFailedException, and so skips the migration, when the
+        // copy cannot be written.
+        await DatabaseUpdate.BackupBeforeMigrating(db,
+            Services.GetRequiredService<AppPaths>().DbPath,
+            Services.GetRequiredService<IBackupService>());
         await db.Database.MigrateAsync();
 
         // Runs after every migration, not only on a fresh file: later versions add

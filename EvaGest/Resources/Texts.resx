@@ -1511,4 +1511,13 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="BackupFromNewerVersion" xml:space="preserve">
     <value>Aquesta còpia es va fer amb una versió més nova de l'aplicació i aquesta no la pot llegir. Les dades actuals no s'han tocat: actualitza l'aplicació o tria una còpia més antiga.</value>
   </data>
+  <data name="BackupBeforeUpdate" xml:space="preserve">
+    <value>Abans d'actualitzar</value>
+  </data>
+  <data name="BackupBeforeUpdateFailedTitle" xml:space="preserve">
+    <value>No s'han pogut actualitzar les dades</value>
+  </data>
+  <data name="BackupBeforeUpdateFailedMessage" xml:space="preserve">
+    <value>Aquesta versió de l'aplicació ha d'actualitzar el fitxer de dades i abans en fa una còpia, però la còpia no s'ha pogut fer. Les dades no s'han tocat. Comprova que el disc tingui espai lliure i torna a obrir l'aplicació.</value>
+  </data>
 </root>
