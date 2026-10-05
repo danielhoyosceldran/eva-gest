@@ -1568,4 +1568,10 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="KeepEditing" xml:space="preserve">
     <value>Seguir editando</value>
   </data>
+  <data name="ExportFileInUse" xml:space="preserve">
+    <value>El fichero {0} está abierto en otro programa, seguramente Excel. Ciérralo y vuelve a exportar; no se ha cambiado ningún fichero.</value>
+  </data>
+  <data name="ExportFolderNotWritable" xml:space="preserve">
+    <value>No se ha podido escribir en la carpeta elegida. Elige otra y vuelve a exportar.</value>
+  </data>
 </root>

@@ -536,6 +536,8 @@ public static class Texts
         nameof(DiscardChangesMessage),
         nameof(DiscardChanges),
         nameof(KeepEditing),
+        nameof(ExportFileInUse),
+        nameof(ExportFolderNotWritable),
     ];
 
     /// <summary>Pendent</summary>
@@ -2037,4 +2039,10 @@ public static class Texts
 
     /// <summary>Continuar editant</summary>
     public static string KeepEditing => Get(nameof(KeepEditing));
+
+    /// <summary>El fitxer {0} està obert en un altre programa, segurament l'Excel. Tanca'l i torna a exportar; no s'ha canviat cap fitxer.</summary>
+    public static string ExportFileInUse => Get(nameof(ExportFileInUse));
+
+    /// <summary>No s'ha pogut escriure a la carpeta triada. Tria'n una altra i torna a exportar.</summary>
+    public static string ExportFolderNotWritable => Get(nameof(ExportFolderNotWritable));
 }

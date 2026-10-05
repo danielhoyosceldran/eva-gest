@@ -49,7 +49,13 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
             .OrderBy(v => v.Date).ThenBy(v => v.Time)
             .ToListAsync();
 
-        await WriteSales(Path.Combine(destinationFolder, $"vendes_{period}.csv"), sales);
+        // Every file is built in memory first and written at the end, all or nothing
+        // (see WriteAll): the three used to be written one by one, so a file held open in
+        // Excel stopped the export halfway, with the first file already overwritten.
+        var files = new List<(string Path, string Content)>
+        {
+            (Path.Combine(destinationFolder, $"vendes_{period}.csv"), SalesCsv(sales))
+        };
 
         var breakdowns = await db.SaleBreakdowns.AsNoTracking()
             .Where(d => d.Sale.Status == SaleStatus.Active && d.Sale.Date >= from && d.Sale.Date <= to)
@@ -64,8 +70,8 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
             .OrderBy(g => g.VatBp)
             .ToListAsync();
 
-        await WriteVat(Path.Combine(destinationFolder, $"iva_{period}.csv"),
-            breakdowns.Select(d => (d.VatBp, d.Base, d.Vat, d.Total)).ToList());
+        files.Add((Path.Combine(destinationFolder, $"iva_{period}.csv"),
+            VatCsv(breakdowns.Select(d => (d.VatBp, d.Base, d.Vat, d.Total)).ToList())));
 
         // Cash movements whose VAT was split (RF-13). Their base and quota were stored
         // but never reached any export, so VAT charged on a cash-in, or paid on a
@@ -88,7 +94,9 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
         // Only written when there is something in it: most shops never switch the
         // split on, and an empty extra file would only raise questions.
         if (movementVat.Count > 0)
-            await WriteMovementVat(Path.Combine(destinationFolder, $"iva_caixa_{period}.csv"), movementVat);
+            files.Add((Path.Combine(destinationFolder, $"iva_caixa_{period}.csv"), MovementVatCsv(movementVat)));
+
+        await WriteAll(files);
 
         // The file the accountant is given: worth being able to say afterwards which
         // period was exported, when, and how many sales it covered (CU-08).
@@ -96,7 +104,60 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
             sales.Count, movementVat.Count, from, to, destinationFolder);
     }
 
-    private static async Task WriteMovementVat(string path,
+    /// <summary>
+    /// Writes the export's files all or nothing. First every existing target is checked
+    /// for a lock — the accountant's spreadsheet holds an open CSV with no sharing, which
+    /// used to fail the export after the first file had already been replaced — and
+    /// <see cref="ExportFileInUseException"/> names the one in the way before anything is
+    /// touched. Then each file is written next to its target as *.tmp and only moved into
+    /// place once all of them are written; leftovers are removed whatever happens.
+    /// </summary>
+    private static async Task WriteAll(IReadOnlyList<(string Path, string Content)> files)
+    {
+        foreach (var file in files) EnsureNotInUse(file.Path);
+
+        try
+        {
+            foreach (var file in files)
+                await File.WriteAllTextAsync(file.Path + ".tmp", file.Content, Encoding.UTF8);
+
+            foreach (var file in files)
+                File.Move(file.Path + ".tmp", file.Path, overwrite: true);
+        }
+        finally
+        {
+            foreach (var file in files)
+            {
+                string temp = file.Path + ".tmp";
+                try
+                {
+                    if (File.Exists(temp)) File.Delete(temp);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Could not remove the temporary export file {Path}", temp);
+                }
+            }
+        }
+    }
+
+    /// <summary>Throws <see cref="ExportFileInUseException"/> when another program holds
+    /// <paramref name="path"/> open. A file that does not exist yet is never in use.</summary>
+    private static void EnsureNotInUse(string path)
+    {
+        if (!File.Exists(path)) return;
+
+        try
+        {
+            using var probe = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+        }
+        catch (IOException ex)
+        {
+            throw new ExportFileInUseException(path, ex);
+        }
+    }
+
+    private static string MovementVatCsv(
         List<(MovementType type, int vatBp, long baseCents, long vatCents, long totalCents)> rows)
     {
         var sb = new StringBuilder();
@@ -112,10 +173,10 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
                 Amount(r.totalCents)));
         }
 
-        await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
+        return sb.ToString();
     }
 
-    private static async Task WriteSales(string path, List<Sale> sales)
+    private static string SalesCsv(List<Sale> sales)
     {
         var sb = new StringBuilder();
         sb.AppendLine(Texts.ExportSalesHeader);
@@ -138,10 +199,10 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
                 Amount(v.TotalCents)));
         }
 
-        await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
+        return sb.ToString();
     }
 
-    private static async Task WriteVat(string path, List<(int vatBp, long baseCents, long vatCents, long totalCents)> rows)
+    private static string VatCsv(List<(int vatBp, long baseCents, long vatCents, long totalCents)> rows)
     {
         var sb = new StringBuilder();
         sb.AppendLine(Texts.ExportVatHeader);
@@ -155,7 +216,7 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
                 Amount(f.totalCents)));
         }
 
-        await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
+        return sb.ToString();
     }
 
     /// <summary>

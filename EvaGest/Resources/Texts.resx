@@ -1568,4 +1568,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="KeepEditing" xml:space="preserve">
     <value>Continuar editant</value>
   </data>
+  <data name="ExportFileInUse" xml:space="preserve">
+    <value>El fitxer {0} està obert en un altre programa, segurament l'Excel. Tanca'l i torna a exportar; no s'ha canviat cap fitxer.</value>
+  </data>
+  <data name="ExportFolderNotWritable" xml:space="preserve">
+    <value>No s'ha pogut escriure a la carpeta triada. Tria'n una altra i torna a exportar.</value>
+  </data>
 </root>
