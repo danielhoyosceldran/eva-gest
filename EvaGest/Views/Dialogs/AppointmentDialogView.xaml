@@ -101,8 +101,9 @@
                         Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!-- No IsCancel: the window handles Esc itself so an edited appointment asks before it is discarded (F-02) -->
                     <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding CancelCommand}" IsCancel="True" />
+                            Command="{Binding CancelCommand}" />
                     <Button Content="{x:Static t:Texts.Save}" Style="{StaticResource PrimaryButton}"
                             Command="{Binding SaveCommand}" IsDefault="True" Margin="12,0,0,0" />
                 </StackPanel>

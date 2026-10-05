@@ -148,7 +148,8 @@
                    Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" IsCancel="True" />
+            <!-- No IsCancel: the window handles Esc itself so a sale with lines asks before it is discarded (F-02) -->
+            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" />
             <Button Content="{x:Static t:Texts.VoidSale}" Style="{StaticResource DestructiveButton}" Command="{Binding VoidSaleCommand}"
                     Visibility="{Binding CurrentMode, Converter={StaticResource EditModeToVisibilityConverter}}" />
             <Button Content="{x:Static t:Texts.Charge}" Style="{StaticResource PrimaryButton}" Command="{Binding ChargeCommand}" IsDefault="True" Margin="12,0,0,0" />

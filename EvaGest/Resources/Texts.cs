@@ -532,6 +532,10 @@ public static class Texts
         nameof(CloseBackupFailedTitle),
         nameof(CloseBackupFailedMessage),
         nameof(BackgroundActionFailed),
+        nameof(DiscardChangesTitle),
+        nameof(DiscardChangesMessage),
+        nameof(DiscardChanges),
+        nameof(KeepEditing),
     ];
 
     /// <summary>Pendent</summary>
@@ -2021,4 +2025,16 @@ public static class Texts
 
     /// <summary>No s'ha pogut completar l'última acció. Torna-ho a provar; les dades ja guardades no s'han vist afectades.</summary>
     public static string BackgroundActionFailed => Get(nameof(BackgroundActionFailed));
+
+    /// <summary>Vols descartar el que has escrit?</summary>
+    public static string DiscardChangesTitle => Get(nameof(DiscardChangesTitle));
+
+    /// <summary>Si tanques ara, el que has posat en aquesta finestra no es guardarà.</summary>
+    public static string DiscardChangesMessage => Get(nameof(DiscardChangesMessage));
+
+    /// <summary>Descartar</summary>
+    public static string DiscardChanges => Get(nameof(DiscardChanges));
+
+    /// <summary>Continuar editant</summary>
+    public static string KeepEditing => Get(nameof(KeepEditing));
 }

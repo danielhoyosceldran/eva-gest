@@ -161,6 +161,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         var vm = new SaleDialogViewModel(sales, so, clients, dialogs) { CurrentMode = Mode.New };
         vm._modeVat = await settings.CurrentVatMode();
         await vm.LoadOptions(clients, catalog, workers, settings);
+        vm.MarkOpened();
         return vm;
     }
 
@@ -198,6 +199,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
             vm.AddService(service);
 
         vm.ReviewGuestNotice();
+        vm.MarkOpened();
         return vm;
     }
 
@@ -247,6 +249,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         vm._date = sale.Date;
         vm._time = sale.Time;
         vm.ReviewGuestNotice();
+        vm.MarkOpened();
         return vm;
     }
 
@@ -397,6 +400,19 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         }
     }
 
+    /// <summary>Esc and the X button reach the same question through the window.</summary>
     [RelayCommand]
-    private void Cancel() => RequestClose(false);
+    private async Task Cancel()
+    {
+        if (await CanDiscard()) RequestClose(false);
+    }
+
+    protected override IDialogService DiscardDialogs => _dialogs;
+
+    /// <summary>Everything Charge would save: the lines as typed, who, how and the notes.</summary>
+    protected override string EditableState()
+        => string.Join("|",
+            SelectedClient?.Id, TextClient, GuestPhone, Worker?.Id, PaymentMethod?.Id, Notes,
+            string.Join(";", Lines.Select(l =>
+                $"{l.ServiceId}/{l.ProductId}/{l.Description}/{l.QuantityText}/{l.PriceText}/{l.VatText}")));
 }

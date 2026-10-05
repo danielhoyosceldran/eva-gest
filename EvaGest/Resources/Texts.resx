@@ -1556,4 +1556,16 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="BackgroundActionFailed" xml:space="preserve">
     <value>No s'ha pogut completar l'última acció. Torna-ho a provar; les dades ja guardades no s'han vist afectades.</value>
   </data>
+  <data name="DiscardChangesTitle" xml:space="preserve">
+    <value>Vols descartar el que has escrit?</value>
+  </data>
+  <data name="DiscardChangesMessage" xml:space="preserve">
+    <value>Si tanques ara, el que has posat en aquesta finestra no es guardarà.</value>
+  </data>
+  <data name="DiscardChanges" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="KeepEditing" xml:space="preserve">
+    <value>Continuar editant</value>
+  </data>
 </root>

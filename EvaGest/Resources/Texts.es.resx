@@ -1556,4 +1556,16 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="BackgroundActionFailed" xml:space="preserve">
     <value>No se ha podido completar la última acción. Vuelve a intentarlo; los datos ya guardados no se han visto afectados.</value>
   </data>
+  <data name="DiscardChangesTitle" xml:space="preserve">
+    <value>¿Quieres descartar lo que has escrito?</value>
+  </data>
+  <data name="DiscardChangesMessage" xml:space="preserve">
+    <value>Si cierras ahora, lo que has puesto en esta ventana no se guardará.</value>
+  </data>
+  <data name="DiscardChanges" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="KeepEditing" xml:space="preserve">
+    <value>Seguir editando</value>
+  </data>
 </root>

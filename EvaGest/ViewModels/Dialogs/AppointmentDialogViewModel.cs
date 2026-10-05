@@ -220,6 +220,10 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
 
         ReviewGuestNotice();
         await ReviewNotices();
+
+        // Everything above (defaults, the client, service and worker picked by id) is
+        // the dialog opening, not the user changing anything.
+        MarkOpened();
     }
 
     /// <summary>
@@ -450,6 +454,18 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         RequestClose(true);
     }
 
+    /// <summary>Esc and the X button reach the same question through the window.</summary>
     [RelayCommand]
-    private void Cancel() => RequestClose(false);
+    private async Task Cancel()
+    {
+        if (await CanDiscard()) RequestClose(false);
+    }
+
+    protected override IDialogService DiscardDialogs => _dialogs;
+
+    /// <summary>Everything Save would write, as the boxes hold it.</summary>
+    protected override string EditableState()
+        => string.Join("|",
+            Date, Time, TimeText, DurationText, SelectedClient?.Id, TextClient, GuestPhone,
+            Service?.Id, Worker?.Id, Notes);
 }
