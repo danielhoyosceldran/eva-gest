@@ -115,6 +115,10 @@ public class LanguageTests
         // "{0} vendes actives" down to "{0" and let the very bug this rule exists for
         // walk straight through.
         var stringFormat = new Regex(@"StringFormat=\{\}(?<value>[^"",]*)");
+        // The same text set by a trigger: "Amagar clients adormits" sat in a Setter on the
+        // Clients page toggle, which the attribute rule above never saw.
+        var setterValue = new Regex(
+            @"Property\s*=\s*""(?:Text|Content|Header|ToolTip)""\s+Value\s*=\s*""(?<value>[^""{][^""]*)""");
         var hasLetters = new Regex(@"\p{L}");
 
         // Everything inside a {0...} placeholder is a .NET format specifier — "dd/MM/yyyy"
@@ -132,7 +136,7 @@ public class LanguageTests
         foreach (string path in views)
         {
             string xaml = File.ReadAllText(path);
-            foreach (var regex in new[] { literalAttribute, stringFormat })
+            foreach (var regex in new[] { literalAttribute, stringFormat, setterValue })
                 foreach (Match match in regex.Matches(xaml))
                 {
                     string value = match.Groups["value"].Value;

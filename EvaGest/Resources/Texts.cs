@@ -173,6 +173,7 @@ public static class Texts
         nameof(NotRegistered),
         nameof(SearchByNameOrMobile),
         nameof(ShowSleepingClients),
+        nameof(HideSleepingClients),
         nameof(ColorInAgenda),
         nameof(PickTimeInAgenda),
         nameof(ClientSearchPlaceholder),
@@ -956,6 +957,9 @@ public static class Texts
 
     /// <summary>Mostrar clients adormits</summary>
     public static string ShowSleepingClients => Get(nameof(ShowSleepingClients));
+
+    /// <summary>Amagar clients adormits</summary>
+    public static string HideSleepingClients => Get(nameof(HideSleepingClients));
 
     /// <summary>Color a l'agenda</summary>
     public static string ColorInAgenda => Get(nameof(ColorInAgenda));

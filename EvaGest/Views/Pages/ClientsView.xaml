@@ -80,7 +80,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Text" Property="Text" Value="Amagar clients adormits" />
+                                <Setter TargetName="Text" Property="Text" Value="{x:Static t:Texts.HideSleepingClients}" />
                                 <Setter TargetName="Arrow" Property="RenderTransform">
                                     <Setter.Value>
                                         <RotateTransform Angle="180" />

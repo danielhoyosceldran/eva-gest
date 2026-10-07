@@ -466,6 +466,9 @@
   <data name="ShowSleepingClients" xml:space="preserve">
     <value>Mostrar clients adormits</value>
   </data>
+  <data name="HideSleepingClients" xml:space="preserve">
+    <value>Amagar clients adormits</value>
+  </data>
   <data name="ColorInAgenda" xml:space="preserve">
     <value>Color a l'agenda</value>
   </data>
