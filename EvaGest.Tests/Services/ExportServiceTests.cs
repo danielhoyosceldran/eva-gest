@@ -1,3 +1,4 @@
+using System.Globalization;
 using AwesomeAssertions;
 using EvaGest.Models;
 using EvaGest.Services;
@@ -176,16 +177,34 @@ public class ExportServiceTests : IDisposable
         static async Task<string> DataRows(string path)
             => string.Join("|", (await File.ReadAllLinesAsync(path)).Skip(1));
 
+        // Only this test's own culture moves, never the process default. AppLanguage.Use
+        // sets DefaultThreadCurrent(UI)Culture for the whole process, and calling it here
+        // switched every test class running in parallel to Spanish for a moment, so an
+        // unrelated test now and then read "No asistida" instead of "No assistida".
+        // CurrentCulture and CurrentUICulture flow with this test's async context only,
+        // and they are what Texts and the export read.
+        var previousCulture = CultureInfo.CurrentCulture;
+        var previousUiCulture = CultureInfo.CurrentUICulture;
         var written = new List<string>();
-        foreach (var language in new[] { Language.Catalan, Language.Spanish })
+        var headers = new List<string>();
+        try
         {
-            AppLanguage.Use(language);
-            await export.ExportSales(Today, Today, _folder);
-            written.Add(await DataRows(Path.Combine(_folder, $"vendes_{period}.csv"))
-                      + await DataRows(Path.Combine(_folder, $"iva_{period}.csv")));
+            foreach (string culture in new[] { "ca-ES", "es-ES" })
+            {
+                CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
+                await export.ExportSales(Today, Today, _folder);
+                headers.Add(File.ReadLines(Path.Combine(_folder, $"vendes_{period}.csv")).First());
+                written.Add(await DataRows(Path.Combine(_folder, $"vendes_{period}.csv"))
+                          + await DataRows(Path.Combine(_folder, $"iva_{period}.csv")));
+            }
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previousCulture;
+            CultureInfo.CurrentUICulture = previousUiCulture;
         }
 
-        AppLanguage.Use(Language.Catalan);   // this suite shares one process
+        headers[0].Should().NotBe(headers[1], "otherwise both passes ran in the same language");
         written[0].Should().Be(written[1], "the assessoria's figures are not part of the interface");
         written[0].Should().Contain("5,2 %", "including the rate, which is not always whole");
     }
