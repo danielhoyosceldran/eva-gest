@@ -30,6 +30,21 @@ public class XamlLoadTests(ApplicationWpf app)
             Application.Current.Resources["DateOnlyConverter"].Should().NotBeNull();
         });
 
+    /// <summary>
+    /// Building App in the test process must not run its startup: with EvaGest open that
+    /// shut the test Application down, and with it closed it opened the real database and
+    /// a MainWindow.
+    /// </summary>
+    [Fact]
+    public void The_test_application_does_not_run_the_app_startup()
+        => app.Runs(() =>
+        {
+            Application.Current.Should().NotBeNull("with EvaGest open, its startup shut the test Application down");
+            Application.Current.MainWindow.Should().BeNull("startup is what opens the shell");
+            Serilog.Log.Logger.IsEnabled(Serilog.Events.LogEventLevel.Fatal).Should()
+                .BeFalse("startup points the log at the user's real log file");
+        });
+
     [Fact] // X-02
     public async Task The_weekly_grid_builds_and_fills_with_real_data()
     {

@@ -24,6 +24,15 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // WPF's Application constructor queues OnStartup on the dispatcher, so it runs in
+        // any process that builds an App and pumps messages, not only in EvaGest.exe. The
+        // view tests do exactly that to load App.xaml's resources, and used to get the whole
+        // startup below: the single-instance mutex (with EvaGest open, a Shutdown that left
+        // every view test without an Application), the user's real log file, a migration
+        // of the real database and a MainWindow. Only the app's own process starts the app.
+        if (System.Reflection.Assembly.GetEntryAssembly() != typeof(App).Assembly)
+            return;
+
         Helpers.SmoothScroll.Activate();
 
         // Any exception that escapes a command handler would otherwise crash to the
