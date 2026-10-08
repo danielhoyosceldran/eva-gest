@@ -1,22 +1,29 @@
 <UserControl x:Class="EvaGest.Views.Dialogs.PaymentMethodDialogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="clr-namespace:EvaGest.Resources">
-    <StackPanel Width="320">
-        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements">
+    <el:DialogShell Width="320">
+        <el:DialogShell.Actions>
+            <StackPanel>
+                <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
+                           TextWrapping="Wrap" Margin="0,0,0,12"
+                           Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
-        <TextBlock Text="{x:Static t:Texts.Name}" Style="{StaticResource DataLabel}" />
-        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding CancelCommand}" IsCancel="True" />
+                    <Button Content="{x:Static t:Texts.Save}" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding SaveCommand}" IsDefault="True" Margin="12,0,0,0" />
+                </StackPanel>
+            </StackPanel>
+        </el:DialogShell.Actions>
 
-        <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
-                   TextWrapping="Wrap" Margin="0,0,0,12"
-                   Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
-                    Command="{Binding CancelCommand}" IsCancel="True" />
-            <Button Content="{x:Static t:Texts.Save}" Style="{StaticResource PrimaryButton}"
-                    Command="{Binding SaveCommand}" IsDefault="True" Margin="12,0,0,0" />
+            <TextBlock Text="{x:Static t:Texts.Name}" Style="{StaticResource DataLabel}" />
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
         </StackPanel>
-    </StackPanel>
+    </el:DialogShell>
 </UserControl>

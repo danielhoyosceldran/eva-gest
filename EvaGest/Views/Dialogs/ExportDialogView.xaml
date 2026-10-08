@@ -1,26 +1,33 @@
 <UserControl x:Class="EvaGest.Views.Dialogs.ExportDialogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="clr-namespace:EvaGest.Resources">
-    <StackPanel Width="360">
-        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements">
+    <el:DialogShell Width="360">
+        <el:DialogShell.Actions>
+            <StackPanel>
+                <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
+                           TextWrapping="Wrap" Margin="0,0,0,12"
+                           Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
-        <TextBlock Text="{x:Static t:Texts.From}" Style="{StaticResource DataLabel}" />
-        <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" IsCancel="True" />
+                    <Button Content="{x:Static t:Texts.Export}" Style="{StaticResource PrimaryButton}" Command="{Binding ExportCommand}" IsDefault="True" Margin="12,0,0,0" />
+                </StackPanel>
+            </StackPanel>
+        </el:DialogShell.Actions>
 
-        <TextBlock Text="{x:Static t:Texts.To}" Style="{StaticResource DataLabel}" />
-        <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
 
-        <TextBlock TextWrapping="Wrap" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
-                   Text="{x:Static t:Texts.ExportProducesTwoFiles}" />
+            <TextBlock Text="{x:Static t:Texts.From}" Style="{StaticResource DataLabel}" />
+            <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
 
-        <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
-                   TextWrapping="Wrap" Margin="0,0,0,12"
-                   Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+            <TextBlock Text="{x:Static t:Texts.To}" Style="{StaticResource DataLabel}" />
+            <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" IsCancel="True" />
-            <Button Content="{x:Static t:Texts.Export}" Style="{StaticResource PrimaryButton}" Command="{Binding ExportCommand}" IsDefault="True" Margin="12,0,0,0" />
+            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
+                       Text="{x:Static t:Texts.ExportProducesTwoFiles}" />
         </StackPanel>
-    </StackPanel>
+    </el:DialogShell>
 </UserControl>

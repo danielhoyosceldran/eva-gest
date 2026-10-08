@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using EvaGest.Helpers;
 using EvaGest.ViewModels.Dialogs;
 
 namespace EvaGest.Views.Dialogs;
@@ -30,7 +31,46 @@ public partial class DialogWindow : Window
 
         Closing += OnClosing;
         KeyDown += OnKeyDown;
+
+        FitToScreen();
+        SizeChanged += (_, _) => KeepOnScreen();
     }
+
+    /// <summary>
+    /// SizeToContent alone let a tall dialog open taller than the screen — on a
+    /// 1366x768 laptop at 125 % the sale dialog's Cobrar button was below the bottom
+    /// edge. Capping the window to the work area makes WPF measure the content against
+    /// that cap instead, and the dialog's DialogShell scrolls the form while its buttons
+    /// stay in view. Dialogs smaller than the screen size to their content as before.
+    ///
+    /// The work area is the primary screen's: EvaGest runs full screen on a single
+    /// computer, and SystemParameters.WorkArea is already in DIPs.
+    /// </summary>
+    private void FitToScreen()
+    {
+        var area = SystemParameters.WorkArea;
+        var (width, height) = LayoutFit.MaxWindowSize(area.Width, area.Height, ScreenMargin);
+        MaxWidth = width;
+        MaxHeight = height;
+    }
+
+    /// <summary>
+    /// A SizeToContent dialog grows downwards when its content grows (a line added to a
+    /// sale) and does not move, so its bottom can still slip off the screen. Each
+    /// resize nudges it back inside the work area; WPF has already placed it centred on
+    /// the owner by the time the first one arrives.
+    /// </summary>
+    private void KeepOnScreen()
+    {
+        if (double.IsNaN(Left) || double.IsNaN(Top)) return;
+
+        var area = SystemParameters.WorkArea;
+        double margin = ScreenMargin;
+        Left = LayoutFit.KeepInside(Left, ActualWidth, area.Left + margin, area.Right - margin);
+        Top = LayoutFit.KeepInside(Top, ActualHeight, area.Top + margin, area.Bottom - margin);
+    }
+
+    private double ScreenMargin => (double)FindResource("DialogScreenMargin");
 
     /// <summary>
     /// Esc closes a dialog that asks before discarding (its Cancel button has no

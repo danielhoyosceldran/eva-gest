@@ -20,4 +20,44 @@
     <CornerRadius x:Key="SurfaceRadius">8</CornerRadius>
 
     <sys:Double x:Key="RulerThickness">3</sys:Double>
+
+    <!-- Responsive layout. Sizes are in DIPs after Windows display scaling; the
+         smallest screen the app is designed for is 1366x768 at 125 %, which leaves
+         about 1093x566 once the taskbar is gone. -->
+
+    <!-- Main window: below this the shell itself stops making sense -->
+    <sys:Double x:Key="MainMinWidth">1000</sys:Double>
+    <sys:Double x:Key="MainMinHeight">540</sys:Double>
+
+    <!-- Gap a dialog keeps from every edge of the screen's work area -->
+    <sys:Double x:Key="DialogScreenMargin">12</sys:Double>
+    <!-- Space between a dialog's scrolling body and its pinned buttons -->
+    <Thickness x:Key="DialogFooterMargin">0,12,0,0</Thickness>
+    <!-- The help list grows as questions open; past this it scrolls instead -->
+    <sys:Double x:Key="HelpMaxHeight">620</sys:Double>
+
+    <!-- Appointment dialog: the week picker shrinks from its full width down to this
+         floor when the screen is too narrow for both columns -->
+    <sys:Double x:Key="AppointmentFormWidth">420</sys:Double>
+    <sys:Double x:Key="AppointmentPickerWidth">700</sys:Double>
+    <sys:Double x:Key="AppointmentPickerMinWidth">440</sys:Double>
+
+    <!-- Agenda day detail panel: a share of the page, between these two -->
+    <sys:Double x:Key="DayPanelMinWidth">300</sys:Double>
+    <sys:Double x:Key="DayPanelMaxWidth">400</sys:Double>
+
+    <!-- Smallest cell a wrapping card row gives each card before it moves one to the
+         next line. Sized for a four-digit amount in the hero figure. -->
+    <sys:Double x:Key="StatCardMinWidth">260</sys:Double>
+    <sys:Double x:Key="QuickActionMinWidth">180</sys:Double>
+    <sys:Double x:Key="RankingCardMinWidth">260</sys:Double>
+    <sys:Double x:Key="FilterFieldMinWidth">140</sys:Double>
+
+    <!-- Table columns that must never collapse to nothing -->
+    <sys:Double x:Key="TextColumnMinWidth">100</sys:Double>
+    <!-- dd/MM/yyyy plus the cell padding -->
+    <DataGridLength x:Key="DateColumnWidth">104</DataGridLength>
+
+    <!-- Bars of the monthly sales chart share the card's width, up to this -->
+    <sys:Double x:Key="ChartBarMaxWidth">40</sys:Double>
 </ResourceDictionary>

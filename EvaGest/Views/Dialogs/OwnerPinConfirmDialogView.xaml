@@ -1,33 +1,40 @@
 <UserControl x:Class="EvaGest.Views.Dialogs.OwnerPinConfirmDialogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="clr-namespace:EvaGest.Resources">
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements">
     <!-- The question before a delete or a void (F-05): what is about to go, then the PIN -->
-    <StackPanel Width="440" Margin="8">
-        <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+    <el:DialogShell Width="440" Margin="8">
+        <el:DialogShell.Actions>
+            <StackPanel>
+                <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
+                           TextWrapping="Wrap" Margin="0,0,0,16"
+                           Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
-        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,0,0,16" />
-        <TextBlock Text="{x:Static t:Texts.OwnerPinConfirmIntro}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding CancelCommand}" IsCancel="True" />
+                    <Button Content="{Binding ConfirmText}" Style="{StaticResource DestructiveButton}"
+                            Command="{Binding ConfirmCommand}" Margin="8,0,0,0" />
+                </StackPanel>
+            </StackPanel>
+        </el:DialogShell.Actions>
 
-        <TextBlock Text="{x:Static t:Texts.Pin}" Style="{StaticResource DataLabel}" />
-        <!-- Enter confirms through a key binding: the destructive button is never the
-             default one, so a stray Enter elsewhere cannot delete anything. -->
-        <PasswordBox x:Name="PinBox" MaxLength="6" Margin="0,0,0,16"
-                     PasswordChanged="OnPinChanged">
-            <PasswordBox.InputBindings>
-                <KeyBinding Key="Enter" Command="{Binding ConfirmCommand}" />
-            </PasswordBox.InputBindings>
-        </PasswordBox>
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
 
-        <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
-                   TextWrapping="Wrap" Margin="0,0,0,16"
-                   Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,0,0,16" />
+            <TextBlock Text="{x:Static t:Texts.OwnerPinConfirmIntro}" TextWrapping="Wrap" Margin="0,0,0,8" />
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
-                    Command="{Binding CancelCommand}" IsCancel="True" />
-            <Button Content="{Binding ConfirmText}" Style="{StaticResource DestructiveButton}"
-                    Command="{Binding ConfirmCommand}" Margin="8,0,0,0" />
+            <TextBlock Text="{x:Static t:Texts.Pin}" Style="{StaticResource DataLabel}" />
+            <!-- Enter confirms through a key binding: the destructive button is never the
+                 default one, so a stray Enter elsewhere cannot delete anything. -->
+            <PasswordBox x:Name="PinBox" MaxLength="6" Margin="0,0,0,16"
+                         PasswordChanged="OnPinChanged">
+                <PasswordBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding ConfirmCommand}" />
+                </PasswordBox.InputBindings>
+            </PasswordBox>
         </StackPanel>
-    </StackPanel>
+    </el:DialogShell>
 </UserControl>

@@ -1,171 +1,182 @@
 <UserControl x:Class="EvaGest.Views.Dialogs.AppointmentDialogView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="clr-namespace:EvaGest.Resources">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="420" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements">
+    <!-- The buttons are pinned under both columns; the two columns scroll together
+         when the screen is shorter than the form. -->
+    <el:DialogShell>
+        <el:DialogShell.Actions>
+            <StackPanel>
+                <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
+                           TextWrapping="Wrap" Margin="0,0,0,12"
+                           Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
-        <StackPanel x:Name="FormColumn" Grid.Column="0">
-            <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-            <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
-            <!-- Search a registered client or type a guest's name, in the same box -->
-            <ContentControl Content="{Binding ClientPicker}" Focusable="False" Margin="0,0,0,8" />
+                    <!-- Kept away from Guardar and hidden on a new appointment, which has
+                         nothing to delete: Cancel·lar already discards it -->
+                    <Button Grid.Column="0" Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
+                            HorizontalAlignment="Left" Command="{Binding DeleteCommand}"
+                            Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-            <!-- Disabled rather than hidden for a registered client: the dialog window is
-                 SizeToContent, so collapsing it made the whole window jump every time
-                 the client type changed. -->
-            <StackPanel IsEnabled="{Binding CanWriteGuest}">
-                <TextBlock Text="{x:Static t:Texts.PhoneOptional}" Style="{StaticResource DataLabel}" />
-                <TextBox Text="{Binding GuestPhone, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
-            </StackPanel>
-
-            <Grid Margin="0,0,0,12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="12" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="{x:Static t:Texts.Date}" Style="{StaticResource DataLabel}" />
-                    <DatePicker SelectedDate="{Binding Date, Converter={StaticResource DateOnlyConverter}}" />
-                </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="{x:Static t:Texts.Time}" Style="{StaticResource DataLabel}" />
-                    <TextBox Text="{Binding TimeText, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-            </Grid>
-
-            <TextBlock Text="{x:Static t:Texts.DurationMinutes}" Style="{StaticResource DataLabel}" />
-            <TextBox Text="{Binding DurationText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
-
-            <TextBlock Text="{x:Static t:Texts.ServiceOptional}" Style="{StaticResource DataLabel}" />
-            <ComboBox ItemsSource="{Binding ActiveServices}" SelectedItem="{Binding Service}"
-                      DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
-
-            <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
-            <ComboBox ItemsSource="{Binding ActiveWorkers}" SelectedItem="{Binding Worker}"
-                      DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
-
-            <TextBlock Text="{x:Static t:Texts.NotesOptional}" Style="{StaticResource DataLabel}" />
-            <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
-                     AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
-
-            <!-- Non-blocking inline warnings (pantalles 3.1) -->
-            <StackPanel Margin="0,0,0,12">
-                <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
-                        BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,6"
-                        Visibility="{Binding OverlapNotice, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <TextBlock Text="{x:Static t:Texts.PossibleOverlap}" TextWrapping="Wrap" />
-                </Border>
-                <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
-                        BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,6"
-                        Visibility="{Binding OutsideScheduleNotice, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <TextBlock Text="{x:Static t:Texts.OutsideOpeningHours}" TextWrapping="Wrap" />
-                </Border>
-                <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
-                        BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10"
-                        Visibility="{Binding ClosedDayNotice, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <TextBlock Text="{Binding ClosedDayReason, StringFormat={x:Static t:Texts.ClosedDayFormat}}" TextWrapping="Wrap" />
-                </Border>
-                <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
-                        BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,6,0,0"
-                        Visibility="{Binding UnregisteredClientNotice, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel>
-                        <TextBlock TextWrapping="Wrap"
-                                   Text="{x:Static t:Texts.UnregisteredClientAppointment}" />
-                        <Button Content="{x:Static t:Texts.RegisterNow}" Style="{StaticResource SecondaryButton}"
-                                HorizontalAlignment="Left" Margin="0,8,0,0"
-                                Command="{Binding RegisterClientNowCommand}" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <!-- No IsCancel: the window handles Esc itself so an edited appointment asks before it is discarded (F-02) -->
+                        <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
+                                Command="{Binding CancelCommand}" />
+                        <Button Content="{x:Static t:Texts.Save}" Style="{StaticResource PrimaryButton}"
+                                Command="{Binding SaveCommand}" IsDefault="True" Margin="12,0,0,0" />
                     </StackPanel>
-                </Border>
+                </Grid>
+            </StackPanel>
+        </el:DialogShell.Actions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel x:Name="FormColumn" Grid.Column="0" Width="{StaticResource AppointmentFormWidth}">
+                <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+
+                <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
+                <!-- Search a registered client or type a guest's name, in the same box -->
+                <ContentControl Content="{Binding ClientPicker}" Focusable="False" Margin="0,0,0,8" />
+
+                <!-- Disabled rather than hidden for a registered client: the dialog window is
+                     SizeToContent, so collapsing it made the whole window jump every time
+                     the client type changed. -->
+                <StackPanel IsEnabled="{Binding CanWriteGuest}">
+                    <TextBlock Text="{x:Static t:Texts.PhoneOptional}" Style="{StaticResource DataLabel}" />
+                    <TextBox Text="{Binding GuestPhone, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+                </StackPanel>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="{x:Static t:Texts.Date}" Style="{StaticResource DataLabel}" />
+                        <DatePicker SelectedDate="{Binding Date, Converter={StaticResource DateOnlyConverter}}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="{x:Static t:Texts.Time}" Style="{StaticResource DataLabel}" />
+                        <TextBox Text="{Binding TimeText, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="{x:Static t:Texts.DurationMinutes}" Style="{StaticResource DataLabel}" />
+                <TextBox Text="{Binding DurationText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+                <TextBlock Text="{x:Static t:Texts.ServiceOptional}" Style="{StaticResource DataLabel}" />
+                <ComboBox ItemsSource="{Binding ActiveServices}" SelectedItem="{Binding Service}"
+                          DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+
+                <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
+                <ComboBox ItemsSource="{Binding ActiveWorkers}" SelectedItem="{Binding Worker}"
+                          DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+
+                <TextBlock Text="{x:Static t:Texts.NotesOptional}" Style="{StaticResource DataLabel}" />
+                <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
+
+                <!-- Non-blocking inline warnings (pantalles 3.1) -->
+                <StackPanel Margin="0,0,0,12">
+                    <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                            BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,6"
+                            Visibility="{Binding OverlapNotice, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="{x:Static t:Texts.PossibleOverlap}" TextWrapping="Wrap" />
+                    </Border>
+                    <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                            BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,6"
+                            Visibility="{Binding OutsideScheduleNotice, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="{x:Static t:Texts.OutsideOpeningHours}" TextWrapping="Wrap" />
+                    </Border>
+                    <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                            BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10"
+                            Visibility="{Binding ClosedDayNotice, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="{Binding ClosedDayReason, StringFormat={x:Static t:Texts.ClosedDayFormat}}" TextWrapping="Wrap" />
+                    </Border>
+                    <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                            BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,6,0,0"
+                            Visibility="{Binding UnregisteredClientNotice, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap"
+                                       Text="{x:Static t:Texts.UnregisteredClientAppointment}" />
+                            <Button Content="{x:Static t:Texts.RegisterNow}" Style="{StaticResource SecondaryButton}"
+                                    HorizontalAlignment="Left" Margin="0,8,0,0"
+                                    Command="{Binding RegisterClientNowCommand}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </StackPanel>
 
-            <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
-                       TextWrapping="Wrap" Margin="0,0,0,12"
-                       Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
+            <!-- The same weekly grid as the Agenda page. Clicking a slot sets the date and
+                 hour; the dashed ghost block shows the duration colliding with its neighbours
+                 before the warnings on the left even fire.
+                 The width is set by the code-behind, never by the grid's content, and the
+                 panel is never collapsed: the dialog window is SizeToContent, so it measures
+                 itself once while the grid is still loading and would otherwise open too
+                 narrow to show the week. The code-behind gives it its full width when the
+                 screen has room and shrinks it on a narrow screen.
+                 The height is capped to the form column instead: the grid is a ScrollViewer
+                 over the whole opening day, so with SizeToContent measuring at infinity it
+                 would otherwise ask for the full day and push the window past the screen. -->
+            <Grid x:Name="Picker" Grid.Column="1" Margin="20,0,0,0"
+                  MaxHeight="{Binding ActualHeight, ElementName=FormColumn}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Text="{x:Static t:Texts.PickTimeInAgenda}" Style="{StaticResource DataLabel}"
+                           Margin="0,4,0,4" />
 
-                <!-- Kept away from Guardar and hidden on a new appointment, which has
-                     nothing to delete: Cancel·lar already discards it -->
-                <Button Grid.Column="0" Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
-                        HorizontalAlignment="Left" Command="{Binding DeleteCommand}"
-                        Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Grid Grid.Row="1" Margin="0,0,0,8">
+                    <!-- Same navigation as the Agenda toolbar, on the same grid view model -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="«" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                            ToolTip="{x:Static t:Texts.ThreeDaysBack}" Command="{Binding Grid.JumpBackCommand}"
+                            Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
+                            ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
+                    <TextBlock Grid.Column="2" Text="{Binding Grid.RangeText}" Margin="12,0"
+                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontFamily="{StaticResource FontUi}" FontWeight="SemiBold"
+                               Foreground="{StaticResource InkBrush}" />
+                    <Button Grid.Column="3" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                            ToolTip="{Binding Grid.StepForwardTooltip}" Command="{Binding Grid.StepForwardCommand}" />
+                    <Button Grid.Column="4" Content="»" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                            ToolTip="{x:Static t:Texts.ThreeDaysForward}" Command="{Binding Grid.JumpForwardCommand}"
+                            Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <Button Grid.Column="5" Content="{x:Static t:Texts.Today}" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding Grid.GoToTodayCommand}" Margin="0,0,8,0" />
+                    <Button Grid.Column="6" Content="{Binding Grid.ToggleViewText}" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding Grid.ToggleViewCommand}" />
+                </Grid>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <!-- No IsCancel: the window handles Esc itself so an edited appointment asks before it is discarded (F-02) -->
-                    <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding CancelCommand}" />
-                    <Button Content="{x:Static t:Texts.Save}" Style="{StaticResource PrimaryButton}"
-                            Command="{Binding SaveCommand}" IsDefault="True" Margin="12,0,0,0" />
-                </StackPanel>
+                <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                        CornerRadius="{StaticResource SurfaceRadius}" ClipToBounds="True"
+                        VerticalAlignment="Stretch">
+                    <ContentControl Content="{Binding Grid}" />
+                </Border>
             </Grid>
-        </StackPanel>
-
-        <!-- The same weekly grid as the Agenda page. Clicking a slot sets the date and
-             hour; the dashed ghost block shows the duration colliding with its neighbours
-             before the warnings on the left even fire.
-             The width is fixed and the panel is never collapsed: the dialog window is
-             SizeToContent, so it measures itself once while the grid is still loading and
-             would otherwise open too narrow to show the week.
-             The height is capped to the form column instead: the grid is a ScrollViewer
-             over the whole opening day, so with SizeToContent measuring at infinity it
-             would otherwise ask for the full day and push the window past the screen. -->
-        <Grid Grid.Column="1" Width="700" Margin="20,0,0,0"
-              MaxHeight="{Binding ActualHeight, ElementName=FormColumn}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0" Text="{x:Static t:Texts.PickTimeInAgenda}" Style="{StaticResource DataLabel}"
-                       Margin="0,4,0,4" />
-
-            <Grid Grid.Row="1" Margin="0,0,0,8">
-                <!-- Same navigation as the Agenda toolbar, on the same grid view model -->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="«" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
-                        ToolTip="{x:Static t:Texts.ThreeDaysBack}" Command="{Binding Grid.JumpBackCommand}"
-                        Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
-                        ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
-                <TextBlock Grid.Column="2" Text="{Binding Grid.RangeText}" Margin="12,0"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"
-                           FontFamily="{StaticResource FontUi}" FontWeight="SemiBold"
-                           Foreground="{StaticResource InkBrush}" />
-                <Button Grid.Column="3" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
-                        ToolTip="{Binding Grid.StepForwardTooltip}" Command="{Binding Grid.StepForwardCommand}" />
-                <Button Grid.Column="4" Content="»" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
-                        ToolTip="{x:Static t:Texts.ThreeDaysForward}" Command="{Binding Grid.JumpForwardCommand}"
-                        Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <Button Grid.Column="5" Content="{x:Static t:Texts.Today}" Style="{StaticResource SecondaryButton}"
-                        Command="{Binding Grid.GoToTodayCommand}" Margin="0,0,8,0" />
-                <Button Grid.Column="6" Content="{Binding Grid.ToggleViewText}" Style="{StaticResource SecondaryButton}"
-                        Command="{Binding Grid.ToggleViewCommand}" />
-            </Grid>
-
-            <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
-                    CornerRadius="{StaticResource SurfaceRadius}" ClipToBounds="True"
-                    VerticalAlignment="Stretch">
-                <ContentControl Content="{Binding Grid}" />
-            </Border>
         </Grid>
-    </Grid>
+    </el:DialogShell>
 </UserControl>

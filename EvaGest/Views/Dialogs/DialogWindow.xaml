@@ -4,5 +4,8 @@
         Title="{Binding Title}" SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         Background="{StaticResource PaperBrush}">
+    <!-- No ScrollViewer here: each dialog view wraps itself in a DialogShell, which
+         scrolls the form and keeps the buttons pinned. The window only caps its own
+         size to the screen (code-behind), and the shell does the rest. -->
     <ContentControl Content="{Binding}" Margin="{StaticResource PadCard}" MinWidth="380" />
 </Window>
