@@ -381,7 +381,8 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10,8" TextTrimming="CharacterEllipsis" />
+            <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10,8" TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding Name}" />
             <TextBlock Grid.Column="1" Text="{Binding Mobile}" Margin="10,8" Opacity="0.75"
                        FontSize="{StaticResource FontSizeSmall}" VerticalAlignment="Center" />
         </Grid>

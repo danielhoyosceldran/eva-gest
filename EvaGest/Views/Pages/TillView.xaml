@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:t="clr-namespace:EvaGest.Resources"
              xmlns:h="clr-namespace:EvaGest.Helpers"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements"
              xmlns:vm="clr-namespace:EvaGest.ViewModels.Pages"
              Background="{StaticResource PaperBrush}">
     <UserControl.Resources>
@@ -39,32 +40,33 @@
             </StackPanel>
 
             <!-- Summary cards: Vendes, Entrades, Sortides, Balanç (highlighted) -->
-            <UniformGrid Columns="4" Margin="0,0,0,16">
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+            <!-- Wraps onto two rows on a narrow screen rather than clip the figures -->
+            <el:WrappingUniformGrid MinItemWidth="{StaticResource StatCardMinWidth}" Margin="0,0,0,8">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,8">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.NavSales}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding SalesText}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,8">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.CashInPlural}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding CashInText}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,0">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,8,8">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.CashOutPlural}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding CashOutText}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource HeroCard}">
+                <Border Style="{StaticResource HeroCard}" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.Balance}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding BalanceText}" Style="{StaticResource HeroFigure}" />
                     </StackPanel>
                 </Border>
-            </UniformGrid>
+            </el:WrappingUniformGrid>
 
             <!-- VAT breakdown for the period -->
             <TextBlock Text="{x:Static t:Texts.PeriodVatBreakdown}" Style="{StaticResource Subtitle}" />
@@ -143,15 +145,17 @@
             <!-- Movements table -->
             <TextBlock Text="{x:Static t:Texts.Movements}" Style="{StaticResource Subtitle}" />
             <Border Style="{StaticResource DataCard}" Padding="0">
-                <DataGrid ItemsSource="{Binding Movements}" AutoGenerateColumns="False"
+                <!-- On a narrow screen TableFit drops the category, then the worker, so the
+                     concept keeps room to read -->
+                <DataGrid ItemsSource="{Binding Movements}" AutoGenerateColumns="False" h:TableFit.IsEnabled="True"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding DateText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Type}" Binding="{Binding TypeText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding ConceptText}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Category}" Binding="{Binding CategoryText}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Worker}" Binding="{Binding WorkerText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding ConceptText}" Width="*" MinWidth="{StaticResource TextColumnMinWidth}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="1" Header="{x:Static t:Texts.Category}" Binding="{Binding CategoryText}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="2" Header="{x:Static t:Texts.Worker}" Binding="{Binding WorkerText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Method}" Binding="{Binding MethodText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Amount}" Binding="{Binding AmountText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTemplateColumn Header="" Width="100">

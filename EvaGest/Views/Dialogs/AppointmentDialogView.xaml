@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:t="clr-namespace:EvaGest.Resources"
-             xmlns:el="clr-namespace:EvaGest.Views.Elements">
+             xmlns:el="clr-namespace:EvaGest.Views.Elements"
+             xmlns:h="clr-namespace:EvaGest.Helpers">
     <!-- The buttons are pinned under both columns; the two columns scroll together
          when the screen is shorter than the form. -->
     <el:DialogShell>
@@ -140,8 +141,13 @@
                 <TextBlock Grid.Row="0" Text="{x:Static t:Texts.PickTimeInAgenda}" Style="{StaticResource DataLabel}"
                            Margin="0,4,0,4" />
 
-                <Grid Grid.Row="1" Margin="0,0,0,8">
-                    <!-- Same navigation as the Agenda toolbar, on the same grid view model -->
+                <!-- Same navigation as the Agenda toolbar, on the same grid view model. On a
+                     narrow screen ToolbarTitle moves the range text under the buttons. -->
+                <Grid Grid.Row="1" Margin="0,0,0,8" h:ToolbarTitle.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -156,7 +162,7 @@
                             Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
                             ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
-                    <TextBlock Grid.Column="2" Text="{Binding Grid.RangeText}" Margin="12,0"
+                    <TextBlock Grid.Column="2" Text="{Binding Grid.RangeText, NotifyOnTargetUpdated=True}" Margin="12,0"
                                VerticalAlignment="Center" HorizontalAlignment="Center"
                                FontFamily="{StaticResource FontUi}" FontWeight="SemiBold"
                                Foreground="{StaticResource InkBrush}" />

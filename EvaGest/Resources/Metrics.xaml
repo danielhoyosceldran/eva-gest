@@ -54,7 +54,7 @@
     <sys:Double x:Key="FilterFieldMinWidth">140</sys:Double>
 
     <!-- Table columns that must never collapse to nothing -->
-    <sys:Double x:Key="TextColumnMinWidth">100</sys:Double>
+    <sys:Double x:Key="TextColumnMinWidth">80</sys:Double>
     <!-- dd/MM/yyyy plus the cell padding -->
     <DataGridLength x:Key="DateColumnWidth">104</DataGridLength>
 

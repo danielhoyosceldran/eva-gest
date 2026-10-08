@@ -120,6 +120,7 @@
 
                                         <TextBlock Grid.Column="0" Text="{Binding Worker.Name}"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding Worker.Name}"
                                                    FontFamily="{StaticResource FontUi}"
                                                    FontSize="{StaticResource FontSizeBody}"
                                                    Foreground="{StaticResource InkBrush}" />

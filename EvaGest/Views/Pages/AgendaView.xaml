@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:h="clr-namespace:EvaGest.Helpers"
              Background="{StaticResource PaperBrush}">
     <Grid Margin="{StaticResource PagePad}">
         <Grid.RowDefinitions>
@@ -22,8 +23,14 @@
         </StackPanel>
 
         <!-- Range header. ‹ › move one day in the three-day view (one week in the week
-             view); « » jump three days and only exist in the three-day view. -->
-        <Grid Grid.Row="1" Margin="0,0,0,16">
+             view); « » jump three days and only exist in the three-day view.
+             The range text sits between the arrows; when the buttons leave it no room
+             (a laptop screen) ToolbarTitle moves it to the second row instead. -->
+        <Grid Grid.Row="1" Margin="0,0,0,16" h:ToolbarTitle.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -40,7 +47,8 @@
                     Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
             <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
                     ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
-            <TextBlock Grid.Column="2" Text="{Binding Grid.RangeText}" Style="{StaticResource Subtitle}"
+            <TextBlock Grid.Column="2"
+                       Text="{Binding Grid.RangeText, NotifyOnTargetUpdated=True}" Style="{StaticResource Subtitle}"
                        Margin="16,0" VerticalAlignment="Center" HorizontalAlignment="Center" />
             <Button Grid.Column="3" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
                     ToolTip="{Binding Grid.StepForwardTooltip}" Command="{Binding Grid.StepForwardCommand}" />
@@ -62,7 +70,7 @@
         <!-- The week itself is the shared time grid: full size here, embedded in the
              cita dialog as the hour picker. Click an empty slot to book there, click an
              appointment to edit it. -->
-        <Grid Grid.Row="2">
+        <Grid x:Name="Body" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -74,8 +82,10 @@
             </Border>
 
             <!-- Day detail (pantalles 2.2): opens from a column header, and shows the
-                 status buttons the compact grid cards keep hidden until hover. -->
-            <Border Grid.Column="1" Width="400" Margin="16,0,0,0"
+                 status buttons the compact grid cards keep hidden until hover. Its width
+                 is a share of the page (code-behind), so on a laptop it leaves the week
+                 grid room to read. -->
+            <Border x:Name="DayPanel" Grid.Column="1" Width="{StaticResource DayPanelMaxWidth}" Margin="16,0,0,0"
                     Style="{StaticResource DataCard}"
                     Visibility="{Binding HasSelectedDay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <DockPanel>

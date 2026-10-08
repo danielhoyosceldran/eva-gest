@@ -2,6 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements"
+             xmlns:h="clr-namespace:EvaGest.Helpers"
              Background="{StaticResource PaperBrush}">
     <Grid Margin="{StaticResource PagePad}">
         <Grid.RowDefinitions>
@@ -38,45 +40,46 @@
         </Grid>
 
         <!-- Filters (RF-15). Every picker allows an empty selection, meaning "all".
-             One row of equal cells that stretches to the page width -->
+             Equal cells that stretch to the page width: one row on a wide screen,
+             wrapped onto more rows when the cells would get too narrow to read. -->
         <Border Grid.Row="1" Style="{StaticResource DataCard}" Margin="0,0,0,12">
-            <UniformGrid Rows="1">
-                <StackPanel Margin="0,0,12,0">
+            <el:WrappingUniformGrid MinItemWidth="{StaticResource FilterFieldMinWidth}">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.From}" Style="{StaticResource DataLabel}" />
                     <DatePicker HorizontalAlignment="Stretch"
                                 SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.To}" Style="{StaticResource DataLabel}" />
                     <DatePicker HorizontalAlignment="Stretch"
                                 SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
                     <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterClients}"
                               SelectedItem="{Binding Client}" DisplayMemberPath="Name" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Service}" Style="{StaticResource DataLabel}" />
                     <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterServices}"
                               SelectedItem="{Binding Service}" DisplayMemberPath="Name" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Product}" Style="{StaticResource DataLabel}" />
                     <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterProducts}"
                               SelectedItem="{Binding Product}" DisplayMemberPath="Name" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Payment}" Style="{StaticResource DataLabel}" />
                     <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterMethods}"
                               SelectedItem="{Binding PaymentMethod}" DisplayMemberPath="Name" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Worker}" Style="{StaticResource DataLabel}" />
                     <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterWorkers}"
                               SelectedItem="{Binding Worker}" DisplayMemberPath="Name" />
                 </StackPanel>
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Status}" Style="{StaticResource DataLabel}" />
                     <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterStatuses}"
                               SelectedItem="{Binding Status}">
@@ -88,34 +91,38 @@
                     </ComboBox>
                 </StackPanel>
                 <Button Content="{x:Static t:Texts.ClearFilters}" Style="{StaticResource SecondaryButton}"
-                        VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Padding="8,0"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Padding="8,0" Margin="0,0,0,8"
                         Command="{Binding ClearFiltersCommand}" />
-            </UniformGrid>
+            </el:WrappingUniformGrid>
         </Border>
 
         <Border Grid.Row="2" Style="{StaticResource DataCard}" Padding="0">
             <Grid>
-                <DataGrid ItemsSource="{Binding Sales}" AutoGenerateColumns="False"
+                <!-- On a narrow screen TableFit hides the optional columns, in HideOrder,
+                     so client and concept never collapse to nothing: base and VAT are in
+                     the footer totals, the worker is a filter of its own, and the payment
+                     method is the last to go. -->
+                <DataGrid ItemsSource="{Binding Sales}" AutoGenerateColumns="False" h:TableFit.IsEnabled="True"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0"
                           Visibility="{Binding HasNoResults, Converter={StaticResource InverseVisibilityConverter}}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding DateText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Client}" Binding="{Binding ClientText}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Worker}" Binding="{Binding WorkerText}" Width="130" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding ConceptText}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Base}" Binding="{Binding BaseText}" Width="95" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Vat}" Binding="{Binding VatText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Date}" Binding="{Binding DateText}" Width="{StaticResource DateColumnWidth}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Client}" Binding="{Binding ClientText}" Width="*" MinWidth="{StaticResource TextColumnMinWidth}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="3" Header="{x:Static t:Texts.Worker}" Binding="{Binding WorkerText}" Width="130" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Concept}" Binding="{Binding ConceptText}" Width="*" MinWidth="{StaticResource TextColumnMinWidth}" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="1" Header="{x:Static t:Texts.Base}" Binding="{Binding BaseText}" Width="95" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="2" Header="{x:Static t:Texts.Vat}" Binding="{Binding VatText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Total}" Binding="{Binding TotalText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Payment}" Binding="{Binding MethodText}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="4" Header="{x:Static t:Texts.Payment}" Binding="{Binding MethodText}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Status}" Binding="{Binding StatusText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTemplateColumn Header="" Width="300">
+                        <DataGridTemplateColumn Header="" Width="280">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <!-- A cancelled sale is history: it is shown, never rewritten -->
                                         <Button Content="{x:Static t:Texts.Edit}" Style="{StaticResource SecondaryButton}"
-                                                Padding="10,0" MinHeight="32"
+                                                Padding="8,0" MinHeight="32"
                                                 Visibility="{Binding CanVoid, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Command="{Binding DataContext.EditSaleCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
@@ -123,7 +130,7 @@
                                         <!-- Only an active sale can be cancelled: doing it twice
                                              would suggest a second, different effect -->
                                         <Button Content="{x:Static t:Texts.Void}" Style="{StaticResource SecondaryButton}"
-                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Padding="8,0" MinHeight="32" Margin="8,0,0,0"
                                                 Foreground="{StaticResource DangerBrush}"
                                                 Visibility="{Binding CanVoid, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Command="{Binding DataContext.VoidSaleCommand,
@@ -133,7 +140,7 @@
                                              A cancelled sale is never deleted (RF-10), so the
                                              button is not offered on its row -->
                                         <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource DestructiveButton}"
-                                                Padding="10,0" MinHeight="32" Margin="8,0,0,0"
+                                                Padding="8,0" MinHeight="32" Margin="8,0,0,0"
                                                 Visibility="{Binding CanVoid, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Command="{Binding DataContext.DeleteSaleCommand,
                                                           RelativeSource={RelativeSource AncestorType=DataGrid}}"
