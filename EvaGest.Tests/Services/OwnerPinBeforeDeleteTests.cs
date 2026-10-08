@@ -13,7 +13,8 @@ namespace EvaGest.Tests.Services;
 /// F-05: any worker could delete a client with owner mode closed, and some deletes and
 /// voids asked nothing at all (voiding from the sale dialog, removing a closed day).
 /// Every delete and void must now ask for the owner's PIN — even with owner mode already
-/// open — and when the PIN is not given, nothing changes.
+/// open — and when the PIN is not given, nothing changes. The one exception is an
+/// appointment: it is only a booking, so it is deleted after a plain "are you sure?".
 ///
 /// The plain confirmation answers "yes" throughout: what stops the delete has to be the
 /// PIN, not an ordinary "are you sure?".
@@ -88,7 +89,7 @@ public class OwnerPinBeforeDeleteTests
         });
 
     [Fact]
-    public async Task Deleting_an_appointment_from_the_agenda_without_the_pin_keeps_it()
+    public async Task Deleting_an_appointment_from_the_agenda_asks_no_pin_and_deletes_it()
     {
         await using var testDb = new TestDatabase();
         var factory = new TestFactory(testDb.Options);
@@ -102,12 +103,13 @@ public class OwnerPinBeforeDeleteTests
 
         await page.DeleteAppointmentCommand.ExecuteAsync((await appointments.GetById(id))!);
 
-        dialogs.PinConfirmationsRequested.Should().ContainSingle();
-        (await appointments.GetById(id)).Should().NotBeNull();
+        dialogs.PinConfirmationsRequested.Should().BeEmpty("deleting an appointment needs no password");
+        dialogs.ConfirmacionsRequested.Should().ContainSingle();
+        (await appointments.GetById(id)).Should().BeNull();
     }
 
     [Fact]
-    public async Task Deleting_an_appointment_from_its_dialog_without_the_pin_keeps_it()
+    public async Task Deleting_an_appointment_from_its_dialog_asks_no_pin_and_deletes_it()
     {
         await using var testDb = new TestDatabase();
         var factory = new TestFactory(testDb.Options);
@@ -121,8 +123,9 @@ public class OwnerPinBeforeDeleteTests
 
         await vm.DeleteCommand.ExecuteAsync(null);
 
-        dialogs.PinConfirmationsRequested.Should().ContainSingle();
-        (await appointments.GetById(id)).Should().NotBeNull();
+        dialogs.PinConfirmationsRequested.Should().BeEmpty("deleting an appointment needs no password");
+        dialogs.ConfirmacionsRequested.Should().ContainSingle();
+        (await appointments.GetById(id)).Should().BeNull();
     }
 
     // ── Sales ────────────────────────────────────────────────────────────────

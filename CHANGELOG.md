@@ -5,7 +5,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 
 ## 1.1.0 — in progress
 
-- (add each change here as it is made)
+- Deleting an appointment no longer asks for the owner's PIN, only "are you sure?".
+  Deleting clients, sales, till movements and catalogue items still asks for it.
 
 ## 1.0.0
 
