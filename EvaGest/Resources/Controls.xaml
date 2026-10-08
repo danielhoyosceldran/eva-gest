@@ -101,6 +101,14 @@
         </Setter>
     </Style>
 
+    <!-- Validation message in a dialog: a tinted, bold block so a refused save cannot go unnoticed -->
+    <Style x:Key="ErrorBanner" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+        <Setter Property="Background" Value="{StaticResource DangerBgBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="12,10" />
+    </Style>
+
     <!-- Destructive button (Eliminar, Anul·lar): red outline, hover is a light red tint -->
     <Style x:Key="DestructiveButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
         <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />

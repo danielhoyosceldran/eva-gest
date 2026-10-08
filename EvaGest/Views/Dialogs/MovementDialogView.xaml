@@ -41,7 +41,7 @@
         <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
                  AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
 
-        <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+        <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
                    TextWrapping="Wrap" Margin="0,0,0,12"
                    Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 

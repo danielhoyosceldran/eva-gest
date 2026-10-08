@@ -17,7 +17,7 @@
         <TextBlock Text="{x:Static t:Texts.DurationMinutesOptional}" Style="{StaticResource DataLabel}" />
         <TextBox Text="{Binding DurationMinText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
-        <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+        <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
                    TextWrapping="Wrap" Margin="0,0,0,12"
                    Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 

@@ -19,7 +19,7 @@
         <TextBlock Text="{x:Static t:Texts.RepeatPin}" Style="{StaticResource DataLabel}" />
         <PasswordBox x:Name="RepeatPinBox" MaxLength="6" Margin="0,0,0,12" PasswordChanged="OnPinChanged" />
 
-        <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+        <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
                    TextWrapping="Wrap" Margin="0,0,0,12"
                    Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 

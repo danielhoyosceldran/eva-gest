@@ -23,7 +23,7 @@
             <Button Content="{x:Static t:Texts.ForgotPin}" Style="{StaticResource LinkButton}"
                     Command="{Binding ForgotPinCommand}" Margin="0,0,0,16" />
 
-            <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+            <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
                        TextWrapping="Wrap" Margin="0,0,0,16"
                        Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
@@ -51,7 +51,7 @@
             <Button Content="{x:Static t:Texts.BackToPin}" Style="{StaticResource LinkButton}"
                     Command="{Binding BackToPinCommand}" Margin="0,0,0,16" />
 
-            <TextBlock Text="{Binding ErrorValidation}" Foreground="{StaticResource DangerBrush}"
+            <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
                        TextWrapping="Wrap" Margin="0,0,0,16"
                        Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
