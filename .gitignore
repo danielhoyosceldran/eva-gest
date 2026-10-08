@@ -8,3 +8,6 @@ obj/
 
 # dotnet test output: blame hang dumps (hundreds of MB) and sequence files
 TestResults/
+
+# Inno Setup output (scripts/build-installer.ps1)
+installer/Output/

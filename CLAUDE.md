@@ -37,6 +37,19 @@ seconds. Look for a stale `testhost` process holding the output DLL
 The app itself needs a Windows desktop session; it cannot be launched from a
 headless agent run. Verify through tests instead.
 
+## Versioning and the installer
+
+The installer is versioned (`MAJOR.MINOR.PATCH`). `<Version>` in
+`EvaGest/EvaGest.csproj` is the only place the number lives; `scripts/build-installer.ps1`
+passes it to Inno Setup, which names the output `EvaGest-Setup-<version>.exe`.
+
+- v1 = `1.0.0`, the first installer. Work towards the next release is `1.1.0`.
+- Bump `<Version>` in the same change that starts a release, and log every
+  user-visible change under that version in [`CHANGELOG.md`](CHANGELOG.md).
+- A released version is tagged in git (`v1.0.0`) on the commit it was built from.
+- Never change `AppId` in `installer/EvaGest.iss`: it is how an upgrade replaces
+  the previous install.
+
 ## Language
 
 - Identifiers, namespaces, file names, database columns, comments, commit
