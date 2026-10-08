@@ -23,6 +23,7 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
     them, and the day panel narrows so the week stays readable.
   - The sales chart in Informes keeps every month in view; long names wrap or show
     in full in a tooltip.
+- Closing the app a second time on the same day no longer fails with an error.
 
 ## 1.0.0
 

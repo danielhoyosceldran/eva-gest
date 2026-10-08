@@ -9,3 +9,4 @@ description,repro_steps,solved,commit
 "Reports: ranking names cut off and the sales chart loses its latest months","1366x768 at 125 %: Informes -> client names cut, last bars missing",yes,c599c21
 "Names shortened with no tooltip (client browser rows, workers weekly overview); Spanish headers too narrow in Reports and Catalog","Spanish, any screen: Informes worker ranking 'Ventas atendidas' cut off",yes,c599c21
 "Catalan week range reads 'de octubre' instead of 'd'octubre' (no elision before a vowel)","Catalan: Agenda in a week inside October -> '8 – 10 de octubre 2026'",no,
+"Closing the app threw InvalidOperationException (Close while a Window is closing) when the day's backup was already done","Close the app once (backup taken), reopen, close again -> crash in MainWindow.OnClosing: the no-backup path completes synchronously and Close() runs inside Closing",yes,

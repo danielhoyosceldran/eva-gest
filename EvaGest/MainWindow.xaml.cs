@@ -92,7 +92,12 @@ namespace EvaGest
                 Mouse.OverrideCursor = null;
                 _backupDoneOnClose = true;
             }
-            Close();
+
+            // Queued rather than called directly: when no backup is due, the await above
+            // completes synchronously and we are still inside this Closing handler, where
+            // WPF refuses a nested Close() (InvalidOperationException). Posting it runs it
+            // once the cancelled close has fully unwound.
+            Dispatcher.BeginInvoke(Close);
         }
 
         private async Task RunOverdueCheck()
