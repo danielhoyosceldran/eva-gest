@@ -173,6 +173,13 @@ Convention, established in `Services/SaleService.cs` and `App.xaml.cs`:
 
 ## Conventions worth knowing before editing
 
+- **Every dialog view's root is a `DialogShell`** (`Views/Elements`): the form goes
+  in its content (it scrolls), the error banner and buttons in `Actions` (pinned).
+  `DialogWindow` caps itself to the screen, so a dialog without the shell loses its
+  buttons below the edge on a laptop. Add a new dialog to `ResponsiveLayoutTests`.
+  Screen-fitting helpers live in `Helpers/` (`LayoutFit`, `TableFit`,
+  `ToolbarTitle`) and `Views/Elements/WrappingUniformGrid`; sizes are tokens in
+  `Metrics.xaml`.
 - **Dialog ViewModels are constructed with `new`, not resolved from DI** (about
   23 call sites). They take their host's services plus the entity being edited.
   Do not "fix" this by registering them in `App.Configure`.
@@ -209,7 +216,8 @@ From `disseny-ui.md` §9 — user-visible text is design, not decoration:
 `Services/`, `Views/`, `Scenarios/`, plus `Infra/` for shared fixtures (fake
 services, test-data builders, the WPF app fixture, in-memory DB setup). The
 catalogue of blocks is in `docs/plan/pla-proves.md`; block V, the interface
-language, is newer than that document.
+language, and block R, responsive layout (`Views/ResponsiveLayoutTests.cs`), are
+newer than that document.
 
 - `Services/` and `Scenarios/` run against a real SQLite in-memory database (not
   the EF InMemory provider).

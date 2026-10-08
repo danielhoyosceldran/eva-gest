@@ -1,1 +1,11 @@
 description,repro_steps,solved,commit
+"Dialogs taller than the screen opened with their buttons off screen: DialogWindow was SizeToContent with no size cap and no scrolling","1366x768 at 125 % (or 1920x1080 at 100 % with 4+ sale lines): open Nova venda -> Cobrar is below the bottom edge; same for the appointment, worker and cash-out dialogs",yes,0beda43
+"Appointment dialog about 1200 DIP wide, wider than small laptop screens","1280x800 or 1366x768 at 125 %: Agenda > Nova cita -> the right part of the week picker is off screen",yes,0beda43
+"Client record: a long client name is cut off in the title, and history dates are truncated","Any screen: open the record of a client with a long name -> title and dd/MM/yyyy dates cut off",yes,0beda43
+"Owner mode: the Lock button at the bottom of the navigation is cut off","1366x768 at 125 %: open owner mode -> Bloquejar only partly visible, no way to scroll to it",yes,c599c21
+"Sales page: Client and Concept columns collapse to zero width; filter labels and Netejar filtres clipped","1366x768 at 100 % or smaller: Vendes -> Client and Concepte columns empty",yes,c599c21
+"Home and Till summary cards clip four-digit amounts","1366x768 at 100 %: Home in owner mode with more than 1.000 EUR charged today -> figure cut off",yes,c599c21
+"Agenda: date range squeezed to nothing in the toolbar; fixed 400 DIP day panel crushes the week grid","1280x800 at 125 %: Agenda, open a day in the week view -> no range title, day columns about 50 DIP",yes,c599c21
+"Reports: ranking names cut off and the sales chart loses its latest months","1366x768 at 125 %: Informes -> client names cut, last bars missing",yes,c599c21
+"Names shortened with no tooltip (client browser rows, workers weekly overview); Spanish headers too narrow in Reports and Catalog","Spanish, any screen: Informes worker ranking 'Ventas atendidas' cut off",yes,c599c21
+"Catalan week range reads 'de octubre' instead of 'd'octubre' (no elision before a vowel)","Catalan: Agenda in a week inside October -> '8 – 10 de octubre 2026'",no,
