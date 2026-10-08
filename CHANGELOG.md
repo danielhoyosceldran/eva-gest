@@ -3,7 +3,7 @@
 Installer / app releases. The version is `<Version>` in `EvaGest/EvaGest.csproj`;
 the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 
-## 1.1.0 — in progress
+## 1.1.0
 
 - Deleting an appointment no longer asks for the owner's PIN, only "are you sure?".
   Deleting clients, sales, till movements and catalogue items still asks for it.
