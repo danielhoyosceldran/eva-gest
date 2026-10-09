@@ -29,6 +29,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - The windows for services, products, payment methods, categories, clients, till
   movements and workers now save before they close. If saving fails they stay open,
   say so, and keep what was typed; before, it was lost behind a generic error.
+- An error that keeps repeating now shows its message once (at most once a minute)
+  instead of one window after another, and an error with no main window open closes
+  the app instead of leaving it running invisibly.
 
 ## 1.1.0
 

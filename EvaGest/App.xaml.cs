@@ -19,6 +19,9 @@ public partial class App : Application
 
     private static Mutex? _instance;
 
+    /// <summary>Keeps the unhandled-error message from repeating (E-10).</summary>
+    private readonly Helpers.ErrorNoticeGate _errorNotices = new(Helpers.ErrorNoticeGate.DefaultQuiet);
+
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -39,10 +42,34 @@ public partial class App : Application
         // disculpes ni tecnicismes"). Log the real cause, tell the user something plain.
         DispatcherUnhandledException += (_, args) =>
         {
-            Log.Error(args.Exception, "Unhandled exception");
-            MessageBox.Show(Texts.UnexpectedErrorMessage, Texts.UnexpectedErrorTitle,
-                MessageBoxButton.OK, MessageBoxImage.Warning);
             args.Handled = true;
+
+            // No main window on screen: nothing the user could carry on with. Marking it
+            // handled and staying up left an invisible process holding the single-instance
+            // mutex (E-10), so the app says so and closes instead.
+            if (MainWindow is not { IsLoaded: true })
+            {
+                Log.Fatal(args.Exception, "Unhandled exception with no main window open; closing");
+                MessageBox.Show(Texts.UnexpectedErrorMessage, Texts.UnexpectedErrorTitle,
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                Shutdown();
+                return;
+            }
+
+            Log.Error(args.Exception, "Unhandled exception");
+
+            // Always logged, but told once: not again while a box is up, nor for the same
+            // failure repeating within a minute (a timer or a binding hitting it each time).
+            if (!_errorNotices.TryEnter(args.Exception, DateTime.Now)) return;
+            try
+            {
+                MessageBox.Show(Texts.UnexpectedErrorMessage, Texts.UnexpectedErrorTitle,
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            finally
+            {
+                _errorNotices.Exit();
+            }
         };
 
         // Exceptions off the UI thread never reach DispatcherUnhandledException above and
