@@ -1598,4 +1598,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="RemoveClosedDay" xml:space="preserve">
     <value>Treure</value>
   </data>
+  <data name="AppointmentNotLoaded" xml:space="preserve">
+    <value>Les dades de la cita no s'han pogut carregar. Tanca aquesta finestra i torna-la a obrir per guardar-la.</value>
+  </data>
 </root>

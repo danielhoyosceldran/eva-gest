@@ -1598,4 +1598,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="RemoveClosedDay" xml:space="preserve">
     <value>Quitar</value>
   </data>
+  <data name="AppointmentNotLoaded" xml:space="preserve">
+    <value>Los datos de la cita no se han podido cargar. Cierra esta ventana y vuelve a abrirla para guardarla.</value>
+  </data>
 </root>

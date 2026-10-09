@@ -6,6 +6,7 @@ using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.ViewModels.Elements;
 using EvaGest.Resources;
+using Serilog;
 
 namespace EvaGest.ViewModels.Dialogs;
 
@@ -96,8 +97,13 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
 
     public override string Title => _id is null ? Texts.NewAppointmentTitle : Texts.EditAppointmentTitle;
 
-    /// <summary>Awaited by the tests; the views let it run in the background.</summary>
+    /// <summary>Awaited by the tests and by <see cref="Save"/>; the views let it run in
+    /// the background. Never faults: a failure is logged and shown in the dialog (E-03).</summary>
     public Task Initialization { get; }
+
+    /// <summary>Set once <see cref="Initialize"/> has filled the dialog in completely.
+    /// Until then the form is not what the appointment holds, so it cannot be saved.</summary>
+    private bool _initialized;
 
     public AppointmentDialogViewModel(IAppointmentService appointments, IAvailabilityService availability,
         IClientService clients, ICatalogService catalog, IWorkerService workers,
@@ -160,7 +166,49 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
             DurationMin = appointment.DurationMin;
         }
 
-        Initialization = Initialize(clients, catalog, workers, settings);
+        Initialization = InitializeObserved(clients, catalog, workers, settings);
+    }
+
+    /// <summary>
+    /// Runs <see cref="Initialize"/> and owns its failure (E-03). Nothing in the app awaits
+    /// the loading task, so an exception in it used to go unobserved: the dialog opened
+    /// half empty with no message and no log line, and saving an edited appointment then
+    /// wrote its service and worker back as empty. Now the failure is logged, the dialog
+    /// says to reopen it, and <see cref="Save"/> refuses until a load has completed.
+    /// </summary>
+    private async Task InitializeObserved(IClientService clients, ICatalogService catalog,
+        IWorkerService workers, ISettingsService settings)
+    {
+        try
+        {
+            await Initialize(clients, catalog, workers, settings);
+            _initialized = true;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Appointment dialog could not load (appointment {AppointmentId})", _id);
+            ErrorValidation = Texts.AppointmentNotLoaded;
+        }
+    }
+
+    /// <summary>
+    /// Starts a refresh that follows an edit (the week picker, the availability notices)
+    /// without awaiting it, but keeps its failure: these used to be bare <c>_ = ...</c>
+    /// calls whose exceptions vanished. They only inform, and Save checks availability
+    /// again itself, so a failure is logged and the form carries on.
+    /// </summary>
+    private void RefreshInBackground(Func<Task> refresh, string what) => _ = RefreshQuietly(refresh, what);
+
+    private async Task RefreshQuietly(Func<Task> refresh, string what)
+    {
+        try
+        {
+            await refresh();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Appointment dialog could not refresh {What} (appointment {AppointmentId})", what, _id);
+        }
     }
 
     private async Task Initialize(IClientService clients, ICatalogService catalog,
@@ -282,22 +330,22 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
 
     partial void OnDateChanged(DateOnly value)
     {
-        _ = SyncGrid(value);
-        _ = ReviewNotices();
+        RefreshInBackground(() => SyncGrid(value), "the week picker");
+        RefreshInBackground(ReviewNotices, "the availability notices");
     }
 
     partial void OnTimeChanged(TimeOnly value)
     {
         Sync(() => TimeText = ScheduleHelper.Format(value));
         Grid?.ShowGhost(Date, value, DurationMin);
-        _ = ReviewNotices();
+        RefreshInBackground(ReviewNotices, "the availability notices");
     }
 
     partial void OnDurationMinChanged(int value)
     {
         Sync(() => DurationText = value.ToString());
         Grid?.ShowGhost(Date, Time, Math.Max(1, value));
-        _ = ReviewNotices();
+        RefreshInBackground(ReviewNotices, "the availability notices");
     }
 
     // Only a value that parses moves the appointment. Anything else just sits in the
@@ -321,7 +369,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         finally { _syncingText = false; }
     }
 
-    partial void OnWorkerChanged(Worker? value) => _ = ReviewNotices();
+    partial void OnWorkerChanged(Worker? value) => RefreshInBackground(ReviewNotices, "the availability notices");
 
     private async Task SyncGrid(DateOnly date)
     {
@@ -345,6 +393,15 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     [RelayCommand]
     private async Task Save()
     {
+        // A click that lands while the dialog is still loading waits for it; one after a
+        // failed load is refused, since the form does not hold what the appointment does.
+        await Initialization;
+        if (!_initialized)
+        {
+            ErrorValidation = Texts.AppointmentNotLoaded;
+            return;
+        }
+
         var client = SelectedClient;
         if (client is null && string.IsNullOrWhiteSpace(TextClient))
         {

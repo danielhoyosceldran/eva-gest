@@ -546,6 +546,7 @@ public static class Texts
         nameof(ConfirmRemoveClosedDayTitle),
         nameof(ConfirmRemoveClosedDayMessage),
         nameof(RemoveClosedDay),
+        nameof(AppointmentNotLoaded),
     ];
 
     /// <summary>Pendent</summary>
@@ -2077,4 +2078,7 @@ public static class Texts
 
     /// <summary>Treure</summary>
     public static string RemoveClosedDay => Get(nameof(RemoveClosedDay));
+
+    /// <summary>Les dades de la cita no s'han pogut carregar. Tanca aquesta finestra i torna-la a obrir per guardar-la.</summary>
+    public static string AppointmentNotLoaded => Get(nameof(AppointmentNotLoaded));
 }

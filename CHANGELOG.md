@@ -11,6 +11,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - If EvaGest cannot start because its settings file or data folder is missing or
   unusable, it now says so and closes. It used to stay running invisibly, and every
   later attempt to open it said it was already open.
+- If the appointment window cannot load its data, it now says so and does not let the
+  appointment be saved. It used to open half empty without a word, and saving an
+  edited appointment then removed its service and worker.
 
 ## 1.1.0
 
