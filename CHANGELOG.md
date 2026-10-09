@@ -3,7 +3,7 @@
 Installer / app releases. The version is `<Version>` in `EvaGest/EvaGest.csproj`;
 the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 
-## 1.1.1
+## 2.0.0
 
 - Restoring a backup made by an older version (1.0) now finishes and closes the app as
   it should. It used to report an error after the data had already been restored and
@@ -41,6 +41,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - In the Agenda, appointments now cover at most two thirds of the day column. The
   right third stays free, so another appointment at the same time can be added by
   clicking there.
+- The mouse wheel now scrolls the page when the pointer is over a table (Clients and
+  every page with a long list). Before, the page only moved with the pointer beside it.
 
 ## 1.1.0
 
