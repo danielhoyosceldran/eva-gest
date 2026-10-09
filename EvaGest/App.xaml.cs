@@ -7,7 +7,6 @@ using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using EvaGest.Resources;
@@ -76,34 +75,41 @@ public partial class App : Application
             return;
         }
 
-        var config = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json")
-            .Build();
+        // Guarded like the steps below (E-02). A missing or broken appsettings.json, or a
+        // data folder that cannot be created, used to escape to DispatcherUnhandledException:
+        // it was logged to a logger not configured yet (so nowhere), marked handled, and
+        // with no window ever opened the process stayed alive holding the mutex, so every
+        // later launch said EvaGest was already open.
+        StartupFolders.Layout layout;
+        try
+        {
+            // Expand %LOCALAPPDATA% and make sure the folders exist on first run
+            layout = StartupFolders.Prepare(AppContext.BaseDirectory);
 
-        // Expand %LOCALAPPDATA% and make sure the folders exist on first run
-        string dbPath = Environment.ExpandEnvironmentVariables(
-            config["DatabasePath"] ?? throw new InvalidOperationException(
-                "appsettings.json is missing DatabasePath"));
-
-        string baseFolder = Path.GetDirectoryName(dbPath)!;
-        Directory.CreateDirectory(baseFolder);
-        Directory.CreateDirectory(Path.Combine(baseFolder, "Backups"));
-        Directory.CreateDirectory(Path.Combine(baseFolder, "Logs"));
-
-        // Never pruned. The log is part of the audit trail CU-04 asks for (sale edits and
-        // voids, client deletions, cash movements), and the books it backs up have to be
-        // kept for years; 30 files used to erase that record a month later. One small
-        // text file a day costs next to nothing. The durable copy of each change lives
-        // in the audit_entries table, which also travels inside every backup.
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.File(Path.Combine(baseFolder, "Logs", "log-.txt"),
-                          rollingInterval: RollingInterval.Day,
-                          retainedFileCountLimit: null)
-            .CreateLogger();
+            // Never pruned. The log is part of the audit trail CU-04 asks for (sale edits and
+            // voids, client deletions, cash movements), and the books it backs up have to be
+            // kept for years; 30 files used to erase that record a month later. One small
+            // text file a day costs next to nothing. The durable copy of each change lives
+            // in the audit_entries table, which also travels inside every backup.
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File(Path.Combine(layout.LogsFolder, "log-.txt"),
+                              rollingInterval: RollingInterval.Day,
+                              retainedFileCountLimit: null)
+                .CreateLogger();
+        }
+        catch (Exception ex)
+        {
+            StartupFolders.RecordEarlyFailure(ex);
+            MessageBox.Show(Texts.StartupFailedMessage, Texts.StartupFailedTitle,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            Shutdown();
+            return;
+        }
 
         Log.Information("Application started");
 
+        string dbPath = layout.DbPath;
+        string baseFolder = layout.BaseFolder;
         Services = Configure(dbPath, baseFolder);
 
         // A corrupt or locked database must never surface as a raw exception (RF-18)

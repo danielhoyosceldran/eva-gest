@@ -8,6 +8,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - Restoring a backup made by an older version (1.0) now finishes and closes the app as
   it should. It used to report an error after the data had already been restored and
   leave the app open on it.
+- If EvaGest cannot start because its settings file or data folder is missing or
+  unusable, it now says so and closes. It used to stay running invisibly, and every
+  later attempt to open it said it was already open.
 
 ## 1.1.0
 

@@ -27,7 +27,18 @@ public static class SingleInstance
             {
                 if (other.Id == current.Id) continue;
 
-                IntPtr window = other.MainWindowHandle;
+                // The other copy can exit between the listing and this read, and then
+                // MainWindowHandle throws. Escaping from here left this second copy with
+                // no window and no shutdown, alive in the background (E-02).
+                IntPtr window;
+                try
+                {
+                    window = other.MainWindowHandle;
+                }
+                catch (InvalidOperationException)
+                {
+                    continue;
+                }
                 if (window == IntPtr.Zero) continue;
 
                 if (IsIconic(window)) ShowWindow(window, SwRestore);
