@@ -38,6 +38,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   the days still shown instead of naming days that were never loaded.
 - If Configuració cannot read the settings, it now says so at the top of the page and
   does not save the switches over the stored values until it has read them.
+- In the Agenda, appointments now cover at most two thirds of the day column. The
+  right third stays free, so another appointment at the same time can be added by
+  clicking there.
 
 ## 1.1.0
 
