@@ -13,10 +13,13 @@ public class SoundService(ISettingsService settings) : ISoundService
 {
     public async Task PlayConfirmation()
     {
-        if (!await settings.GetBool(ConfigKeys.ConfirmationSound, perDefault: true)) return;
-
+        // The setting is read inside the try as well. It used to be read before it, so a
+        // failed read escaped from here, after the sale had already been saved: the sale
+        // dialog stayed open on a charged sale, and Cobrar again charged it twice (E-07).
         try
         {
+            if (!await settings.GetBool(ConfigKeys.ConfirmationSound, perDefault: true)) return;
+
             System.Media.SystemSounds.Asterisk.Play();
         }
         catch (Exception ex)

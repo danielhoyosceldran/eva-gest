@@ -418,8 +418,11 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         if (CurrentMode == Mode.Edit) await _sales.Update(sale, lines);
         else await _sales.Create(sale, lines);
 
-        await _so.PlayConfirmation();
+        // Closed as soon as the sale is stored, before anything else can go wrong: a
+        // dialog left open on a saved sale offers Cobrar again, and a second click
+        // charges the same sale twice (E-07). The chime is only a confirmation.
         RequestClose(true);
+        await _so.PlayConfirmation();
     }
 
     [RelayCommand]

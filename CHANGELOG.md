@@ -22,6 +22,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - A payment method or expense category can no longer be given a name that already
   exists (a deactivated one included). The window now says so and keeps what was typed,
   instead of closing on an unexpected error.
+- The sale window now closes as soon as the sale is saved. If something failed just
+  after saving, it could stay open and a second Cobrar charged the same sale twice.
 
 ## 1.1.0
 
