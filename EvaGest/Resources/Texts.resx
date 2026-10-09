@@ -1607,4 +1607,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="CategoryNameAlreadyExists" xml:space="preserve">
     <value>Ja hi ha una categoria que es diu «{0}». Posa-li un altre nom, o reactiva la que ja hi ha si està desactivada.</value>
   </data>
+  <data name="BackupNotTaken" xml:space="preserve">
+    <value>No s'ha pogut fer la còpia: ara mateix no n'hi ha cap de nova. Comprova que el disc tingui espai lliure i torna-ho a provar d'aquí a un moment.</value>
+  </data>
+  <data name="RestoreNotDone" xml:space="preserve">
+    <value>No s'ha pogut restaurar la còpia. Comprova que el disc tingui espai lliure i torna-ho a provar d'aquí a un moment.</value>
+  </data>
 </root>

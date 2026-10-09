@@ -24,6 +24,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   instead of closing on an unexpected error.
 - The sale window now closes as soon as the sale is saved. If something failed just
   after saving, it could stay open and a second Cobrar charged the same sale twice.
+- When "Fer còpia ara" or a restore cannot be done (disk full, data file busy), the
+  page or the restore window now says so and what to try, instead of a generic error.
 
 ## 1.1.0
 

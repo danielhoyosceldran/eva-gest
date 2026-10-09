@@ -1607,4 +1607,10 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="CategoryNameAlreadyExists" xml:space="preserve">
     <value>Ya hay una categoría que se llama «{0}». Ponle otro nombre, o reactiva la que ya existe si está desactivada.</value>
   </data>
+  <data name="BackupNotTaken" xml:space="preserve">
+    <value>No se ha podido hacer la copia: ahora mismo no hay ninguna nueva. Comprueba que el disco tenga espacio libre y vuelve a intentarlo en un momento.</value>
+  </data>
+  <data name="RestoreNotDone" xml:space="preserve">
+    <value>No se ha podido restaurar la copia. Comprueba que el disco tenga espacio libre y vuelve a intentarlo en un momento.</value>
+  </data>
 </root>

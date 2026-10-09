@@ -484,6 +484,15 @@ public partial class SettingsViewModel(
             ErrorBackup = Texts.BackupNotVerified;
             return;
         }
+        catch (Exception ex)
+        {
+            // Anything else (a full disk, a folder that cannot be written, the data file
+            // busy past every retry) means the same to the user: no copy was taken. It
+            // used to reach the generic error, which says neither that nor what to try (E-08).
+            Log.Error(ex, "Manual backup failed");
+            ErrorBackup = Texts.BackupNotTaken;
+            return;
+        }
 
         ErrorBackup = null;
         await dialogs.Inform(Texts.BackupDoneTitle,

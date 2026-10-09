@@ -68,6 +68,15 @@ public partial class RestoreDialogViewModel : DialogViewModelBase
             ErrorValidation = Texts.BackupNotRestorable;
             return;
         }
+        catch (Exception ex)
+        {
+            // The safety copy of the current data, or writing the chosen copy over it,
+            // failed (a full disk, the data file busy past every retry). Said here, so the
+            // user knows the restore did not happen, instead of the generic error (E-08).
+            Log.Error(ex, "Restore from {BackupPath} failed", Selected.Path);
+            ErrorValidation = Texts.RestoreNotDone;
+            return;
+        }
 
         await _dialogs.Inform(Texts.BackupRestoredTitle, Texts.BackupRestoredMessage);
 

@@ -549,6 +549,8 @@ public static class Texts
         nameof(AppointmentNotLoaded),
         nameof(MethodNameAlreadyExists),
         nameof(CategoryNameAlreadyExists),
+        nameof(BackupNotTaken),
+        nameof(RestoreNotDone),
     ];
 
     /// <summary>Pendent</summary>
@@ -2089,4 +2091,10 @@ public static class Texts
 
     /// <summary>Ja hi ha una categoria que es diu «{0}». Posa-li un altre nom, o reactiva la que ja hi ha si està desactivada.</summary>
     public static string CategoryNameAlreadyExists => Get(nameof(CategoryNameAlreadyExists));
+
+    /// <summary>No s'ha pogut fer la còpia: ara mateix no n'hi ha cap de nova. Comprova que el disc tingui espai lliure i torna-ho a provar d'aquí a un moment.</summary>
+    public static string BackupNotTaken => Get(nameof(BackupNotTaken));
+
+    /// <summary>No s'ha pogut restaurar la còpia. Comprova que el disc tingui espai lliure i torna-ho a provar d'aquí a un moment.</summary>
+    public static string RestoreNotDone => Get(nameof(RestoreNotDone));
 }
