@@ -137,8 +137,8 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         },
         ["Service"] = _ => Task.FromResult(new Built(new ServiceDialogViewModel(), () => new ServiceDialogView())),
         ["Product"] = _ => Task.FromResult(new Built(new ProductDialogViewModel(), () => new ProductDialogView())),
-        ["Category"] = _ => Task.FromResult(new Built(new CategoryDialogViewModel(), () => new CategoryDialogView())),
-        ["Payment method"] = _ => Task.FromResult(new Built(new PaymentMethodDialogViewModel(), () => new PaymentMethodDialogView())),
+        ["Category"] = s => Task.FromResult(new Built(new CategoryDialogViewModel(new CatalogService(s.Factory)), () => new CategoryDialogView())),
+        ["Payment method"] = s => Task.FromResult(new Built(new PaymentMethodDialogViewModel(new CatalogService(s.Factory)), () => new PaymentMethodDialogView())),
         ["Owner unlock"] = s => Task.FromResult(new Built(
             new OwnerUnlockDialogViewModel(new OwnerAccessService(new SettingsService(s.Factory))),
             () => new OwnerUnlockDialogView())),

@@ -1601,4 +1601,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="AppointmentNotLoaded" xml:space="preserve">
     <value>Les dades de la cita no s'han pogut carregar. Tanca aquesta finestra i torna-la a obrir per guardar-la.</value>
   </data>
+  <data name="MethodNameAlreadyExists" xml:space="preserve">
+    <value>Ja hi ha un mètode de pagament que es diu «{0}». Posa-li un altre nom, o reactiva el que ja hi ha si està desactivat.</value>
+  </data>
+  <data name="CategoryNameAlreadyExists" xml:space="preserve">
+    <value>Ja hi ha una categoria que es diu «{0}». Posa-li un altre nom, o reactiva la que ja hi ha si està desactivada.</value>
+  </data>
 </root>

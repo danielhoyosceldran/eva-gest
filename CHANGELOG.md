@@ -19,6 +19,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   automatic backup was not tried again, and it showed up in the list to restore.
 - A backup that was taken correctly is no longer reported as failed when tidying up
   the old copies afterwards runs into a problem.
+- A payment method or expense category can no longer be given a name that already
+  exists (a deactivated one included). The window now says so and keeps what was typed,
+  instead of closing on an unexpected error.
 
 ## 1.1.0
 

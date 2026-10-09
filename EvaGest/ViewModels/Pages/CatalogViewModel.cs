@@ -148,7 +148,7 @@ public partial class CatalogViewModel(
     [RelayCommand]
     private async Task NewMethod()
     {
-        var vm = new PaymentMethodDialogViewModel();
+        var vm = new PaymentMethodDialogViewModel(catalog);
         if (await dialogs.ShowDialog(vm))
         {
             await catalog.CreateMethod(vm.AModel().Name);
@@ -159,7 +159,7 @@ public partial class CatalogViewModel(
     [RelayCommand]
     private async Task EditMethod(PaymentMethod method)
     {
-        var vm = new PaymentMethodDialogViewModel(method);
+        var vm = new PaymentMethodDialogViewModel(catalog, method);
         if (await dialogs.ShowDialog(vm))
         {
             var updated = vm.AModel();
@@ -212,7 +212,7 @@ public partial class CatalogViewModel(
     [RelayCommand]
     private async Task NewCategory()
     {
-        var vm = new CategoryDialogViewModel();
+        var vm = new CategoryDialogViewModel(catalog);
         if (await dialogs.ShowDialog(vm))
         {
             await catalog.CreateCategory(vm.AModel().Name);
@@ -223,7 +223,7 @@ public partial class CatalogViewModel(
     [RelayCommand]
     private async Task EditCategory(ExpenseCategory category)
     {
-        var vm = new CategoryDialogViewModel(category);
+        var vm = new CategoryDialogViewModel(catalog, category);
         if (await dialogs.ShowDialog(vm))
         {
             var updated = vm.AModel();

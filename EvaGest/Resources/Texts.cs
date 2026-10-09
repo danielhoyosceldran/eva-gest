@@ -547,6 +547,8 @@ public static class Texts
         nameof(ConfirmRemoveClosedDayMessage),
         nameof(RemoveClosedDay),
         nameof(AppointmentNotLoaded),
+        nameof(MethodNameAlreadyExists),
+        nameof(CategoryNameAlreadyExists),
     ];
 
     /// <summary>Pendent</summary>
@@ -2081,4 +2083,10 @@ public static class Texts
 
     /// <summary>Les dades de la cita no s'han pogut carregar. Tanca aquesta finestra i torna-la a obrir per guardar-la.</summary>
     public static string AppointmentNotLoaded => Get(nameof(AppointmentNotLoaded));
+
+    /// <summary>Ja hi ha un mètode de pagament que es diu «{0}». Posa-li un altre nom, o reactiva el que ja hi ha si està desactivat.</summary>
+    public static string MethodNameAlreadyExists => Get(nameof(MethodNameAlreadyExists));
+
+    /// <summary>Ja hi ha una categoria que es diu «{0}». Posa-li un altre nom, o reactiva la que ja hi ha si està desactivada.</summary>
+    public static string CategoryNameAlreadyExists => Get(nameof(CategoryNameAlreadyExists));
 }

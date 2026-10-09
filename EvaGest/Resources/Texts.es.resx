@@ -1601,4 +1601,10 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="AppointmentNotLoaded" xml:space="preserve">
     <value>Los datos de la cita no se han podido cargar. Cierra esta ventana y vuelve a abrirla para guardarla.</value>
   </data>
+  <data name="MethodNameAlreadyExists" xml:space="preserve">
+    <value>Ya hay un método de pago que se llama «{0}». Ponle otro nombre, o reactiva el que ya existe si está desactivado.</value>
+  </data>
+  <data name="CategoryNameAlreadyExists" xml:space="preserve">
+    <value>Ya hay una categoría que se llama «{0}». Ponle otro nombre, o reactiva la que ya existe si está desactivada.</value>
+  </data>
 </root>
