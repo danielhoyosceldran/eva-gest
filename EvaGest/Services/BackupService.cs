@@ -216,7 +216,29 @@ public class BackupService(
         // why a day's work is missing (CU-09b).
         Log.Information("Database restored from backup {BackupPath}", backupPath);
 
-        await DeleteOldBackups();
+        // Best effort: the restore is done by now, and the prune reads the retention from
+        // the database that was just put in place. A copy older than a migration that
+        // renamed the settings table (E-01) cannot answer that until the next startup
+        // migrates it, and letting the failure out here reported a finished restore as
+        // failed and kept the app from closing.
+        await PruneQuietly();
+    }
+
+    /// <summary>
+    /// <see cref="DeleteOldBackups"/> for the callers that have already done their real
+    /// job (taken a copy, restored one): a failure to prune is logged and left for the
+    /// next backup, which prunes again, instead of turning that job into an error.
+    /// </summary>
+    private async Task PruneQuietly()
+    {
+        try
+        {
+            await DeleteOldBackups();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Could not prune old backups; the next backup will try again");
+        }
     }
 
     /// <param name="verify">

@@ -3,6 +3,12 @@
 Installer / app releases. The version is `<Version>` in `EvaGest/EvaGest.csproj`;
 the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 
+## 1.1.1
+
+- Restoring a backup made by an older version (1.0) now finishes and closes the app as
+  it should. It used to report an error after the data had already been restored and
+  leave the app open on it.
+
 ## 1.1.0
 
 - Deleting an appointment no longer asks for the owner's PIN, only "are you sure?".
