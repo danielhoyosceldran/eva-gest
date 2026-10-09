@@ -32,6 +32,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - An error that keeps repeating now shows its message once (at most once a minute)
   instead of one window after another, and an error with no main window open closes
   the app instead of leaving it running invisibly.
+- If the Agenda could not load the workers the first time it was opened, it now loads
+  them the next time; the worker filter used to stay without them until a restart.
 
 ## 1.1.0
 

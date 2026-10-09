@@ -99,9 +99,15 @@ public partial class AgendaViewModel : PageViewModelBase
     {
         if (WorkerFilterOptions.Count == 0)
         {
+            // Read before the list is touched. The two fixed entries used to go in first,
+            // so a failed read left the list at two, never empty again, and the workers
+            // were missing from the filter for the rest of the session (E-11). Now a
+            // failure leaves it empty and the next visit to the page tries again.
+            var workers = await _workers.GetAll();
+
             WorkerFilterOptions.Add(new WorkerFilterItem(Texts.AllWorkers, null, IsUnassigned: false));
             WorkerFilterOptions.Add(new WorkerFilterItem(Texts.Unassigned, null, IsUnassigned: true));
-            foreach (var worker in await _workers.GetAll())
+            foreach (var worker in workers)
                 WorkerFilterOptions.Add(new WorkerFilterItem(worker.Name, worker, IsUnassigned: false));
 
             SelectedWorkerFilter = WorkerFilterOptions[0];
