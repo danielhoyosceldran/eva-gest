@@ -1616,4 +1616,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="SaveFailedKeepEditing" xml:space="preserve">
     <value>No se ha podido guardar. Lo que has escrito se mantiene: vuelve a intentarlo en un momento.</value>
   </data>
+  <data name="SettingsNotLoaded" xml:space="preserve">
+    <value>No se han podido leer los ajustes, así que los valores que ves pueden no ser los guardados y los cambios no se guardarán. Ve a otra página y vuelve aquí para intentarlo de nuevo.</value>
+  </data>
 </root>

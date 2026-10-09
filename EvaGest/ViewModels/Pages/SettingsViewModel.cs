@@ -171,10 +171,23 @@ public partial class SettingsViewModel(
             ErrorLanguage = null;
             ShopConfirmation = null;
             ErrorShop = null;
+            Notice = null;
+
+            // Only a complete load counts. This used to be set in the finally, so a load
+            // that failed half way left the unread fields at their defaults while the
+            // controls that save as they change behaved as if those defaults were the
+            // stored values (E-13). Until a load succeeds, they save nothing.
+            _loaded = true;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Settings page could not load");
+            // Not cleared after a few seconds like other notes: it stays until a load
+            // goes through, because every value on the page is in doubt until then.
+            Notice = Texts.SettingsNotLoaded;
         }
         finally
         {
-            _loaded = true;
             Loading = false;
         }
     }

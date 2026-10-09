@@ -8,6 +8,13 @@
     <StackPanel Margin="{StaticResource PagePad}">
         <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
 
+        <!-- Said when the settings could not be read (E-13) -->
+        <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
+                BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,12"
+                Visibility="{Binding Notice, Converter={StaticResource NullToVisibilityConverter}}">
+            <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Style="{StaticResource DataLabel}" />
+        </Border>
+
         <TextBlock Text="{x:Static t:Texts.Language}" Style="{StaticResource Subtitle}" />
         <Border Style="{StaticResource DataCard}" Margin="0,0,0,16">
             <StackPanel>

@@ -552,6 +552,7 @@ public static class Texts
         nameof(BackupNotTaken),
         nameof(RestoreNotDone),
         nameof(SaveFailedKeepEditing),
+        nameof(SettingsNotLoaded),
     ];
 
     /// <summary>Pendent</summary>
@@ -2101,4 +2102,7 @@ public static class Texts
 
     /// <summary>No s'ha pogut guardar. El que has escrit es manté: torna-ho a provar d'aquí a un moment.</summary>
     public static string SaveFailedKeepEditing => Get(nameof(SaveFailedKeepEditing));
+
+    /// <summary>No s'han pogut llegir els ajustos, així que els valors que veus poden no ser els guardats i els canvis no es desaran. Ves a una altra pàgina i torna aquí per tornar-ho a provar.</summary>
+    public static string SettingsNotLoaded => Get(nameof(SettingsNotLoaded));
 }

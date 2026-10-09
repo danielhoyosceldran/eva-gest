@@ -1616,4 +1616,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="SaveFailedKeepEditing" xml:space="preserve">
     <value>No s'ha pogut guardar. El que has escrit es manté: torna-ho a provar d'aquí a un moment.</value>
   </data>
+  <data name="SettingsNotLoaded" xml:space="preserve">
+    <value>No s'han pogut llegir els ajustos, així que els valors que veus poden no ser els guardats i els canvis no es desaran. Ves a una altra pàgina i torna aquí per tornar-ho a provar.</value>
+  </data>
 </root>

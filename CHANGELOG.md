@@ -36,6 +36,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   them the next time; the worker filter used to stay without them until a restart.
 - When moving the Agenda to other days fails, the date range at the top now stays on
   the days still shown instead of naming days that were never loaded.
+- If Configuració cannot read the settings, it now says so at the top of the page and
+  does not save the switches over the stored values until it has read them.
 
 ## 1.1.0
 
