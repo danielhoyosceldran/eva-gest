@@ -29,7 +29,7 @@
                         <DataGridTextColumn Header="{x:Static t:Texts.Vat}" Binding="{Binding VatText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Duration}" Binding="{Binding DurationText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Service.Active}" Width="72" />
-                        <DataGridTemplateColumn Header="" Width="*">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -70,7 +70,7 @@
                         <DataGridTextColumn Header="{x:Static t:Texts.Category}" Binding="{Binding Product.Category}" Width="120" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Vat}" Binding="{Binding VatText}" Width="80" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Product.Active}" Width="72" />
-                        <DataGridTemplateColumn Header="" Width="*">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -108,7 +108,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Active}" Width="72" />
-                        <DataGridTemplateColumn Header="" Width="*">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -158,7 +158,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridCheckBoxColumn Header="{x:Static t:Texts.ColumnActive}" Binding="{Binding Active}" Width="72" />
-                        <DataGridTemplateColumn Header="" Width="*">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

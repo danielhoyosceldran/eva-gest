@@ -35,7 +35,7 @@
                         <!-- Visits / Total spent / Last visit come from the aggregated indicators
                              (RF-17), which ReportsService computes from Phase 8 on. Until then
                              no made-up figures are shown. -->
-                        <DataGridTemplateColumn Header="" Width="*">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -100,7 +100,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{x:Static t:Texts.Name}" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Mobile}" Binding="{Binding Mobile}" Width="130" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTemplateColumn Header="" Width="120">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{x:Static t:Texts.Wake}" Style="{StaticResource SecondaryButton}"

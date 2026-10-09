@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -38,6 +39,24 @@ public static class TableFit
         else grid.SizeChanged -= OnSizeChanged;
     }
 
+    private static readonly DependencyProperty WatchedProperty = DependencyProperty.RegisterAttached(
+        "Watched", typeof(bool), typeof(TableFit), new PropertyMetadata(false));
+
+    /// <summary>An automatic column (the row actions) only learns its width once its cells
+    /// are measured, after the grid's own size is settled. Refit whenever that width
+    /// changes, or the fit would run against a stale figure.</summary>
+    private static void WatchAutoColumns(DataGrid grid)
+    {
+        var descriptor = DependencyPropertyDescriptor.FromProperty(
+            DataGridColumn.ActualWidthProperty, typeof(DataGridColumn));
+        foreach (var column in grid.Columns.Where(c => !c.Width.IsAbsolute && !c.Width.IsStar
+                                                       && !(bool)c.GetValue(WatchedProperty)))
+        {
+            column.SetValue(WatchedProperty, true);
+            descriptor.AddValueChanged(column, (_, _) => Fit(grid));
+        }
+    }
+
     private static void OnSizeChanged(object sender, SizeChangedEventArgs e) => Fit((DataGrid)sender);
 
     /// <summary>
@@ -48,6 +67,7 @@ public static class TableFit
     /// </summary>
     public static void Fit(DataGrid grid)
     {
+        WatchAutoColumns(grid);
         double available = grid.ActualWidth - grid.BorderThickness.Left - grid.BorderThickness.Right
                            - SystemParameters.VerticalScrollBarWidth;
         if (available <= 0) return;

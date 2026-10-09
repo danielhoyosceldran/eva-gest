@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Seed EvaGest DB with 6 months of barbershop data.
+Seed EvaGest DB with 6 months of barbershop data, ending yesterday.
 
 Clears ALL tables, then populates with realistic data:
   - 2 workers with different schedules
   - 100 clients with varying visit patterns
-  - Appointments + sales (service lines, optional product lines)
+  - Appointments (all Completed, each with its sale) up to yesterday; none from
+    today onwards
   - Walk-in sales (no appointment)
   - Monthly salary payments + tax consultory cash movements
 
@@ -32,10 +33,9 @@ from datetime import date, timedelta
 # Config
 # ---------------------------------------------------------------------------
 DEFAULT_DB = os.path.expandvars(r"%LOCALAPPDATA%\EvaGest\barberia.db")
-START_DATE  = date(2026, 3, 20)
-TODAY       = date(2026, 9, 20)   # past/future boundary
-END_DATE    = date(2026, 9, 19)   # last day with completed data
-FUTURE_END  = date(2026, 10, 20)  # 1 month of future appointments
+TODAY       = date.today()                # no appointments from today onwards
+START_DATE  = TODAY - timedelta(days=202)  # about 6 months of history
+END_DATE    = TODAY - timedelta(days=1)   # last day with data: every appointment is Completed
 SEED = 42
 
 # ---------------------------------------------------------------------------
@@ -475,8 +475,8 @@ def seed(db_path: str) -> None:
     print("Generating appointments …")
 
     for idx, cid in enumerate(client_ids):
-        # Past visits up to END_DATE + future bookings up to FUTURE_END
-        for vd in _visit_dates(client_patterns[idx], START_DATE, FUTURE_END):
+        # Past visits only, up to END_DATE: nothing is booked from today on
+        for vd in _visit_dates(client_patterns[idx], START_DATE, END_DATE):
             wd = vd.weekday()
             marc_ok = wd in MARC_DAYS
             joan_ok = wd in JOAN_DAYS
@@ -511,13 +511,7 @@ def seed(db_path: str) -> None:
             t_str = f"{slot[0]:02d}:{slot[1]:02d}:00"
             d_str = vd.isoformat()
 
-            is_future = vd >= TODAY
-
-            if is_future:
-                status = "Pending"
-            else:
-                r = rng.random()
-                status = "Completed" if r < 0.85 else ("Cancelled" if r < 0.95 else "NoShow")
+            status = "Completed"  # every past appointment was attended
 
             appt_rows.append((aid, d_str, t_str, dur, cid, None, None,
                                svc_ids.get(svc_name), wid, status, None))
@@ -552,14 +546,14 @@ def seed(db_path: str) -> None:
     # ------------------------------------------------------------------
     print("Generating walk-ins and enforcing daily minimums …")
 
-    # Pre-select 3 busy days per week (Mon-Sat range, within START_DATE..FUTURE_END).
+    # Pre-select 3 busy days per week (Mon-Sat range, within START_DATE..END_DATE).
     busy_days: set[date] = set()
     week_mon = START_DATE - timedelta(days=START_DATE.weekday())
-    while week_mon <= FUTURE_END:
+    while week_mon <= END_DATE:
         week_open = sorted(
             week_mon + timedelta(days=i)
             for i in range(6)
-            if START_DATE <= week_mon + timedelta(days=i) <= FUTURE_END
+            if START_DATE <= week_mon + timedelta(days=i) <= END_DATE
             and (week_mon + timedelta(days=i)).weekday() <= 5
         )
         if week_open:
@@ -598,29 +592,13 @@ def seed(db_path: str) -> None:
         for (vbp, b, v, tt) in bds:
             bdown_rows.append((sid, vbp, b, v, tt))
 
-    def _add_pending_appt(d: date, wid: int, slot: tuple[int, int],
-                          dur: int, svc_name: str) -> None:
-        nonlocal appt_id
-        appt_id += 1
-        d_str = d.isoformat(); t_str = f"{slot[0]:02d}:{slot[1]:02d}:00"
-        if rng.random() < 0.60:
-            cid = rng.choice(client_ids)
-            appt_rows.append((appt_id, d_str, t_str, dur, cid, None, None,
-                               svc_ids.get(svc_name), wid, "Pending", None))
-        else:
-            gname  = rng.choice(FIRST_NAMES) + " " + rng.choice(LAST_NAMES)
-            gphone = _make_phone(rng)
-            appt_rows.append((appt_id, d_str, t_str, dur, None, gname, gphone,
-                               svc_ids.get(svc_name), wid, "Pending", None))
-
     d = START_DATE
-    while d <= FUTURE_END:
+    while d <= END_DATE:
         wd = d.weekday()
         if wd > 5:
             d += timedelta(days=1)
             continue
 
-        is_future      = d >= TODAY
         morning_only   = wd in {2, 5}
         marc_on        = wd in MARC_DAYS
         joan_on        = wd in JOAN_DAYS
@@ -667,10 +645,7 @@ def seed(db_path: str) -> None:
             _mark(d, wid, slot[0], slot[1], dur)
             day_count[d_str] = day_count.get(d_str, 0) + 1
 
-            if is_future:
-                _add_pending_appt(d, wid, slot, dur, svc_name)
-            else:
-                _add_walkin_sale(d, wid, slot, svc_name)
+            _add_walkin_sale(d, wid, slot, svc_name)
 
         d += timedelta(days=1)
 

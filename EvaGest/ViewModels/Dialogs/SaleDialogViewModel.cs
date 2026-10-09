@@ -196,7 +196,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         // an appointment with no service simply opens with an empty sale.
         if (appointment.ServiceId is int serviceId
             && vm.ActiveServices.FirstOrDefault(s => s.Id == serviceId) is { } service)
-            vm.AddService(service);
+            vm.AddExistingLine(SaleLineViewModel.FromService(service));
 
         vm.ReviewGuestNotice();
         vm.MarkOpened();
@@ -278,8 +278,40 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         SelectedClient = client;
     }
 
-    [RelayCommand] private void AddService(Service service) => AddExistingLine(SaleLineViewModel.FromService(service));
-    [RelayCommand] private void AddProduct(Product product) => AddExistingLine(SaleLineViewModel.FromProduct(product));
+    /// <summary>The service picked in the combo next to "+ Servei", not yet added as a
+    /// line. The button stays disabled while it is empty: it used to pass the combo's
+    /// empty selection straight through and crash the dialog.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AddServiceCommand))]
+    private Service? _serviceToAdd;
+
+    /// <summary>The product picked next to "+ Producte"; same as <see cref="ServiceToAdd"/>.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AddProductCommand))]
+    private Product? _productToAdd;
+
+    /// <summary>Adds the picked service as a line and empties the combo, so it is clear
+    /// the line went in and the same pick is not added twice by accident.</summary>
+    [RelayCommand(CanExecute = nameof(CanAddService))]
+    private void AddService()
+    {
+        if (ServiceToAdd is null) return;
+        AddExistingLine(SaleLineViewModel.FromService(ServiceToAdd));
+        ServiceToAdd = null;
+    }
+
+    private bool CanAddService() => ServiceToAdd is not null;
+
+    [RelayCommand(CanExecute = nameof(CanAddProduct))]
+    private void AddProduct()
+    {
+        if (ProductToAdd is null) return;
+        AddExistingLine(SaleLineViewModel.FromProduct(ProductToAdd));
+        ProductToAdd = null;
+    }
+
+    private bool CanAddProduct() => ProductToAdd is not null;
+
     [RelayCommand] private void AddCustomConcept() => AddExistingLine(SaleLineViewModel.Free(_defaultVatBp));
 
     [RelayCommand]

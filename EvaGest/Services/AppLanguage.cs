@@ -19,10 +19,29 @@ public static class AppLanguage
     /// <summary>Culture used for every number, currency and date the user sees.</summary>
     public static CultureInfo Culture { get; private set; } = CultureInfo.GetCultureInfo("ca-ES");
 
+    /// <summary>
+    /// The culture <see cref="Resources.Texts"/> looks strings up in: the chosen one once
+    /// <see cref="Use"/> has run, the thread's until then.
+    ///
+    /// The thread's culture cannot be trusted after startup. WPF runs every dispatcher
+    /// operation with the culture captured when it was queued and puts the previous one
+    /// back afterwards, so the UI thread falls back to the Windows language as soon as the
+    /// startup operation that called <see cref="Use"/> ends. The main window, built inside
+    /// that operation, came out in the chosen language; every page, built later on
+    /// navigation, came out in the Windows one.
+    ///
+    /// The tests never call <see cref="Use"/> (it is process-wide), so for them this stays
+    /// the thread's culture, which each test sets for its own async context.
+    /// </summary>
+    public static CultureInfo UiCulture => _chosen ?? CultureInfo.CurrentUICulture;
+
+    private static CultureInfo? _chosen;
+
     public static void Use(Language language)
     {
         Current = language;
         Culture = CultureInfo.GetCultureInfo(language == Language.Spanish ? "es-ES" : "ca-ES");
+        _chosen = Culture;
 
         // DefaultThread* rather than the current thread: services run on pool threads and
         // must format the same way as the UI thread.

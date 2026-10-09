@@ -158,7 +158,7 @@
                         <DataGridTextColumn h:TableFit.HideOrder="2" Header="{x:Static t:Texts.Worker}" Binding="{Binding WorkerText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Method}" Binding="{Binding MethodText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Amount}" Binding="{Binding AmountText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTemplateColumn Header="" Width="100">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="{x:Static t:Texts.Delete}" Style="{StaticResource SecondaryButton}"

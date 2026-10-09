@@ -57,7 +57,7 @@
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="{x:Static t:Texts.Schedule}" Binding="{Binding ScheduleSummary}" Width="2*" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Status}" Binding="{Binding StatusText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTemplateColumn Header="" Width="*">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

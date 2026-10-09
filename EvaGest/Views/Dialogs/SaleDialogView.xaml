@@ -120,12 +120,12 @@
             </ItemsControl>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                <ComboBox ItemsSource="{Binding ActiveServices}" DisplayMemberPath="Name" Width="140" x:Name="ServiceCombo" />
+                <ComboBox ItemsSource="{Binding ActiveServices}" SelectedItem="{Binding ServiceToAdd}" DisplayMemberPath="Name" Width="140" />
                 <Button Content="{x:Static t:Texts.AddServiceButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
-                        Command="{Binding AddServiceCommand}" CommandParameter="{Binding ElementName=ServiceCombo, Path=SelectedItem}" />
-                <ComboBox ItemsSource="{Binding ActiveProducts}" DisplayMemberPath="Name" Width="140" Margin="16,0,0,0" x:Name="ProductCombo" />
+                        Command="{Binding AddServiceCommand}" />
+                <ComboBox ItemsSource="{Binding ActiveProducts}" SelectedItem="{Binding ProductToAdd}" DisplayMemberPath="Name" Width="140" Margin="16,0,0,0" />
                 <Button Content="{x:Static t:Texts.AddProductButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
-                        Command="{Binding AddProductCommand}" CommandParameter="{Binding ElementName=ProductCombo, Path=SelectedItem}" />
+                        Command="{Binding AddProductCommand}" />
                 <Button Content="{x:Static t:Texts.AddCustomLineButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="16,0,0,0"
                         Command="{Binding AddCustomConceptCommand}" />
             </StackPanel>

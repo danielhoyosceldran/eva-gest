@@ -116,7 +116,7 @@
                         <DataGridTextColumn Header="{x:Static t:Texts.Total}" Binding="{Binding TotalText}" Width="100" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn h:TableFit.HideOrder="4" Header="{x:Static t:Texts.Payment}" Binding="{Binding MethodText}" Width="110" ElementStyle="{StaticResource CellWithTooltip}" />
                         <DataGridTextColumn Header="{x:Static t:Texts.Status}" Binding="{Binding StatusText}" Width="90" ElementStyle="{StaticResource CellWithTooltip}" />
-                        <DataGridTemplateColumn Header="" Width="280">
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

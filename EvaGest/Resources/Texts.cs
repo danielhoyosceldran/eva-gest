@@ -5,8 +5,8 @@ namespace EvaGest.Resources;
 
 /// <summary>
 /// Every piece of text the user reads. The Catalan wording lives in Texts.resx and the
-/// Spanish in Texts.es.resx; which one answers depends on the UI culture that
-/// <see cref="Services.AppLanguage"/> sets once at startup.
+/// Spanish in Texts.es.resx; which one answers is <see cref="EvaGest.Services.AppLanguage.UiCulture"/>,
+/// the language chosen at startup.
 ///
 /// One property per string, so both XAML ({x:Static}) and the ViewModels name them the
 /// same way and the compiler catches a key that no longer exists.
@@ -19,7 +19,7 @@ public static class Texts
     /// <summary>Falls back to the key itself: a missing string must never be an
     /// exception in front of the user.</summary>
     public static string Get(string key)
-        => Get(key, CultureInfo.CurrentUICulture);
+        => Get(key, EvaGest.Services.AppLanguage.UiCulture);
 
     /// <summary>The same lookup against an explicit culture. Used by the tests, which
     /// must not move the culture of the process they share with every other test.</summary>

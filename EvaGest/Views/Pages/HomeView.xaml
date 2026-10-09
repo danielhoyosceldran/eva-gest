@@ -1,6 +1,7 @@
 <UserControl x:Class="EvaGest.Views.Pages.HomeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:EvaGest.Helpers"
              xmlns:t="clr-namespace:EvaGest.Resources"
              xmlns:el="clr-namespace:EvaGest.Views.Elements"
              Background="{StaticResource PaperBrush}">
@@ -82,17 +83,17 @@
             <TextBlock Text="{x:Static t:Texts.TodayAppointments}" Style="{StaticResource Subtitle}" />
             <Border Style="{StaticResource DataCard}" Padding="0"
                     Visibility="{Binding TodayAppointments, Converter={StaticResource ZeroToVisibilityConverter}}">
-                <DataGrid ItemsSource="{Binding DayAppointments}" AutoGenerateColumns="False"
+                <DataGrid ItemsSource="{Binding DayAppointments}" AutoGenerateColumns="False" h:TableFit.IsEnabled="True"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{x:Static t:Texts.Time}" Binding="{Binding Time, StringFormat={}{0:HH:mm}}" Width="*" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Duration}" Binding="{Binding DurationMin, StringFormat={x:Static t:Texts.MinutesShort}}" Width="*" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Client}" Binding="{Binding DisplayName}" Width="*" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Service}" Binding="{Binding Service.Name, TargetNullValue={x:Static t:Texts.NoService}}" Width="*" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Worker}" Binding="{Binding Worker.Name, TargetNullValue={x:Static t:Texts.Unassigned}}" Width="*" />
-                        <DataGridTextColumn Header="{x:Static t:Texts.Status}" Binding="{Binding Status, Converter={StaticResource LabelConverter}}" Width="*" />
-                        <DataGridTemplateColumn Header="" Width="1.5*">
+                        <DataGridTextColumn Header="{x:Static t:Texts.Time}" Binding="{Binding Time, StringFormat={}{0:HH:mm}}" Width="*" MinWidth="70" />
+                        <DataGridTextColumn h:TableFit.HideOrder="1" Header="{x:Static t:Texts.Duration}" Binding="{Binding DurationMin, StringFormat={x:Static t:Texts.MinutesShort}}" Width="*" MinWidth="90" />
+                        <DataGridTextColumn Header="{x:Static t:Texts.Client}" Binding="{Binding DisplayName}" Width="*" MinWidth="{StaticResource TextColumnMinWidth}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="3" Header="{x:Static t:Texts.Service}" Binding="{Binding Service.Name, TargetNullValue={x:Static t:Texts.NoService}}" Width="*" MinWidth="{StaticResource TextColumnMinWidth}" />
+                        <DataGridTextColumn h:TableFit.HideOrder="2" Header="{x:Static t:Texts.Worker}" Binding="{Binding Worker.Name, TargetNullValue={x:Static t:Texts.Unassigned}}" Width="*" MinWidth="100" />
+                        <DataGridTextColumn h:TableFit.HideOrder="4" Header="{x:Static t:Texts.Status}" Binding="{Binding Status, Converter={StaticResource LabelConverter}}" Width="*" MinWidth="90" />
+                        <DataGridTemplateColumn Header="" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>

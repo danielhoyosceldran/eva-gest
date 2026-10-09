@@ -7,6 +7,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 
 - Deleting an appointment no longer asks for the owner's PIN, only "are you sure?".
   Deleting clients, sales, till movements and catalogue items still asks for it.
+- The action buttons at the end of each table (Editar, Anul·lar, Eliminar…) always show in full:
+  that column takes the width its buttons need and the other columns share the rest.
+  The Inici appointments table now drops its least important columns on a narrow screen.
 - The message shown when a dialog can't be saved (missing or invalid fields) is now a
   bold red block instead of thin red text, so it is hard to miss.
 - Works on laptop screens (down to 1366x768 at 125 % scaling):
@@ -24,6 +27,12 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   - The sales chart in Informes keeps every month in view; long names wrap or show
     in full in a tooltip.
 - Closing the app a second time on the same day no longer fails with an error.
+- In the sale dialog, "+ Servei" and "+ Producte" stay greyed out until something is
+  picked in the box next to them, instead of failing with an error. After adding, the
+  box empties again.
+- With the language set to Spanish, every page now shows in Spanish. Only the
+  navigation did before; the pages themselves stayed in Catalan (or in the Windows
+  language).
 
 ## 1.0.0
 
