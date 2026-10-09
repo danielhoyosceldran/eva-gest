@@ -14,6 +14,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - If the appointment window cannot load its data, it now says so and does not let the
   appointment be saved. It used to open half empty without a word, and saving an
   edited appointment then removed its service and worker.
+- A backup that fails while it is being written (disk full, data file busy) no longer
+  leaves an empty file behind. That file used to count as the day's copy, so the
+  automatic backup was not tried again, and it showed up in the list to restore.
 
 ## 1.1.0
 

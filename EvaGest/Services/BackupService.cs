@@ -266,8 +266,23 @@ public class BackupService(
         // database, missing the tables altogether).
         await Task.Run(() =>
         {
-            Snapshot(paths.DbPath, destination);
-            UseRollbackJournal(destination);
+            // The destination file exists from the moment the copy opens it, so a copy
+            // that fails part way (a lock that outlasts every retry, a full disk) used to
+            // leave it behind, empty or half written (E-04). Named like any other copy, it
+            // was then listed, offered for restore, kept by the retention, and an empty
+            // *_auto.db even counted as the day's automatic copy, so none was attempted
+            // again. Whatever goes wrong here, the file goes too.
+            try
+            {
+                Snapshot(paths.DbPath, destination);
+                UseRollbackJournal(destination);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Backup copy to {BackupPath} failed while being written and is discarded", destination);
+                Discard(destination);
+                throw;
+            }
             if (verify) VerifyOrDiscard(destination);
         });
         Log.Information("{BackupKind} backup taken: {BackupPath}",
@@ -360,15 +375,22 @@ public class BackupService(
         catch (InvalidDataException ex)
         {
             Log.Error(ex, "Backup {BackupPath} failed its check after writing and is discarded", path);
-            try
-            {
-                File.Delete(path);
-            }
-            catch (Exception deleteEx)
-            {
-                Log.Warning(deleteEx, "Could not delete the unsound backup {BackupPath}", path);
-            }
+            Discard(path);
             throw;
+        }
+    }
+
+    /// <summary>Deletes a copy that must not be kept. Best effort: if even that fails it
+    /// is logged, and the restore check still refuses the file should anyone pick it.</summary>
+    private static void Discard(string path)
+    {
+        try
+        {
+            if (File.Exists(path)) File.Delete(path);
+        }
+        catch (Exception deleteEx)
+        {
+            Log.Warning(deleteEx, "Could not delete the unsound backup {BackupPath}", path);
         }
     }
 
