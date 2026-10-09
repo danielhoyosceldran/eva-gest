@@ -31,22 +31,26 @@ public static class SmoothScroll
         var sv = (ScrollViewer)sender;
 
         // PreviewMouseWheel tunnels, so the outermost ScrollViewer is called first.
-        // Only the one closest to the pointer should move.
-        if (NextMonth(e.OriginalSource as DependencyObject) != sv) return;
-
-        // Nothing to scroll here: leave the event alone so an outer ScrollViewer
-        // (or a control that uses the wheel for something else) still gets it.
-        if (sv.ScrollableHeight <= 0) return;
+        // Only the one closest to the pointer that has something to scroll should
+        // move. Skipping the ones that can't matters: a DataGrid laid out at full
+        // height inside a page still has its own inner ScrollViewer, and if the
+        // wheel were left to it, WPF's ScrollViewer.OnMouseWheel would mark the
+        // event handled without moving anything, and the page would never scroll.
+        if (NearestScrollable(e.OriginalSource as DependencyObject) != sv) return;
 
         e.Handled = true;
         sv.ScrollToVerticalOffset(sv.VerticalOffset - e.Delta * Factor);
     }
 
-    private static ScrollViewer? NextMonth(DependencyObject? origin)
+    /// <summary>
+    /// Walks up from where the wheel happened to the first ScrollViewer that can
+    /// actually scroll vertically, or null when none can.
+    /// </summary>
+    private static ScrollViewer? NearestScrollable(DependencyObject? origin)
     {
         while (origin is not null)
         {
-            if (origin is ScrollViewer sv) return sv;
+            if (origin is ScrollViewer { ScrollableHeight: > 0 } sv) return sv;
 
             origin = origin is Visual or System.Windows.Media.Media3D.Visual3D
                 ? VisualTreeHelper.GetParent(origin)
