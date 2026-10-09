@@ -34,6 +34,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   the app instead of leaving it running invisibly.
 - If the Agenda could not load the workers the first time it was opened, it now loads
   them the next time; the worker filter used to stay without them until a restart.
+- When moving the Agenda to other days fails, the date range at the top now stays on
+  the days still shown instead of naming days that were never loaded.
 
 ## 1.1.0
 

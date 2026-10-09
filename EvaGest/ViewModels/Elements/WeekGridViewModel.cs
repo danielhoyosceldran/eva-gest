@@ -232,21 +232,26 @@ public partial class WeekGridViewModel : ObservableObject
         try
         {
             int dayCount = ValidDayCount(await _settings.GetInt(ConfigKeys.AgendaDays, ThreeDays));
-            IsThreeDayView = dayCount == ThreeDays;
-            if (!IsThreeDayView) start = WeekHelper.MondayOfWeek(start);
-            ResizeDays(dayCount);
-
-            RangeStart = start;
+            bool threeDays = dayCount == ThreeDays;
+            if (!threeDays) start = WeekHelper.MondayOfWeek(start);
             var end = start.AddDays(dayCount - 1);
-            RangeText = FormatRange(start, end);
 
             // Three round trips for the whole range, never one per day.
             var all = await _appointments.GetByRange(start, end);
             if (filter is not null) all = all.Where(filter).ToList();
             var closed = await _availability.ClosedDaysIn(start, end);
             var intervalsPerDay = await _availability.WeeklyIntervals();
-            SlotMinutes = GridHelper.IsValidSlotMinutes(
+            int slotMinutes = GridHelper.IsValidSlotMinutes(
                 await _settings.GetInt(ConfigKeys.AgendaSlotMinutes, GridHelper.DefaultSlotMinutes));
+
+            // Everything is read: only now does what is on screen change. The range and its
+            // title used to move before the queries, so a failed one left the header naming
+            // the new days over the columns of the old ones (E-12).
+            IsThreeDayView = threeDays;
+            ResizeDays(dayCount);
+            RangeStart = start;
+            RangeText = FormatRange(start, end);
+            SlotMinutes = slotMinutes;
 
             // Opening hours of the days on screen only, so the three-day view is not
             // stretched to fit a longer day that is not even shown.
