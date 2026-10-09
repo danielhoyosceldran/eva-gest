@@ -69,7 +69,7 @@ public partial class ClientDialogViewModel : DialogViewModelBase
         }
 
         ErrorValidation = null;
-        RequestClose(true);
+        await CloseAfterSaving();
     }
 
     [RelayCommand]

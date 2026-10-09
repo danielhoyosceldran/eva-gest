@@ -48,7 +48,7 @@ public partial class PaymentMethodDialogViewModel : DialogViewModelBase
         }
 
         ErrorValidation = null;
-        RequestClose(true);
+        await CloseAfterSaving();
     }
 
     [RelayCommand]

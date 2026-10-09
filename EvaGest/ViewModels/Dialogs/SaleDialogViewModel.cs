@@ -143,10 +143,16 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         var dialog = new ClientDialogViewModel(_clients) { Name = TextClient.Trim() };
         if (GuestPhone is { Length: > 0 } phone) dialog.Mobile = phone;
 
-        if (!await _dialogs.ShowDialog(dialog)) return;
-
-        var created = dialog.AModel();
-        created.Id = await _clients.Create(created);
+        // Saved by the client dialog itself, so a failed write keeps it open with what
+        // was typed instead of losing it behind the generic error (E-09).
+        Client? created = null;
+        dialog.Persist = async () =>
+        {
+            var model = dialog.AModel();
+            model.Id = await _clients.Create(model);
+            created = model;
+        };
+        if (!await _dialogs.ShowDialog(dialog) || created is null) return;
 
         ClientPicker.Add(created);
         SelectedClient = created;

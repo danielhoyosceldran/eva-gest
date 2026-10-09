@@ -1613,4 +1613,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="RestoreNotDone" xml:space="preserve">
     <value>No s'ha pogut restaurar la còpia. Comprova que el disc tingui espai lliure i torna-ho a provar d'aquí a un moment.</value>
   </data>
+  <data name="SaveFailedKeepEditing" xml:space="preserve">
+    <value>No s'ha pogut guardar. El que has escrit es manté: torna-ho a provar d'aquí a un moment.</value>
+  </data>
 </root>

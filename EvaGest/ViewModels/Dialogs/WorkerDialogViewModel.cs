@@ -62,7 +62,7 @@ public partial class WorkerDialogViewModel : DialogViewModelBase
     }
 
     [RelayCommand]
-    private void Save()
+    private async Task Save()
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
@@ -95,7 +95,7 @@ public partial class WorkerDialogViewModel : DialogViewModelBase
         }
 
         ErrorValidation = null;
-        RequestClose(true);
+        await CloseAfterSaving();
     }
 
     [RelayCommand]

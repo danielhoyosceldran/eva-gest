@@ -62,24 +62,21 @@ public partial class CatalogViewModel(
     private async Task NewService()
     {
         var vm = new ServiceDialogViewModel(await DefaultVat());
-        if (await dialogs.ShowDialog(vm))
-        {
-            await catalog.CreateService(vm.AModel());
-            await Load();
-        }
+        vm.Persist = () => catalog.CreateService(vm.AModel());
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
     private async Task EditService(Service service)
     {
         var vm = new ServiceDialogViewModel(service);
-        if (await dialogs.ShowDialog(vm))
+        vm.Persist = () =>
         {
             var updated = vm.AModel();
             updated.Active = service.Active;
-            await catalog.UpdateService(updated);
-            await Load();
-        }
+            return catalog.UpdateService(updated);
+        };
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
@@ -106,24 +103,21 @@ public partial class CatalogViewModel(
     private async Task NewProduct()
     {
         var vm = new ProductDialogViewModel(await DefaultVat());
-        if (await dialogs.ShowDialog(vm))
-        {
-            await catalog.CreateProduct(vm.AModel());
-            await Load();
-        }
+        vm.Persist = () => catalog.CreateProduct(vm.AModel());
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
     private async Task EditProduct(Product product)
     {
         var vm = new ProductDialogViewModel(product);
-        if (await dialogs.ShowDialog(vm))
+        vm.Persist = () =>
         {
             var updated = vm.AModel();
             updated.Active = product.Active;
-            await catalog.UpdateProduct(updated);
-            await Load();
-        }
+            return catalog.UpdateProduct(updated);
+        };
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
@@ -149,24 +143,21 @@ public partial class CatalogViewModel(
     private async Task NewMethod()
     {
         var vm = new PaymentMethodDialogViewModel(catalog);
-        if (await dialogs.ShowDialog(vm))
-        {
-            await catalog.CreateMethod(vm.AModel().Name);
-            await Load();
-        }
+        vm.Persist = () => catalog.CreateMethod(vm.AModel().Name);
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
     private async Task EditMethod(PaymentMethod method)
     {
         var vm = new PaymentMethodDialogViewModel(catalog, method);
-        if (await dialogs.ShowDialog(vm))
+        vm.Persist = () =>
         {
             var updated = vm.AModel();
             updated.Active = method.Active;
-            await catalog.UpdateMethod(updated);
-            await Load();
-        }
+            return catalog.UpdateMethod(updated);
+        };
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
@@ -213,24 +204,21 @@ public partial class CatalogViewModel(
     private async Task NewCategory()
     {
         var vm = new CategoryDialogViewModel(catalog);
-        if (await dialogs.ShowDialog(vm))
-        {
-            await catalog.CreateCategory(vm.AModel().Name);
-            await Load();
-        }
+        vm.Persist = () => catalog.CreateCategory(vm.AModel().Name);
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
     private async Task EditCategory(ExpenseCategory category)
     {
         var vm = new CategoryDialogViewModel(catalog, category);
-        if (await dialogs.ShowDialog(vm))
+        vm.Persist = () =>
         {
             var updated = vm.AModel();
             updated.Active = category.Active;
-            await catalog.UpdateCategory(updated);
-            await Load();
-        }
+            return catalog.UpdateCategory(updated);
+        };
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]

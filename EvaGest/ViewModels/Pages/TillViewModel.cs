@@ -158,11 +158,8 @@ public partial class TillViewModel(
     {
         var vm = await ViewModels.Dialogs.MovementDialogViewModel.New(
             type, DateForNewMovement(), catalog, workers, settings);
-        if (await dialogs.ShowDialog(vm))
-        {
-            await till.Create(vm.AModel());
-            await Load();
-        }
+        vm.Persist = () => till.Create(vm.AModel());
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]

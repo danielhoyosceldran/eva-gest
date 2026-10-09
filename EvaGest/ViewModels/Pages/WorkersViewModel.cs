@@ -64,10 +64,8 @@ public partial class WorkersViewModel(IWorkerService workers, IDialogService dia
     private async Task NewWorker()
     {
         var vm = new WorkerDialogViewModel(Rows.Select(f => f.Worker.Color));
-        if (!await dialogs.ShowDialog(vm)) return;
-
-        await workers.Create(vm.AModel(), vm.ToSchedule());
-        await Load();
+        vm.Persist = () => workers.Create(vm.AModel(), vm.ToSchedule());
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]
@@ -75,10 +73,8 @@ public partial class WorkersViewModel(IWorkerService workers, IDialogService dia
     {
         var schedule = await workers.GetSchedule(worker.Id);
         var vm = new WorkerDialogViewModel(worker, schedule);
-        if (!await dialogs.ShowDialog(vm)) return;
-
-        await workers.Update(vm.AModel(), vm.ToSchedule());
-        await Load();
+        vm.Persist = () => workers.Update(vm.AModel(), vm.ToSchedule());
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     /// <summary>No confirmation: it is reversible and happens every holiday (pantalles 2.4).</summary>

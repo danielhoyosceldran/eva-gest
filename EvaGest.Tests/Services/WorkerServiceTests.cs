@@ -129,15 +129,14 @@ public class WorkerServiceTests
         var dialogs = new TestDialogService
         {
             ResultDialog = true,
-            FillDialog = d =>
+            FillDialog = async d =>
             {
                 var dialog = (WorkerDialogViewModel)d;
                 dialog.Name = "Berta";
                 dialog.ScheduleDays[0].WorksMorning = true;
                 dialog.ScheduleDays[0].MorningStart = "09:00";
                 dialog.ScheduleDays[0].MorningEnd = "14:00";
-                dialog.SaveCommand.Execute(null);
-                return Task.CompletedTask;
+                await dialog.SaveCommand.ExecuteAsync(null);
             }
         };
 

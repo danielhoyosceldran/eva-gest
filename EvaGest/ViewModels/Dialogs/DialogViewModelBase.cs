@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using EvaGest.Resources;
 using EvaGest.Services;
+using Serilog;
 
 namespace EvaGest.ViewModels.Dialogs;
 
@@ -16,6 +17,39 @@ public abstract partial class DialogViewModelBase : ObservableObject
     public event Action<bool>? Close;
 
     protected void RequestClose(bool confirmed) => Close?.Invoke(confirmed);
+
+    /// <summary>
+    /// The write this dialog's Guardar stands for, set by the page that opens it. Pages
+    /// used to write only after the dialog had closed, so when that write failed the
+    /// user got the generic error and everything typed in the dialog was gone (E-09).
+    /// Run by <see cref="CloseAfterSaving"/> while the dialog is still open. Null for a
+    /// dialog whose caller does not save anything (or saves on its own afterwards).
+    /// </summary>
+    public Func<Task>? Persist { get; set; }
+
+    /// <summary>
+    /// Where a dialog's Save ends once its form is valid: runs <see cref="Persist"/> and
+    /// closes only if it went through. A failure is logged, said in the dialog's error
+    /// line, and leaves the form as it was so the user can try again.
+    /// </summary>
+    protected async Task CloseAfterSaving()
+    {
+        if (Persist is { } persist)
+        {
+            try
+            {
+                await persist();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "{Dialog} could not save", GetType().Name);
+                ErrorValidation = Texts.SaveFailedKeepEditing;
+                return;
+            }
+        }
+
+        RequestClose(true);
+    }
 
     // ── Leaving without saving ───────────────────────────────────────────────
 

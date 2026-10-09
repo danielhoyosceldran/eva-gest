@@ -34,7 +34,7 @@ public partial class ProductDialogViewModel : DialogViewModelBase
     }
 
     [RelayCommand]
-    private void Save()
+    private async Task Save()
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
@@ -60,7 +60,7 @@ public partial class ProductDialogViewModel : DialogViewModelBase
         }
 
         ErrorValidation = null;
-        RequestClose(true);
+        await CloseAfterSaving();
     }
 
     [RelayCommand]

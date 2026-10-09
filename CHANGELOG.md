@@ -26,6 +26,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   after saving, it could stay open and a second Cobrar charged the same sale twice.
 - When "Fer còpia ara" or a restore cannot be done (disk full, data file busy), the
   page or the restore window now says so and what to try, instead of a generic error.
+- The windows for services, products, payment methods, categories, clients, till
+  movements and workers now save before they close. If saving fails they stay open,
+  say so, and keep what was typed; before, it was lost behind a generic error.
 
 ## 1.1.0
 

@@ -55,13 +55,12 @@ public partial class ClientsViewModel(IClientService clients, IReportsService re
 
     private async Task OpenClientDialog(ClientDialogViewModel vm)
     {
-        if (await dialogs.ShowDialog(vm))
+        vm.Persist = () =>
         {
             var model = vm.AModel();
-            if (model.Id == 0) await clients.Create(model);
-            else await clients.Update(model);
-            await Load();
-        }
+            return model.Id == 0 ? clients.Create(model) : clients.Update(model);
+        };
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]

@@ -147,12 +147,8 @@ public partial class HomeViewModel(
     private async Task NewClient()
     {
         var vm = new ClientDialogViewModel(clients);
-        if (await dialogs.ShowDialog(vm))
-        {
-            var model = vm.AModel();
-            if (model.Id == 0) await clients.Create(model);
-            else await clients.Update(model);
-        }
+        vm.Persist = () => clients.Create(vm.AModel());
+        await dialogs.ShowDialog(vm);
     }
 
     [RelayCommand]
@@ -165,11 +161,8 @@ public partial class HomeViewModel(
     {
         var vm = await MovementDialogViewModel.New(
             type, DateOnly.FromDateTime(DateTime.Today), catalog, workers, settings);
-        if (await dialogs.ShowDialog(vm))
-        {
-            await till.Create(vm.AModel());
-            await Load();
-        }
+        vm.Persist = () => till.Create(vm.AModel());
+        if (await dialogs.ShowDialog(vm)) await Load();
     }
 
     [RelayCommand]

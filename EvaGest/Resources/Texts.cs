@@ -551,6 +551,7 @@ public static class Texts
         nameof(CategoryNameAlreadyExists),
         nameof(BackupNotTaken),
         nameof(RestoreNotDone),
+        nameof(SaveFailedKeepEditing),
     ];
 
     /// <summary>Pendent</summary>
@@ -2097,4 +2098,7 @@ public static class Texts
 
     /// <summary>No s'ha pogut restaurar la còpia. Comprova que el disc tingui espai lliure i torna-ho a provar d'aquí a un moment.</summary>
     public static string RestoreNotDone => Get(nameof(RestoreNotDone));
+
+    /// <summary>No s'ha pogut guardar. El que has escrit es manté: torna-ho a provar d'aquí a un moment.</summary>
+    public static string SaveFailedKeepEditing => Get(nameof(SaveFailedKeepEditing));
 }

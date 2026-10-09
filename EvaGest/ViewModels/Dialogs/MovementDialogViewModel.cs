@@ -121,7 +121,7 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     }
 
     [RelayCommand]
-    private void Save()
+    private async Task Save()
     {
         if (!Money.TryParse(PriceText, out int amountCents) || amountCents <= 0)
         {
@@ -147,7 +147,7 @@ public partial class MovementDialogViewModel : DialogViewModelBase
         }
 
         ErrorValidation = null;
-        RequestClose(true);
+        await CloseAfterSaving();
     }
 
     [RelayCommand]

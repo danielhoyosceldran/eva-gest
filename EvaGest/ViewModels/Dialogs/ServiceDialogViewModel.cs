@@ -34,7 +34,7 @@ public partial class ServiceDialogViewModel : DialogViewModelBase
     }
 
     [RelayCommand]
-    private void Save()
+    private async Task Save()
     {
         if (string.IsNullOrWhiteSpace(Name))
         {
@@ -68,7 +68,7 @@ public partial class ServiceDialogViewModel : DialogViewModelBase
         }
 
         ErrorValidation = null;
-        RequestClose(true);
+        await CloseAfterSaving();
     }
 
     [RelayCommand]
