@@ -118,8 +118,17 @@ public class BackupService(
     {
         var backupFile = await Copy(suffix);
 
-        await settings.Save(ConfigKeys.LastAutomaticBackup,
-            DateOnly.FromDateTime(backupFile.Date).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        // A note about the copy, not the copy: the file in the folder is what every check
+        // reads. Failing to write the note used to report a good copy as a failed one (E-05).
+        try
+        {
+            await settings.Save(ConfigKeys.LastAutomaticBackup,
+                DateOnly.FromDateTime(backupFile.Date).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Backup {BackupPath} taken, but its date could not be recorded in the settings", backupFile.Path);
+        }
 
         return backupFile;
     }
@@ -289,7 +298,9 @@ public class BackupService(
             suffix switch { AutomaticSuffix => "Automatic", OnCloseSuffix => "On-close", BeforeUpdateSuffix => "Before-update", _ => "Manual" },
             destination);
 
-        if (prune) await DeleteOldBackups();
+        // The copy is written and checked by now: a prune that fails (the settings or the
+        // folder listing unreadable for a moment) must not report it as failed (E-05).
+        if (prune) await PruneQuietly();
 
         var backup = ReadBackup(destination)!;
 

@@ -17,6 +17,8 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - A backup that fails while it is being written (disk full, data file busy) no longer
   leaves an empty file behind. That file used to count as the day's copy, so the
   automatic backup was not tried again, and it showed up in the list to restore.
+- A backup that was taken correctly is no longer reported as failed when tidying up
+  the old copies afterwards runs into a problem.
 
 ## 1.1.0
 
