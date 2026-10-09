@@ -96,8 +96,9 @@ namespace EvaGest
             // Queued rather than called directly: when no backup is due, the await above
             // completes synchronously and we are still inside this Closing handler, where
             // WPF refuses a nested Close() (InvalidOperationException). Posting it runs it
-            // once the cancelled close has fully unwound.
-            Dispatcher.BeginInvoke(Close);
+            // once the cancelled close has fully unwound. Not awaited on purpose (the
+            // discard says so, and keeps the build free of CS4014).
+            _ = Dispatcher.BeginInvoke(Close);
         }
 
         private async Task RunOverdueCheck()
