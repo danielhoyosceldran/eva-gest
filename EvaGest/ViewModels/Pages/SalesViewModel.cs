@@ -55,14 +55,12 @@ public partial class SalesViewModel(
 
     public bool HasNoResults => Sales.Count == 0;
 
-    private bool _optionsLoaded;
-
     public async Task Load()
     {
         Loading = true;
         try
         {
-            if (!_optionsLoaded) await LoadFilterOptions();
+            await LoadFilterOptions();
 
             var found = await sales.Search(new SalesFilter(
                 From, To, Client?.Id, Service?.Id, Product?.Id,
@@ -86,14 +84,48 @@ public partial class SalesViewModel(
         finally { Loading = false; }
     }
 
+    /// <summary>
+    /// Refills the filter boxes on every load. They used to be filled once per session,
+    /// and the page is kept for the whole session, so a client, service, product, worker
+    /// or payment method created afterwards could not be filtered on until a restart
+    /// (B-2). Every client is offered, asleep ones included: their sales are still sales.
+    ///
+    /// Queried first and swapped in synchronously afterwards, with each selection put
+    /// back by id: clearing a list empties the combo bound to it, which would otherwise
+    /// drop the filter the user had picked and start a reload of its own.
+    /// </summary>
     private async Task LoadFilterOptions()
     {
-        foreach (var c in await clients.GetActive()) FilterClients.Add(c);
-        foreach (var s in await catalog.GetServices()) FilterServices.Add(s);
-        foreach (var p in await catalog.GetProducts()) FilterProducts.Add(p);
-        foreach (var m in await catalog.GetMethods()) FilterMethods.Add(m);
-        foreach (var t in await workers.GetAll()) FilterWorkers.Add(t);
-        _optionsLoaded = true;
+        var clientList = (await clients.GetActive()).Concat(await clients.GetAsleep())
+            .OrderBy(c => c.Name).ToList();
+        var serviceList = await catalog.GetServices();
+        var productList = await catalog.GetProducts();
+        var methodList = await catalog.GetMethods();
+        var workerList = await workers.GetAll();
+
+        _changingSeveralFilters = true;
+        try
+        {
+            Client = Refill(FilterClients, clientList, Client, c => c.Id);
+            Service = Refill(FilterServices, serviceList, Service, s => s.Id);
+            Product = Refill(FilterProducts, productList, Product, p => p.Id);
+            PaymentMethod = Refill(FilterMethods, methodList, PaymentMethod, m => m.Id);
+            Worker = Refill(FilterWorkers, workerList, Worker, w => w.Id);
+        }
+        finally { _changingSeveralFilters = false; }
+    }
+
+    /// <summary>Replaces a filter list's items and returns the new instance of the item
+    /// that was selected, or null when it no longer exists.</summary>
+    private static T? Refill<T>(ObservableCollection<T> target, List<T> items, T? selected, Func<T, int> id)
+        where T : class
+    {
+        int? selectedId = selected is null ? null : id(selected);
+
+        target.Clear();
+        foreach (var item in items) target.Add(item);
+
+        return selectedId is int wanted ? items.FirstOrDefault(i => id(i) == wanted) : null;
     }
 
     private static SaleRow ToRow(Sale v) => new(

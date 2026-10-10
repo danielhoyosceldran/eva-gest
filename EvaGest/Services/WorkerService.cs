@@ -1,6 +1,7 @@
 using EvaGest.Data;
 using EvaGest.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace EvaGest.Services;
 
@@ -99,13 +100,19 @@ public class WorkerService(IDbContextFactory<ShopDbContext> factory) : IWorkerSe
             .FirstOrDefaultAsync(t => t.Id == workerId);
         if (worker is null) return DeleteResult.Deleted;
 
+        // Cash movements count too: a cash-out naming her is what she was paid, and the
+        // month-close report compares it against what she billed. Left out, a worker paid
+        // but never booked was deleted for good and SET NULL quietly cut every payment
+        // loose from her, with no audit row (B-3).
         bool used = await db.Appointments.AnyAsync(c => c.WorkerId == workerId)
-                     || await db.Sales.AnyAsync(v => v.WorkerId == workerId);
+                     || await db.Sales.AnyAsync(v => v.WorkerId == workerId)
+                     || await db.CashMovements.AnyAsync(m => m.WorkerId == workerId);
 
         if (used)
         {
             worker.Active = false;
             await db.SaveChangesAsync();
+            Log.Information("Worker {WorkerId} deactivated instead of deleted: she has history", workerId);
             return DeleteResult.Deactivated;
         }
 
@@ -114,6 +121,7 @@ public class WorkerService(IDbContextFactory<ShopDbContext> factory) : IWorkerSe
         db.WorkerSchedules.RemoveRange(worker.Schedules);
         db.Workers.Remove(worker);
         await db.SaveChangesAsync();
+        Log.Information("Worker {WorkerId} deleted", workerId);
         return DeleteResult.Deleted;
     }
 

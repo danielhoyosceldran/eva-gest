@@ -3,6 +3,21 @@
 Installer / app releases. The version is `<Version>` in `EvaGest/EvaGest.csproj`;
 the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 
+## 3.0.0
+
+- Caixa now follows the date when EvaGest stays open overnight. "Avui", "Aquesta
+  setmana" and the other periods used to stay on the day the app was opened, and a
+  movement entered the next morning was dated the day before.
+- The filters on the Vendes page now list clients, services, products, workers and
+  payment methods created since the page was first opened, and sleeping clients too.
+  They used to need a restart.
+- Deleting a worker who was paid through the till (a salary or a commission) now
+  deactivates her instead. Deleting her used to remove her name from those payments.
+- The workers report counts a service sold twice on one line as two services.
+- Clients born on 29 February get their birthday notice on 28 February in years without one.
+- Searching for a client with "_" or "%" in the text now finds only names containing it,
+  instead of every client.
+
 ## 2.0.0
 
 - Restoring a backup made by an older version (1.0) now finishes and closes the app as

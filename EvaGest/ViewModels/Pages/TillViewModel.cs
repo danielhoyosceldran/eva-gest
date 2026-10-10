@@ -9,12 +9,22 @@ namespace EvaGest.ViewModels.Pages;
 
 public enum TillPeriod { Today, Yesterday, ThisWeek, ThisMonth, PreviousMonth, Custom }
 
+/// <param name="now">
+/// How the page reads the clock. Defaulted rather than injected, like BackupService's,
+/// so the container still resolves the page; the tests pass a clock they can move past
+/// midnight.
+/// </param>
 public partial class TillViewModel(
     ITillService till, ICatalogService catalog, IWorkerService workers,
-    ISettingsService settings, IDialogService dialogs)
+    ISettingsService settings, IDialogService dialogs, Func<DateTime>? now = null)
     : PageViewModelBase
 {
     public override string Title => Texts.NavTill;
+
+    private readonly Func<DateTime> _now = now ?? (() => DateTime.Now);
+
+    /// <summary>Today by the page's clock.</summary>
+    private DateOnly Today => DateOnly.FromDateTime(_now());
 
     [ObservableProperty] private TillPeriod _period = TillPeriod.Today;
     [ObservableProperty] private DateOnly _from = DateOnly.FromDateTime(DateTime.Today);
@@ -59,8 +69,21 @@ public partial class TillViewModel(
 
     partial void OnPeriodChanged(TillPeriod value)
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        (From, To) = value switch
+        ApplyPeriod();
+        RunInBackground(Load);
+    }
+
+    /// <summary>
+    /// Sets From and To to what the selected period means today. Every period but Custom
+    /// is relative to today, so this is also run on every load: the page is kept for the
+    /// whole session, and with the range worked out only when the period was picked, an
+    /// app left open overnight showed yesterday's till under "Avui" — and dated the next
+    /// morning's cash movements yesterday (B-1).
+    /// </summary>
+    private void ApplyPeriod()
+    {
+        var today = Today;
+        (From, To) = Period switch
         {
             TillPeriod.Today => (today, today),
             TillPeriod.Yesterday => (today.AddDays(-1), today.AddDays(-1)),
@@ -69,7 +92,6 @@ public partial class TillViewModel(
             TillPeriod.PreviousMonth => FirstAndLastOfPreviousMonth(today),
             _ => (From, To)
         };
-        RunInBackground(Load);
     }
 
     partial void OnFromChanged(DateOnly value)
@@ -96,6 +118,11 @@ public partial class TillViewModel(
         Loading = true;
         try
         {
+            // A custom range is the user's and stays put; any other period follows the
+            // date. Setting From and To here does not reload: outside Custom their change
+            // handlers leave the loading to this method.
+            if (Period != TillPeriod.Custom) ApplyPeriod();
+
             // Both queries first, then one synchronous rewrite: a custom range moves From
             // and To separately, so two loads can be in flight and clearing before the
             // await would let them interleave.
@@ -150,7 +177,7 @@ public partial class TillViewModel(
     /// </summary>
     private DateOnly DateForNewMovement()
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = Today;
         return today >= From && today <= To ? today : To;
     }
 

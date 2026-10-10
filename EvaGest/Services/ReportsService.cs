@@ -185,9 +185,11 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
         long productsCents = AllocatedCents(sales, LineType.Product);
         long otherCents = AllocatedCents(sales, LineType.Other);
 
+        // Units, like the products below: a "x2" line is two services. Counting lines
+        // reported it as one (B-4).
         var services = allLines.Where(l => l.Type == LineType.Service)
             .GroupBy(l => l.Description)
-            .Select(g => (g.Key, g.Count()))
+            .Select(g => (g.Key, g.Sum(l => l.Quantity)))
             .ToList();
 
         var products = allLines.Where(l => l.Type == LineType.Product)

@@ -33,12 +33,23 @@ public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientSe
     public async Task<List<Client>> Search(string text)
     {
         await using var db = await factory.CreateDbContextAsync();
-        string pattern = $"%{text.Trim()}%";
+
+        // What was typed is matched literally. % and _ are LIKE wildcards, so typing "_"
+        // used to list every client (B-7); each is escaped, and so is the escape itself.
+        string pattern = $"%{EscapeLike(text.Trim())}%";
         return await db.Clients.AsNoTracking()
-            .Where(c => !c.Asleep && (EF.Functions.Like(c.Name, pattern) || EF.Functions.Like(c.Mobile, pattern)))
+            .Where(c => !c.Asleep && (EF.Functions.Like(c.Name, pattern, LikeEscape)
+                                      || EF.Functions.Like(c.Mobile, pattern, LikeEscape)))
             .OrderBy(c => c.Name)
             .ToListAsync();
     }
+
+    /// <summary>The escape character for <see cref="Search"/>'s LIKE pattern.</summary>
+    private const string LikeEscape = @"\";
+
+    /// <summary>Makes typed text match itself inside a LIKE pattern.</summary>
+    public static string EscapeLike(string text)
+        => text.Replace(@"\", @"\\").Replace("%", @"\%").Replace("_", @"\_");
 
     public async Task<Client?> GetById(int id)
     {
@@ -65,9 +76,19 @@ public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientSe
 
     public async Task Update(Client client)
     {
-        client.ClientKey = ComputeClientKey(client.Name);
         await using var db = await factory.CreateDbContextAsync();
-        db.Clients.Update(client);
+        var existing = await db.Clients.FirstAsync(c => c.Id == client.Id);
+
+        // Field by field rather than db.Clients.Update(client), which wrote every column
+        // back from what the edit dialog builds. That model carries no Asleep, so editing
+        // an asleep client quietly woke them (B-6). Asleep belongs to Sleep and Wake.
+        existing.Name = client.Name;
+        existing.Mobile = client.Mobile;
+        existing.Email = client.Email;
+        existing.BirthDate = client.BirthDate;
+        existing.Notes = client.Notes;
+        existing.ClientKey = ComputeClientKey(client.Name);
+
         await db.SaveChangesAsync();
         Log.Information("Client {ClientId} updated", client.Id);
     }
@@ -138,11 +159,28 @@ public class ClientService(IDbContextFactory<ShopDbContext> factory) : IClientSe
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         await using var db = await factory.CreateDbContextAsync();
-        return await db.Clients.AsNoTracking()
-            .Where(c => !c.Asleep && c.BirthDate != null
-                     && c.BirthDate.Value.Month == today.Month
-                     && c.BirthDate.Value.Day == today.Day)
+
+        // Filtered here rather than in SQL so the leap-day rule lives in one pure, testable
+        // place; the shop's client list is small.
+        var withBirthday = await db.Clients.AsNoTracking()
+            .Where(c => !c.Asleep && c.BirthDate != null)
             .ToListAsync();
+        return withBirthday.Where(c => IsBirthday(c.BirthDate!.Value, today)).ToList();
+    }
+
+    /// <summary>
+    /// Whether <paramref name="today"/> is the birthday of someone born on
+    /// <paramref name="birthDate"/>. Someone born on 29 February is greeted on 28 February
+    /// in a year without one: matching day and month alone never greeted them at all in
+    /// three years out of four (B-5).
+    /// </summary>
+    public static bool IsBirthday(DateOnly birthDate, DateOnly today)
+    {
+        if (birthDate.Month == today.Month && birthDate.Day == today.Day) return true;
+
+        return birthDate is { Month: 2, Day: 29 }
+            && today is { Month: 2, Day: 28 }
+            && !DateTime.IsLeapYear(today.Year);
     }
 
     public async Task<List<ClientHistoryRow>> GetClientHistory(int clientId)
