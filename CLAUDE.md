@@ -43,7 +43,8 @@ The installer is versioned (`MAJOR.MINOR.PATCH`). `<Version>` in
 `EvaGest/EvaGest.csproj` is the only place the number lives; `scripts/build-installer.ps1`
 passes it to Inno Setup, which names the output `EvaGest-Setup-<version>.exe`.
 
-- v1 = `1.0.0`, the first installer. Work towards the next release is `1.1.0`.
+- Version 1 (`1.0.0` to `1.3.0`, tag `v1.3.0`) is closed. Work towards the next
+  release is `2.0.0`.
 - Bump `<Version>` in the same change that starts a release, and log every
   user-visible change under that version in [`CHANGELOG.md`](CHANGELOG.md).
 - A released version is tagged in git (`v1.0.0`) on the commit it was built from.

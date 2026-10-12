@@ -3,7 +3,10 @@
 Installer / app releases. The version is `<Version>` in `EvaGest/EvaGest.csproj`;
 the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 
-## 3.0.0
+Version 1 is closed at 1.3.0. The releases first numbered 2.0.0 and 3.0.0 were
+fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 2.0.0.
+
+## 1.3.0 (closes version 1)
 
 - Caixa now follows the date when EvaGest stays open overnight. "Avui", "Aquesta
   setmana" and the other periods used to stay on the day the app was opened, and a
@@ -21,7 +24,7 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
   no longer end where the last appointment ends. They show the usual day (9:00 to
   20:00), extended if an appointment falls outside it.
 
-## 2.0.0
+## 1.2.0
 
 - Restoring a backup made by an older version (1.0) now finishes and closes the app as
   it should. It used to report an error after the data had already been restored and
