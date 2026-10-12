@@ -138,6 +138,18 @@ public class XamlLoadTests(ApplicationWpf app)
             dialog.ActualHeight.Should().BeGreaterThan(0);
         });
 
+    [Fact]
+    public void The_time_box_shows_the_bound_time_in_its_two_boxes()
+        => app.Runs(() =>
+        {
+            var box = new EvaGest.Views.Elements.TimeBox { Time = "09:30" };
+            box.Measure(new Size(200, 60));
+            box.Arrange(new Rect(0, 0, 200, 60));
+
+            Descendants<TextBox>(box).Select(t => t.Text).Should().Equal("09", "30");
+            box.ActualHeight.Should().BeGreaterThan(0);
+        });
+
     [Fact] // X-05
     public void The_settings_view_builds()
         => app.Runs(() =>

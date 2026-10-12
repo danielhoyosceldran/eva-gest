@@ -25,6 +25,11 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   worker and category filters of the transactions window; and the worker filter of the
   Agenda. An empty filter box still means "all". Text typed but not picked is settled
   on leaving the box: it picks the one option it names, or is cleared.
+- Hours are typed in two boxes, hours and minutes, with the ":" already in place: the
+  appointment's hour and every opening-hours row (the shop's and each worker's). Two
+  digits in the hours move on to the minutes by themselves (so does a single digit that
+  can only be one hour, such as 9), ":" or "." also move on, and the arrow keys step an
+  hour or a quarter of an hour. The drop-down list of quarter hours is gone.
 
 ## 1.3.0 (closes version 1)
 

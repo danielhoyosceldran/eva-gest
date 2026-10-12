@@ -20,9 +20,6 @@ public partial class DayScheduleViewModel : ObservableObject
 
     public string DayName => Labels.Text(Day);
 
-    /// <summary>The hours the picker offers; the boxes stay editable for odd times.</summary>
-    public IReadOnlyList<string> AvailableTimes => ScheduleHelper.Slots;
-
     [ObservableProperty] private bool _worksMorning;
     [ObservableProperty] private bool _worksAfternoon;
     [ObservableProperty] private string _morningStart = string.Empty;

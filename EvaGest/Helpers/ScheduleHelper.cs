@@ -28,16 +28,8 @@ public static class ScheduleHelper
     public static readonly TimeOnly MorningAfternoonSplit = new(14, 1);
 
     /// <summary>
-    /// Every quarter hour of a plausible working day, as the picker offers them. Typing is
-    /// still allowed, so an odd hour like 09:10 is not lost by not being on the list.
-    /// </summary>
-    public static IReadOnlyList<string> Slots { get; } =
-        [.. Enumerable.Range(0, (23 - 6) * 4 + 1)
-             .Select(i => Format(new TimeOnly(6, 0).AddMinutes(i * 15)))];
-
-    /// <summary>
     /// One shape only: hh:mm, with a literal colon and both parts padded to two digits,
-    /// exactly as <see cref="Slots"/> offers them. "9", "9.00" and "0900" used to be
+    /// exactly as <see cref="TimeEntry.Join"/> writes it. "9", "9.00" and "0900" used to be
     /// accepted too, which made "10.00" and "20-00" land on times nobody typed.
     /// </summary>
     public static TimeOnly? Analyze(string? text)

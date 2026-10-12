@@ -1,0 +1,67 @@
+<UserControl x:Class="EvaGest.Views.Elements.TimeBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root" MinHeight="{StaticResource FieldHeight}" Focusable="False">
+    <!--
+      An hour as two small boxes, hours and minutes, with a fixed ":" between them that
+      cannot be typed or deleted. Looks like one text box: the outline is drawn here and
+      the two inner boxes have none. All the typing rules are in Helpers/TimeEntry; the
+      code-behind only applies them.
+    -->
+    <UserControl.Resources>
+        <!-- An inner box: just the text, centred, two characters wide; a dashed placeholder when empty -->
+        <Style x:Key="Segment" TargetType="TextBox">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="MaxLength" Value="2" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid Background="Transparent">
+                            <TextBlock x:Name="Placeholder" Text="--" HorizontalAlignment="Center"
+                                       Foreground="{StaticResource InkMutedBrush}" IsHitTestVisible="False"
+                                       Visibility="Collapsed" />
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- Same outline as a TextBox: the accent, 2 DIP thick, while either box has focus;
+         faded while disabled (a shift that is switched off). -->
+    <Border x:Name="Outline" CornerRadius="{StaticResource ControlRadius}" Padding="6,0"
+            Background="{StaticResource SurfaceBrush}" Cursor="IBeam">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=Root}" Value="True">
+                        <Setter Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                        <Setter Property="BorderThickness" Value="2" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsEnabled, ElementName=Root}" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <TextBox x:Name="Hours" Style="{StaticResource Segment}" />
+            <TextBlock Text=":" VerticalAlignment="Center" Margin="0,0,0,2"
+                       FontSize="{StaticResource FontSizeInput}" Foreground="{StaticResource InkBrush}" />
+            <TextBox x:Name="Minutes" Style="{StaticResource Segment}" />
+        </StackPanel>
+    </Border>
+</UserControl>

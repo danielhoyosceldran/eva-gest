@@ -1,20 +1,16 @@
 <UserControl x:Class="EvaGest.Views.Elements.ScheduleRowView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="clr-namespace:EvaGest.Resources">
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements">
     <!--
       One day of the weekly schedule, shared by the barbershop's opening hours and the
       worker dialog so both forms behave identically. Morning and afternoon are ticked
-      separately; each hour is a drop-down of quarter hours that stays typeable.
+      separately; each hour is a TimeBox (hours and minutes, the ":" fixed).
     -->
     <UserControl.Resources>
-        <Style x:Key="TimeSelector" TargetType="ComboBox">
-            <Setter Property="IsEditable" Value="True" />
-            <Setter Property="IsTextSearchEnabled" Value="True" />
+        <Style x:Key="TimeSelector" TargetType="el:TimeBox">
             <Setter Property="Width" Value="86" />
-            <Setter Property="MaxDropDownHeight" Value="260" />
-            <Setter Property="MinHeight" Value="{StaticResource FieldHeight}" />
-            <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
         </Style>
 
         <Style x:Key="IntervalSeparator" TargetType="TextBlock">
@@ -41,29 +37,17 @@
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,24,0">
                 <CheckBox Content="{x:Static t:Texts.Morning}" IsChecked="{Binding WorksMorning}"
                           VerticalAlignment="Center" Width="76" />
-                <ComboBox Style="{StaticResource TimeSelector}"
-                          ItemsSource="{Binding AvailableTimes}"
-                          IsEnabled="{Binding WorksMorning}"
-                          Text="{Binding MorningStart, UpdateSourceTrigger=PropertyChanged}" />
+                <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksMorning}" Time="{Binding MorningStart}" />
                 <TextBlock Style="{StaticResource IntervalSeparator}" />
-                <ComboBox Style="{StaticResource TimeSelector}"
-                          ItemsSource="{Binding AvailableTimes}"
-                          IsEnabled="{Binding WorksMorning}"
-                          Text="{Binding MorningEnd, UpdateSourceTrigger=PropertyChanged}" />
+                <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksMorning}" Time="{Binding MorningEnd}" />
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <CheckBox Content="{x:Static t:Texts.Afternoon}" IsChecked="{Binding WorksAfternoon}"
                           VerticalAlignment="Center" Width="76" />
-                <ComboBox Style="{StaticResource TimeSelector}"
-                          ItemsSource="{Binding AvailableTimes}"
-                          IsEnabled="{Binding WorksAfternoon}"
-                          Text="{Binding AfternoonStart, UpdateSourceTrigger=PropertyChanged}" />
+                <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksAfternoon}" Time="{Binding AfternoonStart}" />
                 <TextBlock Style="{StaticResource IntervalSeparator}" />
-                <ComboBox Style="{StaticResource TimeSelector}"
-                          ItemsSource="{Binding AvailableTimes}"
-                          IsEnabled="{Binding WorksAfternoon}"
-                          Text="{Binding AfternoonEnd, UpdateSourceTrigger=PropertyChanged}" />
+                <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksAfternoon}" Time="{Binding AfternoonEnd}" />
             </StackPanel>
         </Grid>
 

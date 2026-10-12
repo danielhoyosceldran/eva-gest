@@ -114,12 +114,4 @@ public class ScheduleHelperTests
         r.IsValid.Should().BeTrue();
         r.Intervals.Should().ContainSingle();
     }
-
-    [Fact] // H-14
-    public void The_picker_offers_the_quarter_hours_of_the_working_day()
-    {
-        ScheduleHelper.Slots.Should().StartWith(["06:00", "06:15", "06:30", "06:45", "07:00"]);
-        ScheduleHelper.Slots.Should().EndWith(["23:00"]);
-        ScheduleHelper.Slots.Should().Contain("09:00").And.Contain("20:30");
-    }
 }
