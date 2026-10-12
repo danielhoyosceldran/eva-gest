@@ -6,7 +6,16 @@
              Background="{StaticResource PaperBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="{StaticResource PagePad}">
-            <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+                <!-- Every sale and cash movement in one filterable table -->
+                <Button Grid.Column="1" Content="{x:Static t:Texts.AllTransactions}" Style="{StaticResource PrimaryButton}"
+                        VerticalAlignment="Top" Command="{Binding ShowTransactionsCommand}" />
+            </Grid>
 
             <!-- Quiet note: mostly that a background reload failed -->
             <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"

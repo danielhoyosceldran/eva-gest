@@ -1619,4 +1619,77 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="SettingsNotLoaded" xml:space="preserve">
     <value>No se han podido leer los ajustes, así que los valores que ves pueden no ser los guardados y los cambios no se guardarán. Ve a otra página y vuelve aquí para intentarlo de nuevo.</value>
   </data>
+  <data name="Sale" xml:space="preserve">
+    <value>Venta</value>
+  </data>
+  <data name="AllTransactions" xml:space="preserve">
+    <value>Ver todas las transacciones</value>
+  </data>
+  <data name="TransactionsTitle" xml:space="preserve">
+    <value>Transacciones</value>
+  </data>
+  <data name="ThisYear" xml:space="preserve">
+    <value>Este año</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="TransactionSearchPlaceholder" xml:space="preserve">
+    <value>Cliente, concepto o nota…</value>
+  </data>
+  <data name="ShowVoided" xml:space="preserve">
+    <value>Mostrar las anuladas</value>
+  </data>
+  <data name="NoTransactionMatchesFilters" xml:space="preserve">
+    <value>Ninguna venta ni movimiento de caja coincide con estos filtros. Prueba otro periodo o quita los filtros.</value>
+  </data>
+  <data name="TransactionsCount" xml:space="preserve">
+    <value>{0} transacciones</value>
+  </data>
+  <data name="IncomeWithColon" xml:space="preserve">
+    <value>Ingresos:</value>
+  </data>
+  <data name="OutgoingsWithColon" xml:space="preserve">
+    <value>Salidas:</value>
+  </data>
+  <data name="NetWithColon" xml:space="preserve">
+    <value>Neto:</value>
+  </data>
+  <data name="SalesBaseWithColon" xml:space="preserve">
+    <value>Base de las ventas:</value>
+  </data>
+  <data name="SalesVatWithColon" xml:space="preserve">
+    <value>IVA de las ventas:</value>
+  </data>
+  <data name="OtherConcepts" xml:space="preserve">
+    <value>Otros conceptos</value>
+  </data>
+  <data name="ProductCategoryOption" xml:space="preserve">
+    <value>Productos · {0}</value>
+  </data>
+  <data name="ExpenseCategoryOption" xml:space="preserve">
+    <value>Gasto · {0}</value>
+  </data>
+  <data name="ExportTable" xml:space="preserve">
+    <value>Exportar la tabla</value>
+  </data>
+  <data name="ExportTableDone" xml:space="preserve">
+    <value>Se ha guardado la tabla en:
+{0}</value>
+  </data>
+  <data name="ExportTransactionsHeader" xml:space="preserve">
+    <value>fecha;hora;tipo;cliente;trabajadora;concepto;categoria;metodo_pago;base;iva;total;estado</value>
+  </data>
+  <data name="TransactionsNotLoaded" xml:space="preserve">
+    <value>No se han podido cargar las transacciones. Cambia algún filtro o vuelve a intentarlo en un momento.</value>
+  </data>
+  <data name="ExportTableEmpty" xml:space="preserve">
+    <value>La tabla está vacía: elige otro periodo o quita los filtros antes de exportar.</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Todas</value>
+  </data>
+  <data name="SalesPlural" xml:space="preserve">
+    <value>Ventas</value>
+  </data>
 </root>

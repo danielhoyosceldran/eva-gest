@@ -1619,4 +1619,77 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="SettingsNotLoaded" xml:space="preserve">
     <value>No s'han pogut llegir els ajustos, així que els valors que veus poden no ser els guardats i els canvis no es desaran. Ves a una altra pàgina i torna aquí per tornar-ho a provar.</value>
   </data>
+  <data name="Sale" xml:space="preserve">
+    <value>Venda</value>
+  </data>
+  <data name="AllTransactions" xml:space="preserve">
+    <value>Veure totes les transaccions</value>
+  </data>
+  <data name="TransactionsTitle" xml:space="preserve">
+    <value>Transaccions</value>
+  </data>
+  <data name="ThisYear" xml:space="preserve">
+    <value>Aquest any</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Cerca</value>
+  </data>
+  <data name="TransactionSearchPlaceholder" xml:space="preserve">
+    <value>Client, concepte o nota…</value>
+  </data>
+  <data name="ShowVoided" xml:space="preserve">
+    <value>Mostrar les anul·lades</value>
+  </data>
+  <data name="NoTransactionMatchesFilters" xml:space="preserve">
+    <value>Cap venda ni moviment de caixa coincideix amb aquests filtres. Prova un altre període o neteja els filtres.</value>
+  </data>
+  <data name="TransactionsCount" xml:space="preserve">
+    <value>{0} transaccions</value>
+  </data>
+  <data name="IncomeWithColon" xml:space="preserve">
+    <value>Ingressos:</value>
+  </data>
+  <data name="OutgoingsWithColon" xml:space="preserve">
+    <value>Sortides:</value>
+  </data>
+  <data name="NetWithColon" xml:space="preserve">
+    <value>Net:</value>
+  </data>
+  <data name="SalesBaseWithColon" xml:space="preserve">
+    <value>Base de les vendes:</value>
+  </data>
+  <data name="SalesVatWithColon" xml:space="preserve">
+    <value>IVA de les vendes:</value>
+  </data>
+  <data name="OtherConcepts" xml:space="preserve">
+    <value>Altres conceptes</value>
+  </data>
+  <data name="ProductCategoryOption" xml:space="preserve">
+    <value>Productes · {0}</value>
+  </data>
+  <data name="ExpenseCategoryOption" xml:space="preserve">
+    <value>Despesa · {0}</value>
+  </data>
+  <data name="ExportTable" xml:space="preserve">
+    <value>Exportar la taula</value>
+  </data>
+  <data name="ExportTableDone" xml:space="preserve">
+    <value>S'ha guardat la taula a:
+{0}</value>
+  </data>
+  <data name="ExportTransactionsHeader" xml:space="preserve">
+    <value>data;hora;tipus;client;treballadora;concepte;categoria;metode_pagament;base;iva;total;estat</value>
+  </data>
+  <data name="TransactionsNotLoaded" xml:space="preserve">
+    <value>No s'han pogut carregar les transaccions. Canvia algun filtre o torna-ho a provar d'aquí a un moment.</value>
+  </data>
+  <data name="ExportTableEmpty" xml:space="preserve">
+    <value>La taula és buida: tria un altre període o neteja els filtres abans d'exportar.</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Totes</value>
+  </data>
+  <data name="SalesPlural" xml:space="preserve">
+    <value>Vendes</value>
+  </data>
 </root>

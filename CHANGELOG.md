@@ -6,6 +6,18 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 Version 1 is closed at 1.3.0. The releases first numbered 2.0.0 and 3.0.0 were
 fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 2.0.0.
 
+## 2.0.0
+
+- Informes has a new button, "Veure totes les transaccions", that opens a large window
+  with every sale and till movement in one table. It filters by period (with Avui,
+  Aquesta setmana, Aquest mes and Aquest any shortcuts), type (sales, cash-ins,
+  cash-outs), client, worker, payment method, category (services, products, other
+  concepts, each product category and each expense category) and free text, which
+  ignores accents. Voided sales and movements can be shown, greyed out, and never
+  count. Underneath are the totals of what is on screen: income, outgoings, net, and
+  the base and VAT of the sales. The table is read-only; "Exportar la taula" saves
+  exactly the rows on screen as a CSV.
+
 ## 1.3.0 (closes version 1)
 
 - Caixa now follows the date when EvaGest stays open overnight. "Avui", "Aquesta

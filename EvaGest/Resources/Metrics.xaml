@@ -33,6 +33,10 @@
     <sys:Double x:Key="DialogScreenMargin">12</sys:Double>
     <!-- Space between a dialog's scrolling body and its pinned buttons -->
     <Thickness x:Key="DialogFooterMargin">0,12,0,0</Thickness>
+    <!-- Ceiling of a dialog that fills the screen (the transactions table): below this
+         it takes the whole work area, above it it stops growing -->
+    <sys:Double x:Key="LargeDialogMaxWidth">1500</sys:Double>
+    <sys:Double x:Key="LargeDialogMaxHeight">950</sys:Double>
     <!-- The help list grows as questions open; past this it scrolls instead -->
     <sys:Double x:Key="HelpMaxHeight">620</sys:Double>
 

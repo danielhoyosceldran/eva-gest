@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Resources;
+using EvaGest.ViewModels.Dialogs;
 
 namespace EvaGest.ViewModels.Pages;
 
@@ -11,8 +12,16 @@ namespace EvaGest.ViewModels.Pages;
 /// Reports (pantalles 2.8): three blocks with a period selector for the worker
 /// ranking. Reports only make sense once there is real data (Phase 8 is
 /// deliberately one of the last modules built).
+///
+/// The transactions window (every sale and cash movement, filterable) opens from here.
+/// Its three services are optional only so the tests that build this page for its
+/// rankings need not provide them; the container always does.
 /// </summary>
-public partial class ReportsViewModel(IReportsService reports)
+public partial class ReportsViewModel(
+    IReportsService reports,
+    ITransactionsService? transactions = null,
+    IExportService? export = null,
+    IDialogService? dialogs = null)
     : PageViewModelBase
 {
     public override string Title => Texts.NavReports;
@@ -156,5 +165,17 @@ public partial class ReportsViewModel(IReportsService reports)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         (From, To) = (new DateOnly(today.Year, today.Month, 1), today);
+    }
+
+    /// <summary>Opens the transactions window, on this month. It is read-only, so
+    /// nothing on this page needs reloading when it closes.</summary>
+    [RelayCommand]
+    private async Task ShowTransactions()
+    {
+        if (transactions is null || export is null || dialogs is null) return;
+
+        var vm = new TransactionsDialogViewModel(transactions, export, dialogs, DateOnly.FromDateTime(DateTime.Today));
+        await vm.Load();
+        await dialogs.ShowDialog(vm);
     }
 }

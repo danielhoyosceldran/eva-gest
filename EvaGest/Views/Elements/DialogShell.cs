@@ -20,6 +20,21 @@ public class DialogShell : ContentControl
     public static readonly DependencyProperty ActionsProperty = DependencyProperty.Register(
         nameof(Actions), typeof(object), typeof(DialogShell), new PropertyMetadata(null));
 
+    public static readonly DependencyProperty ScrollsContentProperty = DependencyProperty.Register(
+        nameof(ScrollsContent), typeof(bool), typeof(DialogShell), new PropertyMetadata(true));
+
+    /// <summary>
+    /// False for a dialog whose content scrolls by itself — a table. The shell then gives
+    /// the content exactly the height left above the buttons instead of unlimited room:
+    /// inside an outer scroll a DataGrid measures every row at once (no virtualisation)
+    /// and its header scrolls away with the rows.
+    /// </summary>
+    public bool ScrollsContent
+    {
+        get => (bool)GetValue(ScrollsContentProperty);
+        set => SetValue(ScrollsContentProperty, value);
+    }
+
     /// <summary>What stays pinned under the scrolling form: usually the error banner
     /// and the row of buttons.</summary>
     public object? Actions

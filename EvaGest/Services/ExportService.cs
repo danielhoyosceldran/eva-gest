@@ -104,6 +104,48 @@ public class ExportService(IDbContextFactory<ShopDbContext> factory) : IExportSe
             sales.Count, movementVat.Count, from, to, destinationFolder);
     }
 
+    public async Task<string> ExportTransactions(IReadOnlyList<TransactionEntry> entries,
+                                                 DateOnly from, DateOnly to, string destinationFolder)
+    {
+        Directory.CreateDirectory(destinationFolder);
+        string path = Path.Combine(destinationFolder, $"transaccions_{from:yyyyMMdd}-{to:yyyyMMdd}.csv");
+
+        // Same all-or-nothing write as the accountant's export: a copy of this file
+        // still open in Excel is named instead of failing halfway.
+        await WriteAll([(path, TransactionsCsv(entries))]);
+
+        Log.Information("Exported {RowCount} transactions for {From}..{To} to {Path}",
+            entries.Count, from, to, path);
+        return path;
+    }
+
+    private static string TransactionsCsv(IReadOnlyList<TransactionEntry> entries)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine(Texts.ExportTransactionsHeader);
+
+        foreach (var e in entries)
+        {
+            sb.AppendLine(string.Join(';',
+                e.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+                e.Time?.ToString("HH:mm", CultureInfo.InvariantCulture) ?? "",
+                Csv(Labels.Text(e.Kind)),
+                Csv(e.ClientName ?? ""),
+                Csv(e.WorkerName ?? ""),
+                Csv(e.Concept),
+                Csv(Labels.Category(e)),
+                Csv(e.MethodName ?? Texts.DeletedPaymentMethod),
+                // Blank, not 0,00, on a movement whose VAT was never split: zero would
+                // claim it had no VAT, when it simply was not recorded (RF-13).
+                e.BaseCents is int b ? Amount(e.Kind == TransactionKind.CashOut ? -b : b) : "",
+                e.VatCents is int v ? Amount(e.Kind == TransactionKind.CashOut ? -v : v) : "",
+                Amount(e.SignedTotalCents),
+                Csv(e.Voided ? Texts.Voided : Texts.Active)));
+        }
+
+        return sb.ToString();
+    }
+
     /// <summary>
     /// Writes the export's files all or nothing. First every existing target is checked
     /// for a lock — the accountant's spreadsheet holds an open CSV with no sharing, which

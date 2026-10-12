@@ -55,6 +55,7 @@
             <DataTemplate DataType="{x:Type dvm:OwnerPinConfirmDialogViewModel}"><dv:OwnerPinConfirmDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:OwnerPinDialogViewModel}"><dv:OwnerPinDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:RecoveryCodeDialogViewModel}"><dv:RecoveryCodeDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:TransactionsDialogViewModel}"><dv:TransactionsDialogView /></DataTemplate>
 
             <!-- The weekly grid is hosted both by the Agenda page and by the appointment dialog -->
             <DataTemplate DataType="{x:Type evm:WeekGridViewModel}"><ev:WeekGridView /></DataTemplate>

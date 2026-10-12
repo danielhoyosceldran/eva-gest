@@ -14,6 +14,13 @@ public abstract partial class DialogViewModelBase : ObservableObject
 
     public abstract string Title { get; }
 
+    /// <summary>
+    /// True for a dialog that is a workspace rather than a form — a table to browse —
+    /// and opens as large as the screen allows instead of sizing to its content. Its
+    /// view must not need scrolling as a whole: the table inside scrolls by itself.
+    /// </summary>
+    public virtual bool FillsScreen => false;
+
     public event Action<bool>? Close;
 
     protected void RequestClose(bool confirmed) => Close?.Invoke(confirmed);

@@ -99,6 +99,7 @@ Defined in [`plan/requeriments-barberia-v2.md`](plan/requeriments-barberia-v2.md
 | RF-26 | Restoring a backup |
 | RF-27 | CSV export for the accountant (modelo 303) |
 | RF-28 | Basic logging, 30 days retained |
+| RF-29 | Transactions table in Reports: every sale and till movement, filtered by period, type, client, worker, payment method, category and text, with totals and CSV export. Added in 2.0.0, so it is newer than `plan/` and defined only here and in `TransactionsService` |
 
 ### `CU-xx` — use cases
 

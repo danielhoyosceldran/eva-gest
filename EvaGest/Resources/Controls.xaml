@@ -1039,7 +1039,7 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <ScrollViewer Grid.Row="0" Focusable="False"
+                        <ScrollViewer x:Name="Body" Grid.Row="0" Focusable="False"
                                       VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
                             <ContentPresenter Margin="{TemplateBinding Padding}" />
@@ -1047,6 +1047,13 @@
                         <ContentPresenter Grid.Row="1" Content="{TemplateBinding Actions}"
                                           Margin="{StaticResource DialogFooterMargin}" />
                     </Grid>
+                    <!-- A table that scrolls by itself: Disabled hands the content the
+                         viewport's height instead of unlimited room -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ScrollsContent" Value="False">
+                            <Setter TargetName="Body" Property="VerticalScrollBarVisibility" Value="Disabled" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

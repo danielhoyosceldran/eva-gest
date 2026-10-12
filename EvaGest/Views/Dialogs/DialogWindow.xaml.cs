@@ -52,6 +52,15 @@ public partial class DialogWindow : Window
         var (width, height) = LayoutFit.MaxWindowSize(area.Width, area.Height, ScreenMargin);
         MaxWidth = width;
         MaxHeight = height;
+
+        // A workspace dialog (the transactions table) takes the whole cap, up to a
+        // ceiling so it does not turn into a second main window on a large screen.
+        if (_viewModel.FillsScreen)
+        {
+            SizeToContent = SizeToContent.Manual;
+            Width = Math.Min(width, (double)FindResource("LargeDialogMaxWidth"));
+            Height = Math.Min(height, (double)FindResource("LargeDialogMaxHeight"));
+        }
     }
 
     /// <summary>

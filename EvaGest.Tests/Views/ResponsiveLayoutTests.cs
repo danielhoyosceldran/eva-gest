@@ -135,6 +135,18 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
             vm.SplitVat = true;
             return new(vm, () => new MovementDialogView());
         },
+        ["Transactions"] = async s =>
+        {
+            var f = s.Factory;
+            var vm = new TransactionsDialogViewModel(new TransactionsService(f), new ExportService(f),
+                new TestDialogService(), WorstCaseShop.Today);
+            await vm.Load();
+            await vm.SelectThisYearCommand.ExecuteAsync(null);
+            vm.IncludeVoided = true;
+            await vm.Search();
+            vm.ErrorValidation = "No s'han pogut carregar les transaccions. Canvia algun filtre o torna-ho a provar d'aquí a un moment.";
+            return new(vm, () => new TransactionsDialogView());
+        },
         ["Service"] = _ => Task.FromResult(new Built(new ServiceDialogViewModel(), () => new ServiceDialogView())),
         ["Product"] = _ => Task.FromResult(new Built(new ProductDialogViewModel(), () => new ProductDialogView())),
         ["Category"] = s => Task.FromResult(new Built(new CategoryDialogViewModel(new CatalogService(s.Factory)), () => new CategoryDialogView())),
@@ -179,7 +191,10 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                     Margin = (Thickness)Application.Current.FindResource("PadCard")
                 };
                 var cap = new Size(maxWidth - DialogFrameWidth, maxHeight - DialogFrameHeight);
-                Layout(host, cap, sizeToContent: true);
+                // A dialog that fills the screen is not sized to its content: DialogWindow
+                // gives it the whole cap, so it is laid out at exactly that size.
+                bool fills = built.ViewModel is DialogViewModelBase { FillsScreen: true };
+                Layout(host, cap, sizeToContent: !fills);
 
                 foreach (var p in Problems(host)) problems.Add($"{screen.name}: {p}");
 

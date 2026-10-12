@@ -231,6 +231,7 @@ public partial class App : Application
         s.AddTransient<ISaleService, SaleService>();
         s.AddTransient<ITillService, TillService>();
         s.AddTransient<IReportsService, ReportsService>();
+        s.AddTransient<ITransactionsService, TransactionsService>();
         s.AddSingleton<ISoundService, SoundService>();
         // Singleton so the settings table is read once and kept in memory: the agenda
         // grid asks for the slot granularity on every week load.

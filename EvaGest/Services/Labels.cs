@@ -77,4 +77,28 @@ public static class Labels
         LineType.Other   => Texts.Other,
         _ => type.ToString()
     };
+
+    public static string Text(TransactionKind kind) => kind switch
+    {
+        TransactionKind.Sale    => Texts.Sale,
+        TransactionKind.CashIn  => Texts.CashIn,
+        TransactionKind.CashOut => Texts.CashOut,
+        _ => kind.ToString()
+    };
+
+    /// <summary>
+    /// The category column of the transactions table, and of its CSV: the kinds of line
+    /// a sale holds ("Servei + Producte"), or the expense category of a movement. A dash
+    /// when there is nothing to say, so the cell is never mistaken for missing data.
+    /// </summary>
+    public static string Category(TransactionEntry entry)
+    {
+        if (entry.Kind == TransactionKind.Sale)
+        {
+            var types = entry.LineTypes.Select(Text).ToList();
+            return types.Count > 0 ? string.Join(" + ", types) : "—";
+        }
+
+        return entry.ExpenseCategoryName ?? "—";
+    }
 }

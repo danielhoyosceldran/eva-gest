@@ -553,6 +553,30 @@ public static class Texts
         nameof(RestoreNotDone),
         nameof(SaveFailedKeepEditing),
         nameof(SettingsNotLoaded),
+        nameof(Sale),
+        nameof(AllTransactions),
+        nameof(TransactionsTitle),
+        nameof(ThisYear),
+        nameof(Search),
+        nameof(TransactionSearchPlaceholder),
+        nameof(ShowVoided),
+        nameof(NoTransactionMatchesFilters),
+        nameof(TransactionsCount),
+        nameof(IncomeWithColon),
+        nameof(OutgoingsWithColon),
+        nameof(NetWithColon),
+        nameof(SalesBaseWithColon),
+        nameof(SalesVatWithColon),
+        nameof(OtherConcepts),
+        nameof(ProductCategoryOption),
+        nameof(ExpenseCategoryOption),
+        nameof(ExportTable),
+        nameof(ExportTableDone),
+        nameof(ExportTransactionsHeader),
+        nameof(TransactionsNotLoaded),
+        nameof(ExportTableEmpty),
+        nameof(AllKinds),
+        nameof(SalesPlural),
     ];
 
     /// <summary>Pendent</summary>
@@ -2105,4 +2129,76 @@ public static class Texts
 
     /// <summary>No s'han pogut llegir els ajustos, així que els valors que veus poden no ser els guardats i els canvis no es desaran. Ves a una altra pàgina i torna aquí per tornar-ho a provar.</summary>
     public static string SettingsNotLoaded => Get(nameof(SettingsNotLoaded));
+
+    /// <summary>Venda</summary>
+    public static string Sale => Get(nameof(Sale));
+
+    /// <summary>Veure totes les transaccions</summary>
+    public static string AllTransactions => Get(nameof(AllTransactions));
+
+    /// <summary>Transaccions</summary>
+    public static string TransactionsTitle => Get(nameof(TransactionsTitle));
+
+    /// <summary>Aquest any</summary>
+    public static string ThisYear => Get(nameof(ThisYear));
+
+    /// <summary>Cerca</summary>
+    public static string Search => Get(nameof(Search));
+
+    /// <summary>Client, concepte o nota…</summary>
+    public static string TransactionSearchPlaceholder => Get(nameof(TransactionSearchPlaceholder));
+
+    /// <summary>Mostrar les anul·lades</summary>
+    public static string ShowVoided => Get(nameof(ShowVoided));
+
+    /// <summary>Cap venda ni moviment de caixa coincideix amb aquests filtres. Prova un altre període o neteja els filtres.</summary>
+    public static string NoTransactionMatchesFilters => Get(nameof(NoTransactionMatchesFilters));
+
+    /// <summary>{0} transaccions</summary>
+    public static string TransactionsCount => Get(nameof(TransactionsCount));
+
+    /// <summary>Ingressos:</summary>
+    public static string IncomeWithColon => Get(nameof(IncomeWithColon));
+
+    /// <summary>Sortides:</summary>
+    public static string OutgoingsWithColon => Get(nameof(OutgoingsWithColon));
+
+    /// <summary>Net:</summary>
+    public static string NetWithColon => Get(nameof(NetWithColon));
+
+    /// <summary>Base de les vendes:</summary>
+    public static string SalesBaseWithColon => Get(nameof(SalesBaseWithColon));
+
+    /// <summary>IVA de les vendes:</summary>
+    public static string SalesVatWithColon => Get(nameof(SalesVatWithColon));
+
+    /// <summary>Altres conceptes</summary>
+    public static string OtherConcepts => Get(nameof(OtherConcepts));
+
+    /// <summary>Productes · {0}</summary>
+    public static string ProductCategoryOption => Get(nameof(ProductCategoryOption));
+
+    /// <summary>Despesa · {0}</summary>
+    public static string ExpenseCategoryOption => Get(nameof(ExpenseCategoryOption));
+
+    /// <summary>Exportar la taula</summary>
+    public static string ExportTable => Get(nameof(ExportTable));
+
+    /// <summary>S'ha guardat la taula a:</summary>
+    public static string ExportTableDone => Get(nameof(ExportTableDone));
+
+    /// <summary>data;hora;tipus;client;treballadora;concepte;categoria;metode_pagament;base;iva;total;estat</summary>
+    public static string ExportTransactionsHeader => Get(nameof(ExportTransactionsHeader));
+
+    /// <summary>No s'han pogut carregar les transaccions. Canvia algun filtre o torna-ho a provar d'aquí a un moment.</summary>
+    public static string TransactionsNotLoaded => Get(nameof(TransactionsNotLoaded));
+
+    /// <summary>La taula és buida: tria un altre període o neteja els filtres abans d'exportar.</summary>
+    public static string ExportTableEmpty => Get(nameof(ExportTableEmpty));
+
+    /// <summary>Totes</summary>
+    public static string AllKinds => Get(nameof(AllKinds));
+
+    /// <summary>Vendes</summary>
+    public static string SalesPlural => Get(nameof(SalesPlural));
 }
