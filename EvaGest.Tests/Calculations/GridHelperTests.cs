@@ -139,6 +139,20 @@ public class GridHelperTests
         (fi - start).Should().BeGreaterThanOrEqualTo(60);
     }
 
+    [Fact]
+    public void VisibleRange_without_schedules_one_appointment_does_not_cut_the_grid_at_its_end()
+    {
+        var appointments = new[] { (new TimeOnly(10, 0), 30) };
+        GridHelper.VisibleRange([], appointments).Should().Be(GridHelper.DefaultRange);
+    }
+
+    [Fact]
+    public void VisibleRange_without_schedules_widens_the_default_for_an_appointment_outside_it()
+    {
+        var appointments = new[] { (new TimeOnly(20, 30), 60) };
+        GridHelper.VisibleRange([], appointments).Should().Be((GridHelper.DefaultRange.start, 22 * 60));
+    }
+
     // ---------- Bands fora d'schedule ----------
 
     [Fact] // G-15

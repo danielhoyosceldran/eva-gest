@@ -100,6 +100,12 @@ public static class GridHelper
             start = Math.Min(start, Math.Max(0, DayMinutes(f.start) - OpeningPaddingMinutes));
             fi = Math.Max(fi, Math.Min(MinutesPerDay, ToEndMinute(f.fi) + OpeningPaddingMinutes));
         }
+
+        // No opening hours for the days shown: the default band is the base, and the
+        // appointments below only widen it. Without this the band shrank to the
+        // appointments alone, so one booking cut the grid off where it ended.
+        if (start == int.MaxValue) (start, fi) = DefaultRange;
+
         foreach (var c in appointments)
         {
             int h = DayMinutes(c.time);
@@ -107,7 +113,7 @@ public static class GridHelper
             fi = Math.Max(fi, h + Math.Max(0, c.durationMin));
         }
 
-        if (start == int.MaxValue || fi <= start) return DefaultRange;
+        if (fi <= start) return DefaultRange;
 
         start = start / 60 * 60;                                  // floor to the hour
         fi = (int)Math.Ceiling(fi / 60.0) * 60;                   // ceil to the hour

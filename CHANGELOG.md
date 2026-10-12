@@ -17,6 +17,9 @@ the installer file is `installer/Output/EvaGest-Setup-<version>.exe`.
 - Clients born on 29 February get their birthday notice on 28 February in years without one.
 - Searching for a client with "_" or "%" in the text now finds only names containing it,
   instead of every client.
+- Without opening hours set, the Agenda and the slot picker in the appointment window
+  no longer end where the last appointment ends. They show the usual day (9:00 to
+  20:00), extended if an appointment falls outside it.
 
 ## 2.0.0
 

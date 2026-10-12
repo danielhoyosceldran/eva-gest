@@ -33,3 +33,4 @@ description,repro_steps,solved,commit
 "B-05 Clients born on 29 February never got the birthday notice in a non-leap year","Client born 29/02/2000 -> open Inici on 28/02 of a non-leap year -> no birthday notice",yes,
 "B-06 ClientService.Update wrote back every column from the edit dialog's model, which has no Asleep, so editing an asleep client woke them (latent: Edit is only offered on the active list)","Call Update with a dialog-built model for an asleep client -> Asleep becomes false",yes,
 "B-07 Client search did not escape LIKE wildcards: typing _ or % matched every client","Clients -> search _ -> every client is listed",yes,
+"B-08 Without opening hours set, the Agenda and the appointment window's grid shrank to the hours of the appointments shown: one appointment cut the grid off where it ended","No schedules configured -> Agenda -> book a 10:00-10:30 appointment -> the grid shows only 10:00-11:00 (same in the slot picker of Nova cita)",yes,
