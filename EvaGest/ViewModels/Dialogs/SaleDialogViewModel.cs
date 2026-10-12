@@ -85,6 +85,14 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     public ObservableCollection<Worker> ActiveWorkers { get; } = [];
     public ObservableCollection<PaymentMethod> ActiveMethods { get; } = [];
 
+    public SearchPickerViewModel<Worker> WorkerPicker { get; }
+    public SearchPickerViewModel<Service> ServiceToAddPicker { get; }
+    public SearchPickerViewModel<Product> ProductToAddPicker { get; }
+
+    partial void OnWorkerChanged(Worker? value) => WorkerPicker.Show(value);
+    partial void OnServiceToAddChanged(Service? value) => ServiceToAddPicker.Show(value);
+    partial void OnProductToAddChanged(Product? value) => ProductToAddPicker.Show(value);
+
     [ObservableProperty] private int _baseCents;
     [ObservableProperty] private int _vatCents;
     [ObservableProperty] private int _totalCents;
@@ -108,6 +116,12 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         _so = so;
         _clients = clients;
         _dialogs = dialogs;
+
+        // Search boxes over the lists that grow long, with the whole list a button away.
+        // Their OnXChanged below mirror the property back into the box.
+        WorkerPicker = new(ActiveWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle);
+        ServiceToAddPicker = new(ActiveServices, s => s.Name, s => ServiceToAdd = s, dialogs, Texts.ServiceBrowserTitle);
+        ProductToAddPicker = new(ActiveProducts, p => p.Name, p => ProductToAdd = p, dialogs, Texts.ProductBrowserTitle);
 
         ClientPicker = new ClientPickerViewModel(dialogs);
         ClientPicker.PropertyChanged += (_, e) =>

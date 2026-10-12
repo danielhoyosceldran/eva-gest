@@ -114,13 +114,11 @@
                     <el:WrappingUniformGrid MinItemWidth="{StaticResource FilterFieldMinWidth}">
                         <StackPanel Margin="0,0,12,0">
                             <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
-                            <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterClients}"
-                                      SelectedItem="{Binding Client}" DisplayMemberPath="Name" />
+                            <el:SearchPickerView DataContext="{Binding ClientPicker}" Compact="True" />
                         </StackPanel>
                         <StackPanel Margin="0,0,12,0">
                             <TextBlock Text="{x:Static t:Texts.Worker}" Style="{StaticResource DataLabel}" />
-                            <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterWorkers}"
-                                      SelectedItem="{Binding Worker}" DisplayMemberPath="Name" />
+                            <el:SearchPickerView DataContext="{Binding WorkerPicker}" Compact="True" />
                         </StackPanel>
                         <StackPanel Margin="0,0,12,0">
                             <TextBlock Text="{x:Static t:Texts.Payment}" Style="{StaticResource DataLabel}" />
@@ -129,8 +127,7 @@
                         </StackPanel>
                         <StackPanel Margin="0,0,12,0">
                             <TextBlock Text="{x:Static t:Texts.Category}" Style="{StaticResource DataLabel}" />
-                            <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterCategories}"
-                                      SelectedItem="{Binding Category}" DisplayMemberPath="Label" />
+                            <el:SearchPickerView DataContext="{Binding CategoryPicker}" Compact="True" />
                         </StackPanel>
                         <StackPanel Margin="0,0,12,0">
                             <TextBlock Text="{x:Static t:Texts.Search}" Style="{StaticResource DataLabel}" />

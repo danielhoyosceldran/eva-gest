@@ -184,7 +184,7 @@ public partial class TillViewModel(
     private async Task OpenMovementDialog(MovementType type)
     {
         var vm = await ViewModels.Dialogs.MovementDialogViewModel.New(
-            type, DateForNewMovement(), catalog, workers, settings);
+            type, DateForNewMovement(), catalog, workers, settings, dialogs);
         vm.Persist = () => till.Create(vm.AModel());
         if (await dialogs.ShowDialog(vm)) await Load();
     }

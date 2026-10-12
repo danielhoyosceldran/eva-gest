@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.ViewModels.Dialogs;
+using EvaGest.ViewModels.Elements;
 using EvaGest.Resources;
 
 namespace EvaGest.ViewModels.Pages;
@@ -46,6 +47,24 @@ public partial class SalesViewModel(
     public ObservableCollection<Worker> FilterWorkers { get; } = [];
 
     public IReadOnlyList<SaleStatus> FilterStatuses { get; } = [SaleStatus.Active, SaleStatus.Voided];
+
+    // Search boxes in place of the combo boxes whose lists grow long. Each reads its
+    // Filter* list above and writes the matching property; an empty box means "all".
+    // Built on first use: a primary-constructor class cannot reach its own lists from
+    // a property initializer.
+    private SearchPickerViewModel<Client>? _clientPicker;
+    private SearchPickerViewModel<Service>? _servicePicker;
+    private SearchPickerViewModel<Product>? _productPicker;
+    private SearchPickerViewModel<Worker>? _workerPicker;
+
+    public SearchPickerViewModel<Client> ClientPicker => _clientPicker ??=
+        new(FilterClients, c => c.Name, c => Client = c, dialogs, Texts.ClientBrowserTitle, Texts.AnyOption, c => c.Mobile);
+    public SearchPickerViewModel<Service> ServicePicker => _servicePicker ??=
+        new(FilterServices, s => s.Name, s => Service = s, dialogs, Texts.ServiceBrowserTitle, Texts.AnyOption);
+    public SearchPickerViewModel<Product> ProductPicker => _productPicker ??=
+        new(FilterProducts, p => p.Name, p => Product = p, dialogs, Texts.ProductBrowserTitle, Texts.AnyOption);
+    public SearchPickerViewModel<Worker> WorkerPicker => _workerPicker ??=
+        new(FilterWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle, Texts.AnyOption);
 
     // ── Table footer ─────────────────────────────────────────────────────────
     [ObservableProperty] private string _totalBaseText = "—";
@@ -168,11 +187,11 @@ public partial class SalesViewModel(
 
     partial void OnFromChanged(DateOnly? value) => FilterChanged();
     partial void OnToChanged(DateOnly? value) => FilterChanged();
-    partial void OnClientChanged(Client? value) => FilterChanged();
-    partial void OnServiceChanged(Service? value) => FilterChanged();
-    partial void OnProductChanged(Product? value) => FilterChanged();
+    partial void OnClientChanged(Client? value) { ClientPicker.Show(value); FilterChanged(); }
+    partial void OnServiceChanged(Service? value) { ServicePicker.Show(value); FilterChanged(); }
+    partial void OnProductChanged(Product? value) { ProductPicker.Show(value); FilterChanged(); }
     partial void OnPaymentMethodChanged(PaymentMethod? value) => FilterChanged();
-    partial void OnWorkerChanged(Worker? value) => FilterChanged();
+    partial void OnWorkerChanged(Worker? value) { WorkerPicker.Show(value); FilterChanged(); }
     partial void OnStatusChanged(SaleStatus? value) => FilterChanged();
 
     [RelayCommand]
@@ -189,6 +208,11 @@ public partial class SalesViewModel(
             PaymentMethod = null;
             Worker = null;
             Status = null;
+            // Also empties text typed in a box but never picked
+            ClientPicker.Clear();
+            ServicePicker.Clear();
+            ProductPicker.Clear();
+            WorkerPicker.Clear();
         }
         finally { _changingSeveralFilters = false; }
 

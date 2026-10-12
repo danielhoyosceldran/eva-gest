@@ -1692,4 +1692,34 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="SalesPlural" xml:space="preserve">
     <value>Ventas</value>
   </data>
+  <data name="BrowseList" xml:space="preserve">
+    <value>Ver la lista</value>
+  </data>
+  <data name="OptionSearchPlaceholder" xml:space="preserve">
+    <value>Escribe para buscar</value>
+  </data>
+  <data name="OptionSearchPlaceholderBrowse" xml:space="preserve">
+    <value>Escribe para filtrar la lista</value>
+  </data>
+  <data name="OptionBrowserEmpty" xml:space="preserve">
+    <value>Nada coincide con la búsqueda. Prueba con otra palabra.</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Elegir</value>
+  </data>
+  <data name="AnyOption" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="WorkerBrowserTitle" xml:space="preserve">
+    <value>Elegir trabajadora</value>
+  </data>
+  <data name="ServiceBrowserTitle" xml:space="preserve">
+    <value>Elegir servicio</value>
+  </data>
+  <data name="ProductBrowserTitle" xml:space="preserve">
+    <value>Elegir producto</value>
+  </data>
+  <data name="CategoryBrowserTitle" xml:space="preserve">
+    <value>Elegir categoría</value>
+  </data>
 </root>

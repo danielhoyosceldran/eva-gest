@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.Resources;
+using EvaGest.ViewModels.Elements;
 
 namespace EvaGest.ViewModels.Dialogs;
 
@@ -53,14 +54,26 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     public ObservableCollection<ExpenseCategory> ActiveCategories { get; } = [];
     public ObservableCollection<Worker> ActiveWorkers { get; } = [];
 
+    /// <summary>Search boxes over <see cref="ActiveCategories"/> and <see cref="ActiveWorkers"/>,
+    /// with the whole list a button away; they write <see cref="Category"/> and <see cref="Worker"/>.</summary>
+    public SearchPickerViewModel<ExpenseCategory> CategoryPicker { get; }
+    public SearchPickerViewModel<Worker> WorkerPicker { get; }
+
+    partial void OnCategoryChanged(ExpenseCategory? value) => CategoryPicker.Show(value);
+    partial void OnWorkerChanged(Worker? value) => WorkerPicker.Show(value);
+
     public override string Title => Type == MovementType.In ? Texts.NewCashInTitle : Texts.NewCashOutTitle;
 
     /// <summary>Category and worker only make sense for money going out (RF-16
     /// extension): a cash-in has no expense to classify or worker to pay.</summary>
     public bool IsCashOut => Type == MovementType.Out;
 
-    public MovementDialogViewModel(MovementType type, DateOnly date)
+    /// <param name="dialogs">Opens the boxes' "Veure la llista". Null where there is no
+    /// window to open one from (tests of the form itself): the button then does nothing.</param>
+    public MovementDialogViewModel(MovementType type, DateOnly date, IDialogService? dialogs = null)
     {
+        CategoryPicker = new(ActiveCategories, c => c.Name, c => Category = c, dialogs, Texts.CategoryBrowserTitle);
+        WorkerPicker = new(ActiveWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle);
         Type = type;
         Date = date;
     }
@@ -73,9 +86,10 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     /// </summary>
     public static async Task<MovementDialogViewModel> New(
         MovementType type, DateOnly date,
-        ICatalogService catalog, IWorkerService workers, ISettingsService settings)
+        ICatalogService catalog, IWorkerService workers, ISettingsService settings,
+        IDialogService? dialogs = null)
     {
-        var vm = new MovementDialogViewModel(type, date);
+        var vm = new MovementDialogViewModel(type, date, dialogs);
         await vm.LoadMethods(catalog);
         await vm.LoadCategories(catalog);
         await vm.LoadWorkers(workers);

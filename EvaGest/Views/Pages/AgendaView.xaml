@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:t="clr-namespace:EvaGest.Resources"
              xmlns:h="clr-namespace:EvaGest.Helpers"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements"
              Background="{StaticResource PaperBrush}">
     <Grid Margin="{StaticResource PagePad}">
         <Grid.RowDefinitions>
@@ -59,10 +60,10 @@
                     Command="{Binding Grid.GoToTodayCommand}" Margin="0,0,12,0" />
             <Button Grid.Column="6" Content="{Binding Grid.ToggleViewText}" Style="{StaticResource SecondaryButton}"
                     Command="{Binding Grid.ToggleViewCommand}" Margin="0,0,12,0" />
-            <!-- "All" and "Not defined" sit alongside the real workers in the same list. -->
-            <ComboBox Grid.Column="7" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,12,0"
-                      ItemsSource="{Binding WorkerFilterOptions}" SelectedItem="{Binding SelectedWorkerFilter}"
-                      DisplayMemberPath="Name" ToolTip="{x:Static t:Texts.Worker}" />
+            <!-- "All" and "Not defined" sit alongside the real workers in the same list;
+                 an empty box shows everyone too. -->
+            <el:SearchPickerView Grid.Column="7" VerticalAlignment="Center" Margin="0,0,12,0" Compact="True"
+                                 DataContext="{Binding WorkerFilterPicker}" ToolTip="{x:Static t:Texts.Worker}" />
             <Button Grid.Column="8" Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
                     Command="{Binding NewAppointmentCommand}" />
         </Grid>

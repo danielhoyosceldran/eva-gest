@@ -388,6 +388,21 @@
         </Grid>
     </DataTemplate>
 
+    <!-- A row of a search picker's list (its dropdown and its browse dialog): the
+         label, and on the right the optional detail, laid out like ClientRow. -->
+    <DataTemplate x:Key="OptionRow">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="10,8" TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding Label}" />
+            <TextBlock Grid.Column="1" Text="{Binding Detail}" Margin="10,8" Opacity="0.75"
+                       FontSize="{StaticResource FontSizeSmall}" VerticalAlignment="Center" />
+        </Grid>
+    </DataTemplate>
+
     <!-- Checkbox: same accent and focus language as TextBox/buttons -->
     <Style TargetType="CheckBox">
         <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />

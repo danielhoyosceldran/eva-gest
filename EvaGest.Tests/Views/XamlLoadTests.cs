@@ -119,6 +119,25 @@ public class XamlLoadTests(ApplicationWpf app)
             view.ActualHeight.Should().BeGreaterThan(0);
         });
 
+    [Fact]
+    public void The_search_picker_and_its_browser_dialog_build()
+        => app.Runs(() =>
+        {
+            var workers = new List<Worker> { new() { Id = 1, Name = "Marta Puig" } };
+            var picker = new SearchPickerViewModel<Worker>(workers, w => w.Name, _ => { }, null, "Triar treballadora");
+            var view = new EvaGest.Views.Elements.SearchPickerView { DataContext = picker, Compact = true };
+            view.Measure(new Size(200, 60));
+            view.Arrange(new Rect(0, 0, 200, 60));
+            view.ActualHeight.Should().BeGreaterThan(0);
+
+            var browser = new EvaGest.ViewModels.Dialogs.OptionBrowserDialogViewModel("Triar treballadora",
+                [new EvaGest.Helpers.PickerOption(workers[0], "Marta Puig")]);
+            var dialog = new EvaGest.Views.Dialogs.OptionBrowserDialogView { DataContext = browser };
+            dialog.Measure(new Size(800, 700));
+            dialog.Arrange(new Rect(0, 0, 800, 700));
+            dialog.ActualHeight.Should().BeGreaterThan(0);
+        });
+
     [Fact] // X-05
     public void The_settings_view_builds()
         => app.Runs(() =>

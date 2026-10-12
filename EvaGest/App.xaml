@@ -51,6 +51,7 @@
             <DataTemplate DataType="{x:Type dvm:HelpViewModel}"><dv:HelpView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:WorkerDialogViewModel}"><dv:WorkerDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:ClientBrowserDialogViewModel}"><dv:ClientBrowserDialogView /></DataTemplate>
+            <DataTemplate DataType="{x:Type dvm:OptionBrowserDialogViewModel}"><dv:OptionBrowserDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:OwnerUnlockDialogViewModel}"><dv:OwnerUnlockDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:OwnerPinConfirmDialogViewModel}"><dv:OwnerPinConfirmDialogView /></DataTemplate>
             <DataTemplate DataType="{x:Type dvm:OwnerPinDialogViewModel}"><dv:OwnerPinDialogView /></DataTemplate>

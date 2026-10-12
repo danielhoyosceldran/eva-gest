@@ -39,7 +39,9 @@
             </Border>
         </Grid>
 
-        <!-- Filters (RF-15). Every picker allows an empty selection, meaning "all".
+        <!-- Filters (RF-15). Every picker allows an empty selection, meaning "all". The
+             lists that grow long (clients, services, products, workers) are search boxes
+             with the whole list behind "…"; the short ones stay combo boxes.
              Equal cells that stretch to the page width: one row on a wide screen,
              wrapped onto more rows when the cells would get too narrow to read. -->
         <Border Grid.Row="1" Style="{StaticResource DataCard}" Margin="0,0,0,12">
@@ -56,18 +58,15 @@
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
-                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterClients}"
-                              SelectedItem="{Binding Client}" DisplayMemberPath="Name" />
+                    <el:SearchPickerView DataContext="{Binding ClientPicker}" Compact="True" />
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Service}" Style="{StaticResource DataLabel}" />
-                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterServices}"
-                              SelectedItem="{Binding Service}" DisplayMemberPath="Name" />
+                    <el:SearchPickerView DataContext="{Binding ServicePicker}" Compact="True" />
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Product}" Style="{StaticResource DataLabel}" />
-                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterProducts}"
-                              SelectedItem="{Binding Product}" DisplayMemberPath="Name" />
+                    <el:SearchPickerView DataContext="{Binding ProductPicker}" Compact="True" />
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Payment}" Style="{StaticResource DataLabel}" />
@@ -76,8 +75,7 @@
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Worker}" Style="{StaticResource DataLabel}" />
-                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding FilterWorkers}"
-                              SelectedItem="{Binding Worker}" DisplayMemberPath="Name" />
+                    <el:SearchPickerView DataContext="{Binding WorkerPicker}" Compact="True" />
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.Status}" Style="{StaticResource DataLabel}" />

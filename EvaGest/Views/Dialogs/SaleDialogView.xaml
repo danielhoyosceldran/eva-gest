@@ -44,8 +44,7 @@
             </Border>
 
             <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
-            <ComboBox ItemsSource="{Binding ActiveWorkers}" SelectedItem="{Binding Worker}"
-                      DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+            <el:SearchPickerView DataContext="{Binding WorkerPicker}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.Lines}" Style="{StaticResource Subtitle}" />
 
@@ -119,16 +118,25 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                <ComboBox ItemsSource="{Binding ActiveServices}" SelectedItem="{Binding ServiceToAdd}" DisplayMemberPath="Name" Width="140" />
-                <Button Content="{x:Static t:Texts.AddServiceButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
+            <!-- Pick a service or product in its search box ("…" opens the whole list),
+                 then add it. The two boxes share whatever width the buttons leave. -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <el:SearchPickerView Grid.Column="0" DataContext="{Binding ServiceToAddPicker}" Compact="True" />
+                <Button Grid.Column="1" Content="{x:Static t:Texts.AddServiceButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
                         Command="{Binding AddServiceCommand}" />
-                <ComboBox ItemsSource="{Binding ActiveProducts}" SelectedItem="{Binding ProductToAdd}" DisplayMemberPath="Name" Width="140" Margin="16,0,0,0" />
-                <Button Content="{x:Static t:Texts.AddProductButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
+                <el:SearchPickerView Grid.Column="2" DataContext="{Binding ProductToAddPicker}" Compact="True" Margin="16,0,0,0" />
+                <Button Grid.Column="3" Content="{x:Static t:Texts.AddProductButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
                         Command="{Binding AddProductCommand}" />
-                <Button Content="{x:Static t:Texts.AddCustomLineButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="16,0,0,0"
+                <Button Grid.Column="4" Content="{x:Static t:Texts.AddCustomLineButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="16,0,0,0"
                         Command="{Binding AddCustomConceptCommand}" />
-            </StackPanel>
+            </Grid>
 
             <TextBlock Text="{x:Static t:Texts.PaymentMethod}" Style="{StaticResource DataLabel}" />
             <ComboBox ItemsSource="{Binding ActiveMethods}" SelectedItem="{Binding PaymentMethod}"

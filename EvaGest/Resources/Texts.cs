@@ -577,6 +577,16 @@ public static class Texts
         nameof(ExportTableEmpty),
         nameof(AllKinds),
         nameof(SalesPlural),
+        nameof(BrowseList),
+        nameof(OptionSearchPlaceholder),
+        nameof(OptionSearchPlaceholderBrowse),
+        nameof(OptionBrowserEmpty),
+        nameof(ChooseOption),
+        nameof(AnyOption),
+        nameof(WorkerBrowserTitle),
+        nameof(ServiceBrowserTitle),
+        nameof(ProductBrowserTitle),
+        nameof(CategoryBrowserTitle),
     ];
 
     /// <summary>Pendent</summary>
@@ -2201,4 +2211,34 @@ public static class Texts
 
     /// <summary>Vendes</summary>
     public static string SalesPlural => Get(nameof(SalesPlural));
+
+    /// <summary>Veure la llista</summary>
+    public static string BrowseList => Get(nameof(BrowseList));
+
+    /// <summary>Escriu per buscar</summary>
+    public static string OptionSearchPlaceholder => Get(nameof(OptionSearchPlaceholder));
+
+    /// <summary>Escriu per filtrar la llista</summary>
+    public static string OptionSearchPlaceholderBrowse => Get(nameof(OptionSearchPlaceholderBrowse));
+
+    /// <summary>Res no coincideix amb la cerca…</summary>
+    public static string OptionBrowserEmpty => Get(nameof(OptionBrowserEmpty));
+
+    /// <summary>Triar</summary>
+    public static string ChooseOption => Get(nameof(ChooseOption));
+
+    /// <summary>Qualsevol</summary>
+    public static string AnyOption => Get(nameof(AnyOption));
+
+    /// <summary>Triar treballadora</summary>
+    public static string WorkerBrowserTitle => Get(nameof(WorkerBrowserTitle));
+
+    /// <summary>Triar servei</summary>
+    public static string ServiceBrowserTitle => Get(nameof(ServiceBrowserTitle));
+
+    /// <summary>Triar producte</summary>
+    public static string ProductBrowserTitle => Get(nameof(ProductBrowserTitle));
+
+    /// <summary>Triar categoria</summary>
+    public static string CategoryBrowserTitle => Get(nameof(CategoryBrowserTitle));
 }

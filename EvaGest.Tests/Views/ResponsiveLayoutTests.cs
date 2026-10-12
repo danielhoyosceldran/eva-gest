@@ -109,6 +109,10 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         ["Client browser"] = async s => new(
             new ClientBrowserDialogViewModel(await new ClientService(s.Factory).GetActive()),
             () => new ClientBrowserDialogView()),
+        ["Option browser"] = async s => new(
+            new OptionBrowserDialogViewModel("Triar treballadora",
+                (await new WorkerService(s.Factory).GetAll()).Select(w => new PickerOption(w, w.Name))),
+            () => new OptionBrowserDialogView()),
         ["Client"] = s => Task.FromResult(new Built(
             new ClientDialogViewModel(new ClientService(s.Factory))
             {

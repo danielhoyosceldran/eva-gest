@@ -1692,4 +1692,34 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="SalesPlural" xml:space="preserve">
     <value>Vendes</value>
   </data>
+  <data name="BrowseList" xml:space="preserve">
+    <value>Veure la llista</value>
+  </data>
+  <data name="OptionSearchPlaceholder" xml:space="preserve">
+    <value>Escriu per buscar</value>
+  </data>
+  <data name="OptionSearchPlaceholderBrowse" xml:space="preserve">
+    <value>Escriu per filtrar la llista</value>
+  </data>
+  <data name="OptionBrowserEmpty" xml:space="preserve">
+    <value>Res no coincideix amb la cerca. Prova amb una altra paraula.</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Triar</value>
+  </data>
+  <data name="AnyOption" xml:space="preserve">
+    <value>Qualsevol</value>
+  </data>
+  <data name="WorkerBrowserTitle" xml:space="preserve">
+    <value>Triar treballadora</value>
+  </data>
+  <data name="ServiceBrowserTitle" xml:space="preserve">
+    <value>Triar servei</value>
+  </data>
+  <data name="ProductBrowserTitle" xml:space="preserve">
+    <value>Triar producte</value>
+  </data>
+  <data name="CategoryBrowserTitle" xml:space="preserve">
+    <value>Triar categoria</value>
+  </data>
 </root>

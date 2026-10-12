@@ -45,6 +45,10 @@ public partial class AgendaViewModel : PageViewModelBase
         _so = so;
         _dialogs = dialogs;
 
+        // An empty box shows everyone, like "Totes"
+        WorkerFilterPicker = new(WorkerFilterOptions, o => o.Name, o => SelectedWorkerFilter = o, dialogs,
+            Texts.WorkerBrowserTitle, Texts.AllWorkers);
+
         Grid = new WeekGridViewModel(appointments, availability, settings, ModeGrid.Agenda,
             onSlotClick: (date, time) => RunInBackground(() => NewAppointmentAt(date, time)),
             onAppointmentClick: appointment => RunInBackground(() => EditAppointment(appointment)),
@@ -89,6 +93,10 @@ public partial class AgendaViewModel : PageViewModelBase
     [ObservableProperty] private WorkerFilterItem? _selectedWorkerFilter;
     public ObservableCollection<WorkerFilterItem> WorkerFilterOptions { get; } = [];
 
+    /// <summary>The toolbar's search box over <see cref="WorkerFilterOptions"/>, with the
+    /// whole list behind "…"; it writes <see cref="SelectedWorkerFilter"/>.</summary>
+    public SearchPickerViewModel<WorkerFilterItem> WorkerFilterPicker { get; }
+
     /// <summary>Which days are shown and their label both live on the grid, so this toolbar
     /// and the picker embedded in the appointment dialog drive exactly the same navigation.
     /// The grid hands its navigation back to <see cref="LoadRange"/> here, so moving
@@ -116,7 +124,11 @@ public partial class AgendaViewModel : PageViewModelBase
         await LoadRange(DateOnly.FromDateTime(DateTime.Today));
     }
 
-    partial void OnSelectedWorkerFilterChanged(WorkerFilterItem? value) => RunInBackground(() => LoadRange(RangeStart));
+    partial void OnSelectedWorkerFilterChanged(WorkerFilterItem? value)
+    {
+        WorkerFilterPicker.Show(value);
+        RunInBackground(() => LoadRange(RangeStart));
+    }
 
     /// <summary>Toolbar button: books on the day being examined if there is one, else on
     /// today when today is in view, else on the first day shown — and always at that day's

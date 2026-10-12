@@ -77,12 +77,10 @@
                 <TextBox Text="{Binding DurationText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
                 <TextBlock Text="{x:Static t:Texts.ServiceOptional}" Style="{StaticResource DataLabel}" />
-                <ComboBox ItemsSource="{Binding ActiveServices}" SelectedItem="{Binding Service}"
-                          DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+                <el:SearchPickerView DataContext="{Binding ServicePicker}" Margin="0,0,0,12" />
 
                 <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
-                <ComboBox ItemsSource="{Binding ActiveWorkers}" SelectedItem="{Binding Worker}"
-                          DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+                <el:SearchPickerView DataContext="{Binding WorkerPicker}" Margin="0,0,0,12" />
 
                 <TextBlock Text="{x:Static t:Texts.NotesOptional}" Style="{StaticResource DataLabel}" />
                 <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"

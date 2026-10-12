@@ -92,6 +92,11 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     public ObservableCollection<Service> ActiveServices { get; } = [];
     public ObservableCollection<Worker> ActiveWorkers { get; } = [];
 
+    /// <summary>Search boxes over <see cref="ActiveServices"/> and <see cref="ActiveWorkers"/>,
+    /// with the whole list a button away; they write <see cref="Service"/> and <see cref="Worker"/>.</summary>
+    public SearchPickerViewModel<Service> ServicePicker { get; }
+    public SearchPickerViewModel<Worker> WorkerPicker { get; }
+
     /// <summary>The phone box belongs to a new client (a guest); a registered one already has one.</summary>
     public bool CanWriteGuest => ClientPicker.IsNewClient;
 
@@ -132,6 +137,12 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         _availability = availability;
         _clients = clients;
         _dialogs = dialogs;
+
+        // First, before anything can set Service or Worker: their OnXChanged mirror the
+        // value into these boxes.
+        ServicePicker = new(ActiveServices, s => s.Name, s => Service = s, dialogs, Texts.ServiceBrowserTitle);
+        WorkerPicker = new(ActiveWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle);
+
         Date = dateInitial;
         Time = initialTime ?? new TimeOnly(10, 0);
         // DurationMin is a field initialiser, which does not raise OnDurationMinChanged,
@@ -310,6 +321,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
 
     partial void OnServiceChanged(Service? value)
     {
+        ServicePicker.Show(value);
         if (value?.DurationMin is int d) DurationMin = d;
     }
 
@@ -375,7 +387,11 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         finally { _syncingText = false; }
     }
 
-    partial void OnWorkerChanged(Worker? value) => RefreshInBackground(ReviewNotices, "the availability notices");
+    partial void OnWorkerChanged(Worker? value)
+    {
+        WorkerPicker.Show(value);
+        RefreshInBackground(ReviewNotices, "the availability notices");
+    }
 
     private async Task SyncGrid(DateOnly date)
     {

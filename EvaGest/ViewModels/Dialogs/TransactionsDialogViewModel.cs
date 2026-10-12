@@ -6,6 +6,7 @@ using EvaGest.Helpers;
 using EvaGest.Models;
 using EvaGest.Resources;
 using EvaGest.Services;
+using EvaGest.ViewModels.Elements;
 using Serilog;
 
 namespace EvaGest.ViewModels.Dialogs;
@@ -42,6 +43,14 @@ public partial class TransactionsDialogViewModel : DialogViewModelBase
         // no reload starts before Load() is called.
         _from = new DateOnly(today.Year, today.Month, 1);
         _to = today;
+
+        // Search boxes over the lists that grow long; an empty box means "all"
+        ClientPicker = new(FilterClients, c => c.Name, c => Client = c, dialogs,
+            Texts.ClientBrowserTitle, Texts.AnyOption, c => c.Mobile);
+        WorkerPicker = new(FilterWorkers, w => w.Name, w => Worker = w, dialogs,
+            Texts.WorkerBrowserTitle, Texts.AnyOption);
+        CategoryPicker = new(FilterCategories, c => c.Label, c => Category = c, dialogs,
+            Texts.CategoryBrowserTitle, Texts.AnyOption);
 
         KindOptions =
         [
@@ -131,6 +140,10 @@ public partial class TransactionsDialogViewModel : DialogViewModelBase
     public ObservableCollection<Worker> FilterWorkers { get; } = [];
     public ObservableCollection<PaymentMethod> FilterMethods { get; } = [];
     public ObservableCollection<CategoryOption> FilterCategories { get; } = [];
+
+    public SearchPickerViewModel<Client> ClientPicker { get; }
+    public SearchPickerViewModel<Worker> WorkerPicker { get; }
+    public SearchPickerViewModel<CategoryOption> CategoryPicker { get; }
 
     // ── Footer ───────────────────────────────────────────────────────────────
 
@@ -257,10 +270,10 @@ public partial class TransactionsDialogViewModel : DialogViewModelBase
     }
 
     partial void OnKindChanged(TransactionKind? value) => FilterChanged();
-    partial void OnClientChanged(Client? value) => FilterChanged();
-    partial void OnWorkerChanged(Worker? value) => FilterChanged();
+    partial void OnClientChanged(Client? value) { ClientPicker.Show(value); FilterChanged(); }
+    partial void OnWorkerChanged(Worker? value) { WorkerPicker.Show(value); FilterChanged(); }
     partial void OnPaymentMethodChanged(PaymentMethod? value) => FilterChanged();
-    partial void OnCategoryChanged(CategoryOption? value) => FilterChanged();
+    partial void OnCategoryChanged(CategoryOption? value) { CategoryPicker.Show(value); FilterChanged(); }
     partial void OnSearchTextChanged(string value) => FilterChanged();
     partial void OnIncludeVoidedChanged(bool value) => FilterChanged();
 
@@ -308,6 +321,10 @@ public partial class TransactionsDialogViewModel : DialogViewModelBase
             Worker = null;
             PaymentMethod = null;
             Category = null;
+            // Also empties text typed in a box but never picked
+            ClientPicker.Clear();
+            WorkerPicker.Clear();
+            CategoryPicker.Clear();
             SearchText = string.Empty;
             IncludeVoided = false;
         }
