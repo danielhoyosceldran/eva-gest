@@ -37,6 +37,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   fills all three. Leaving out the year means this year, and "26" is 2026. A date that
   does not exist, such as 31/02, turns the box red and is not taken until it is put
   right. The calendar button is still there to pick a day with the mouse.
+- Inici no longer has the "Entrada" quick button, which was hardly used. A cash-in is
+  still recorded from Caixa, with "+ Entrada".
 
 ## 1.3.0 (closes version 1)
 

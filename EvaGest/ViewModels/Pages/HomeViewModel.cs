@@ -152,15 +152,10 @@ public partial class HomeViewModel(
     }
 
     [RelayCommand]
-    private async Task NewCashIn() => await OpenMovementDialog(MovementType.In);
-
-    [RelayCommand]
-    private async Task NewCashOut() => await OpenMovementDialog(MovementType.Out);
-
-    private async Task OpenMovementDialog(MovementType type)
+    private async Task NewCashOut()
     {
         var vm = await MovementDialogViewModel.New(
-            type, DateOnly.FromDateTime(DateTime.Today), catalog, workers, settings, dialogs);
+            MovementType.Out, DateOnly.FromDateTime(DateTime.Today), catalog, workers, settings, dialogs);
         vm.Persist = () => till.Create(vm.AModel());
         if (await dialogs.ShowDialog(vm)) await Load();
     }

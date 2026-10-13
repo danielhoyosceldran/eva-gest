@@ -70,12 +70,12 @@
                 </Border>
             </el:WrappingUniformGrid>
 
-            <!-- Quick actions: five across when they fit, otherwise wrapped -->
+            <!-- Quick actions: four across when they fit, otherwise wrapped.
+                 Cash-in is left to the Till page: it is rarely used. -->
             <el:WrappingUniformGrid MinItemWidth="{StaticResource QuickActionMinWidth}" Margin="0,0,0,12">
                 <Button Content="{x:Static t:Texts.NewAppointmentTitle}" Style="{StaticResource QuickActionButton}" Margin="0,0,8,8" Command="{Binding NewAppointmentCommand}" />
                 <Button Content="{x:Static t:Texts.NewSaleTitle}" Style="{StaticResource QuickActionButton}" Margin="0,0,8,8" Command="{Binding NewSaleCommand}" />
                 <Button Content="{x:Static t:Texts.NewClientTitle}" Style="{StaticResource QuickActionButton}" Margin="0,0,8,8" Command="{Binding NewClientCommand}" />
-                <Button Content="{x:Static t:Texts.CashIn}" Style="{StaticResource QuickActionButton}" Margin="0,0,8,8" Command="{Binding NewCashInCommand}" />
                 <Button Content="{x:Static t:Texts.CashOut}" Style="{StaticResource QuickActionButton}" Margin="0,0,0,8" Command="{Binding NewCashOutCommand}" />
             </el:WrappingUniformGrid>
 
