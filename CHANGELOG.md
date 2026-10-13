@@ -145,6 +145,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - In the appointment window, a time outside the hours the grid shows (23:30 on a grid
   that ends at 20:00) widens the grid so "Aquesta cita" is in view; it used to sit below
   the last row, out of sight.
+- In the weekly schedules (the shop's opening hours and each worker's), a window too
+  narrow for a whole row moves the afternoon under the morning instead of cutting off
+  its last time.
 
 ## 1.3.0 (closes version 1)
 

@@ -762,6 +762,20 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                               $"(room {page.ViewportWidth:0}, and it cannot scroll sideways)");
             }
 
+            // A control running past the right edge of its card is cut by the card, which no
+            // layout clip above reports (the shop's opening hours at the window's minimum
+            // width, B-25). Tables scroll sideways on their own and are left out.
+            if (element is not TextBlock && !Ancestors(element, root).Any(a => a is DataGrid)
+                && Ancestors(element, root).OfType<Border>().FirstOrDefault(IsCard) is { } card)
+            {
+                var inCard = element.TransformToAncestor(card)
+                    .TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+                // The card's padding is where its content stops: past it, the content is cut
+                double room = card.ActualWidth - card.Padding.Right - card.BorderThickness.Right;
+                if (inCard.Right > room + Tolerance)
+                    found.Add($"{Describe(element)} runs past its card to {inCard.Right:0} (room {room:0})");
+            }
+
             if (element is TextBlock text && IsTrimmed(text) && !HasToolTip(text, root))
                 found.Add($"{Describe(text)} shortened with no tooltip");
         }
@@ -792,6 +806,9 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
 
     private static bool InsideWeekGrid(DependencyObject element, FrameworkElement root)
         => Ancestors(element, root).Any(a => a is WeekGridView);
+
+    private static bool IsCard(Border border)
+        => border.Style is not null && ReferenceEquals(border.Style, border.TryFindResource("DataCard"));
 
     private static bool InsideTableCell(DependencyObject element, FrameworkElement root)
         => Ancestors(element, root).Any(a => a is DataGridCell);
