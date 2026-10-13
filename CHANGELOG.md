@@ -89,6 +89,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   longer cut off. On Treballadores, a table first shown empty kept that column almost
   zero wide once rows arrived, hiding Editar; it now widens to its buttons whenever
   the rows change, on every table.
+- The weekly schedule overview on Treballadores names the days in the session's
+  language (Dl, Dt, Dc… / Lu, Ma, Mi…), as the schedule column already did; it read
+  Mon, Tue, Wed… in both languages.
 
 ## 1.3.0 (closes version 1)
 

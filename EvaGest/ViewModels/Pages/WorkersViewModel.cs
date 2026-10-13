@@ -33,8 +33,10 @@ public partial class WorkersViewModel(IWorkerService workers, IDialogService dia
 
     public bool HasNone => Rows.Count == 0;
 
+    /// <summary>The weekly overview's column headers (Dl, Dt… / Lu, Ma…). The enum
+    /// members are English (Mon, Tue…) and are stored as such, never shown.</summary>
     public IReadOnlyList<string> DayNames { get; } =
-        [.. Enum.GetValues<Weekday>().Select(d => d.ToString())];
+        [.. Enum.GetValues<Weekday>().Select(Labels.TextShort)];
 
     public async Task Load()
     {

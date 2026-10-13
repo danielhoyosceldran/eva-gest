@@ -98,6 +98,29 @@ public class LanguageTests
     }
 
     /// <summary>
+    /// The weekly overview on Treballadores headed its columns with the enum members,
+    /// so both languages read "Mon Tue Wed Thu Fri Sat Sun".
+    /// </summary>
+    [Theory]
+    [InlineData("ca-ES", new[] { "Dl", "Dt", "Dc", "Dj", "Dv", "Ds", "Dg" })]
+    [InlineData("es-ES", new[] { "Lu", "Ma", "Mi", "Ju", "Vi", "Sá", "Do" })]
+    public void The_workers_weekly_overview_names_the_days_in_the_session_language(string culture, string[] expected)
+    {
+        // Only this test's own culture moves (see ExportServiceTests): the process
+        // default is shared with the tests running in parallel.
+        var previous = CultureInfo.CurrentUICulture;
+        try
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
+            // The headers need no data: the services are never called
+            var vm = new EvaGest.ViewModels.Pages.WorkersViewModel(null!, null!);
+
+            vm.DayNames.Should().Equal(expected);
+        }
+        finally { CultureInfo.CurrentUICulture = previous; }
+    }
+
+    /// <summary>
     /// Every other test here compares the two resx tables against each other, which makes
     /// them structurally blind to a string that never reached a table at all. Two did:
     /// "{0} vendes actives" and "{0} minuts" sat in XAML StringFormat attributes and
