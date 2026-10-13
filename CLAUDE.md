@@ -230,6 +230,22 @@ newer than that document.
 Add a test for anything touching money, availability/overlap, client keys or the
 weekly grid.
 
+Two newer scenario blocks drive the app the way the user does:
+
+- **Block N** (`Scenarios/FreshDatabaseTests.cs`) starts the app as `App.OnStartup`
+  does, over an empty folder: `StartupFolders` → `AppComposition.Register` →
+  `AppComposition.PrepareDatabase` (real migrations, real seed). Keep startup wiring
+  in `AppComposition`, not in `App.xaml.cs`, so this stays the real path.
+- **Block W** (`Scenarios/{NormalDay,OddFlow,MistakeFlow}Tests.cs`) — whole working
+  days through the pages and dialogs. `Infra/Shop` wires every page and the shell over
+  one in-memory database; `Infra/ScriptedUser` plays the person at the counter (a queue
+  of steps per dialog type, answers to questions, and a dialog only counts as accepted
+  if its ViewModel closed itself with true).
+
+The manual UI test script, for sessions with computer use, is
+`docs/manual-testing/guio-proves.md`; `scripts/prepare-test-session.ps1` points the
+Debug build at a throwaway database first.
+
 ## Bug tracking
 
 Every bug found gets a row in `bugs.csv` at the repo root: short description,

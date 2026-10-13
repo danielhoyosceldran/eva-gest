@@ -2,11 +2,9 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Markup;
-using EvaGest.Data;
 using EvaGest.Models;
 using EvaGest.Services;
 using EvaGest.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using EvaGest.Resources;
@@ -207,72 +205,11 @@ public partial class App : Application
         new MainWindow { DataContext = shell }.Show();
     }
 
+    /// <summary>The wiring lives in <see cref="AppComposition"/>, where the tests run it too.</summary>
     private static ServiceProvider Configure(string dbPath, string baseFolder)
-    {
-        var s = new ServiceCollection();
+        => AppComposition.Register(new ServiceCollection(), dbPath, baseFolder).BuildServiceProvider();
 
-        // Short-lived contexts per operation: a long-lived one accumulates stale
-        // tracked entities in a desktop app.
-        s.AddDbContextFactory<ShopDbContext>(o => o
-            .UseSqlite($"Data Source={dbPath}")
-            .UseSnakeCaseNamingConvention());
-
-        s.AddSingleton(new AppPaths(dbPath, baseFolder));
-        s.AddSingleton<IBackupService, BackupService>();
-        s.AddTransient<IExportService, ExportService>();
-        s.AddSingleton<IDialogService, DialogService>();
-        s.AddSingleton<IAppShutdown, AppShutdown>();
-        s.AddTransient<ICatalogService, CatalogService>();
-        s.AddTransient<IClientService, ClientService>();
-        s.AddSingleton<IAppointmentChangeNotifier, AppointmentChangeNotifier>();
-        s.AddTransient<IAppointmentService, AppointmentService>();
-        s.AddTransient<IAvailabilityService, AvailabilityService>();
-        s.AddTransient<IWorkerService, WorkerService>();
-        s.AddTransient<ISaleService, SaleService>();
-        s.AddTransient<ITillService, TillService>();
-        s.AddTransient<IReportsService, ReportsService>();
-        s.AddTransient<ITransactionsService, TransactionsService>();
-        s.AddSingleton<ISoundService, SoundService>();
-        // Singleton so the settings table is read once and kept in memory: the agenda
-        // grid asks for the slot granularity on every week load.
-        s.AddSingleton<ISettingsService, SettingsService>();
-        s.AddTransient<ISeedService, SeedService>();
-        // Singleton: one owner-mode state for the whole app. Built by hand so the
-        // optional clock and iteration count keep their production defaults.
-        s.AddSingleton<IOwnerAccessService>(sp =>
-            new OwnerAccessService(sp.GetRequiredService<ISettingsService>()));
-
-        s.AddSingleton<MainWindowViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.HomeViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.CatalogViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.ClientsViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.WorkersViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.AgendaViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.SalesViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.TillViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.ReportsViewModel>();
-        s.AddTransient<EvaGest.ViewModels.Pages.SettingsViewModel>();
-
-        return s.BuildServiceProvider();
-    }
-
-    private static async Task PrepareDatabase()
-    {
-        var factory = Services.GetRequiredService<IDbContextFactory<ShopDbContext>>();
-
-        await using var db = await factory.CreateDbContextAsync();
-        // A copy of the data as the previous version left it, before the schema moves.
-        // Throws BackupBeforeUpdateFailedException, and so skips the migration, when the
-        // copy cannot be written.
-        await DatabaseUpdate.BackupBeforeMigrating(db,
-            Services.GetRequiredService<AppPaths>().DbPath,
-            Services.GetRequiredService<IBackupService>());
-        await db.Database.MigrateAsync();
-
-        // Runs after every migration, not only on a fresh file: later versions add
-        // settings keys that an existing database still has to pick up (CU-12, step E).
-        await Services.GetRequiredService<ISeedService>().Seed();
-    }
+    private static Task PrepareDatabase() => AppComposition.PrepareDatabase(Services);
 
     protected override void OnExit(ExitEventArgs e)
     {
