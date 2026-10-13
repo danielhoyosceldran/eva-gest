@@ -166,6 +166,21 @@ public sealed class AutomaticBackupNoticeTests : IDisposable
     }
 
     [Fact]
+    public async Task A_manual_backup_says_which_folder_the_copy_is_in()
+    {
+        // B-30: the message gave the time only, so whoever wanted to carry the copy away
+        // on a pen drive had no way to find it.
+        await using var testDb = new TestDatabase();
+        var app = await Build(testDb, Backups());
+
+        await app.Settings.BackupNowCommand.ExecuteAsync(null);
+
+        app.Settings.ErrorBackup.Should().BeNull();
+        app.Dialogs.InfoMessages.Should().ContainSingle()
+            .Which.Should().Contain(Path.Combine(_folder, "Backups"));
+    }
+
+    [Fact]
     public async Task A_manual_backup_that_also_fails_leaves_the_notice_up()
     {
         DamageAPage(_live);

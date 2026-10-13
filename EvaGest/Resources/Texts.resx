@@ -1180,7 +1180,7 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
     <value>Còpia feta</value>
   </data>
   <data name="BackupDoneMessage" xml:space="preserve">
-    <value>S'ha creat la còpia de seguretat del {0}.</value>
+    <value>S'ha creat la còpia de seguretat del {0}. És a la carpeta {1}</value>
   </data>
   <data name="DeleteMovementTitle" xml:space="preserve">
     <value>Eliminar moviment?</value>

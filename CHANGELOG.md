@@ -148,6 +148,7 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - In the weekly schedules (the shop's opening hours and each worker's), a window too
   narrow for a whole row moves the afternoon under the morning instead of cutting off
   its last time.
+- "Fer còpia ara" now says which folder the new copy is in, not only when it was made.
 
 ## 1.3.0 (closes version 1)
 

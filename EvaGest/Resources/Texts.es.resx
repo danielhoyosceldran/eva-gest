@@ -1180,7 +1180,7 @@ Si ya se ha usado, se desactivará en lugar de borrarse, para no tocar el histor
     <value>Copia hecha</value>
   </data>
   <data name="BackupDoneMessage" xml:space="preserve">
-    <value>Se ha creado la copia de seguridad del {0}.</value>
+    <value>Se ha creado la copia de seguridad del {0}. Está en la carpeta {1}</value>
   </data>
   <data name="DeleteMovementTitle" xml:space="preserve">
     <value>¿Eliminar movimiento?</value>

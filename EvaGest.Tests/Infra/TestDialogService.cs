@@ -26,6 +26,9 @@ public class TestDialogService : IDialogService
     public List<string> ConfirmacionsRequested { get; } = [];
     public List<string> InfoDisplayed { get; } = [];
 
+    /// <summary>The message under each title in <see cref="InfoDisplayed"/>, in order.</summary>
+    public List<string> InfoMessages { get; } = [];
+
     public string? FolderChosen { get; set; }
 
     public async Task<bool> ShowDialog<TViewModel>(TViewModel viewModel) where TViewModel : class
@@ -61,6 +64,7 @@ public class TestDialogService : IDialogService
     public Task Inform(string title, string message)
     {
         InfoDisplayed.Add(title);
+        InfoMessages.Add(message);
         return Task.CompletedTask;
     }
 

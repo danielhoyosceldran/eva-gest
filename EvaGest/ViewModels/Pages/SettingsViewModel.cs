@@ -514,9 +514,12 @@ public partial class SettingsViewModel(
         }
 
         ErrorBackup = null;
+        // Say where the copy went too: someone taking a copy now usually wants to carry it
+        // to a pen drive next, and the folder is nowhere else on screen (B-30).
         await dialogs.Inform(Texts.BackupDoneTitle,
             string.Format(Texts.BackupDoneMessage,
-                          backupFile.Date.ToString("dd/MM/yyyy HH:mm")));
+                          backupFile.Date.ToString("dd/MM/yyyy HH:mm"),
+                          Path.GetDirectoryName(backupFile.Path)));
         await Load();
     }
 
