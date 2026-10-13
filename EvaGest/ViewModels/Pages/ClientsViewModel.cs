@@ -54,14 +54,14 @@ public partial class ClientsViewModel(IClientService clients, IReportsService re
     [RelayCommand]
     private async Task NewClient()
     {
-        var vm = new ClientDialogViewModel(clients);
+        var vm = new ClientDialogViewModel(clients, dialogs);
         await OpenClientDialog(vm);
     }
 
     [RelayCommand]
     private async Task EditClient(Client client)
     {
-        var vm = new ClientDialogViewModel(clients, client);
+        var vm = new ClientDialogViewModel(clients, dialogs, client);
         await OpenClientDialog(vm);
     }
 

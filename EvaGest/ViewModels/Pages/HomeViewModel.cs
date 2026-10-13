@@ -127,7 +127,7 @@ public partial class HomeViewModel(
     [RelayCommand]
     private async Task NewClient()
     {
-        var vm = new ClientDialogViewModel(clients);
+        var vm = new ClientDialogViewModel(clients, dialogs);
         vm.Persist = () => clients.Create(vm.AModel());
         await dialogs.ShowDialog(vm);
     }

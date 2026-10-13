@@ -305,7 +305,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     [RelayCommand]
     private async Task RegisterClientNow()
     {
-        var dialog = new ClientDialogViewModel(_clients) { Name = TextClient.Trim() };
+        var dialog = new ClientDialogViewModel(_clients, _dialogs, TextClient.Trim());
         if (GuestPhone is { Length: > 0 } phone) dialog.Mobile = phone;
 
         // Saved by the client dialog itself, so a failed write keeps it open with what

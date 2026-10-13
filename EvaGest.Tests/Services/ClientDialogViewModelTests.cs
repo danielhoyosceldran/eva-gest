@@ -10,10 +10,10 @@ namespace EvaGest.Tests.Services;
 public class ClientDialogViewModelTests
 {
     private static ClientDialogViewModel Build(TestDatabase testDb)
-        => new(new ClientService(new TestFactory(testDb.Options)));
+        => new(new ClientService(new TestFactory(testDb.Options)), new TestDialogService());
 
     private static ClientDialogViewModel Build(TestDatabase testDb, Client existing)
-        => new(new ClientService(new TestFactory(testDb.Options)), existing);
+        => new(new ClientService(new TestFactory(testDb.Options)), new TestDialogService(), existing);
 
     [Fact]
     public async Task A_malformed_mobile_cannot_be_saved()
@@ -132,5 +132,31 @@ public class ClientDialogViewModelTests
         await vm.SaveCommand.ExecuteAsync(null);
 
         vm.ErrorValidation.Should().BeNull();
+    }
+
+    /// <summary>
+    /// B-37: Esc closed a new client with its name and mobile already typed, with no
+    /// question. It asks now, like the sale and appointment windows, and only when
+    /// something was typed: a name carried over from the box it was opened from does
+    /// not count.
+    /// </summary>
+    [Fact]
+    public async Task Closing_a_half_typed_client_asks_first_and_an_untouched_one_does_not()
+    {
+        await using var testDb = new TestDatabase();
+        var dialogs = new TestDialogService { ResultConfirm = false };
+        var vm = new ClientDialogViewModel(new ClientService(new TestFactory(testDb.Options)), dialogs, "Joan");
+        vm.AsksBeforeDiscarding.Should().BeTrue("the window hands Esc to the question");
+
+        (await vm.CanDiscard()).Should().BeTrue("only the name carried over is there");
+        dialogs.ConfirmacionsRequested.Should().BeEmpty();
+
+        vm.Mobile = "612345678";
+        bool closed = false;
+        vm.Close += _ => closed = true;
+        await vm.CancelCommand.ExecuteAsync(null);
+
+        dialogs.DestructiveConfirmations.Should().ContainSingle();
+        closed.Should().BeFalse("the user chose to keep editing");
     }
 }

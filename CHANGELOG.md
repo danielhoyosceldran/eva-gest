@@ -166,6 +166,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   deleted, instead of first asking "Eliminar la cita?" and refusing after the yes.
 - Editing a sale already charged offers "Guardar la venda" as its main button instead
   of "Cobrar", which read as charging it again.
+- Esc, Cancel·lar or the X on a client window with something typed asks before throwing
+  it away, like the sale and appointment windows; it used to close at once.
 
 ## 1.3.0 (closes version 1)
 

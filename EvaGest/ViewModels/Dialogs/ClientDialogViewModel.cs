@@ -9,6 +9,7 @@ namespace EvaGest.ViewModels.Dialogs;
 public partial class ClientDialogViewModel : DialogViewModelBase
 {
     private readonly IClientService _clients;
+    private readonly IDialogService _dialogs;
     private readonly int? _id;
 
     [ObservableProperty] private string _name = string.Empty;
@@ -19,12 +20,20 @@ public partial class ClientDialogViewModel : DialogViewModelBase
 
     public override string Title => _id is null ? Texts.NewClientTitle : Texts.EditClientTitle;
 
-    public ClientDialogViewModel(IClientService clients)
+    /// <summary>A new client.</summary>
+    /// <param name="name">What was already typed in the box the dialog was opened from
+    /// (the sale's or the appointment's client box). It counts as the starting point, so
+    /// closing the dialog without typing anything else does not ask.</param>
+    public ClientDialogViewModel(IClientService clients, IDialogService dialogs, string? name = null)
     {
         _clients = clients;
+        _dialogs = dialogs;
+        Name = name ?? string.Empty;
+        MarkOpened();
     }
 
-    public ClientDialogViewModel(IClientService clients, Client client) : this(clients)
+    public ClientDialogViewModel(IClientService clients, IDialogService dialogs, Client client)
+        : this(clients, dialogs)
     {
         _id = client.Id;
         Name = client.Name;
@@ -32,6 +41,7 @@ public partial class ClientDialogViewModel : DialogViewModelBase
         Email = client.Email;
         BirthDate = client.BirthDate;
         Notes = client.Notes;
+        MarkOpened();
     }
 
     [RelayCommand]
@@ -72,8 +82,22 @@ public partial class ClientDialogViewModel : DialogViewModelBase
         await CloseAfterSaving();
     }
 
+    /// <summary>
+    /// Asks before throwing away what was typed, like the sale and appointment dialogs:
+    /// Esc used to close a half-filled client with no question (B-37). Esc and the X
+    /// button reach the same question through the window.
+    /// </summary>
     [RelayCommand]
-    private void Cancel() => RequestClose(false);
+    private async Task Cancel()
+    {
+        if (await CanDiscard()) RequestClose(false);
+    }
+
+    protected override IDialogService DiscardDialogs => _dialogs;
+
+    /// <summary>Everything Save would write, as the boxes hold it.</summary>
+    protected override string EditableState()
+        => string.Join("|", Name, Mobile, Email, BirthDate, Notes);
 
     public Client AModel() => new()
     {

@@ -120,7 +120,7 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                 (await new WorkerService(s.Factory).GetAll()).Select(w => new PickerOption(w, w.Name))),
             () => new OptionBrowserDialogView()),
         ["Client"] = s => Task.FromResult(new Built(
-            new ClientDialogViewModel(new ClientService(s.Factory))
+            new ClientDialogViewModel(new ClientService(s.Factory), new TestDialogService())
             {
                 ErrorValidation = "Ja hi ha un client amb aquest nom. Escriu un nom diferent per guardar-lo."
             },
