@@ -347,6 +347,67 @@
         </Setter>
     </Style>
 
+    <!-- A single-choice row of segments bound to a collection (e.g. the payment method
+         of a sale): a ListBox whose SelectedItem is the choice, drawn as SegmentButton
+         look-alikes laid out left to right, each as wide as its own text, wrapping onto
+         a new line only when the row runs out of room. Arrow keys move the choice. -->
+    <Style x:Key="SegmentItem" TargetType="ListBoxItem">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+        <Setter Property="MinHeight" Value="{StaticResource FieldHeight}" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="Margin" Value="0,0,6,6" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Face" Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                            CornerRadius="{StaticResource ControlRadius}" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Face" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Face" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Face" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Face" Property="Background" Value="{StaticResource BlueBrush}" />
+                            <Setter TargetName="Face" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SegmentList" TargetType="ListBox">
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource SegmentItem}" />
+        <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <!-- No border or scroll viewer: the segments sit straight on the form -->
+                <ControlTemplate TargetType="ListBox">
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- A row of a client list (the client box's dropdown and the browse-clients
          dialog). Same look as the combo box items: pale on hover, accent when chosen. -->
     <Style x:Key="ClientRowItem" TargetType="ListBoxItem">

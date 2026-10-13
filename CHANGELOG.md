@@ -17,6 +17,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   count. Underneath are the totals of what is on screen: income, outgoings, net, and
   the base and VAT of the sales. The table is read-only; "Exportar la taula" saves
   exactly the rows on screen as a CSV.
+- In the sale window the payment method is chosen with a row of buttons, one per
+  method and each as wide as its name, instead of a drop-down list. The chosen one is
+  filled in; only one can be chosen at a time.
 - The drop-down lists that grow with the shop are now search boxes, like the client box
   of a new appointment: type to see the matches, or press "Veure la llista" ("…" where
   space is short) to scroll every option in its own window. This covers the worker,

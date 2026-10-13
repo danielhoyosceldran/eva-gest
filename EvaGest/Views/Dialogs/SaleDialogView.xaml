@@ -139,8 +139,9 @@
             </Grid>
 
             <TextBlock Text="{x:Static t:Texts.PaymentMethod}" Style="{StaticResource DataLabel}" />
-            <ComboBox ItemsSource="{Binding ActiveMethods}" SelectedItem="{Binding PaymentMethod}"
-                      DisplayMemberPath="Name" Margin="0,0,0,12" FontSize="{StaticResource FontSizeInput}" MinHeight="{StaticResource FieldHeight}" />
+            <!-- One segment per active method, each as wide as its name; only one chosen -->
+            <ListBox Style="{StaticResource SegmentList}" ItemsSource="{Binding ActiveMethods}"
+                     SelectedItem="{Binding PaymentMethod}" DisplayMemberPath="Name" Margin="0,0,0,6" />
 
             <TextBlock Text="{x:Static t:Texts.NotesOptional}" Style="{StaticResource DataLabel}" />
             <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
