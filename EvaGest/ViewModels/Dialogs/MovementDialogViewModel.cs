@@ -52,6 +52,8 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     [ObservableProperty] private ExpenseCategory? _category;
     [ObservableProperty] private Worker? _worker;
 
+    private readonly IDialogService? _dialogs;
+
     public ObservableCollection<PaymentMethod> ActiveMethods { get; } = [];
     public ObservableCollection<ExpenseCategory> ActiveCategories { get; } = [];
     public ObservableCollection<Worker> ActiveWorkers { get; } = [];
@@ -74,6 +76,7 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     /// window to open one from (tests of the form itself): the button then does nothing.</param>
     public MovementDialogViewModel(MovementType type, DateOnly date, IDialogService? dialogs = null)
     {
+        _dialogs = dialogs;
         CategoryPicker = new(ActiveCategories, c => c.Name, c => Category = c, dialogs, Texts.CategoryBrowserTitle);
         WorkerPicker = new(ActiveWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle);
         Type = type;
@@ -96,6 +99,8 @@ public partial class MovementDialogViewModel : DialogViewModelBase
         await vm.LoadCategories(catalog);
         await vm.LoadWorkers(workers);
         await vm.LoadDefaults(settings);
+        // Filled in: from here on, anything the user types counts as a change.
+        vm.MarkOpened();
         return vm;
     }
 
@@ -171,8 +176,24 @@ public partial class MovementDialogViewModel : DialogViewModelBase
         await CloseAfterSaving();
     }
 
+    /// <summary>
+    /// Asks before throwing away what was typed, like the sale window: Esc used to close
+    /// a cash-out with its amount already typed, and the movement was lost with no
+    /// question (B-29). Esc and the X button reach the same question through the window.
+    /// </summary>
     [RelayCommand]
-    private void Cancel() => RequestClose(false);
+    private async Task Cancel()
+    {
+        if (await CanDiscard()) RequestClose(false);
+    }
+
+    /// <summary>Null when built without dialogs (tests of the form itself): it never asks.</summary>
+    protected override IDialogService? DiscardDialogs => _dialogs;
+
+    /// <summary>Everything Save would write, as the boxes hold it.</summary>
+    protected override string EditableState()
+        => string.Join("|", Date, PriceText, Method?.Id, Concept, SplitVat, VatText, Notes,
+                       Category?.Id, Worker?.Id);
 
     public CashMovement AModel()
     {

@@ -83,4 +83,31 @@ public class MovementDateAndDefaultsTests
         new ReportsViewModel.WorkerRankingRow(1, "Eva", 0, "0,00 €", null)
             .WorkPercentText.Should().Be("-");
     }
+
+    /// <summary>
+    /// B-29: Esc closed a cash-out with its amount already typed, and the movement was
+    /// lost with no question. It asks now, like the sale window, and only once something
+    /// was typed: the defaults the dialog opens with do not count.
+    /// </summary>
+    [Fact]
+    public async Task Closing_a_half_typed_movement_asks_first_and_an_untouched_one_does_not()
+    {
+        await using var testDb = new TestDatabase();
+        var (catalog, workers) = Services(testDb);
+        var dialogs = new TestDialogService { ResultConfirm = false };
+        var vm = await MovementDialogViewModel.New(MovementType.Out, DateOnly.FromDateTime(DateTime.Today),
+            catalog, workers, new SettingsService(new TestFactory(testDb.Options)), dialogs);
+        vm.AsksBeforeDiscarding.Should().BeTrue("the window hands Esc to the question");
+
+        (await vm.CanDiscard()).Should().BeTrue("nothing was typed yet");
+        dialogs.ConfirmacionsRequested.Should().BeEmpty();
+
+        vm.PriceText = "20,00";
+        bool closed = false;
+        vm.Close += _ => closed = true;
+        await vm.CancelCommand.ExecuteAsync(null);
+
+        dialogs.DestructiveConfirmations.Should().ContainSingle();
+        closed.Should().BeFalse("the user chose to keep editing");
+    }
 }

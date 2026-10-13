@@ -170,6 +170,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   it away, like the sale and appointment windows; it used to close at once.
 - A sale charged with no client chosen says it can also be charged as "Sense client", the
   way to ring up a counter sale; the message only offered a client or a new name.
+- Esc, Cancel·lar or the X on a cash-in or cash-out window with something typed asks
+  before throwing it away; a half-entered movement used to be lost with no question.
 
 ## 1.3.0 (closes version 1)
 
