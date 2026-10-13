@@ -607,6 +607,7 @@ public static class Texts
         nameof(NoClientsYet),
         nameof(NoActiveClients),
         nameof(NoClientMatchesSearch),
+        nameof(NoSalesYet),
     ];
 
     /// <summary>Pendent</summary>
@@ -2322,4 +2323,7 @@ public static class Texts
 
     /// <summary>Cap client coincideix amb «{0}». Prova amb una altra part del nom o del mòbil, o afegeix-lo amb «+ Nou client».</summary>
     public static string NoClientMatchesSearch => Get(nameof(NoClientMatchesSearch));
+
+    /// <summary>Encara no hi ha cap venda. Quan cobris la primera, amb «+ Nova venda» o en marcar una cita com a feta, sortirà aquí.</summary>
+    public static string NoSalesYet => Get(nameof(NoSalesYet));
 }

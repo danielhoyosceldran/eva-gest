@@ -79,6 +79,18 @@ public partial class SalesViewModel(
 
     public bool HasNoResults => Sales.Count == 0;
 
+    /// <summary>Any filter set. An empty table is then the filters' doing, and the page
+    /// offers to clear them; with none set there are simply no sales yet.</summary>
+    public bool HasFilters => From is not null || To is not null || Client is not null || Service is not null
+                              || Product is not null || PaymentMethod is not null || Worker is not null
+                              || Status is not null;
+
+    /// <summary>The empty table because of the filters: "no sale matches" and Netejar filtres.</summary>
+    public bool NoSaleMatches => HasNoResults && HasFilters;
+
+    /// <summary>The empty table of a shop with no sale at all: an invitation to charge the first.</summary>
+    public bool NoSalesYet => HasNoResults && !HasFilters;
+
     public async Task Load()
     {
         Loading = true;
@@ -104,6 +116,9 @@ public partial class SalesViewModel(
             TotalTotalText = Money.Format(active.Sum(v => (long)v.TotalCents));
 
             OnPropertyChanged(nameof(HasNoResults));
+            OnPropertyChanged(nameof(HasFilters));
+            OnPropertyChanged(nameof(NoSaleMatches));
+            OnPropertyChanged(nameof(NoSalesYet));
         }
         finally { Loading = false; }
     }

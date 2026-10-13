@@ -214,6 +214,22 @@ public class SalesPageTests
 
         vm.HasNoResults.Should().BeTrue();
         vm.TotalTotalText.Should().Be(Money.Format(0));
+        vm.NoSaleMatches.Should().BeTrue("the filter is what empties the table: offer to clear it");
+        vm.NoSalesYet.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task A_shop_with_no_sales_is_invited_to_make_one_rather_than_told_to_clear_filters()
+    {
+        await using var testDb = new TestDatabase();
+        await Seed(testDb);
+
+        var vm = await Build(testDb);
+        await vm.Load();
+
+        vm.HasFilters.Should().BeFalse();
+        vm.NoSalesYet.Should().BeTrue();
+        vm.NoSaleMatches.Should().BeFalse("there is no filter to clear");
     }
 
     [Fact] // T-08

@@ -1782,4 +1782,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="NoClientMatchesSearch" xml:space="preserve">
     <value>Cap client coincideix amb «{0}». Prova amb una altra part del nom o del mòbil, o afegeix-lo amb «+ Nou client».</value>
   </data>
+  <data name="NoSalesYet" xml:space="preserve">
+    <value>Encara no hi ha cap venda. Quan cobris la primera, amb «+ Nova venda» o en marcar una cita com a feta, sortirà aquí.</value>
+  </data>
 </root>

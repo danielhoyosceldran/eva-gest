@@ -99,6 +99,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   the first client with "+ Nou client", points to "Mostrar clients adormits" when every
   client is asleep, and says "Cap client coincideix amb «…»" when a search finds
   nobody.
+- Vendes with no sale at all says so and offers "+ Nova venda", instead of "Cap venda
+  coincideix amb aquests filtres" and "Netejar filtres" when no filter was set. That
+  message is kept for a table emptied by the filters.
 
 ## 1.3.0 (closes version 1)
 

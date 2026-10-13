@@ -150,13 +150,24 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
+                <!-- Empty because of the filters: offer to clear them -->
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24"
-                            Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{Binding NoSaleMatches, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="{x:Static t:Texts.NoSaleMatchesFilters}"
                                Style="{StaticResource DataLabel}" HorizontalAlignment="Center" />
                     <Button Content="{x:Static t:Texts.ClearFilters}" Style="{StaticResource SecondaryButton}"
                             HorizontalAlignment="Center" Margin="0,12,0,0"
                             Command="{Binding ClearFiltersCommand}" />
+                </StackPanel>
+
+                <!-- Empty because there is no sale at all yet: invite to charge the first -->
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24" MaxWidth="560"
+                            Visibility="{Binding NoSalesYet, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{x:Static t:Texts.NoSalesYet}" Style="{StaticResource DataLabel}"
+                               TextWrapping="Wrap" TextAlignment="Center" />
+                    <Button Content="{x:Static t:Texts.NewSaleButton}" Style="{StaticResource PrimaryButton}"
+                            HorizontalAlignment="Center" Margin="0,12,0,0"
+                            Command="{Binding NewSaleCommand}" />
                 </StackPanel>
             </Grid>
         </Border>

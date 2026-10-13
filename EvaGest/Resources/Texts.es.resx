@@ -1782,4 +1782,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="NoClientMatchesSearch" xml:space="preserve">
     <value>Ningún cliente coincide con «{0}». Prueba con otra parte del nombre o del móvil, o añádelo con «+ Nuevo cliente».</value>
   </data>
+  <data name="NoSalesYet" xml:space="preserve">
+    <value>Todavía no hay ninguna venta. Cuando cobres la primera, con «+ Nueva venta» o al marcar una cita como hecha, saldrá aquí.</value>
+  </data>
 </root>
