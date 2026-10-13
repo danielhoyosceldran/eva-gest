@@ -1773,4 +1773,13 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="RemoveSaleLine" xml:space="preserve">
     <value>Treure aquesta línia de la venda</value>
   </data>
+  <data name="NoClientsYet" xml:space="preserve">
+    <value>Encara no hi ha cap client. Afegeix el primer amb «+ Nou client»: amb el nom i el mòbil n'hi ha prou.</value>
+  </data>
+  <data name="NoActiveClients" xml:space="preserve">
+    <value>Ara mateix no hi ha cap client actiu. Els que fa temps que no vénen són a «Mostrar clients adormits», aquí sota.</value>
+  </data>
+  <data name="NoClientMatchesSearch" xml:space="preserve">
+    <value>Cap client coincideix amb «{0}». Prova amb una altra part del nom o del mòbil, o afegeix-lo amb «+ Nou client».</value>
+  </data>
 </root>

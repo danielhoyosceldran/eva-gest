@@ -25,7 +25,14 @@
                         Command="{Binding NewClientCommand}" />
             </Grid>
 
-            <Border Style="{StaticResource DataCard}" Padding="0">
+            <!-- Empty state in place of bare headers: says what to do next (pantalles 1) -->
+            <Border Style="{StaticResource DataCard}"
+                    Visibility="{Binding EmptyText, Converter={StaticResource NullToVisibilityConverter}}">
+                <TextBlock Text="{Binding EmptyText}" Style="{StaticResource DataLabel}" TextWrapping="Wrap" />
+            </Border>
+
+            <Border Style="{StaticResource DataCard}" Padding="0"
+                    Visibility="{Binding Active.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
                 <DataGrid ItemsSource="{Binding Active}" AutoGenerateColumns="False"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">

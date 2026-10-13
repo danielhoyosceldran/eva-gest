@@ -604,6 +604,9 @@ public static class Texts
         nameof(DecreaseQuantity),
         nameof(EditSaleLine),
         nameof(RemoveSaleLine),
+        nameof(NoClientsYet),
+        nameof(NoActiveClients),
+        nameof(NoClientMatchesSearch),
     ];
 
     /// <summary>Pendent</summary>
@@ -2310,4 +2313,13 @@ public static class Texts
 
     /// <summary>Treure aquesta línia de la venda</summary>
     public static string RemoveSaleLine => Get(nameof(RemoveSaleLine));
+
+    /// <summary>Encara no hi ha cap client. Afegeix el primer amb «+ Nou client»: amb el nom i el mòbil n'hi ha prou.</summary>
+    public static string NoClientsYet => Get(nameof(NoClientsYet));
+
+    /// <summary>Ara mateix no hi ha cap client actiu. Els que fa temps que no vénen són a «Mostrar clients adormits», aquí sota.</summary>
+    public static string NoActiveClients => Get(nameof(NoActiveClients));
+
+    /// <summary>Cap client coincideix amb «{0}». Prova amb una altra part del nom o del mòbil, o afegeix-lo amb «+ Nou client».</summary>
+    public static string NoClientMatchesSearch => Get(nameof(NoClientMatchesSearch));
 }

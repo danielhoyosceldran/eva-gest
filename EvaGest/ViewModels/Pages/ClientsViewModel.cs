@@ -19,6 +19,13 @@ public partial class ClientsViewModel(IClientService clients, IReportsService re
     public ObservableCollection<Client> Active { get; } = [];
     public ObservableCollection<Client> Asleep { get; } = [];
 
+    /// <summary>
+    /// Shown in place of the table when it has no rows, so the page says what to do
+    /// instead of showing bare headers: add the first client, look among the asleep
+    /// ones, or try another search. Null while the table has rows (or before loading).
+    /// </summary>
+    [ObservableProperty] private string? _emptyText;
+
     public async Task Load()
     {
         Loading = true;
@@ -33,6 +40,11 @@ public partial class ClientsViewModel(IClientService clients, IReportsService re
 
             Asleep.Clear();
             foreach (var c in await clients.GetAsleep()) Asleep.Add(c);
+
+            EmptyText = Active.Count > 0 ? null
+                : !string.IsNullOrWhiteSpace(SearchText) ? string.Format(Texts.NoClientMatchesSearch, SearchText.Trim())
+                : Asleep.Count > 0 ? Texts.NoActiveClients
+                : Texts.NoClientsYet;
         }
         finally { Loading = false; }
     }

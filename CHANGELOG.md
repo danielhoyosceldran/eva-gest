@@ -95,6 +95,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - Counts of one read in the singular: "1 venda activa" under the sales list,
   "1 transacció" in the transactions window and "1 visita" for the client of the
   month, instead of "1 vendes actives", "1 transaccions" and "1 visites".
+- Clients with nothing to list no longer shows bare table headers. It invites to add
+  the first client with "+ Nou client", points to "Mostrar clients adormits" when every
+  client is asleep, and says "Cap client coincideix amb «…»" when a search finds
+  nobody.
 
 ## 1.3.0 (closes version 1)
 
