@@ -340,6 +340,16 @@ public partial class WeekGridViewModel : ObservableObject
     private int GhostDuration { get; set; } = 30;
 
     /// <summary>
+    /// The ghost lies within the hours the grid shows. The range is worked out when the
+    /// days are loaded, so a time typed afterwards (23:30 on a grid that ends at 20:00)
+    /// put the ghost below the last row, out of sight; the dialog reloads when this is
+    /// false, and the reload widens the range to take the ghost in.
+    /// </summary>
+    public bool GhostFitsGrid =>
+        GhostStartMinute >= GridStartMinute
+        && Math.Min(GhostStartMinute + GhostDuration, GridHelper.MinutesPerDay) <= GridEndMinute;
+
+    /// <summary>
     /// Places the ghost in its column as one more appointment: it shares the width with
     /// the appointments it overlaps, side by side, the way the agenda lays out two
     /// appointments at the same time. Drawn across the whole column instead, it covered

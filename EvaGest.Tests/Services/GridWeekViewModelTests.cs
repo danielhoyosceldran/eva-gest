@@ -498,4 +498,29 @@ public class GridWeekViewModelTests
         grid.Days[0].Appointments.Should().NotContain(c => c.Id == editing && !c.IsGhost);
         grid.Days[0].Appointments.Single(c => c.IsGhost).LaneCount.Should().Be(1);
     }
+
+    /// <summary>
+    /// Manual test C7: an appointment typed in at 23:30 on a picker whose hours end at
+    /// 20:00 put the ghost below the last row, out of sight. The grid now says so, and a
+    /// reload of the same days widens the hours to take the ghost in.
+    /// </summary>
+    [Fact]
+    public async Task A_ghost_past_the_last_row_is_taken_in_by_reloading_the_range()
+    {
+        await using var testDb = new TestDatabase();
+        await AddSchedule(testDb, Weekday.Mon, 9, 20);
+        var (grid, _) = await Build(testDb, ModeGrid.Selector);
+        await grid.LoadRange(Monday);
+        grid.ShowGhost(Monday, new TimeOnly(10, 0), 30);
+        grid.GhostFitsGrid.Should().BeTrue();
+
+        grid.ShowGhost(Monday, new TimeOnly(23, 30), 90);
+        grid.GhostFitsGrid.Should().BeFalse("the grid ends at {0} minutes", grid.GridEndMinute);
+
+        await grid.LoadRange(grid.RangeStart);
+
+        grid.GhostFitsGrid.Should().BeTrue();
+        grid.GridEndMinute.Should().Be(24 * 60, "a late appointment is clamped to the end of the day");
+        grid.Days[0].Appointments.Should().ContainSingle(c => c.IsGhost);
+    }
 }

@@ -359,14 +359,14 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     partial void OnTimeChanged(TimeOnly value)
     {
         Sync(() => TimeText = ScheduleHelper.Format(value));
-        Grid?.ShowGhost(Date, value, DurationMin);
+        MoveGhost();
         RefreshInBackground(ReviewNotices, "the availability notices");
     }
 
     partial void OnDurationMinChanged(int value)
     {
         Sync(() => DurationText = value.ToString());
-        Grid?.ShowGhost(Date, Time, Math.Max(1, value));
+        MoveGhost();
         RefreshInBackground(ReviewNotices, "the availability notices");
     }
 
@@ -404,7 +404,21 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         // Only reload when the date has left the days on screen: a click on another
         // visible column must not shift the three-day view under the user's cursor.
         if (!grid.Days.Any(d => d.Date == date)) await grid.LoadRange(date);
-        grid.ShowGhost(date, Time, DurationMin);
+        grid.ShowGhost(date, Time, Math.Max(1, DurationMin));
+        if (!grid.GhostFitsGrid) await grid.LoadRange(grid.RangeStart);
+    }
+
+    /// <summary>
+    /// Puts the ghost at the new time or duration and, when that falls outside the hours
+    /// the picker shows (an appointment at 23:30 on a grid that ends at 20:00), reloads it
+    /// so the range takes the ghost in: otherwise it sat below the last row, out of sight.
+    /// </summary>
+    private void MoveGhost()
+    {
+        if (Grid is not { } grid) return;
+        grid.ShowGhost(Date, Time, Math.Max(1, DurationMin));
+        if (!grid.GhostFitsGrid)
+            RefreshInBackground(() => grid.LoadRange(grid.RangeStart), "the week picker");
     }
 
     private async Task ReviewNotices()
