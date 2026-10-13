@@ -290,6 +290,8 @@ public static class Texts
         nameof(ProductNameRequired),
         nameof(PriceInvalid),
         nameof(PriceNegative),
+        nameof(PriceRequired),
+        nameof(MoneyPlaceholder),
         nameof(VatOutOfRange),
         nameof(NewMethodTitle),
         nameof(EditMethodTitle),
@@ -306,6 +308,7 @@ public static class Texts
         nameof(NewCashInTitle),
         nameof(NewCashOutTitle),
         nameof(AmountMustBePositive),
+        nameof(AmountRequired),
         nameof(PaymentMethodRequired),
         nameof(ConceptRequired),
         nameof(NewWorkerTitle),
@@ -1363,6 +1366,13 @@ public static class Texts
     /// <summary>El preu no pot ser negatiu. Escriu-lo sense el signe menys...</summary>
     public static string PriceNegative => Get(nameof(PriceNegative));
 
+    /// <summary>Cal indicar el preu per guardar, encara que sigui 0...</summary>
+    public static string PriceRequired => Get(nameof(PriceRequired));
+
+    /// <summary>"0,00": the hint an empty money box shows. A placeholder, not text,
+    /// so typing a price does not start by deleting a zero.</summary>
+    public static string MoneyPlaceholder => Get(nameof(MoneyPlaceholder));
+
     /// <summary>L'IVA ha de ser un percentatge entre 0 i 100.</summary>
     public static string VatOutOfRange => Get(nameof(VatOutOfRange));
 
@@ -1411,6 +1421,9 @@ public static class Texts
 
     /// <summary>L'import ha de ser més gran que zero.</summary>
     public static string AmountMustBePositive => Get(nameof(AmountMustBePositive));
+
+    /// <summary>Cal indicar l'import per guardar...</summary>
+    public static string AmountRequired => Get(nameof(AmountRequired));
 
     /// <summary>Cal triar un mètode de pagament.</summary>
     public static string PaymentMethodRequired => Get(nameof(PaymentMethodRequired));

@@ -101,7 +101,6 @@ public class DialogValidationTests
     [Theory]
     [InlineData("quinze")]
     [InlineData("15€uros")]
-    [InlineData("")]
     public void A_product_with_a_malformed_price_is_refused(string typed)
     {
         var vm = new ProductDialogViewModel { Name = "Cera", VatText = "21" };
@@ -144,6 +143,63 @@ public class DialogValidationTests
         vm.SaveCommand.Execute(null);
 
         vm.ErrorValidation.Should().Be(Texts.PriceNegative);
+    }
+
+    // ── An empty money box ──────────────────────────────────────────────────
+    // "0,00" is the box's placeholder, not its text, so a new entry starts empty and
+    // the user is made to type an amount, even if that amount is 0.
+
+    [Fact]
+    public void A_new_product_service_or_movement_starts_with_an_empty_price_box()
+    {
+        new ProductDialogViewModel().PriceText.Should().BeEmpty();
+        new ServiceDialogViewModel().PriceText.Should().BeEmpty();
+        new MovementDialogViewModel(MovementType.In, DateOnly.FromDateTime(DateTime.Today))
+            .PriceText.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void A_product_with_no_price_typed_is_asked_for_one(string typed)
+    {
+        var vm = new ProductDialogViewModel { Name = "Cera", PriceText = typed, VatText = "21" };
+
+        vm.SaveCommand.Execute(null);
+
+        vm.ErrorValidation.Should().Be(Texts.PriceRequired);
+    }
+
+    [Fact]
+    public void A_service_with_no_price_typed_is_asked_for_one()
+    {
+        var vm = new ServiceDialogViewModel { Name = "Tall", VatText = "21" };
+
+        vm.SaveCommand.Execute(null);
+
+        vm.ErrorValidation.Should().Be(Texts.PriceRequired);
+    }
+
+    [Fact]
+    public void A_price_of_zero_typed_on_purpose_is_accepted()
+    {
+        var vm = new ServiceDialogViewModel { Name = "Tall", PriceText = "0", VatText = "21" };
+
+        vm.SaveCommand.Execute(null);
+
+        vm.ErrorValidation.Should().BeNull();
+        vm.AModel().PriceCents.Should().Be(0);
+    }
+
+    [Fact]
+    public void A_movement_with_no_amount_typed_is_asked_for_one()
+    {
+        var vm = Movement();
+        vm.PriceText = "";
+
+        vm.SaveCommand.Execute(null);
+
+        vm.ErrorValidation.Should().Be(Texts.AmountRequired);
     }
 
     // ── The two settings the movement dialog is supposed to follow ───────────

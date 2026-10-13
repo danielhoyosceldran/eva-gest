@@ -817,6 +817,12 @@
   <data name="PriceNegative" xml:space="preserve">
     <value>El preu no pot ser negatiu. Escriu-lo sense el signe menys, per exemple 15,50.</value>
   </data>
+  <data name="PriceRequired" xml:space="preserve">
+    <value>Cal indicar el preu per guardar, encara que sigui 0. Escriu-lo, per exemple 15,50.</value>
+  </data>
+  <data name="MoneyPlaceholder" xml:space="preserve">
+    <value>0,00</value>
+  </data>
   <data name="VatOutOfRange" xml:space="preserve">
     <value>L'IVA ha de ser un percentatge entre 0 i 100, només xifres (0-9), per exemple 21.</value>
   </data>
@@ -866,6 +872,9 @@ Si vols conservar-la a l'historial, marca-la com a cancel·lada o no assistida.<
   </data>
   <data name="AmountMustBePositive" xml:space="preserve">
     <value>L'import ha de ser un número més gran que zero, amb els decimals separats per coma i sense punt de milers, per exemple 15,50 o 1200.</value>
+  </data>
+  <data name="AmountRequired" xml:space="preserve">
+    <value>Cal indicar l'import per guardar. Escriu-lo, per exemple 15,50.</value>
   </data>
   <data name="PaymentMethodRequired" xml:space="preserve">
     <value>Cal triar un mètode de pagament.</value>

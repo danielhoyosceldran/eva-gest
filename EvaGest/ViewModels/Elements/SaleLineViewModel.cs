@@ -20,7 +20,9 @@ public partial class SaleLineViewModel : ObservableObject
 
     [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _quantity = 1;
-    [ObservableProperty] private string _priceText = "0,00";
+    /// <summary>Empty on a free line: "0,00" is the box's placeholder, not its text, so a
+    /// price is typed without first deleting a zero. Empty is refused on Charge.</summary>
+    [ObservableProperty] private string _priceText = string.Empty;
     [ObservableProperty] private int _vatBp;
 
     /// <summary>

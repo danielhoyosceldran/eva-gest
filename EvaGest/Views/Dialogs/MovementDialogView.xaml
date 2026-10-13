@@ -24,7 +24,7 @@
             <el:DateBox SelectedDate="{Binding Date, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.AmountEuros}" Style="{StaticResource DataLabel}" />
-            <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MoneyBox}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.PaymentMethod}" Style="{StaticResource DataLabel}" />
             <ComboBox ItemsSource="{Binding ActiveMethods}" SelectedItem="{Binding Method}"

@@ -11,7 +11,9 @@ public partial class ProductDialogViewModel : DialogViewModelBase
     private readonly int? _id;
 
     [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] private string _priceText = "0,00";
+    /// <summary>Starts empty: "0,00" is the box's placeholder, not its text, so a price
+    /// is typed without first deleting a zero. Empty is refused on Save.</summary>
+    [ObservableProperty] private string _priceText = string.Empty;
     [ObservableProperty] private string _vatText = "21";
     [ObservableProperty] private string? _category;
 
@@ -39,6 +41,11 @@ public partial class ProductDialogViewModel : DialogViewModelBase
         if (string.IsNullOrWhiteSpace(Name))
         {
             ErrorValidation = Texts.ProductNameRequired;
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(PriceText))
+        {
+            ErrorValidation = Texts.PriceRequired;
             return;
         }
         if (!Money.TryParse(PriceText, out int priceCents))

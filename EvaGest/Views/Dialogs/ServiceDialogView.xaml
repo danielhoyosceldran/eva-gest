@@ -26,7 +26,7 @@
             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.PriceEuros}" Style="{StaticResource DataLabel}" />
-            <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+            <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MoneyBox}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.VatPercent}" Style="{StaticResource DataLabel}" />
             <TextBox Text="{Binding VatText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />

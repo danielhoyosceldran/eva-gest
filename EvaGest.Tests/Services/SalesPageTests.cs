@@ -309,6 +309,21 @@ public class SalesPageTests
     }
 
     [Fact]
+    public async Task A_custom_line_with_no_price_typed_is_not_charged_and_asks_for_one()
+    {
+        // "0,00" is only the box's placeholder: a line left empty is a price nobody
+        // typed, not a free line, so Charge refuses it instead of reading it as zero.
+        await using var testDb = new TestDatabase();
+        var vm = await NewSaleDialog(testDb);
+        AddLine(vm, "");
+
+        await vm.ChargeCommand.ExecuteAsync(null);
+
+        vm.ErrorValidation.Should().Be(Texts.PriceRequired);
+        vm.Lines[0].IsExpanded.Should().BeTrue("the empty price box has to be in view");
+    }
+
+    [Fact]
     public async Task Typing_a_second_over_large_line_does_not_throw_it_flags_the_total()
     {
         await using var testDb = new TestDatabase();

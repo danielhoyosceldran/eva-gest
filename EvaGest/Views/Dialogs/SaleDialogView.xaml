@@ -232,7 +232,7 @@
                                             </StackPanel>
                                             <StackPanel Grid.Column="2">
                                                 <TextBlock Text="{x:Static t:Texts.PriceEuros}" Style="{StaticResource DataLabel}" />
-                                                <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MoneyBox}" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="4">
                                                 <TextBlock Text="{x:Static t:Texts.VatPercent}" Style="{StaticResource DataLabel}" />

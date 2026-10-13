@@ -75,6 +75,12 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   right. The calendar button is still there to pick a day with the mouse.
 - Inici no longer has the "Entrada" quick button, which was hardly used. A cash-in is
   still recorded from Caixa, with "+ Entrada".
+- The price and amount boxes (new service, new product, a custom line of a sale, a
+  till movement) now start empty, with "0,00" shown in grey as a hint: a price is
+  typed straight away, without first deleting a zero. Leaving the box empty is not
+  read as zero any more: saving asks for the price ("Cal indicar el preu per guardar,
+  encara que sigui 0") or the amount. Leaving a box rewrites what was typed with two
+  decimals, so "0" reads "0,00" and "15,5" reads "15,50".
 
 ## 1.3.0 (closes version 1)
 

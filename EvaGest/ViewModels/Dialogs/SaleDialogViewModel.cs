@@ -462,6 +462,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
             wrong.IsExpanded = true;
             ErrorValidation = string.IsNullOrWhiteSpace(wrong.Description) ? Texts.LineDescriptionRequired
                 : !NumberValidator.TryParseAtLeast(wrong.QuantityText, 1, out _) ? Texts.QuantityInvalid
+                : string.IsNullOrWhiteSpace(wrong.PriceText) ? Texts.PriceRequired
                 : !Money.TryParse(wrong.PriceText, out int wrongPrice) ? Texts.PriceInvalid
                 : wrongPrice < 0 ? Texts.PriceNegative
                 : !Percentages.TryParse(wrong.VatText, out _) ? Texts.VatOutOfRange

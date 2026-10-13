@@ -817,6 +817,12 @@
   <data name="PriceNegative" xml:space="preserve">
     <value>El precio no puede ser negativo. Escríbelo sin el signo menos, por ejemplo 15,50.</value>
   </data>
+  <data name="PriceRequired" xml:space="preserve">
+    <value>Hay que indicar el precio para guardar, aunque sea 0. Escríbelo, por ejemplo 15,50.</value>
+  </data>
+  <data name="MoneyPlaceholder" xml:space="preserve">
+    <value>0,00</value>
+  </data>
   <data name="VatOutOfRange" xml:space="preserve">
     <value>El IVA debe ser un porcentaje entre 0 y 100, solo cifras (0-9), por ejemplo 21.</value>
   </data>
@@ -866,6 +872,9 @@ Si quieres conservarla en el historial, márcala como cancelada o no asistida.</
   </data>
   <data name="AmountMustBePositive" xml:space="preserve">
     <value>El importe debe ser un número mayor que cero, con los decimales separados por coma y sin punto de millares, por ejemplo 15,50 o 1200.</value>
+  </data>
+  <data name="AmountRequired" xml:space="preserve">
+    <value>Hay que indicar el importe para guardar. Escríbelo, por ejemplo 15,50.</value>
   </data>
   <data name="PaymentMethodRequired" xml:space="preserve">
     <value>Hay que elegir un método de pago.</value>

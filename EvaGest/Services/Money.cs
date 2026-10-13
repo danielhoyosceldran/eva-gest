@@ -19,6 +19,14 @@ public static class Money
         => (cents / 100m).ToString("N2", AppLanguage.Culture);
 
     /// <summary>
+    /// Formats cents for a box the user edits: 1500 -> "15,00", 120000 -> "1200,00".
+    /// Two decimals like everywhere else, but no group separator: the price messages
+    /// ask for the amount "sense punt de milers", so the box must not write one in.
+    /// </summary>
+    public static string FormatInput(long cents)
+        => (cents / 100m).ToString("0.00", AppLanguage.Culture);
+
+    /// <summary>
     /// Parses user input into cents. Accepts both comma and dot as decimal separator,
     /// and tolerates a group separator: "15", "15,50", "15.50" and "1.234,56" all work.
     /// The last comma or dot is treated as the decimal separator; earlier ones are

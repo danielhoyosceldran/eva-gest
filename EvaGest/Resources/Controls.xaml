@@ -2,7 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework"
                     xmlns:el="clr-namespace:EvaGest.Views.Elements"
-                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:h="clr-namespace:EvaGest.Helpers"
+                    xmlns:t="clr-namespace:EvaGest.Resources">
 
     <!-- Primary button: one main action per dialog (Guardar, Cobrar) -->
     <Style x:Key="PrimaryButton" TargetType="Button">
@@ -212,6 +214,13 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- Money field (price, amount). "0,00" is a placeholder, not text, so typing starts
+         on an empty box; leaving it rewrites "0" as "0,00" (Helpers/MoneyEntry) -->
+    <Style x:Key="MoneyBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Tag" Value="{x:Static t:Texts.MoneyPlaceholder}" />
+        <Setter Property="h:MoneyEntry.TidyOnBlur" Value="True" />
     </Style>
 
     <!-- Link-looking action ("He oblidat el PIN"): underlined text, no box. For a side

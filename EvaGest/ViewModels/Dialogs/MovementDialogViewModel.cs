@@ -25,7 +25,9 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     /// belongs to the day it happened, not to the moment the dialog was saved).
     /// </summary>
     [ObservableProperty] private DateOnly _date;
-    [ObservableProperty] private string _priceText = "0,00";
+    /// <summary>Starts empty: "0,00" is the box's placeholder, not its text, so an amount
+    /// is typed without first deleting a zero. Empty is refused on Save.</summary>
+    [ObservableProperty] private string _priceText = string.Empty;
     [ObservableProperty] private PaymentMethod? _method;
     [ObservableProperty] private string _concept = string.Empty;
     [ObservableProperty] private bool _splitVat;
@@ -137,6 +139,11 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     [RelayCommand]
     private async Task Save()
     {
+        if (string.IsNullOrWhiteSpace(PriceText))
+        {
+            ErrorValidation = Texts.AmountRequired;
+            return;
+        }
         if (!Money.TryParse(PriceText, out int amountCents) || amountCents <= 0)
         {
             ErrorValidation = Texts.AmountMustBePositive;
