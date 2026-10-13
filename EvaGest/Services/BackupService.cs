@@ -37,6 +37,9 @@ public class BackupService(
     // Automatic too, but taken as the app closed (see RunBackupOnCloseIfDue).
     private const string OnCloseSuffix = "close";
 
+    // Added to a copy's name while it is being written and checked; see Copy.
+    private const string PartialExtension = ".partial";
+
     // Fallbacks only, for a database whose settings row is missing or unreadable.
     // The real values come from Configuració (esquema-bbdd 2.14).
     private const int FallbackRetention = 15;
@@ -47,6 +50,7 @@ public class BackupService(
         Directory.CreateDirectory(paths.BackupsFolder);
 
         var backups = Directory.GetFiles(paths.BackupsFolder, "*.db")
+            .Where(IsComplete)
             .Select(ReadBackup)
             .Where(c => c is not null)
             .Select(c => c!)
@@ -269,6 +273,14 @@ public class BackupService(
         if (File.Exists(destination))
             throw new IOException($"A backup named {name} already exists.");
 
+        // Written under a temporary name and renamed only once complete and checked
+        // (B-31). A copy cut off part way (the PC switched off while the app was taking
+        // its closing copy) used to stay behind under its final name, damaged, listed for
+        // restore and counted as the day's automatic copy. Now it can only leave a
+        // *.partial file, which nothing lists and the next copy deletes.
+        DeleteInterruptedCopies(paths.BackupsFolder);
+        string partial = destination + PartialExtension;
+
         // Through SQLite's online backup, not File.Copy: in WAL mode the most recent
         // commits live in barberia.db-wal until a checkpoint, so copying the main file
         // alone produced a backup missing the day's latest sales (or, on a young
@@ -283,16 +295,17 @@ public class BackupService(
             // again. Whatever goes wrong here, the file goes too.
             try
             {
-                Snapshot(paths.DbPath, destination);
-                UseRollbackJournal(destination);
+                Snapshot(paths.DbPath, partial);
+                UseRollbackJournal(partial);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Backup copy to {BackupPath} failed while being written and is discarded", destination);
-                Discard(destination);
+                Discard(partial);
                 throw;
             }
-            if (verify) VerifyOrDiscard(destination);
+            if (verify) VerifyOrDiscard(partial);
+            File.Move(partial, destination);
         });
         Log.Information("{BackupKind} backup taken: {BackupPath}",
             suffix switch { AutomaticSuffix => "Automatic", OnCloseSuffix => "On-close", BeforeUpdateSuffix => "Before-update", _ => "Manual" },
@@ -470,6 +483,37 @@ public class BackupService(
 
         if (result != "ok")
             throw new InvalidDataException($"The backup {path} failed its integrity check: {result}");
+    }
+
+    /// <summary>
+    /// False for a copy whose writing was cut short before this version wrote them under
+    /// a temporary name (B-31): SQLite leaves its rollback journal beside a file it was
+    /// writing, and only a write leaves one, since every later open of a backup reads.
+    /// Such a file is damaged; listed, it was offered for restore and counted as the
+    /// day's automatic copy, so no other was taken that day. It is left on disk (the
+    /// owner may still want it looked at) but no longer treated as a backup.
+    /// </summary>
+    private static bool IsComplete(string path)
+    {
+        if (!File.Exists(path + "-journal")) return true;
+        Log.Warning("Backup {BackupPath} was cut off while being written and is ignored", path);
+        return false;
+    }
+
+    /// <summary>
+    /// Deletes what a copy cut off part way left behind: its temporary file and that
+    /// file's journal. Only one EvaGest runs at a time and it writes one copy at a time,
+    /// so any temporary file found when a new copy starts belongs to a write that died
+    /// (the PC switched off while the app was closing, a power cut). Best effort.
+    /// </summary>
+    private static void DeleteInterruptedCopies(string folder)
+    {
+        foreach (var leftover in Directory.GetFiles(folder, "*" + PartialExtension)
+                     .Concat(Directory.GetFiles(folder, "*" + PartialExtension + "-journal")))
+        {
+            Log.Warning("Deleting {Leftover}, left by a backup that was cut off while being written", leftover);
+            Discard(leftover);
+        }
     }
 
     private static BackupInfo? ReadBackup(string path)

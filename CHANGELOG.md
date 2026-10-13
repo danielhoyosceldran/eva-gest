@@ -149,6 +149,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   narrow for a whole row moves the afternoon under the morning instead of cutting off
   its last time.
 - "Fer còpia ara" now says which folder the new copy is in, not only when it was made.
+- A backup cut off while being written (the PC switched off while the app was taking its
+  closing copy) no longer stays in the backups folder looking like a good copy. It used
+  to be offered for restore and to count as the day's automatic copy, so no other was
+  taken that day.
 
 ## 1.3.0 (closes version 1)
 
