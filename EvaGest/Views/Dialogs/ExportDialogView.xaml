@@ -21,10 +21,10 @@
             <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
 
             <TextBlock Text="{x:Static t:Texts.From}" Style="{StaticResource DataLabel}" />
-            <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
+            <el:DateBox SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.To}" Style="{StaticResource DataLabel}" />
-            <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
+            <el:DateBox SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
 
             <TextBlock TextWrapping="Wrap" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
                        Text="{x:Static t:Texts.ExportProducesTwoFiles}" />

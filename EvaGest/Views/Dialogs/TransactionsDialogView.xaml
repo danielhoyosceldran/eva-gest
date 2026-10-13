@@ -77,10 +77,10 @@
                     <!-- Period and type on one line on a wide screen, wrapped on a narrow one -->
                     <WrapPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,24,8">
-                            <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}"
+                            <el:DateBox SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}"
                                         VerticalAlignment="Center" AutomationProperties.Name="{x:Static t:Texts.From}" />
                             <TextBlock Text=" – " VerticalAlignment="Center" Margin="6,0" />
-                            <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}"
+                            <el:DateBox SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}"
                                         VerticalAlignment="Center" AutomationProperties.Name="{x:Static t:Texts.To}" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,24,8">

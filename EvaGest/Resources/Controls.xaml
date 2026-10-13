@@ -551,7 +551,7 @@
         </Setter>
     </Style>
 
-    <!-- The calendar popup (the DatePicker drop-down), retemplated end to end: day cell,
+    <!-- The calendar popup (DateBox's drop-down), retemplated end to end: day cell,
          month/year cell, header and the surrounding card. Property Setters alone are not
          enough — the OS theme templates paint their own visual states on top, which is what
          left the selected day unreadable. Owning the templates also fixes the framing: the
@@ -559,11 +559,10 @@
          a square of the same size instead of being squeezed by the theme's own metrics.
          Note that Calendar ignores Width/Height (documented), so size comes from the cells.
 
-         The popup is reached through DatePicker.CalendarStyle, wired further down: DatePicker
-         builds its Calendar in code and binds that property to Calendar.Style, so an implicit
-         `Style TargetType="Calendar"` never applies on its own. Same reasoning for the inner
-         parts, hence the explicit CalendarItemStyle / CalendarButtonStyle /
-         CalendarDayButtonStyle setters. -->
+         DateBox sets this style on its Calendar explicitly (the DatePicker it replaced built
+         its Calendar in code, where an implicit style never reached). The inner parts are
+         wired through the explicit CalendarItemStyle / CalendarButtonStyle /
+         CalendarDayButtonStyle setters for the same reason. -->
 
     <!-- One day. Trigger order is the design: selection comes last so a selected "today"
          reads as a solid blue cell instead of keeping the outline of an unselected one. -->
@@ -846,79 +845,26 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <!-- DatePicker: text/colours matched to TextBox; calendar popup uses the same accent.
-         The whole control is given a custom template so the calendar-toggle button can be
-         made a plain square docked to the right edge, exactly as tall as the text part —
-         the default theme template gives that button its own margin/padding, which made it
-         shorter than the input and never square. -->
-    <Style TargetType="DatePickerTextBox">
+    <!-- The calendar button of DateBox: a plain square with the calendar glyph, pale on
+         hover. It used to be the toggle inside the DatePicker template, which DateBox
+         replaced; the calendar it opens keeps the Calendar style above. -->
+    <Style x:Key="CalendarButton" TargetType="Button">
+        <Setter Property="Width" Value="{StaticResource FieldHeight}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="DatePickerTextBox">
-                    <Border Background="{StaticResource SurfaceBrush}" BorderThickness="0">
-                        <ScrollViewer x:Name="PART_ContentHost" />
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="ButtonBackground" Background="{TemplateBinding Background}"
+                            CornerRadius="{StaticResource ControlRadius}">
+                        <TextBlock Text="&#xE787;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{StaticResource InkBrush}" />
                     </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style TargetType="DatePicker">
-        <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
-        <Setter Property="MinHeight" Value="{StaticResource FieldHeight}" />
-        <Setter Property="Padding" Value="10,0" />
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
-        <!-- DatePicker builds its popup Calendar in code and assigns it via this
-             CalendarStyle property — implicit `Style TargetType="Calendar"` lookup
-             never reaches it, so it must be wired explicitly (see comment above). -->
-        <Setter Property="CalendarStyle" Value="{StaticResource {x:Type Calendar}}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="DatePicker">
-                    <Grid x:Name="PART_Root">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border x:Name="Background" Grid.ColumnSpan="2"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{StaticResource ControlRadius}" />
-                        <DatePickerTextBox x:Name="PART_TextBox" Grid.Column="0"
-                                            Margin="{TemplateBinding Padding}"
-                                            VerticalAlignment="Center"
-                                            Focusable="{TemplateBinding Focusable}" />
-                        <Button x:Name="PART_Button" Grid.Column="1"
-                                Width="{TemplateBinding MinHeight}"
-                                Margin="0" Padding="0" BorderThickness="0"
-                                HorizontalAlignment="Right" VerticalAlignment="Stretch"
-                                Focusable="False" Cursor="Hand"
-                                Background="Transparent">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="ButtonBackground" Background="{TemplateBinding Background}">
-                                        <TextBlock Text="&#xE787;" FontFamily="Segoe MDL2 Assets"
-                                                   FontSize="14" HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="{StaticResource InkBrush}" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="ButtonBackground" Property="Background" Value="{StaticResource PaperBrush}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                        <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" />
-                    </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Background" Property="BorderBrush" Value="{StaticResource BlueBrush}" />
-                            <Setter TargetName="Background" Property="BorderThickness" Value="2" />
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBackground" Property="Background" Value="{StaticResource PaperBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

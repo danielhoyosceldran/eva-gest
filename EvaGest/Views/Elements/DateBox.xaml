@@ -1,0 +1,96 @@
+<UserControl x:Class="EvaGest.Views.Elements.DateBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root" MinHeight="{StaticResource FieldHeight}" Focusable="False">
+    <!--
+      A date as three small boxes, day / month / year, with fixed "/" between them that
+      cannot be typed or deleted, and the calendar button on the right. Looks like one
+      text box: the outline is drawn here and the inner boxes have none. The outline
+      turns red when what is typed is not a real date (31/02). All the typing rules are
+      in Helpers/DateEntry; the code-behind only applies them.
+    -->
+    <UserControl.Resources>
+        <!-- An inner box: just the text, centred; a dashed placeholder when empty -->
+        <Style x:Key="Segment" TargetType="TextBox">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid Background="Transparent">
+                            <TextBlock x:Name="Placeholder" Text="{TemplateBinding Tag}" HorizontalAlignment="Center"
+                                       Foreground="{StaticResource InkMutedBrush}" IsHitTestVisible="False"
+                                       Visibility="Collapsed" />
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Slash" TargetType="TextBlock">
+            <Setter Property="Text" Value="/" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="1,0" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeInput}" />
+            <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+        </Style>
+    </UserControl.Resources>
+
+    <!-- The accent, 2 DIP thick, while a box has focus; red when the date is impossible
+         (last, so it wins over focus); faded while disabled. -->
+    <Border x:Name="Outline" CornerRadius="{StaticResource ControlRadius}"
+            Background="{StaticResource SurfaceBrush}" Cursor="IBeam">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=Root}" Value="True">
+                        <Setter Property="BorderBrush" Value="{StaticResource BlueBrush}" />
+                        <Setter Property="BorderThickness" Value="2" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsInvalid, ElementName=Root}" Value="True">
+                        <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}" />
+                        <Setter Property="BorderThickness" Value="2" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsEnabled, ElementName=Root}" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left"
+                        VerticalAlignment="Center" Margin="4,0,0,0">
+                <TextBox x:Name="Day" Style="{StaticResource Segment}" Tag="--" />
+                <TextBlock Style="{StaticResource Slash}" />
+                <TextBox x:Name="Month" Style="{StaticResource Segment}" Tag="--" />
+                <TextBlock Style="{StaticResource Slash}" />
+                <TextBox x:Name="Year" Style="{StaticResource Segment}" Tag="----" Width="46" />
+            </StackPanel>
+
+            <!-- The month to pick from with the mouse, which also shows the weekday -->
+            <Button x:Name="CalendarButton" Grid.Column="1" Style="{StaticResource CalendarButton}" />
+
+            <Popup x:Name="CalendarPopup" PlacementTarget="{Binding ElementName=Outline}" Placement="Bottom"
+                   StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+                <Calendar x:Name="Picker" Style="{StaticResource {x:Type Calendar}}" />
+            </Popup>
+        </Grid>
+    </Border>
+</UserControl>

@@ -48,12 +48,12 @@
             <el:WrappingUniformGrid MinItemWidth="{StaticResource FilterFieldMinWidth}">
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.From}" Style="{StaticResource DataLabel}" />
-                    <DatePicker HorizontalAlignment="Stretch"
+                    <el:DateBox HorizontalAlignment="Stretch"
                                 SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" />
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">
                     <TextBlock Text="{x:Static t:Texts.To}" Style="{StaticResource DataLabel}" />
-                    <DatePicker HorizontalAlignment="Stretch"
+                    <el:DateBox HorizontalAlignment="Stretch"
                                 SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" />
                 </StackPanel>
                 <StackPanel Margin="0,0,12,8">

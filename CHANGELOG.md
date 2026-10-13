@@ -30,6 +30,13 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   digits in the hours move on to the minutes by themselves (so does a single digit that
   can only be one hour, such as 9), ":" or "." also move on, and the arrow keys step an
   hour or a quarter of an hour. The drop-down list of quarter hours is gone.
+- Dates are typed the same way, in three boxes (day / month / year) with the "/"
+  already in place: every date in the app, from the appointment's day to the From / To
+  filters. A complete day or month moves on by itself, "/", "-" or "." also move on, the
+  arrow keys step a day, a month or a year, and a pasted "13/10/2026" or "2026-10-13"
+  fills all three. Leaving out the year means this year, and "26" is 2026. A date that
+  does not exist, such as 31/02, turns the box red and is not taken until it is put
+  right. The calendar button is still there to pick a day with the mouse.
 
 ## 1.3.0 (closes version 1)
 

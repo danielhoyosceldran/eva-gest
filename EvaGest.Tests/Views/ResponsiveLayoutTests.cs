@@ -444,8 +444,8 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                     if (column.ActualWidth + Tolerance < Math.Max(column.MinWidth, 20))
                         found.Add($"table column '{column.Header}' squeezed to {column.ActualWidth:0} DIP");
 
-            bool checkable = element is TextBlock or ButtonBase or ComboBox or TextBox or DatePicker or PasswordBox;
-            if (!checkable || element.TemplatedParent is TextBox or ComboBox or DatePicker or DatePickerTextBox) continue;
+            bool checkable = element is TextBlock or ButtonBase or ComboBox or TextBox or PasswordBox;
+            if (!checkable || element.TemplatedParent is TextBox or ComboBox) continue;
 
             var clip = LayoutInformation.GetLayoutClip(element);
             if (clip is not null && !element.ClipToBounds && !clip.Bounds.IsEmpty

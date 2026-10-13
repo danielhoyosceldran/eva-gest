@@ -147,9 +147,9 @@
             <!-- C) Worker ranking -->
             <TextBlock Text="{x:Static t:Texts.WorkerRanking}" Style="{StaticResource Subtitle}" />
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                <DatePicker SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
+                <el:DateBox SelectedDate="{Binding From, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
                 <TextBlock Text=" – " VerticalAlignment="Center" Margin="8,0" />
-                <DatePicker SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
+                <el:DateBox SelectedDate="{Binding To, Converter={StaticResource DateOnlyConverter}}" FontSize="{StaticResource FontSizeInput}" />
                 <Button Content="{x:Static t:Texts.ThisMonth}" Style="{StaticResource SecondaryButton}"
                         Command="{Binding SelectThisMonthCommand}" Margin="12,0,0,0" />
             </StackPanel>

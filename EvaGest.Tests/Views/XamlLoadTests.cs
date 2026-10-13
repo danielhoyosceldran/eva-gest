@@ -241,27 +241,40 @@ public class XamlLoadTests(ApplicationWpf app)
     }
 
     [Fact] // X-10
-    public void The_datepicker_calendar_uses_the_app_templates()
+    public void The_date_box_calendar_uses_the_app_templates()
         => app.Runs(() =>
         {
             var view = new EvaGest.Views.Dialogs.AppointmentDialogView();
             view.Measure(new Size(1200, 800));
             view.Arrange(new Rect(0, 0, 1200, 800));
 
-            // DatePicker builds its popup Calendar in code and binds Calendar.Style to this
-            // property, so an implicit Style TargetType="Calendar" never reaches it.
-            var picker = Descendants<DatePicker>(view).First();
-            picker.CalendarStyle.Should().NotBeNull();
+            // The calendar sits in the date box's popup, outside the visual tree until it
+            // opens, so it is reached by name. Its style is set explicitly, like the
+            // DatePicker's CalendarStyle used to be.
+            var box = Descendants<EvaGest.Views.Elements.DateBox>(view).First();
+            var calendar = (Calendar)box.FindName("Picker");
+            calendar.Style.Should().NotBeNull();
 
             // Expanding the calendar's own templates is what resolves every StaticResource
             // and the day/month cell templates inside them.
-            var calendar = new Calendar { Style = picker.CalendarStyle };
             calendar.Measure(new Size(600, 600));
             calendar.Arrange(new Rect(0, 0, 600, 600));
 
             var days = Descendants<CalendarDayButton>(calendar).ToList();
             days.Should().HaveCount(42);
             days.Should().AllSatisfy(d => d.ActualWidth.Should().Be(40));
+        });
+
+    [Fact]
+    public void The_date_box_shows_the_bound_date_in_its_three_boxes()
+        => app.Runs(() =>
+        {
+            var box = new EvaGest.Views.Elements.DateBox { SelectedDate = new DateTime(2026, 3, 4) };
+            box.Measure(new Size(300, 60));
+            box.Arrange(new Rect(0, 0, 300, 60));
+
+            Descendants<TextBox>(box).Select(t => t.Text).Should().Equal("04", "03", "2026");
+            box.IsInvalid.Should().BeFalse();
         });
 
     private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
