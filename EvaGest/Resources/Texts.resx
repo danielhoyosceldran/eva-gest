@@ -1818,4 +1818,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="NoSleepingClients" xml:space="preserve">
     <value>No hi ha cap client adormit. Des de la fitxa d'un client el pots adormir perquè deixi de sortir a la llista i als cercadors.</value>
   </data>
+  <data name="SaveSale" xml:space="preserve">
+    <value>Guardar la venda</value>
+  </data>
 </root>

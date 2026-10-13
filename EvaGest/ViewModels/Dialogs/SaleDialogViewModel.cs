@@ -124,6 +124,12 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         _ => Texts.NewSaleTitle
     };
 
+    /// <summary>
+    /// The main button's verb. Editing a sale already charged saves the correction and
+    /// moves no money, so it no longer says "Cobrar" as if charging again (B-36).
+    /// </summary>
+    public string ChargeText => CurrentMode == Mode.Edit ? Texts.SaveSale : Texts.Charge;
+
     /// <summary>Always as tall as the screen: the lines list takes the free height and
     /// scrolls by itself, so the totals and Cobrar never move.</summary>
     public override bool FillsHeight => true;

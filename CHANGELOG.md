@@ -164,6 +164,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   so Enter pressed out of habit no longer deletes or discards.
 - Deleting an appointment that was already charged says straight away that it cannot be
   deleted, instead of first asking "Eliminar la cita?" and refusing after the yes.
+- Editing a sale already charged offers "Guardar la venda" as its main button instead
+  of "Cobrar", which read as charging it again.
 
 ## 1.3.0 (closes version 1)
 

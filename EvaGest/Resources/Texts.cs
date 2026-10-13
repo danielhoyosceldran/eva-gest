@@ -619,6 +619,7 @@ public static class Texts
         nameof(NoClientNotSeen),
         nameof(NoWorkerRankingInPeriod),
         nameof(NoSleepingClients),
+        nameof(SaveSale),
     ];
 
     /// <summary>Pendent</summary>
@@ -2370,4 +2371,7 @@ public static class Texts
 
     /// <summary>No hi ha cap client adormit. Des de la fitxa d'un client el pots adormir perquè deixi de sortir a la llista i als cercadors.</summary>
     public static string NoSleepingClients => Get(nameof(NoSleepingClients));
+
+    /// <summary>Guardar la venda</summary>
+    public static string SaveSale => Get(nameof(SaveSale));
 }

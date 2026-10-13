@@ -1818,4 +1818,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="NoSleepingClients" xml:space="preserve">
     <value>No hay ningún cliente dormido. Desde la ficha de un cliente puedes dormirlo para que deje de salir en la lista y en los buscadores.</value>
   </data>
+  <data name="SaveSale" xml:space="preserve">
+    <value>Guardar la venta</value>
+  </data>
 </root>
