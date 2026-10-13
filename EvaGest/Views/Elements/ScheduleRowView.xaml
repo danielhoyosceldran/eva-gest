@@ -36,7 +36,7 @@
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,24,0">
                 <CheckBox Content="{x:Static t:Texts.Morning}" IsChecked="{Binding WorksMorning}"
-                          VerticalAlignment="Center" Width="76" />
+                          VerticalAlignment="Center" MinWidth="76" Margin="0,0,8,0" />
                 <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksMorning}" Time="{Binding MorningStart}" />
                 <TextBlock Style="{StaticResource IntervalSeparator}" />
                 <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksMorning}" Time="{Binding MorningEnd}" />
@@ -44,7 +44,7 @@
 
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <CheckBox Content="{x:Static t:Texts.Afternoon}" IsChecked="{Binding WorksAfternoon}"
-                          VerticalAlignment="Center" Width="76" />
+                          VerticalAlignment="Center" MinWidth="76" Margin="0,0,8,0" />
                 <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksAfternoon}" Time="{Binding AfternoonStart}" />
                 <TextBlock Style="{StaticResource IntervalSeparator}" />
                 <el:TimeBox Style="{StaticResource TimeSelector}" IsEnabled="{Binding WorksAfternoon}" Time="{Binding AfternoonEnd}" />

@@ -123,6 +123,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - In the new-appointment window's grid, "Aquesta cita" sits beside an appointment it
   overlaps instead of on top of it, so both can be read and the clash is plain. While
   editing, the appointment is shown only as "Aquesta cita", not twice.
+- A checkbox label wraps when its space is short instead of running off: "Mostrar les
+  anul·lades" in the transactions window is no longer cut on a 1280x800 laptop, and in
+  Spanish "Mañana" no longer spills over the time beside it in the weekly schedules.
 
 ## 1.3.0 (closes version 1)
 
