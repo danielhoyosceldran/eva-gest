@@ -1791,4 +1791,28 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="CatalogBrowserNothingYet" xml:space="preserve">
     <value>Todavía no hay ningún servicio ni producto. Puedes crearlos en Catálogo; mientras tanto, cierra esta ventana y añade la línea con «+ Concepto libre».</value>
   </data>
+  <data name="NoServicesYet" xml:space="preserve">
+    <value>Todavía no hay ningún servicio. Crea uno con «+ Nuevo servicio»: las ventas y las citas lo propondrán con su precio y su duración.</value>
+  </data>
+  <data name="NoProductsYet" xml:space="preserve">
+    <value>Todavía no hay ningún producto. Si vendes alguno, créalos con «+ Nuevo producto».</value>
+  </data>
+  <data name="NoPaymentMethodsYet" xml:space="preserve">
+    <value>No hay ningún método de pago y sin ninguno no se puede cobrar. Crea uno con «+ Nuevo método».</value>
+  </data>
+  <data name="NoExpenseCategoriesYet" xml:space="preserve">
+    <value>Todavía no hay ninguna categoría. Sirven para agrupar las salidas de caja (alquiler, material…); créalas con «+ Nueva categoría».</value>
+  </data>
+  <data name="NoMovementsInPeriod" xml:space="preserve">
+    <value>No hay ninguna entrada ni salida de caja en este período. Apúntalas con «+ Entrada» o «+ Salida».</value>
+  </data>
+  <data name="NoClientRankingYet" xml:space="preserve">
+    <value>Todavía no hay ventas a clientes registrados para hacer esta lista.</value>
+  </data>
+  <data name="NoClientNotSeen" xml:space="preserve">
+    <value>Ningún cliente hace tiempo que no viene.</value>
+  </data>
+  <data name="NoWorkerRankingInPeriod" xml:space="preserve">
+    <value>Ninguna trabajadora tiene ventas en este período. Prueba otro período o «Este mes».</value>
+  </data>
 </root>

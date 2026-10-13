@@ -106,6 +106,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   when nothing was searched. In the sale window it says the catalogue has no services
   or products yet, where to create them, and that "+ Concepte lliure" works meanwhile;
   other lists say they are still empty.
+- The other empty tables say what to do instead of showing only their headers:
+  services, products, payment methods and expense categories on Catàleg, the
+  movements on Caixa, and the worker ranking on Informes. The client rankings on
+  Informes say why they are empty instead of showing blank cards.
 
 ## 1.3.0 (closes version 1)
 

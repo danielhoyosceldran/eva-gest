@@ -19,7 +19,13 @@
             <TextBlock Text="{x:Static t:Texts.Services}" Style="{StaticResource Subtitle}" />
             <Button Content="{x:Static t:Texts.NewServiceButton}" Style="{StaticResource SecondaryButton}"
                     HorizontalAlignment="Left" Command="{Binding NewServiceCommand}" Margin="0,0,0,12" />
-            <Border Style="{StaticResource DataCard}" Padding="0">
+            <!-- Empty state in place of bare headers: says what to do next -->
+            <Border Style="{StaticResource DataCard}"
+                    Visibility="{Binding Services.Count, Converter={StaticResource ZeroToVisibilityInverseConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoServicesYet}" Style="{StaticResource DataLabel}" TextWrapping="Wrap" />
+            </Border>
+            <Border Style="{StaticResource DataCard}" Padding="0"
+                    Visibility="{Binding Services.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
                 <DataGrid ItemsSource="{Binding Services}" AutoGenerateColumns="False"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
@@ -60,7 +66,13 @@
             <TextBlock Text="{x:Static t:Texts.Products}" Style="{StaticResource Subtitle}" />
             <Button Content="{x:Static t:Texts.NewProductButton}" Style="{StaticResource SecondaryButton}"
                     HorizontalAlignment="Left" Command="{Binding NewProductCommand}" Margin="0,0,0,12" />
-            <Border Style="{StaticResource DataCard}" Padding="0">
+            <!-- Empty state in place of bare headers: says what to do next -->
+            <Border Style="{StaticResource DataCard}"
+                    Visibility="{Binding Products.Count, Converter={StaticResource ZeroToVisibilityInverseConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoProductsYet}" Style="{StaticResource DataLabel}" TextWrapping="Wrap" />
+            </Border>
+            <Border Style="{StaticResource DataCard}" Padding="0"
+                    Visibility="{Binding Products.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
                 <DataGrid ItemsSource="{Binding Products}" AutoGenerateColumns="False"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
@@ -101,7 +113,13 @@
             <TextBlock Text="{x:Static t:Texts.PaymentMethods}" Style="{StaticResource Subtitle}" />
             <Button Content="{x:Static t:Texts.NewMethodButton}" Style="{StaticResource SecondaryButton}"
                     HorizontalAlignment="Left" Command="{Binding NewMethodCommand}" Margin="0,0,0,12" />
-            <Border Style="{StaticResource DataCard}" Padding="0">
+            <!-- Empty state in place of bare headers: says what to do next -->
+            <Border Style="{StaticResource DataCard}"
+                    Visibility="{Binding Methods.Count, Converter={StaticResource ZeroToVisibilityInverseConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoPaymentMethodsYet}" Style="{StaticResource DataLabel}" TextWrapping="Wrap" />
+            </Border>
+            <Border Style="{StaticResource DataCard}" Padding="0"
+                    Visibility="{Binding Methods.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
                 <DataGrid ItemsSource="{Binding Methods}" AutoGenerateColumns="False"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
@@ -151,7 +169,13 @@
             <TextBlock Text="{x:Static t:Texts.ExpenseCategories}" Style="{StaticResource Subtitle}" />
             <Button Content="{x:Static t:Texts.NewCategoryButton}" Style="{StaticResource SecondaryButton}"
                     HorizontalAlignment="Left" Command="{Binding NewCategoryCommand}" Margin="0,0,0,12" />
-            <Border Style="{StaticResource DataCard}" Padding="0">
+            <!-- Empty state in place of bare headers: says what to do next -->
+            <Border Style="{StaticResource DataCard}"
+                    Visibility="{Binding Categories.Count, Converter={StaticResource ZeroToVisibilityInverseConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoExpenseCategoriesYet}" Style="{StaticResource DataLabel}" TextWrapping="Wrap" />
+            </Border>
+            <Border Style="{StaticResource DataCard}" Padding="0"
+                    Visibility="{Binding Categories.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
                 <DataGrid ItemsSource="{Binding Categories}" AutoGenerateColumns="False"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">

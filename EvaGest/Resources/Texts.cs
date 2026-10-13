@@ -610,6 +610,14 @@ public static class Texts
         nameof(NoSalesYet),
         nameof(OptionBrowserNothingYet),
         nameof(CatalogBrowserNothingYet),
+        nameof(NoServicesYet),
+        nameof(NoProductsYet),
+        nameof(NoPaymentMethodsYet),
+        nameof(NoExpenseCategoriesYet),
+        nameof(NoMovementsInPeriod),
+        nameof(NoClientRankingYet),
+        nameof(NoClientNotSeen),
+        nameof(NoWorkerRankingInPeriod),
     ];
 
     /// <summary>Pendent</summary>
@@ -2334,4 +2342,28 @@ public static class Texts
 
     /// <summary>Encara no hi ha cap servei ni producte. Els pots crear a Catàleg; mentrestant, tanca aquesta finestra i afegeix la línia amb «+ Concepte lliure».</summary>
     public static string CatalogBrowserNothingYet => Get(nameof(CatalogBrowserNothingYet));
+
+    /// <summary>Encara no hi ha cap servei. Crea'n un amb «+ Nou servei»: les vendes i les cites el proposaran amb el seu preu i la seva durada.</summary>
+    public static string NoServicesYet => Get(nameof(NoServicesYet));
+
+    /// <summary>Encara no hi ha cap producte. Si en vens, crea'ls amb «+ Nou producte».</summary>
+    public static string NoProductsYet => Get(nameof(NoProductsYet));
+
+    /// <summary>No hi ha cap mètode de pagament i sense cap no es pot cobrar. Crea'n un amb «+ Nou mètode».</summary>
+    public static string NoPaymentMethodsYet => Get(nameof(NoPaymentMethodsYet));
+
+    /// <summary>Encara no hi ha cap categoria. Serveixen per agrupar les sortides de caixa (lloguer, material…); crea-les amb «+ Nova categoria».</summary>
+    public static string NoExpenseCategoriesYet => Get(nameof(NoExpenseCategoriesYet));
+
+    /// <summary>No hi ha cap entrada ni sortida de caixa en aquest període. Apunta-les amb «+ Entrada» o «+ Sortida».</summary>
+    public static string NoMovementsInPeriod => Get(nameof(NoMovementsInPeriod));
+
+    /// <summary>Encara no hi ha vendes a clients registrats per fer aquesta llista.</summary>
+    public static string NoClientRankingYet => Get(nameof(NoClientRankingYet));
+
+    /// <summary>Cap client fa temps que no ve.</summary>
+    public static string NoClientNotSeen => Get(nameof(NoClientNotSeen));
+
+    /// <summary>Cap treballadora no té vendes en aquest període. Prova un altre període o «Aquest mes».</summary>
+    public static string NoWorkerRankingInPeriod => Get(nameof(NoWorkerRankingInPeriod));
 }

@@ -144,7 +144,13 @@
 
             <!-- Movements table -->
             <TextBlock Text="{x:Static t:Texts.Movements}" Style="{StaticResource Subtitle}" />
-            <Border Style="{StaticResource DataCard}" Padding="0">
+            <!-- Empty state in place of bare headers: says what to do next -->
+            <Border Style="{StaticResource DataCard}"
+                    Visibility="{Binding Movements.Count, Converter={StaticResource ZeroToVisibilityInverseConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoMovementsInPeriod}" Style="{StaticResource DataLabel}" TextWrapping="Wrap" />
+            </Border>
+            <Border Style="{StaticResource DataCard}" Padding="0"
+                    Visibility="{Binding Movements.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
                 <!-- On a narrow screen TableFit drops the category, then the worker, so the
                      concept keeps room to read -->
                 <DataGrid ItemsSource="{Binding Movements}" AutoGenerateColumns="False" h:TableFit.IsEnabled="True"

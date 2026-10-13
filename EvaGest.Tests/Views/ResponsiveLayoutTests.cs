@@ -6,6 +6,7 @@ using System.Windows.Media;
 using AwesomeAssertions;
 using EvaGest.Helpers;
 using EvaGest.Models;
+using EvaGest.Resources;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
 using EvaGest.ViewModels.Dialogs;
@@ -464,6 +465,51 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         });
 
         problems.Should().BeEmpty("the row actions must be fully visible in {0}:{1}", language, Lines(problems));
+    }
+
+    /// <summary>
+    /// A new install: only what the first start seeds. No page may show a table that is
+    /// just its headers — each says instead what to do (disseny-ui 9), and the client
+    /// rankings in Informes say why they are empty instead of showing blank cards.
+    /// </summary>
+    [Theory, MemberData(nameof(Languages))]
+    public async Task No_page_shows_a_bare_table_on_a_fresh_install(string language)
+    {
+        using var _ = new Language(language);
+        // A WorstCaseShop never initialised is an empty database; seed it as the first
+        // start does, and nothing more.
+        await using var fresh = new WorstCaseShop();
+        await new SeedService(fresh.Factory, new SettingsService(fresh.Factory)).Seed();
+
+        var built = new Dictionary<string, Built>();
+        // The day-panel case needs appointments to open the panel at all
+        foreach (var (page, build) in PageBuilders.Where(p => p.Key != "Agenda, week and day panel"))
+            built[page] = await build(fresh);
+        var problems = new List<string>();
+
+        app.Runs(() =>
+        {
+            using var __ = new Language(language);
+            var size = new Size(ShopScreen.width - (double)Application.Current.FindResource("NavWidth"),
+                                ShopScreen.height - MainCaption);
+            foreach (var (page, b) in built)
+            {
+                var view = b.View();
+                view.DataContext = b.ViewModel;
+                Layout(view, size, sizeToContent: false);
+
+                foreach (var grid in Descendants<DataGrid>(view).Where(g => Shown(g, view) && g.Items.Count == 0))
+                    problems.Add($"{page}: a table with only its headers ({string.Join(", ", grid.Columns.Select(c => c.Header))})");
+
+                if (page == "Reports")
+                {
+                    int shown = Descendants<TextBlock>(view).Count(t => Shown(t, view) && t.Text == Texts.NoClientRankingYet);
+                    if (shown != 3) problems.Add($"Reports: {shown} of the 3 client rankings say why they are empty");
+                }
+            }
+        });
+
+        problems.Should().BeEmpty("every empty list must say what to do in {0}:{1}", language, Lines(problems));
     }
 
     /// <summary>Waits for a task started on the UI thread by pumping the dispatcher, so its
