@@ -99,8 +99,14 @@
                 </ToggleButton.Template>
             </ToggleButton>
 
+            <StackPanel Visibility="{Binding ShowAsleep, Converter={StaticResource BoolToVisibilityConverter}}">
+            <!-- Empty state in place of bare headers: says what "asleep" is for -->
+            <Border Style="{StaticResource DataCard}"
+                    Visibility="{Binding Asleep.Count, Converter={StaticResource ZeroToVisibilityInverseConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoSleepingClients}" Style="{StaticResource DataLabel}" TextWrapping="Wrap" />
+            </Border>
             <Border Style="{StaticResource DataCard}" Padding="0"
-                    Visibility="{Binding ShowAsleep, Converter={StaticResource BoolToVisibilityConverter}}">
+                    Visibility="{Binding Asleep.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
                 <DataGrid ItemsSource="{Binding Asleep}" AutoGenerateColumns="False"
                           IsReadOnly="True" HeadersVisibility="Column" RowHeight="{StaticResource RowHeight}"
                           Background="{StaticResource SurfaceBrush}" BorderThickness="0">
@@ -121,6 +127,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

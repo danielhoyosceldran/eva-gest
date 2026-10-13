@@ -573,6 +573,8 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                                 ShopScreen.height - MainCaption);
             foreach (var (page, b) in built)
             {
+                // The asleep clients' list starts folded; open it, as it is a table too (B-27)
+                if (b.ViewModel is ClientsViewModel clients) clients.ShowAsleep = true;
                 var view = b.View();
                 view.DataContext = b.ViewModel;
                 Layout(view, size, sizeToContent: false);

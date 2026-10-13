@@ -1815,4 +1815,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="NoWorkerRankingInPeriod" xml:space="preserve">
     <value>Cap treballadora no té vendes en aquest període. Prova un altre període o «Aquest mes».</value>
   </data>
+  <data name="NoSleepingClients" xml:space="preserve">
+    <value>No hi ha cap client adormit. Des de la fitxa d'un client el pots adormir perquè deixi de sortir a la llista i als cercadors.</value>
+  </data>
 </root>

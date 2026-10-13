@@ -140,6 +140,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - Answering "Cancel·lar" to the VAT mode change puts the picker back on the mode in
   force at once; it used to keep showing the mode just turned down until the page was
   left.
+- The asleep clients list on Clients, opened with nobody asleep, says so and what
+  putting a client to sleep is for, instead of showing an empty table.
 
 ## 1.3.0 (closes version 1)
 

@@ -1815,4 +1815,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="NoWorkerRankingInPeriod" xml:space="preserve">
     <value>Ninguna trabajadora tiene ventas en este período. Prueba otro período o «Este mes».</value>
   </data>
+  <data name="NoSleepingClients" xml:space="preserve">
+    <value>No hay ningún cliente dormido. Desde la ficha de un cliente puedes dormirlo para que deje de salir en la lista y en los buscadores.</value>
+  </data>
 </root>

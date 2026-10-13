@@ -618,6 +618,7 @@ public static class Texts
         nameof(NoClientRankingYet),
         nameof(NoClientNotSeen),
         nameof(NoWorkerRankingInPeriod),
+        nameof(NoSleepingClients),
     ];
 
     /// <summary>Pendent</summary>
@@ -2366,4 +2367,7 @@ public static class Texts
 
     /// <summary>Cap treballadora no té vendes en aquest període. Prova un altre període o «Aquest mes».</summary>
     public static string NoWorkerRankingInPeriod => Get(nameof(NoWorkerRankingInPeriod));
+
+    /// <summary>No hi ha cap client adormit. Des de la fitxa d'un client el pots adormir perquè deixi de sortir a la llista i als cercadors.</summary>
+    public static string NoSleepingClients => Get(nameof(NoSleepingClients));
 }
