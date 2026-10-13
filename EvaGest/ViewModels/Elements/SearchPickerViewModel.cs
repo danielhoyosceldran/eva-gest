@@ -22,7 +22,7 @@ namespace EvaGest.ViewModels.Elements;
 /// This base holds everything the view binds to, untyped; the owner talks to
 /// <see cref="SearchPickerViewModel{T}"/>, which knows the type of the options.
 /// </summary>
-public abstract partial class SearchPickerViewModel : ObservableObject
+public abstract partial class SearchPickerViewModel : ObservableObject, IPickerKeys
 {
     private readonly IDialogService? _dialogs;
     private readonly string _browseTitle;

@@ -33,6 +33,9 @@ public sealed class ApplicationWpf : IDisposable
             {
                 var app = new EvaGest.App();
                 app.InitializeComponent();      // the real App.xaml, dictionaries and all
+                // Tests that show a real window off screen close it again; with the default
+                // OnLastWindowClose that shut this Application down for every test after.
+                app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
                 _dispatcher = Dispatcher.CurrentDispatcher;
             }
             catch (Exception e)

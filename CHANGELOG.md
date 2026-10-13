@@ -153,6 +153,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   closing copy) no longer stays in the backups folder looking like a good copy. It used
   to be offered for restore and to count as the day's automatic copy, so no other was
   taken that day.
+- With the cursor in a search box (client, worker, catalogue), Esc closes the window and
+  Enter presses its main button again once the box's list is closed; the box used to keep
+  both keys for itself.
 
 ## 1.3.0 (closes version 1)
 

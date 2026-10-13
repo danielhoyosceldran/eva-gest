@@ -1,7 +1,8 @@
 <UserControl x:Class="EvaGest.Views.Elements.SearchPickerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="clr-namespace:EvaGest.Resources">
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:h="clr-namespace:EvaGest.Helpers">
     <!-- A search box with a dropdown of matches, plus the whole list in a dialog: the
          same box as the client picker's "existing client" half, for any long list. -->
     <Grid>
@@ -14,18 +15,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBox x:Name="Box" Grid.Column="0" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
-                 Tag="{Binding Placeholder}" Binding.TargetUpdated="OnTextWrittenByCode">
-            <!-- Enter and Escape are only taken while the list is open (their commands are
-                 disabled otherwise), so with it closed they still reach the dialog's
-                 default and cancel buttons. -->
-            <TextBox.InputBindings>
-                <KeyBinding Key="Down" Command="{Binding MoveDownCommand}" />
-                <KeyBinding Key="Up" Command="{Binding MoveUpCommand}" />
-                <KeyBinding Key="Enter" Command="{Binding PickHighlightedCommand}" />
-                <KeyBinding Key="Escape" Command="{Binding CloseDropdownCommand}" />
-            </TextBox.InputBindings>
-        </TextBox>
+        <!-- Arrows, Enter and Esc for the list; with it closed, Enter and Esc reach the dialog (B-32) -->
+        <TextBox x:Name="Box" h:PickerKeys.Enabled="True" Grid.Column="0" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
+                 Tag="{Binding Placeholder}" Binding.TargetUpdated="OnTextWrittenByCode" />
         <!-- "Veure la llista" in a form; just "…" (same tooltip) where the box sits in a
              narrow filter cell or toolbar. The code-behind switches it on Compact, and
              moves it under the box on Stacked. -->

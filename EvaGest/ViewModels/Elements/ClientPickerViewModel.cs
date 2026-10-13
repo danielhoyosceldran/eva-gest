@@ -25,7 +25,7 @@ namespace EvaGest.ViewModels.Elements;
 ///
 /// Each mode keeps its own text, so flipping the toggle back and forth loses nothing.
 /// </summary>
-public partial class ClientPickerViewModel : ObservableObject
+public partial class ClientPickerViewModel : ObservableObject, IPickerKeys
 {
     /// <summary>The three sides of the toggle.</summary>
     public enum ClientMode { Existing, New, None }
