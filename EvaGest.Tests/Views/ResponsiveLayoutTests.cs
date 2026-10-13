@@ -424,6 +424,58 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
             page, language, Lines(problems));
     }
 
+    /// <summary>
+    /// The page is first shown empty (a new install) and the first worker arrives while it
+    /// is on screen. The table's row-actions column is sized "Auto": it used to be measured
+    /// while the table was hidden behind the empty state, came out almost zero wide, and
+    /// stayed that way — Editar hidden, the status button cut to "…car inactiva".
+    /// </summary>
+    [Theory, MemberData(nameof(Languages))]
+    public async Task The_workers_table_shows_its_row_actions_when_the_first_worker_arrives_on_screen(string language)
+    {
+        using var _ = new Language(language);
+        await using var db = new TestDatabase();
+        var vm = new WorkersViewModel(new WorkerService(new TestFactory(db.Options)), new TestDialogService());
+        await vm.Load();
+        var problems = new List<string>();
+
+        app.Runs(() =>
+        {
+            using var __ = new Language(language);
+            var size = new Size(ShopScreen.width - (double)Application.Current.FindResource("NavWidth"),
+                                ShopScreen.height - MainCaption);
+            var view = new WorkersView { DataContext = vm };
+            Layout(view, size, sizeToContent: false);
+
+            using (var ctx = db.Context())
+            {
+                ctx.Workers.Add(new Worker
+                {
+                    Name = "Laia", Color = "#0F766E",
+                    Schedules = [new WorkerSchedule { Weekday = Weekday.Mon, StartTime = new(9, 0), EndTime = new(13, 0) }]
+                });
+                ctx.SaveChanges();
+            }
+            // Reloaded on the UI thread, as the page does when a dialog saves
+            Await(vm.Load());
+            Layout(view, size, sizeToContent: false);
+
+            problems.AddRange(Problems(view));
+        });
+
+        problems.Should().BeEmpty("the row actions must be fully visible in {0}:{1}", language, Lines(problems));
+    }
+
+    /// <summary>Waits for a task started on the UI thread by pumping the dispatcher, so its
+    /// continuations (which come back to this thread) can run.</summary>
+    private static void Await(Task task)
+    {
+        var frame = new System.Windows.Threading.DispatcherFrame();
+        task.ContinueWith(_ => frame.Continue = false, TaskScheduler.Default);
+        System.Windows.Threading.Dispatcher.PushFrame(frame);
+        task.GetAwaiter().GetResult();
+    }
+
     // ───────────────────────────── shell ─────────────────────────────
 
     [Theory, MemberData(nameof(Languages))]
@@ -518,7 +570,8 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
     /// - a control pushed past the right or bottom edge, unless it sits in a scrolling
     ///   area that can bring it into view;
     /// - text shortened with "…" and no tooltip to read it in full;
-    /// - a flexible table column squeezed below its minimum width.
+    /// - a flexible table column squeezed below its minimum width;
+    /// - a button in a table cell wider than its column.
     /// The text in table cells and everything in the week grid are left out: both clip
     /// by design and carry a tooltip with the full text. Buttons in table cells are not.
     /// </summary>
@@ -546,6 +599,16 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
             if (clip is not null && !element.ClipToBounds && !clip.Bounds.IsEmpty
                 && (clip.Bounds.Width + Tolerance < element.ActualWidth || clip.Bounds.Height + Tolerance < element.ActualHeight))
                 found.Add($"{Describe(element)} cut to {clip.Bounds.Width:0}x{clip.Bounds.Height:0} of {element.ActualWidth:0}x{element.ActualHeight:0}");
+
+            // A button in a table cell is arranged at its full size even when the column is
+            // too narrow for it: the cell clips it, not the layout, so check it against the cell.
+            if (element is ButtonBase && Ancestors(element, root).OfType<DataGridCell>().FirstOrDefault() is { } cell)
+            {
+                var inCell = element.TransformToAncestor(cell)
+                    .TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+                if (inCell.Left < -Tolerance || inCell.Right > cell.ActualWidth + Tolerance)
+                    found.Add($"{Describe(element)} cut by its table cell ({cell.ActualWidth:0} DIP wide)");
+            }
 
             if (!InsideScrollingArea(element, root))
             {

@@ -85,6 +85,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   read as zero any more: saving asks for the price ("Cal indicar el preu per guardar,
   encara que sigui 0") or the amount. Leaving a box rewrites what was typed with two
   decimals, so "0" reads "0,00" and "15,5" reads "15,50".
+- The buttons at the end of a table row (Editar, Marcar inactiva, Eliminar…) are no
+  longer cut off. On Treballadores, a table first shown empty kept that column almost
+  zero wide once rows arrived, hiding Editar; it now widens to its buttons whenever
+  the rows change, on every table.
 
 ## 1.3.0 (closes version 1)
 

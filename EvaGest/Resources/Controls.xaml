@@ -1022,6 +1022,8 @@
         <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
         <Setter Property="RowHeaderWidth" Value="0" />
         <Setter Property="HeadersVisibility" Value="Column" />
+        <!-- The row-actions column widens to its buttons when rows arrive (see AutoColumns) -->
+        <Setter Property="h:AutoColumns.RefitOnNewRows" Value="True" />
     </Style>
 
     <!-- Nav-list action item (Ajuda): same look and hover as ItemNav, but a plain
