@@ -1810,7 +1810,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
     <value>Encara no hi ha vendes a clients registrats per fer aquesta llista.</value>
   </data>
   <data name="NoClientNotSeen" xml:space="preserve">
-    <value>Cap client fa temps que no ve.</value>
+    <value>Cap client porta més d'un mes sense venir.</value>
   </data>
   <data name="NoWorkerRankingInPeriod" xml:space="preserve">
     <value>Cap treballadora no té vendes en aquest període. Prova un altre període o «Aquest mes».</value>

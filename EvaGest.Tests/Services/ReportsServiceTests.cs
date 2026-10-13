@@ -60,6 +60,33 @@ public class ReportsServiceTests
         indicators.FrequencyDays.Should().BeNull();
     }
 
+    [Fact]
+    public async Task Not_seen_in_a_while_leaves_out_clients_who_came_within_the_last_month()
+    {
+        await using var testDb = new TestDatabase();
+        int methodId = await AddsMethod(testDb);
+        int today = await AddsClient(testDb, "Joan", "612345678");
+        int edge = await AddsClient(testDb, "Marta", "633222111");
+        int longAgo = await AddsClient(testDb, "Pere", "644555666");
+        var now = DateOnly.FromDateTime(DateTime.Today);
+        await using (var db = testDb.Context())
+        {
+            foreach (var (clientId, daysAgo) in new[] { (today, 0), (edge, ReportsService.NotSeenMinDays - 1), (longAgo, 45) })
+            {
+                var v = Make.Sale(now.AddDays(-daysAgo), methodId, SaleStatus.Active, Make.Line(1000, 2100));
+                v.ClientId = clientId; v.GuestName = null;
+                db.Sales.Add(v);
+            }
+            await db.SaveChangesAsync();
+        }
+
+        var notSeen = await CreatesService(testDb).GetNotSeenRecently();
+
+        // Joan came today and Marta a day short of the minimum: only Pere has been away a while
+        notSeen.Select(n => n.client.Id).Should().Equal(longAgo);
+        notSeen.Single().daysSince.Should().Be(45);
+    }
+
     [Fact] // I-03
     public async Task GetClientIndicators_counts_only_active_sales()
     {

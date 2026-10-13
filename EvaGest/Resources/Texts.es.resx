@@ -1810,7 +1810,7 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
     <value>Todavía no hay ventas a clientes registrados para hacer esta lista.</value>
   </data>
   <data name="NoClientNotSeen" xml:space="preserve">
-    <value>Ningún cliente hace tiempo que no viene.</value>
+    <value>Ningún cliente lleva más de un mes sin venir.</value>
   </data>
   <data name="NoWorkerRankingInPeriod" xml:space="preserve">
     <value>Ninguna trabajadora tiene ventas en este período. Prueba otro período o «Este mes».</value>

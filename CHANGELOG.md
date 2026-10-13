@@ -114,6 +114,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   ara" beside the text instead of under it. Charging an appointment for someone not
   registered pushed the payment methods under the buttons on the shop's screen, and
   the form had to be scrolled to choose how to pay.
+- "Fa temps que no vénen" on Informes lists only clients who have not come for at least
+  30 days. It used to list every client by last visit, so with few clients it showed
+  someone who had come that same day ("0 dies").
 
 ## 1.3.0 (closes version 1)
 

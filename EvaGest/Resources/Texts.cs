@@ -2361,7 +2361,7 @@ public static class Texts
     /// <summary>Encara no hi ha vendes a clients registrats per fer aquesta llista.</summary>
     public static string NoClientRankingYet => Get(nameof(NoClientRankingYet));
 
-    /// <summary>Cap client fa temps que no ve.</summary>
+    /// <summary>Cap client porta més d'un mes sense venir.</summary>
     public static string NoClientNotSeen => Get(nameof(NoClientNotSeen));
 
     /// <summary>Cap treballadora no té vendes en aquest període. Prova un altre període o «Aquest mes».</summary>

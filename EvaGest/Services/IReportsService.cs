@@ -19,6 +19,8 @@ public interface IReportsService
     Task<List<(Client client, int visits, long totalCents)>> TopByVisits(int limit = 10);
     Task<List<(Client client, long totalCents)>> TopBySpend(int limit = 10);
     Task<List<(Client client, decimal averageEuros)>> TopByAverage(int limit = 10);
+    /// <summary>The clients whose last visit is longest ago, oldest first, among those not
+    /// seen for at least <see cref="ReportsService.NotSeenMinDays"/> days.</summary>
     Task<List<(Client client, DateOnly last, int daysSince)>> GetNotSeenRecently(int limit = 10);
 
     Task<WorkerDetail> GetWorkerDetail(int workerId, DateOnly from, DateOnly to);

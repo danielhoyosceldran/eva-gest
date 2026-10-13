@@ -97,15 +97,25 @@ public class ReportsService(IDbContextFactory<ShopDbContext> factory) : IReports
         return ordered.Select(g => (clients[g.ClientId], g.Average)).ToList();
     }
 
+    /// <summary>
+    /// How long a client must have gone without a visit to count as "not seen in a
+    /// while": about one haircut cycle. Without a minimum the list was simply every
+    /// client ordered by last visit, so a shop with few clients listed someone who had
+    /// come that very day ("0 dies").
+    /// </summary>
+    public const int NotSeenMinDays = 30;
+
     public async Task<List<(Client client, DateOnly last, int daysSince)>> GetNotSeenRecently(int limit = 10)
     {
         await using var db = await factory.CreateDbContextAsync();
         var today = DateOnly.FromDateTime(DateTime.Today);
+        var cutoff = today.AddDays(-NotSeenMinDays);
 
         var groups = await db.Sales.AsNoTracking()
             .Where(v => v.Status == SaleStatus.Active && v.ClientId != null)
             .GroupBy(v => v.ClientId!.Value)
             .Select(g => new { ClientId = g.Key, Last = g.Max(v => v.Date) })
+            .Where(g => g.Last <= cutoff)
             .OrderBy(g => g.Last)
             .Take(limit)
             .ToListAsync();
