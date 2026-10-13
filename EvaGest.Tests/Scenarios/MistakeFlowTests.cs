@@ -351,13 +351,15 @@ public class MistakeFlowTests
         await shop.Agenda.SelectDayCommand.ExecuteAsync(Shop.Today);
 
         // The owner first says no, then deletes the duplicate, then tries the charged one
-        shop.User.Answers(false, true, true);
+        shop.User.Answers(false, true);
         await shop.Agenda.DeleteAppointmentCommand.ExecuteAsync(empty);
         shop.Agenda.DayAppointments.Should().HaveCount(2, "\"no\" deletes nothing");
         await shop.Agenda.DeleteAppointmentCommand.ExecuteAsync(empty);
         shop.Agenda.Notice.Should().Be(Texts.AppointmentDeleted);
+        int asked = shop.User.Asked.Count;
         await shop.Agenda.DeleteAppointmentCommand.ExecuteAsync(charged);
         shop.Agenda.Notice.Should().Be(Texts.AppointmentNotDeletedHasSale);
+        shop.User.Asked.Should().HaveCount(asked, "a delete that cannot happen is not asked about first (B-35)");
 
         shop.Agenda.DayAppointments.Should().ContainSingle(r => r.Appointment.Id == charged.Id);
         (await shop.Sales.Search(new SalesFilter())).Single().AppointmentId.Should().Be(charged.Id);

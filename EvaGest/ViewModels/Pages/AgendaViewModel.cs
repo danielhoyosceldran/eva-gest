@@ -215,6 +215,13 @@ public partial class AgendaViewModel : PageViewModelBase
     [RelayCommand]
     private async Task DeleteAppointment(Appointment appointment)
     {
+        // Refused before the question, not after the user has said yes to it (B-35).
+        if (await _appointments.HasSale(appointment.Id))
+        {
+            ShowNotice(Texts.AppointmentNotDeletedHasSale);
+            return;
+        }
+
         bool confirmed = await _dialogs.Confirm(
             Texts.DeleteAppointmentTitle,
             string.Format(Texts.DeleteAppointmentOfMessage, appointment.DisplayName,

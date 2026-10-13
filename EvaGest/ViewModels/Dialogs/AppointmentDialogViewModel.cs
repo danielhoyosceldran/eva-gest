@@ -536,6 +536,14 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     {
         if (_id is not int id) return;
 
+        // Said straight away: asking "Eliminar la cita?" first, and refusing only after
+        // the user had said yes, made them answer a question that had no yes (B-35).
+        if (await _appointments.HasSale(id))
+        {
+            ErrorValidation = Texts.AppointmentHasSale;
+            return;
+        }
+
         bool confirmed = await _dialogs.Confirm(
             Texts.DeleteAppointmentTitle,
             Texts.DeleteAppointmentMessage,

@@ -44,4 +44,11 @@ public interface IAppointmentService
     /// so the sale has to be dealt with first.
     /// </summary>
     Task<DeleteResult> Delete(int appointmentId);
+
+    /// <summary>
+    /// A sale was taken from the appointment, so <see cref="Delete"/> would refuse it.
+    /// Asked before the delete question, so the user is not asked to confirm a delete
+    /// that is then refused (B-35).
+    /// </summary>
+    Task<bool> HasSale(int appointmentId);
 }

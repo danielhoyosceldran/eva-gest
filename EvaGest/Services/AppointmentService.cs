@@ -169,6 +169,14 @@ public class AppointmentService(IDbContextFactory<ShopDbContext> factory, IAppoi
         return DeleteResult.Deleted;
     }
 
+    public async Task<bool> HasSale(int appointmentId)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+        // The same condition Delete refuses on: any sale, voided ones included, since
+        // a voided sale still names the appointment.
+        return await db.Sales.AnyAsync(v => v.AppointmentId == appointmentId);
+    }
+
     private static IQueryable<Appointment> Query(ShopDbContext db)
         => db.Appointments.AsNoTracking()
             .Include(c => c.Client)

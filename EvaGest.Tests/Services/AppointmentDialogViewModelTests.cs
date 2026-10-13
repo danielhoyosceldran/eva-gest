@@ -439,4 +439,40 @@ public class AppointmentDialogViewModelTests
         vm.ClientPicker.NewName.Should().Be("Algú");
         vm.CanWriteGuest.Should().BeTrue();
     }
+
+    /// <summary>
+    /// B-35: "Eliminar" on a charged appointment asked "Eliminar la cita?" and only once
+    /// the user had said yes explained that it cannot be deleted. It says so at once now.
+    /// </summary>
+    [Fact]
+    public async Task Deleting_a_charged_appointment_says_why_not_without_asking_first()
+    {
+        await using var testDb = new TestDatabase();
+        var s = Build(testDb);
+        int clientId = await s.Clients.Create(Make.Client("Joan García"));
+        int appointmentId = await s.Appointments.Create(new Appointment
+        {
+            Date = Today, Time = new TimeOnly(10, 0), DurationMin = 30, ClientId = clientId
+        });
+        await using (var db = testDb.Context())
+        {
+            var method = Make.Method();
+            db.PaymentMethods.Add(method);
+            await db.SaveChangesAsync();
+            var sale = Make.Sale(Today, method.Id, SaleStatus.Active, Make.Line(1500));
+            sale.AppointmentId = appointmentId;
+            db.Sales.Add(sale);
+            await db.SaveChangesAsync();
+        }
+        var dialogs = new TestDialogService { ResultConfirm = true };
+        var vm = new AppointmentDialogViewModel(s.Appointments, s.Availability, s.Clients, s.Catalog,
+            s.Workers, s.Settings, dialogs, (await s.Appointments.GetById(appointmentId))!);
+        await vm.Initialization;
+
+        await vm.DeleteCommand.ExecuteAsync(null);
+
+        dialogs.ConfirmacionsRequested.Should().BeEmpty();
+        vm.ErrorValidation.Should().Be(Texts.AppointmentHasSale);
+        (await s.Appointments.GetById(appointmentId)).Should().NotBeNull();
+    }
 }

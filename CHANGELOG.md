@@ -162,6 +162,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - A question whose answer loses something (delete an appointment, discard changes,
   restore a backup) shows that answer in red and starts with the focus on the way back,
   so Enter pressed out of habit no longer deletes or discards.
+- Deleting an appointment that was already charged says straight away that it cannot be
+  deleted, instead of first asking "Eliminar la cita?" and refusing after the yes.
 
 ## 1.3.0 (closes version 1)
 
