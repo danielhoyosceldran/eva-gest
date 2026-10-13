@@ -1373,6 +1373,15 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="NewClient" xml:space="preserve">
     <value>Client nou</value>
   </data>
+  <data name="NoClient" xml:space="preserve">
+    <value>Sense client</value>
+  </data>
+  <data name="NoClientHint" xml:space="preserve">
+    <value>La venda es guardarà sense cap client.</value>
+  </data>
+  <data name="GuestNameReserved" xml:space="preserve">
+    <value>Aquest nom està reservat. Escriu un altre nom per al client, o tria «Sense client».</value>
+  </data>
   <data name="BrowseClients" xml:space="preserve">
     <value>Veure la llista</value>
   </data>

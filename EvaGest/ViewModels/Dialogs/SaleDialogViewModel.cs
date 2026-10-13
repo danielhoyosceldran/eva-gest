@@ -138,7 +138,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         CatalogAdder = new(ActiveServices, ActiveProducts, AddPicked, dialogs);
         Lines.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasLines));
 
-        ClientPicker = new ClientPickerViewModel(dialogs);
+        // Sales, unlike appointments, may be charged to nobody at all
+        ClientPicker = new ClientPickerViewModel(dialogs, allowsNoClient: true);
         ClientPicker.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(ClientPickerViewModel.SelectedClient))
@@ -222,7 +223,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         vm._time = sale.Time;
         vm.LinkedAppointmentText = string.Format(Texts.FromAppointmentOn,
             sale.Date.ToString("dd/MM/yyyy"), sale.Time.ToString("HH\\:mm"));
-        vm.TextClient = sale.GuestName ?? string.Empty;
+        vm.ShowOwnGuest(sale);
         await vm.SelectOwnClient(clients, sale.ClientId);
         vm.GuestPhone = sale.GuestPhone;
         vm.Worker = vm.ActiveWorkers.FirstOrDefault(t => t.Id == sale.WorkerId);
@@ -261,7 +262,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
                 .FirstOrDefault(m => m.Id == sale.PaymentMethodId) is { } methodInactive)
             vm.ActiveMethods.Add(methodInactive);
 
-        vm.TextClient = sale.GuestName ?? string.Empty;
+        vm.ShowOwnGuest(sale);
         await vm.SelectOwnClient(clients, sale.ClientId);
         vm.GuestPhone = sale.GuestPhone;
         vm.Worker = sale.WorkerId is int tid ? vm.ActiveWorkers.FirstOrDefault(t => t.Id == tid) : null;
@@ -312,6 +313,17 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         if (clientId is not int id || await clients.GetById(id) is not { } client) return;
         ClientPicker.Add(client);
         SelectedClient = client;
+    }
+
+    /// <summary>
+    /// Puts a saved sale's guest back in the picker: the "no client" option for one
+    /// charged to nobody, so the marker never shows up as a typed name, or the guest's
+    /// name otherwise.
+    /// </summary>
+    private void ShowOwnGuest(Sale sale)
+    {
+        if (sale.IsNoClient) ClientPicker.IsNoClient = true;
+        else TextClient = sale.GuestName ?? string.Empty;
     }
 
     /// <summary>A quick button: adds that service as a line.</summary>
@@ -365,7 +377,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     private bool CanCharge() =>
         Lines.Count > 0
         && PaymentMethod is not null
-        && (SelectedClient is not null || !string.IsNullOrWhiteSpace(TextClient));
+        && (SelectedClient is not null || ClientPicker.IsNoClient || !string.IsNullOrWhiteSpace(TextClient));
 
     /// <summary>Set while the lines add up to more than one sale can hold. Charge
     /// refuses, and the footer stops recomputing rather than throwing mid-keystroke.</summary>
@@ -400,9 +412,18 @@ public partial class SaleDialogViewModel : DialogViewModelBase
             // Checked in the same order as CanCharge. The client used to be missing
             // here, so a sale with no client was refused as missing a payment method.
             ErrorValidation = Lines.Count == 0 ? Texts.AtLeastOneLineRequired
-                : SelectedClient is null && string.IsNullOrWhiteSpace(TextClient)
+                : SelectedClient is null && !ClientPicker.IsNoClient && string.IsNullOrWhiteSpace(TextClient)
                     ? (ClientPicker.IsNewClient ? Texts.GuestNameOrClientRequired : Texts.ClientNotPicked)
                 : Texts.PaymentMethodRequired;
+            return;
+        }
+
+        // The "no client" marker is reserved: typed as a guest's name, the sale would
+        // read back as charged to nobody.
+        if (SelectedClient is null && !ClientPicker.IsNoClient
+            && string.Equals(TextClient.Trim(), Sale.NoClientName, StringComparison.OrdinalIgnoreCase))
+        {
+            ErrorValidation = Texts.GuestNameReserved;
             return;
         }
 
@@ -443,8 +464,12 @@ public partial class SaleDialogViewModel : DialogViewModelBase
             Date = _date,
             Time = _time,
             ClientId = SelectedClient?.Id,
-            GuestName = SelectedClient is null ? TextClient.Trim() : null,
-            GuestPhone = SelectedClient is null ? GuestPhone : null,
+            // A guest's name, the "no client" marker, or nothing for a registered client:
+            // ck_sales_client_xor wants exactly one of ClientId and GuestName.
+            GuestName = SelectedClient is not null ? null
+                : ClientPicker.IsNoClient ? Sale.NoClientName
+                : TextClient.Trim(),
+            GuestPhone = SelectedClient is null && !ClientPicker.IsNoClient ? GuestPhone : null,
             WorkerId = Worker?.Id,
             PaymentMethodId = PaymentMethod!.Id,
             Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim(),
@@ -491,7 +516,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     /// <summary>Everything Charge would save: the lines as typed, who, how and the notes.</summary>
     protected override string EditableState()
         => string.Join("|",
-            SelectedClient?.Id, TextClient, GuestPhone, Worker?.Id, PaymentMethod?.Id, Notes,
+            SelectedClient?.Id, ClientPicker.Mode, TextClient, GuestPhone, Worker?.Id, PaymentMethod?.Id, Notes,
             string.Join(";", Lines.Select(l =>
                 $"{l.ServiceId}/{l.ProductId}/{l.Description}/{l.QuantityText}/{l.PriceText}/{l.VatText}")));
 }

@@ -1373,6 +1373,15 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="NewClient" xml:space="preserve">
     <value>Cliente nuevo</value>
   </data>
+  <data name="NoClient" xml:space="preserve">
+    <value>Sin cliente</value>
+  </data>
+  <data name="NoClientHint" xml:space="preserve">
+    <value>La venta se guardará sin ningún cliente.</value>
+  </data>
+  <data name="GuestNameReserved" xml:space="preserve">
+    <value>Ese nombre está reservado. Escribe otro nombre para el cliente, o elige «Sin cliente».</value>
+  </data>
   <data name="BrowseClients" xml:space="preserve">
     <value>Ver la lista</value>
   </data>

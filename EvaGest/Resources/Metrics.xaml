@@ -56,6 +56,10 @@
     <sys:Double x:Key="QuickActionMinWidth">180</sys:Double>
     <sys:Double x:Key="RankingCardMinWidth">260</sys:Double>
     <sys:Double x:Key="FilterFieldMinWidth">140</sys:Double>
+    <!-- One option of the client picker's Existing / New / No client toggle, its 8 px
+         gap included. Sized for "Cliente existente"; narrower than three of these, the
+         toggle wraps rather than cut the labels. -->
+    <sys:Double x:Key="ClientModeMinWidth">150</sys:Double>
 
     <!-- Table columns that must never collapse to nothing -->
     <sys:Double x:Key="TextColumnMinWidth">80</sys:Double>

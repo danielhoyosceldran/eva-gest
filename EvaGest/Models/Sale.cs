@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using EvaGest.Resources;
 
 namespace EvaGest.Models;
 
@@ -52,8 +53,23 @@ public class Sale
     /// <summary>Frozen per-rate VAT breakdown. Period totals are summed from here.</summary>
     public List<SaleBreakdown> Breakdowns { get; set; } = [];
 
+    /// <summary>
+    /// What <see cref="GuestName"/> holds for a sale charged to nobody on purpose (the
+    /// "no client" option of the sale dialog). ck_sales_client_xor wants a name on every
+    /// sale without a client, so this fixed marker fills it. It is stored as is, never
+    /// translated, so it is recognised whatever the interface language; only
+    /// <see cref="DisplayName"/> turns it into words. Typing it as a guest's name is refused.
+    /// </summary>
+    public const string NoClientName = "no_registered_client";
+
+    /// <summary>The name shown in lists and exports: the client's, the guest's, or the
+    /// translated "no client" for a sale charged to nobody.</summary>
     [NotMapped]
-    public string DisplayName => Client?.Name ?? GuestName ?? string.Empty;
+    public string DisplayName => Client?.Name ?? (IsNoClient ? Texts.NoClient : GuestName) ?? string.Empty;
+
+    /// <summary>Charged to nobody on purpose (see <see cref="NoClientName"/>).</summary>
+    [NotMapped]
+    public bool IsNoClient => ClientId is null && GuestName == NoClientName;
 
     [NotMapped]
     public bool IsGuest => ClientId is null;

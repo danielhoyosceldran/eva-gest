@@ -10,7 +10,7 @@ namespace EvaGest.ViewModels.Elements;
 
 /// <summary>
 /// "Who is this for", shared by the appointment and sale dialogs (CU-01). A toggle says
-/// which of the two it is:
+/// which of these it is:
 ///
 /// - <b>Existing client</b>: a search box. Typing offers the matching registered
 ///   clients in a dropdown; a button opens the whole list in its own dialog to browse
@@ -18,11 +18,18 @@ namespace EvaGest.ViewModels.Elements;
 ///   search, not a name.
 /// - <b>New client</b>: a plain box for the name of someone not registered, saved as a
 ///   guest (RF-05bis). The dialog can still offer to register them.
+/// - <b>No client</b>: only where <see cref="AllowsNoClient"/> is set (sales). Nobody at
+///   all, chosen on purpose: the owner of the dialog saves it as
+///   <see cref="Sale.NoClientName"/>. A deliberate third option rather than an empty
+///   box, so a client forgotten by accident is still refused.
 ///
 /// Each mode keeps its own text, so flipping the toggle back and forth loses nothing.
 /// </summary>
 public partial class ClientPickerViewModel : ObservableObject
 {
+    /// <summary>The three sides of the toggle.</summary>
+    public enum ClientMode { Existing, New, None }
+
     private readonly List<Client> _clients = [];
     private readonly IDialogService? _dialogs;
 
@@ -30,18 +37,29 @@ public partial class ClientPickerViewModel : ObservableObject
     /// neither drops the pick being made nor pops the dropdown open on its own.</summary>
     private bool _writingText;
 
-    /// <summary>The client picked before switching to "new", restored on switching back.</summary>
-    private Client? _pickedBeforeNew;
+    /// <summary>The client picked before leaving "existing client", restored on switching back.</summary>
+    private Client? _pickedBeforeLeaving;
 
     /// <param name="dialogs">Opens the browse-the-list dialog. Null where there is no
     /// window to open one from (the tests of the search itself).</param>
-    public ClientPickerViewModel(IDialogService? dialogs = null) => _dialogs = dialogs;
+    /// <param name="allowsNoClient">Offers the third "no client" option (sales only).</param>
+    public ClientPickerViewModel(IDialogService? dialogs = null, bool allowsNoClient = false)
+    {
+        _dialogs = dialogs;
+        AllowsNoClient = allowsNoClient;
+    }
 
-    /// <summary>True for "new client" (a guest's free name), false for "existing client".</summary>
+    /// <summary>Whether the "no client" option is offered at all. Appointments leave it
+    /// off: an appointment is always booked for somebody.</summary>
+    public bool AllowsNoClient { get; }
+
+    /// <summary>Which side of the toggle is on.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsExistingClient))]
+    [NotifyPropertyChangedFor(nameof(IsNewClient))]
+    [NotifyPropertyChangedFor(nameof(IsNoClient))]
     [NotifyPropertyChangedFor(nameof(GuestName))]
-    private bool _isNewClient;
+    private ClientMode _mode;
 
     /// <summary>The search box of the "existing client" mode.</summary>
     [ObservableProperty] private string _text = string.Empty;
@@ -69,17 +87,35 @@ public partial class ClientPickerViewModel : ObservableObject
 
     public ObservableCollection<Client> Matches { get; } = [];
 
-    /// <summary>The other side of the toggle, for the second radio button to bind to.</summary>
+    // One bool per side of the toggle, for the radio buttons to bind to. Only "true" is
+    // acted on: a radio button writes "false" as it unchecks itself, and that must not
+    // move the mode a second time.
+
+    /// <summary>"Existing client": a registered client searched or browsed.</summary>
     public bool IsExistingClient
     {
-        get => !IsNewClient;
-        set => IsNewClient = !value;
+        get => Mode == ClientMode.Existing;
+        set { if (value) Mode = ClientMode.Existing; }
+    }
+
+    /// <summary>"New client": a guest's free name.</summary>
+    public bool IsNewClient
+    {
+        get => Mode == ClientMode.New;
+        set { if (value) Mode = ClientMode.New; }
+    }
+
+    /// <summary>"No client": nobody, on purpose. Ignored where it is not offered.</summary>
+    public bool IsNoClient
+    {
+        get => Mode == ClientMode.None;
+        set { if (value && AllowsNoClient) Mode = ClientMode.None; }
     }
 
     public bool IsRegistered => SelectedClient is not null;
 
     /// <summary>The free name to save for a guest: what the "new client" box says, and
-    /// nothing at all in the "existing client" mode.</summary>
+    /// nothing at all in the other two modes.</summary>
     public string GuestName => IsNewClient ? NewName : string.Empty;
 
     /// <summary>Replaces the searchable clients, e.g. once the dialog has loaded them.</summary>
@@ -111,8 +147,8 @@ public partial class ClientPickerViewModel : ObservableObject
 
         // Forget any pick kept from before "new client", or leaving that mode below
         // would restore it over this one.
-        _pickedBeforeNew = null;
-        IsNewClient = false;
+        _pickedBeforeLeaving = null;
+        Mode = ClientMode.Existing;
         // Text first: the view moves the caret to the end when the client changes,
         // and by then the name must already be in the box.
         WriteText(client.Name);
@@ -123,22 +159,23 @@ public partial class ClientPickerViewModel : ObservableObject
     /// switching to "new client".</summary>
     public void SetGuestName(string name)
     {
-        IsNewClient = true;
+        Mode = ClientMode.New;
         NewName = name;
     }
 
-    partial void OnIsNewClientChanged(bool value)
+    partial void OnModeChanged(ClientMode oldValue, ClientMode newValue)
     {
         IsDropdownOpen = false;
-        if (value)
+        if (oldValue == ClientMode.Existing)
         {
-            // A guest is nobody registered; remember the pick in case this was a misclick
-            _pickedBeforeNew = SelectedClient;
+            // A guest or no client is nobody registered; remember the pick in case
+            // this was a misclick
+            _pickedBeforeLeaving = SelectedClient;
             SelectedClient = null;
         }
-        else if (_pickedBeforeNew is { } picked)
+        else if (newValue == ClientMode.Existing && _pickedBeforeLeaving is { } picked)
         {
-            _pickedBeforeNew = null;
+            _pickedBeforeLeaving = null;
             Select(picked);
         }
     }
@@ -156,7 +193,7 @@ public partial class ClientPickerViewModel : ObservableObject
 
         // The user edited the box: whatever was picked no longer matches what it says
         SelectedClient = null;
-        _pickedBeforeNew = null;
+        _pickedBeforeLeaving = null;
         RefreshMatches(Text);
         IsDropdownOpen = !string.IsNullOrWhiteSpace(value) && Matches.Count > 0;
     }

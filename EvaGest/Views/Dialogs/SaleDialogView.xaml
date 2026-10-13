@@ -57,10 +57,12 @@
             <TextBlock Text="{Binding LinkedAppointmentText}" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
                        Visibility="{Binding LinkedAppointmentText, Converter={StaticResource NullToVisibilityConverter}}" />
 
-            <!-- Who: the client and the worker side by side -->
+            <!-- Who: the client and the worker side by side. The client takes two thirds:
+                 its toggle has three options (existing / new / no client) to fit in a row,
+                 while a worker's name is short. -->
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="16" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>

@@ -471,6 +471,9 @@ public static class Texts
         nameof(EmailFormat),
         nameof(ExistingClient),
         nameof(NewClient),
+        nameof(NoClient),
+        nameof(NoClientHint),
+        nameof(GuestNameReserved),
         nameof(BrowseClients),
         nameof(NewClientNamePlaceholder),
         nameof(ClientBrowserTitle),
@@ -1899,6 +1902,15 @@ public static class Texts
 
     /// <summary>Client nou</summary>
     public static string NewClient => Get(nameof(NewClient));
+
+    /// <summary>Sense client</summary>
+    public static string NoClient => Get(nameof(NoClient));
+
+    /// <summary>La venda es guardarà sense cap client.</summary>
+    public static string NoClientHint => Get(nameof(NoClientHint));
+
+    /// <summary>Aquest nom està reservat. Escriu un altre nom per al client, o tria «Sense client».</summary>
+    public static string GuestNameReserved => Get(nameof(GuestNameReserved));
 
     /// <summary>Veure la llista</summary>
     public static string BrowseClients => Get(nameof(BrowseClients));

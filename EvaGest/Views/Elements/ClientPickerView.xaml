@@ -1,23 +1,28 @@
 <UserControl x:Class="EvaGest.Views.Elements.ClientPickerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:t="clr-namespace:EvaGest.Resources">
+             xmlns:t="clr-namespace:EvaGest.Resources"
+             xmlns:el="clr-namespace:EvaGest.Views.Elements">
     <StackPanel>
-        <!-- Existing / new client. The two modes keep their own text, so flipping the
-             switch by mistake loses nothing. -->
-        <Grid Margin="0,0,0,8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="8" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <RadioButton Grid.Column="0" Style="{StaticResource SegmentButton}"
+        <!-- Existing / new / no client. The modes keep their own text, so flipping the
+             switch by mistake loses nothing. "No client" is only there for sales: the
+             grid leaves collapsed children out, so the other two then share the row
+             between them, and it wraps onto a second row rather than cut a label where
+             the column is too narrow for three. The negative margin cancels the outer
+             half of each button's 4 px side margin, leaving an 8 px gap between buttons
+             only. The 8 px bottom margin of each button spaces the rows, and the field below. -->
+        <el:WrappingUniformGrid MinItemWidth="{StaticResource ClientModeMinWidth}" Margin="-4,0,-4,0">
+            <RadioButton Style="{StaticResource SegmentButton}" Margin="4,0,4,8"
                          Content="{x:Static t:Texts.ExistingClient}"
                          IsChecked="{Binding IsExistingClient, Mode=TwoWay}" />
-            <RadioButton Grid.Column="2" Style="{StaticResource SegmentButton}"
+            <RadioButton Style="{StaticResource SegmentButton}" Margin="4,0,4,8"
                          Content="{x:Static t:Texts.NewClient}"
                          IsChecked="{Binding IsNewClient, Mode=TwoWay}" />
-        </Grid>
+            <RadioButton Style="{StaticResource SegmentButton}" Margin="4,0,4,8"
+                         Content="{x:Static t:Texts.NoClient}"
+                         IsChecked="{Binding IsNoClient, Mode=TwoWay}"
+                         Visibility="{Binding AllowsNoClient, Converter={StaticResource BoolToVisibilityConverter}}" />
+        </el:WrappingUniformGrid>
 
         <!-- Both rows share one grid cell and only one is visible: they are the same
              height, so swapping them never resizes the SizeToContent dialog. -->
@@ -48,6 +53,13 @@
             <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"
                      Tag="{x:Static t:Texts.NewClientNamePlaceholder}"
                      Visibility="{Binding IsNewClient, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <!-- No client: nothing to type, just a line saying so, as tall as the boxes -->
+            <Border MinHeight="{StaticResource FieldHeight}"
+                    Visibility="{Binding IsNoClient, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoClientHint}" Foreground="{StaticResource InkMutedBrush}"
+                           VerticalAlignment="Center" Margin="2,0,0,0" TextWrapping="Wrap" />
+            </Border>
         </Grid>
 
         <!-- Hidden rather than collapsed: the dialogs are SizeToContent, and a line that

@@ -8,6 +8,12 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 
 ## 2.0.0
 
+- A sale can be charged to nobody. Next to "Client existent" and "Client nou", the
+  sale window has a third option, "Sense client", which saves the sale without any
+  client; lists and exports show it as "Sense client". It has to be chosen: an empty
+  client box is still refused, so a forgotten client is not saved by accident. Only
+  sales offer it, never appointments. In the sale window the client column is now
+  wider than the worker's, so the three options fit in one row.
 - Informes has a new button, "Veure totes les transaccions", that opens a large window
   with every sale and till movement in one table. It filters by period (with Avui,
   Aquesta setmana, Aquest mes and Aquest any shortcuts), type (sales, cash-ins,
