@@ -18,6 +18,13 @@ public interface ICatalogService
     /// </summary>
     Task<DeleteResult> DeleteService(int id);
 
+    /// <summary>
+    /// Up to <paramref name="count"/> active services, the most sold first: the quick
+    /// buttons of the sale dialog. Ranked by units on active sales; a shop with little
+    /// history has the rest of the places filled with its other services by name.
+    /// </summary>
+    Task<List<Service>> GetBestSellingServices(int count);
+
     // --- Products ---
     Task<List<Product>> GetProducts(bool onlyActive = false);
     Task<Product?> GetProduct(int id);

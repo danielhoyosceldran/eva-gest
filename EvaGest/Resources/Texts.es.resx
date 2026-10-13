@@ -277,12 +277,6 @@
   <data name="NewCashOutButton" xml:space="preserve">
     <value>+ Salida</value>
   </data>
-  <data name="AddServiceButton" xml:space="preserve">
-    <value>+ Servicio</value>
-  </data>
-  <data name="AddProductButton" xml:space="preserve">
-    <value>+ Producto</value>
-  </data>
   <data name="AddCustomLineButton" xml:space="preserve">
     <value>+ Concepto libre</value>
   </data>
@@ -444,9 +438,6 @@
   </data>
   <data name="Afternoon" xml:space="preserve">
     <value>Tarde</value>
-  </data>
-  <data name="Lines" xml:space="preserve">
-    <value>Líneas</value>
   </data>
   <data name="Size" xml:space="preserve">
     <value>Tamaño</value>
@@ -1721,5 +1712,32 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   </data>
   <data name="CategoryBrowserTitle" xml:space="preserve">
     <value>Elegir categoría</value>
+  </data>
+  <data name="AddToSale" xml:space="preserve">
+    <value>Añadir a la venta</value>
+  </data>
+  <data name="CatalogBrowserTitle" xml:space="preserve">
+    <value>Elegir servicio o producto</value>
+  </data>
+  <data name="CatalogSearchPlaceholder" xml:space="preserve">
+    <value>Busca un servicio o producto</value>
+  </data>
+  <data name="AddAsCustomConcept" xml:space="preserve">
+    <value>+ Añadir «{0}» como concepto libre</value>
+  </data>
+  <data name="NoSaleLinesYet" xml:space="preserve">
+    <value>Todavía no hay nada en la venta. Toca uno de los botones o busca un servicio o producto para añadirlo.</value>
+  </data>
+  <data name="IncreaseQuantity" xml:space="preserve">
+    <value>Una unidad más</value>
+  </data>
+  <data name="DecreaseQuantity" xml:space="preserve">
+    <value>Una unidad menos</value>
+  </data>
+  <data name="EditSaleLine" xml:space="preserve">
+    <value>Cambiar el concepto, el precio o el IVA</value>
+  </data>
+  <data name="RemoveSaleLine" xml:space="preserve">
+    <value>Quitar esta línea de la venta</value>
   </data>
 </root>

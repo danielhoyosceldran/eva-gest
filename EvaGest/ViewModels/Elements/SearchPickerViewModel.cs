@@ -71,6 +71,11 @@ public abstract partial class SearchPickerViewModel : ObservableObject
     /// <summary>Tells the owner what is now picked (null when the pick was dropped).</summary>
     protected abstract void Report(object? value);
 
+    /// <summary>Options that do not come from the list but from what is typed, shown
+    /// after the real matches whatever their rank ("Afegir «…» com a concepte lliure").
+    /// None by default.</summary>
+    protected virtual IEnumerable<PickerOption> Extras(string query) => [];
+
     /// <summary>
     /// Shows <paramref name="value"/> as the pick without reporting it back: how the owner
     /// mirrors its own property into the box. Null clears a pick, but leaves alone text
@@ -128,6 +133,7 @@ public abstract partial class SearchPickerViewModel : ObservableObject
     {
         Matches.Clear();
         foreach (var option in OptionSearch.Find(Options(), query)) Matches.Add(option);
+        foreach (var extra in Extras(query)) Matches.Add(extra);
         Highlighted = Current is { } picked
             ? Matches.FirstOrDefault(o => Equals(o.Value, picked)) ?? Matches.FirstOrDefault()
             : Matches.FirstOrDefault();
@@ -150,7 +156,7 @@ public abstract partial class SearchPickerViewModel : ObservableObject
     /// still matches (or names exactly) is picked; otherwise the box is emptied, so it
     /// never shows something that is not what is chosen.
     /// </summary>
-    public void Commit()
+    public virtual void Commit()
     {
         IsDropdownOpen = false;
         if (Current is not null || string.IsNullOrWhiteSpace(Text))

@@ -25,7 +25,7 @@ namespace EvaGest.Tests.Views;
 /// taskbar:
 ///   A 1024x720  (1280x800 at 125 %)      B 1093x566  (1366x768 at 125 %, the worst)
 ///   C 1280x672  (1920x1080 at 150 %)     D 1366x720  (1366x768 at 100 %)
-///   E 1920x1032 (1920x1080 at 100 %)
+///   E 1920x1032 (1920x1080 at 100 %)   F 1536x816 (1920x1080 at 125 %, the shop's own)
 ///
 /// A dialog passes if, capped to the screen as DialogWindow caps itself, its buttons
 /// are fully on screen and nothing is cut off or pushed past an edge. A page passes if,
@@ -38,8 +38,13 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
 {
     private static readonly (string name, double width, double height)[] Screens =
     [
-        ("A", 1024, 720), ("B", 1093, 566), ("C", 1280, 672), ("D", 1366, 720), ("E", 1920, 1032)
+        ("A", 1024, 720), ("B", 1093, 566), ("C", 1280, 672), ("D", 1366, 720), ("E", 1920, 1032),
+        ("F", 1536, 816)
     ];
+
+    /// <summary>The shop's own screen (F). Scrolling is allowed everywhere else, but on
+    /// this one an everyday sale must fit whole.</summary>
+    private static readonly (string name, double width, double height) ShopScreen = ("F", 1536, 816);
 
     /// <summary>Non-client frame of a fixed-size dialog (caption and borders), and the
     /// caption of the maximised main window. Approximate, and on the generous side.</summary>
@@ -213,6 +218,46 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
 
         problems.Should().BeEmpty("the {0} dialog must fit every screen in {1}:{2}",
             dialog, language, Lines(problems));
+    }
+
+    [Theory, MemberData(nameof(Languages))]
+    public async Task An_everyday_sale_fits_the_shops_screen_without_scrolling(string language)
+    {
+        // Four lines, a registered client, a worker and a payment method: what the shop
+        // charges all day. On its 1920x1080 screen at 125 % the whole dialog, totals and
+        // Cobrar included, must be in view without touching the scroll bar.
+        using var _ = new Language(language);
+        var f = shop.Factory;
+        var settings = new SettingsService(f);
+        var clients = new ClientService(f);
+        var vm = await SaleDialogViewModel.New(new SaleService(f, settings), clients, new CatalogService(f),
+            new WorkerService(f), new TestSoundService(), settings, new TestDialogService());
+        vm.SelectedClient = (await clients.GetActive()).First();
+        vm.Worker = vm.ActiveWorkers.First();
+        vm.PaymentMethod = vm.ActiveMethods.First();
+        foreach (var quick in vm.QuickServices.Take(4)) vm.AddQuickServiceCommand.Execute(quick);
+        vm.Lines.Should().HaveCount(4);
+
+        string? problem = null;
+        app.Runs(() =>
+        {
+            using var __ = new Language(language);
+            var (maxWidth, maxHeight) = LayoutFit.MaxWindowSize(ShopScreen.width, ShopScreen.height,
+                (double)Application.Current.FindResource("DialogScreenMargin"));
+            var host = new ContentControl
+            {
+                Content = new SaleDialogView(), DataContext = vm, MinWidth = 380,
+                Margin = (Thickness)Application.Current.FindResource("PadCard")
+            };
+            ((FrameworkElement)host.Content).DataContext = vm;
+            Layout(host, new Size(maxWidth - DialogFrameWidth, maxHeight - DialogFrameHeight), sizeToContent: true);
+
+            var body = Descendants<ScrollViewer>(host).First(sv => sv.TemplatedParent is DialogShell);
+            if (body.ExtentHeight > body.ViewportHeight + Tolerance)
+                problem = $"the form needs {body.ExtentHeight:0} DIP but has {body.ViewportHeight:0}";
+        });
+
+        problem.Should().BeNull("an everyday sale must fit the shop's screen in {0}", language);
     }
 
     // ───────────────────────────── pages ─────────────────────────────

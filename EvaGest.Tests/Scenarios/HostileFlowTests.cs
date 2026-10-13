@@ -128,10 +128,11 @@ public class HostileFlowTests
     }
 
     [Fact]
-    public async Task Adding_a_service_or_product_with_nothing_picked_is_disabled_instead_of_crashing()
+    public async Task Leaving_the_search_box_with_nothing_picked_adds_no_line()
     {
-        // "+ Servei" passed the combo's empty selection straight through and threw a
-        // NullReferenceException; "+ Producte" had the same hole.
+        // "+ Servei" used to pass the combo's empty selection straight through and throw.
+        // The button is gone (a pick adds the line itself), but the same hole could come
+        // back as an empty or half-typed box turning into a line when focus leaves it.
         await using var testDb = new TestDatabase();
         var (factory, settings, _) = await Build(testDb);
         var catalog = new CatalogService(factory);
@@ -141,19 +142,13 @@ public class HostileFlowTests
             new SaleService(factory, settings), new ClientService(factory), catalog,
             new WorkerService(factory), new TestSoundService(), settings, new TestDialogService());
 
-        vm.AddServiceCommand.CanExecute(null).Should().BeFalse();
-        vm.AddProductCommand.CanExecute(null).Should().BeFalse();
-        vm.AddServiceCommand.Execute(null);
-        vm.AddProductCommand.Execute(null);
-        vm.Lines.Should().BeEmpty();
+        vm.CatalogAdder.Commit();
+        vm.CatalogAdder.PickHighlightedCommand.Execute(null);
+        vm.CatalogAdder.Text = "Tall";
+        vm.CatalogAdder.Commit();
 
-        vm.ServiceToAdd = vm.ActiveServices[0];
-        vm.AddServiceCommand.CanExecute(null).Should().BeTrue();
-        vm.AddServiceCommand.Execute(null);
-
-        vm.Lines.Should().ContainSingle().Which.ServiceId.Should().Be(vm.ActiveServices[0].Id);
-        vm.ServiceToAdd.Should().BeNull("the combo empties once its pick has become a line");
-        vm.AddServiceCommand.CanExecute(null).Should().BeFalse();
+        vm.Lines.Should().BeEmpty("only an actual pick adds a line");
+        vm.CatalogAdder.Text.Should().Be("Tall", "what was typed is kept rather than thrown away");
     }
 
     // ── The sale dialog must refuse to freeze a value it cannot trust ────────

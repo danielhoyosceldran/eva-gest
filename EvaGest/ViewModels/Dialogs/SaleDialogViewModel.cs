@@ -85,13 +85,28 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     public ObservableCollection<Worker> ActiveWorkers { get; } = [];
     public ObservableCollection<PaymentMethod> ActiveMethods { get; } = [];
 
+    /// <summary>How many quick buttons sit above the search box: exactly one row of
+    /// six across the 760 DIP dialog, so they never cost a second row of height.</summary>
+    public const int QuickServiceCount = 6;
+
+    /// <summary>One quick button: the service, and its price already formatted for the label.</summary>
+    public sealed record QuickService(Service Service, string PriceText)
+    {
+        public string Name => Service.Name;
+    }
+
+    /// <summary>The shop's most sold services, one click each (the quick buttons).</summary>
+    public ObservableCollection<QuickService> QuickServices { get; } = [];
+
     public SearchPickerViewModel<Worker> WorkerPicker { get; }
-    public SearchPickerViewModel<Service> ServiceToAddPicker { get; }
-    public SearchPickerViewModel<Product> ProductToAddPicker { get; }
+
+    /// <summary>The one search box over services and products; a pick becomes a line.</summary>
+    public CatalogAdderViewModel CatalogAdder { get; }
 
     partial void OnWorkerChanged(Worker? value) => WorkerPicker.Show(value);
-    partial void OnServiceToAddChanged(Service? value) => ServiceToAddPicker.Show(value);
-    partial void OnProductToAddChanged(Product? value) => ProductToAddPicker.Show(value);
+
+    /// <summary>Drives the empty state shown in place of the lines.</summary>
+    public bool HasLines => Lines.Count > 0;
 
     [ObservableProperty] private int _baseCents;
     [ObservableProperty] private int _vatCents;
@@ -120,8 +135,8 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         // Search boxes over the lists that grow long, with the whole list a button away.
         // Their OnXChanged below mirror the property back into the box.
         WorkerPicker = new(ActiveWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle);
-        ServiceToAddPicker = new(ActiveServices, s => s.Name, s => ServiceToAdd = s, dialogs, Texts.ServiceBrowserTitle);
-        ProductToAddPicker = new(ActiveProducts, p => p.Name, p => ProductToAdd = p, dialogs, Texts.ProductBrowserTitle);
+        CatalogAdder = new(ActiveServices, ActiveProducts, AddPicked, dialogs);
+        Lines.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasLines));
 
         ClientPicker = new ClientPickerViewModel(dialogs);
         ClientPicker.PropertyChanged += (_, e) =>
@@ -284,6 +299,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         foreach (var p in await catalog.GetProducts(onlyActive: true)) ActiveProducts.Add(p);
         foreach (var t in await workers.GetAll(onlyActive: true)) ActiveWorkers.Add(t);
         foreach (var m in await catalog.GetMethods(onlyActive: true)) ActiveMethods.Add(m);
+        foreach (var s in await catalog.GetBestSellingServices(QuickServiceCount)) QuickServices.Add(new(s, Money.Format(s.PriceCents)));
     }
 
     /// <summary>
@@ -298,39 +314,36 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         SelectedClient = client;
     }
 
-    /// <summary>The service picked in the combo next to "+ Servei", not yet added as a
-    /// line. The button stays disabled while it is empty: it used to pass the combo's
-    /// empty selection straight through and crash the dialog.</summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AddServiceCommand))]
-    private Service? _serviceToAdd;
+    /// <summary>A quick button: adds that service as a line.</summary>
+    [RelayCommand]
+    private void AddQuickService(QuickService quick) => AddCatalogLine(SaleLineViewModel.FromService(quick.Service));
 
-    /// <summary>The product picked next to "+ Producte"; same as <see cref="ServiceToAdd"/>.</summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AddProductCommand))]
-    private Product? _productToAdd;
-
-    /// <summary>Adds the picked service as a line and empties the combo, so it is clear
-    /// the line went in and the same pick is not added twice by accident.</summary>
-    [RelayCommand(CanExecute = nameof(CanAddService))]
-    private void AddService()
+    /// <summary>What the search box hands over when something in it is picked.</summary>
+    private void AddPicked(object picked)
     {
-        if (ServiceToAdd is null) return;
-        AddExistingLine(SaleLineViewModel.FromService(ServiceToAdd));
-        ServiceToAdd = null;
+        switch (picked)
+        {
+            case Service service: AddCatalogLine(SaleLineViewModel.FromService(service)); break;
+            case Product product: AddCatalogLine(SaleLineViewModel.FromProduct(product)); break;
+            case CatalogAdderViewModel.FreeConcept free:
+                AddExistingLine(SaleLineViewModel.Free(_defaultVatBp, free.Description));
+                break;
+        }
     }
 
-    private bool CanAddService() => ServiceToAdd is not null;
-
-    [RelayCommand(CanExecute = nameof(CanAddProduct))]
-    private void AddProduct()
+    /// <summary>
+    /// Adds a catalogue line, or raises the quantity of the line already holding the
+    /// same item at the same price: two cuts are one line of two, not two lines. A line
+    /// whose price or VAT was changed by hand is left alone (see
+    /// <see cref="SaleLineViewModel.IsSameItemAs"/>).
+    /// </summary>
+    private void AddCatalogLine(SaleLineViewModel line)
     {
-        if (ProductToAdd is null) return;
-        AddExistingLine(SaleLineViewModel.FromProduct(ProductToAdd));
-        ProductToAdd = null;
+        if (Lines.FirstOrDefault(l => l.IsSameItemAs(line)) is { } existing)
+            existing.Increase();
+        else
+            AddExistingLine(line);
     }
-
-    private bool CanAddProduct() => ProductToAdd is not null;
 
     [RelayCommand] private void AddCustomConcept() => AddExistingLine(SaleLineViewModel.Free(_defaultVatBp));
 
@@ -398,6 +411,9 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         // sale, which no later edit of the catalogue can put right.
         if (Lines.FirstOrDefault(l => !l.IsValid) is { } wrong)
         {
+            // The faulty box may be behind the line's pencil button: open it, so the
+            // message points at something the user can actually see.
+            wrong.IsExpanded = true;
             ErrorValidation = string.IsNullOrWhiteSpace(wrong.Description) ? Texts.LineDescriptionRequired
                 : !NumberValidator.TryParseAtLeast(wrong.QuantityText, 1, out _) ? Texts.QuantityInvalid
                 : !Money.TryParse(wrong.PriceText, out int wrongPrice) ? Texts.PriceInvalid

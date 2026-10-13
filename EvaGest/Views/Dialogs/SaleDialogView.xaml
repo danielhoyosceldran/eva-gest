@@ -3,32 +3,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:t="clr-namespace:EvaGest.Resources"
              xmlns:el="clr-namespace:EvaGest.Views.Elements">
-    <el:DialogShell Width="700">
+    <!-- Laid out to fit a typical sale (four lines) without scrolling on a 1920x1080
+         screen at 125 % — the shop's own — which leaves about 1536x816 DIP. Hence the
+         paired rows (client | worker, payment | notes) and the totals pinned beside the
+         buttons instead of in a card of their own. ResponsiveLayoutTests checks it. -->
+    <el:DialogShell Width="760">
         <el:DialogShell.Actions>
             <StackPanel>
                 <TextBlock Text="{Binding ErrorValidation}" Style="{StaticResource ErrorBanner}"
                            TextWrapping="Wrap" Margin="0,0,0,12"
                            Visibility="{Binding ErrorValidation, Converter={StaticResource NullToVisibilityConverter}}" />
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <!-- No IsCancel: the window handles Esc itself so a sale with lines asks before it is discarded (F-02) -->
-                    <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" />
-                    <Button Content="{x:Static t:Texts.VoidSale}" Style="{StaticResource DestructiveButton}" Command="{Binding VoidSaleCommand}"
-                            Visibility="{Binding CurrentMode, Converter={StaticResource EditModeToVisibilityConverter}}" />
-                    <Button Content="{x:Static t:Texts.Charge}" Style="{StaticResource PrimaryButton}" Command="{Binding ChargeCommand}" IsDefault="True" Margin="12,0,0,0" />
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Live totals (pantalles 3.2), pinned with the buttons so the amount
+                         being charged is always in view, however long the sale grows -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <TextBlock>
+                            <Run Text="{x:Static t:Texts.TotalUpper}" FontSize="{StaticResource FontSizeSmall}"
+                                 Foreground="{StaticResource InkMutedBrush}" />
+                            <Run Text="{Binding TotalText, Mode=OneWay}" FontFamily="{StaticResource FontDisplay}"
+                                 FontSize="{StaticResource FontSizeFigure}" FontWeight="Bold"
+                                 Foreground="{StaticResource InkBrush}" />
+                        </TextBlock>
+                        <TextBlock FontSize="{StaticResource FontSizeSmall}" Foreground="{StaticResource InkMutedBrush}"
+                                   Typography.NumeralAlignment="Tabular">
+                            <Run Text="{x:Static t:Texts.TaxableBase}" />
+                            <Run Text="{Binding BaseText, Mode=OneWay}" />
+                            <Run Text="·" />
+                            <Run Text="{x:Static t:Texts.Vat}" />
+                            <Run Text="{Binding VatText, Mode=OneWay}" />
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- No IsCancel: the window handles Esc itself so a sale with lines asks before it is discarded (F-02) -->
+                        <Button Content="{x:Static t:Texts.Cancel}" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" />
+                        <Button Content="{x:Static t:Texts.VoidSale}" Style="{StaticResource DestructiveButton}" Command="{Binding VoidSaleCommand}"
+                                Visibility="{Binding CurrentMode, Converter={StaticResource EditModeToVisibilityConverter}}" />
+                        <Button Content="{x:Static t:Texts.Charge}" Style="{StaticResource PrimaryButton}" Command="{Binding ChargeCommand}" IsDefault="True" Margin="12,0,0,0" />
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </el:DialogShell.Actions>
 
         <StackPanel>
-            <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
+            <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,12" />
 
             <TextBlock Text="{Binding LinkedAppointmentText}" Foreground="{StaticResource InkMutedBrush}" Margin="0,0,0,12"
                        Visibility="{Binding LinkedAppointmentText, Converter={StaticResource NullToVisibilityConverter}}" />
 
-            <!-- Search a registered client or type a guest's name, in the same box -->
-            <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
-            <ContentControl Content="{Binding ClientPicker}" Focusable="False" Margin="0,0,0,8" />
+            <!-- Who: the client and the worker side by side -->
+            <Grid Margin="0,0,0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!-- Search a registered client or type a guest's name, in the same box -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{x:Static t:Texts.Client}" Style="{StaticResource DataLabel}" />
+                    <ContentControl Content="{Binding ClientPicker}" Focusable="False" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
+                    <el:SearchPickerView DataContext="{Binding WorkerPicker}" />
+                </StackPanel>
+            </Grid>
 
             <!-- Non-blocking guest reminder (RF-05bis): offers to register, never requires it -->
             <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
@@ -43,132 +88,153 @@
                 </StackPanel>
             </Border>
 
-            <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
-            <el:SearchPickerView DataContext="{Binding WorkerPicker}" Margin="0,0,0,12" />
+            <!-- What: quick buttons for the most sold services, then one search box over
+                 services and products. Either adds a line at once. -->
+            <TextBlock Text="{x:Static t:Texts.AddToSale}" Style="{StaticResource DataLabel}" />
 
-            <TextBlock Text="{x:Static t:Texts.Lines}" Style="{StaticResource Subtitle}" />
-
-            <!-- Headers: without them the four boxes give no clue which is the quantity and
-                 what unit the VAT one wants.
-
-                 The column list below MUST stay identical to the row template's. It used to
-                 declare only the first seven columns while each row declared eleven, so the
-                 star columns divided a different amount of space in the two grids and every
-                 header sat left of the box it named, drifting further across the row. The
-                 two trailing columns are fixed rather than Auto for the same reason: an
-                 Auto column is sized by its content, which the header does not have.
-
-                 The 11px margin is the card's 10px padding plus its 1px border. -->
-            <Grid x:Name="LineHeaders" Margin="11,0,11,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="96" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{x:Static t:Texts.Concept}" Style="{StaticResource DataLabel}" />
-                <TextBlock Grid.Column="2" Text="{x:Static t:Texts.Quantity}" Style="{StaticResource DataLabel}" />
-                <TextBlock Grid.Column="4" Text="{x:Static t:Texts.PriceEuros}" Style="{StaticResource DataLabel}" />
-                <TextBlock Grid.Column="6" Text="{x:Static t:Texts.VatPercent}" Style="{StaticResource DataLabel}" />
-                <TextBlock Grid.Column="8" Text="{x:Static t:Texts.Amount}" Style="{StaticResource DataLabel}"
-                           HorizontalAlignment="Right" />
-            </Grid>
-
-            <ItemsControl x:Name="LineRows" ItemsSource="{Binding Lines}">
+            <ItemsControl x:Name="QuickServices" ItemsSource="{Binding QuickServices}" Focusable="False" Margin="-3,0,-3,5"
+                          Visibility="{Binding QuickServices.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!-- Six across in the 760 DIP dialog; a long name is shortened and
+                             shown whole in the tooltip -->
+                        <el:WrappingUniformGrid MinItemWidth="120" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Style="{StaticResource DataCard}" Padding="10" Margin="0,0,0,8">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="8" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="8" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="8" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="8" />
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="8" />
-                                    <ColumnDefinition Width="96" />
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBox Grid.Column="2" Text="{Binding QuantityText, UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBox Grid.Column="4" Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" />
-                                <TextBox Grid.Column="6" Text="{Binding VatText, UpdateSourceTrigger=PropertyChanged}" />
-                                <!-- AmountText, not AmountCents: the raw property is cents and
-                                     printed "1500" for a fifteen-euro line. -->
-                                <TextBlock Grid.Column="8" Text="{Binding AmountText}" VerticalAlignment="Center"
-                                           Style="{StaticResource TableFigure}" />
-                                <Button Grid.Column="10" Content="{x:Static t:Texts.Remove}" Style="{StaticResource SecondaryButton}"
-                                        Padding="8,0" MinHeight="32" HorizontalAlignment="Stretch"
-                                        Command="{Binding DataContext.RemoveLineCommand,
-                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding}" />
-                            </Grid>
+                        <Button Style="{StaticResource SecondaryButton}" Margin="3" Padding="8,4" MinHeight="52"
+                                HorizontalContentAlignment="Stretch" ToolTip="{Binding Name}"
+                                Command="{Binding DataContext.AddQuickServiceCommand,
+                                          RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontSize="{StaticResource FontSizeBody}" FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis" TextAlignment="Center" />
+                                <TextBlock Text="{Binding PriceText}"
+                                           FontSize="{StaticResource FontSizeSmall}" Foreground="{StaticResource InkMutedBrush}"
+                                           TextAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <el:SearchPickerView x:Name="CatalogSearch" Grid.Column="0" DataContext="{Binding CatalogAdder}" />
+                <Button Grid.Column="1" Content="{x:Static t:Texts.AddCustomLineButton}" Style="{StaticResource SecondaryButton}"
+                        Padding="12,0" MinHeight="{StaticResource FieldHeight}" Margin="8,0,0,0"
+                        Command="{Binding AddCustomConceptCommand}" />
+            </Grid>
+
+            <!-- Empty state in place of the lines: says how to start instead of a blank -->
+            <Border Background="{StaticResource NeutralBgBrush}" CornerRadius="{StaticResource ControlRadius}"
+                    Padding="12,10" Margin="0,0,0,8"
+                    Visibility="{Binding HasLines, Converter={StaticResource InverseVisibilityConverter}}">
+                <TextBlock Text="{x:Static t:Texts.NoSaleLinesYet}" TextWrapping="Wrap" Foreground="{StaticResource NeutralFgBrush}" />
+            </Border>
+
+            <ItemsControl x:Name="LineRows" ItemsSource="{Binding Lines}" Focusable="False" Margin="0,0,0,4">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource DataCard}" Padding="12,4,4,4" Margin="0,0,0,6">
+                            <StackPanel>
+                                <!-- The row: what it is, how many, how much, and its two actions -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Description}" VerticalAlignment="Center"
+                                               FontSize="{StaticResource FontSizeInput}" TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding Description}" Margin="0,0,12,0" />
+
+                                    <!-- Quantity: − / + for the usual one-more, and the box for typing 10 -->
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Content="{StaticResource GlyphMinus}" Style="{StaticResource IconButton}"
+                                                ToolTip="{x:Static t:Texts.DecreaseQuantity}" Command="{Binding DecreaseCommand}" />
+                                        <TextBox Text="{Binding QuantityText, UpdateSourceTrigger=PropertyChanged}" Width="52"
+                                                 Margin="4,0" Padding="2,0" TextAlignment="Center"
+                                                 ToolTip="{x:Static t:Texts.Quantity}"
+                                                 AutomationProperties.Name="{x:Static t:Texts.Quantity}" />
+                                        <Button Content="{StaticResource GlyphPlus}" Style="{StaticResource IconButton}"
+                                                ToolTip="{x:Static t:Texts.IncreaseQuantity}" Command="{Binding IncreaseCommand}" />
+                                    </StackPanel>
+
+                                    <!-- AmountText, not AmountCents: the raw property is cents and
+                                         printed "1500" for a fifteen-euro line. -->
+                                    <TextBlock Grid.Column="2" Text="{Binding AmountText}" VerticalAlignment="Center"
+                                               Style="{StaticResource TableFigure}" FontSize="{StaticResource FontSizeInput}"
+                                               FontWeight="SemiBold" Margin="0,0,12,0" />
+
+                                    <Button Grid.Column="3" Content="{StaticResource GlyphEdit}" Style="{StaticResource IconButton}"
+                                            ToolTip="{x:Static t:Texts.EditSaleLine}" Command="{Binding ToggleEditCommand}" />
+                                    <Button Grid.Column="4" Content="{StaticResource GlyphClose}" Style="{StaticResource IconButton}"
+                                            Foreground="{StaticResource DangerBrush}" Margin="4,0,0,0"
+                                            ToolTip="{x:Static t:Texts.RemoveSaleLine}"
+                                            Command="{Binding DataContext.RemoveLineCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}" />
+                                </Grid>
+
+                                <!-- Behind the pencil: the rarely changed details. Opened by
+                                     itself for a custom concept and for a line Cobrar refused. -->
+                                <Grid Margin="0,6,8,6"
+                                      Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="8" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="8" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{x:Static t:Texts.Concept}" Style="{StaticResource DataLabel}" />
+                                        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="{x:Static t:Texts.PriceEuros}" Style="{StaticResource DataLabel}" />
+                                        <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="4">
+                                        <TextBlock Text="{x:Static t:Texts.VatPercent}" Style="{StaticResource DataLabel}" />
+                                        <TextBox Text="{Binding VatText, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <!-- Pick a service or product in its search box ("…" opens the whole list),
-                 then add it. The two boxes share whatever width the buttons leave. -->
-            <Grid Margin="0,0,0,16">
+            <!-- How: payment method and notes side by side -->
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="16" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <el:SearchPickerView Grid.Column="0" DataContext="{Binding ServiceToAddPicker}" Compact="True" />
-                <Button Grid.Column="1" Content="{x:Static t:Texts.AddServiceButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
-                        Command="{Binding AddServiceCommand}" />
-                <el:SearchPickerView Grid.Column="2" DataContext="{Binding ProductToAddPicker}" Compact="True" Margin="16,0,0,0" />
-                <Button Grid.Column="3" Content="{x:Static t:Texts.AddProductButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="8,0,0,0"
-                        Command="{Binding AddProductCommand}" />
-                <Button Grid.Column="4" Content="{x:Static t:Texts.AddCustomLineButton}" Style="{StaticResource SecondaryButton}" Padding="8,0" MinHeight="32" Margin="16,0,0,0"
-                        Command="{Binding AddCustomConceptCommand}" />
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{x:Static t:Texts.PaymentMethod}" Style="{StaticResource DataLabel}" />
+                    <!-- One segment per active method, each as wide as its name; only one chosen -->
+                    <ListBox Style="{StaticResource SegmentList}" ItemsSource="{Binding ActiveMethods}"
+                             SelectedItem="{Binding PaymentMethod}" DisplayMemberPath="Name" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="{x:Static t:Texts.NotesOptional}" Style="{StaticResource DataLabel}" />
+                    <!-- One line to start with; grows as a longer note wraps -->
+                    <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="96"
+                             VerticalScrollBarVisibility="Auto" />
+                </StackPanel>
             </Grid>
-
-            <TextBlock Text="{x:Static t:Texts.PaymentMethod}" Style="{StaticResource DataLabel}" />
-            <!-- One segment per active method, each as wide as its name; only one chosen -->
-            <ListBox Style="{StaticResource SegmentList}" ItemsSource="{Binding ActiveMethods}"
-                     SelectedItem="{Binding PaymentMethod}" DisplayMemberPath="Name" Margin="0,0,0,6" />
-
-            <TextBlock Text="{x:Static t:Texts.NotesOptional}" Style="{StaticResource DataLabel}" />
-            <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
-                     AcceptsReturn="True" TextWrapping="Wrap" Height="50" Margin="0,0,0,12" />
-
-            <!-- Live totals footer (pantalles 3.2) -->
-            <Border Style="{StaticResource HeroCard}" Margin="0,0,0,12">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="{x:Static t:Texts.TaxableBase}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding BaseText}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="{x:Static t:Texts.Vat}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding VatText}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="{x:Static t:Texts.TotalUpper}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding TotalText}" Style="{StaticResource HeroFigure}" />
-                    </StackPanel>
-                </Grid>
-            </Border>
         </StackPanel>
     </el:DialogShell>
 </UserControl>

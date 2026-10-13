@@ -110,8 +110,6 @@ public static class Texts
         nameof(NewCategoryButton),
         nameof(NewCashInButton),
         nameof(NewCashOutButton),
-        nameof(AddServiceButton),
-        nameof(AddProductButton),
         nameof(AddCustomLineButton),
         nameof(MarkClosedButton),
         nameof(NewClientTitle),
@@ -166,7 +164,6 @@ public static class Texts
         nameof(WeeklySchedule),
         nameof(Morning),
         nameof(Afternoon),
-        nameof(Lines),
         nameof(Size),
         nameof(From),
         nameof(To),
@@ -587,6 +584,15 @@ public static class Texts
         nameof(ServiceBrowserTitle),
         nameof(ProductBrowserTitle),
         nameof(CategoryBrowserTitle),
+        nameof(AddToSale),
+        nameof(CatalogBrowserTitle),
+        nameof(CatalogSearchPlaceholder),
+        nameof(AddAsCustomConcept),
+        nameof(NoSaleLinesYet),
+        nameof(IncreaseQuantity),
+        nameof(DecreaseQuantity),
+        nameof(EditSaleLine),
+        nameof(RemoveSaleLine),
     ];
 
     /// <summary>Pendent</summary>
@@ -810,12 +816,6 @@ public static class Texts
     /// <summary>+ Sortida</summary>
     public static string NewCashOutButton => Get(nameof(NewCashOutButton));
 
-    /// <summary>+ Servei</summary>
-    public static string AddServiceButton => Get(nameof(AddServiceButton));
-
-    /// <summary>+ Producte</summary>
-    public static string AddProductButton => Get(nameof(AddProductButton));
-
     /// <summary>+ Concepte lliure</summary>
     public static string AddCustomLineButton => Get(nameof(AddCustomLineButton));
 
@@ -977,9 +977,6 @@ public static class Texts
 
     /// <summary>Tarda</summary>
     public static string Afternoon => Get(nameof(Afternoon));
-
-    /// <summary>Línies</summary>
-    public static string Lines => Get(nameof(Lines));
 
     /// <summary>Mida</summary>
     public static string Size => Get(nameof(Size));
@@ -2241,4 +2238,31 @@ public static class Texts
 
     /// <summary>Triar categoria</summary>
     public static string CategoryBrowserTitle => Get(nameof(CategoryBrowserTitle));
+
+    /// <summary>Afegir a la venda</summary>
+    public static string AddToSale => Get(nameof(AddToSale));
+
+    /// <summary>Triar servei o producte</summary>
+    public static string CatalogBrowserTitle => Get(nameof(CatalogBrowserTitle));
+
+    /// <summary>Busca un servei o producte</summary>
+    public static string CatalogSearchPlaceholder => Get(nameof(CatalogSearchPlaceholder));
+
+    /// <summary>+ Afegir «{0}» com a concepte lliure</summary>
+    public static string AddAsCustomConcept => Get(nameof(AddAsCustomConcept));
+
+    /// <summary>Encara no hi ha res a la venda…</summary>
+    public static string NoSaleLinesYet => Get(nameof(NoSaleLinesYet));
+
+    /// <summary>Una unitat més</summary>
+    public static string IncreaseQuantity => Get(nameof(IncreaseQuantity));
+
+    /// <summary>Una unitat menys</summary>
+    public static string DecreaseQuantity => Get(nameof(DecreaseQuantity));
+
+    /// <summary>Canviar el concepte, el preu o l'IVA</summary>
+    public static string EditSaleLine => Get(nameof(EditSaleLine));
+
+    /// <summary>Treure aquesta línia de la venda</summary>
+    public static string RemoveSaleLine => Get(nameof(RemoveSaleLine));
 }

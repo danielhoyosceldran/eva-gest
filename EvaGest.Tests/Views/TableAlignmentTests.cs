@@ -41,13 +41,18 @@ public class TableAlignmentTests(ApplicationWpf app)
     }
 
     [Fact]
-    public async Task The_sale_line_headers_sit_over_the_columns_they_name()
+    public async Task The_sale_line_amounts_line_up_in_one_column()
     {
-        // The header grid and the row grid are separate Grids, so nothing but this makes
-        // them agree. They used to declare 7 and 11 columns, which left every header a
-        // little left of its box and drifting further across the row.
+        // The rows have no header any more, so the only thing holding the amounts in a
+        // column is each row's own grid. A long concept or a two-digit quantity must not
+        // push its amount out of line with the others.
         await using var testDb = new TestDatabase();
         var vm = await ASaleDialog(testDb);
+        vm.AddCustomConceptCommand.Execute(null);
+        vm.Lines[1].Description = "Tractament de keratina amb massatge capil·lar i assecat";
+        vm.Lines[1].PriceText = "1234,50";
+        vm.Lines[1].QuantityText = "12";
+        vm.Lines[1].IsExpanded = false;
 
         app.Runs(() =>
         {
@@ -56,17 +61,15 @@ public class TableAlignmentTests(ApplicationWpf app)
             view.Arrange(new Rect(0, 0, 760, 1400));
             view.UpdateLayout();
 
-            var headers = (Grid)view.FindName("LineHeaders")!;
             var rows = (ItemsControl)view.FindName("LineRows")!;
-            var firstRow = Descendants<Grid>(rows).First(g => g.ColumnDefinitions.Count > 1);
+            var amounts = Descendants<TextBlock>(rows)
+                .Where(t => vm.Lines.Any(l => l.AmountText == t.Text))
+                .Select(t => t.TransformToAncestor(view).TransformBounds(new Rect(0, 0, t.ActualWidth, t.ActualHeight)))
+                .ToList();
 
-            headers.ColumnDefinitions.Should().HaveSameCount(firstRow.ColumnDefinitions,
-                "the two grids must divide the row the same way");
-
-            for (int i = 0; i < headers.ColumnDefinitions.Count; i++)
-                headers.ColumnDefinitions[i].ActualWidth.Should().BeApproximately(
-                    firstRow.ColumnDefinitions[i].ActualWidth, 0.5,
-                    $"column {i} must be the same width in the header and in the row");
+            amounts.Should().HaveCount(2);
+            amounts[1].Right.Should().BeApproximately(amounts[0].Right, 0.5,
+                "every amount must end at the same right edge");
         });
     }
 

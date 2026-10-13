@@ -277,12 +277,6 @@
   <data name="NewCashOutButton" xml:space="preserve">
     <value>+ Sortida</value>
   </data>
-  <data name="AddServiceButton" xml:space="preserve">
-    <value>+ Servei</value>
-  </data>
-  <data name="AddProductButton" xml:space="preserve">
-    <value>+ Producte</value>
-  </data>
   <data name="AddCustomLineButton" xml:space="preserve">
     <value>+ Concepte lliure</value>
   </data>
@@ -444,9 +438,6 @@
   </data>
   <data name="Afternoon" xml:space="preserve">
     <value>Tarda</value>
-  </data>
-  <data name="Lines" xml:space="preserve">
-    <value>Línies</value>
   </data>
   <data name="Size" xml:space="preserve">
     <value>Mida</value>
@@ -1721,5 +1712,32 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   </data>
   <data name="CategoryBrowserTitle" xml:space="preserve">
     <value>Triar categoria</value>
+  </data>
+  <data name="AddToSale" xml:space="preserve">
+    <value>Afegir a la venda</value>
+  </data>
+  <data name="CatalogBrowserTitle" xml:space="preserve">
+    <value>Triar servei o producte</value>
+  </data>
+  <data name="CatalogSearchPlaceholder" xml:space="preserve">
+    <value>Busca un servei o producte</value>
+  </data>
+  <data name="AddAsCustomConcept" xml:space="preserve">
+    <value>+ Afegir «{0}» com a concepte lliure</value>
+  </data>
+  <data name="NoSaleLinesYet" xml:space="preserve">
+    <value>Encara no hi ha res a la venda. Toca un dels botons o busca un servei o producte per afegir-lo.</value>
+  </data>
+  <data name="IncreaseQuantity" xml:space="preserve">
+    <value>Una unitat més</value>
+  </data>
+  <data name="DecreaseQuantity" xml:space="preserve">
+    <value>Una unitat menys</value>
+  </data>
+  <data name="EditSaleLine" xml:space="preserve">
+    <value>Canviar el concepte, el preu o l'IVA</value>
+  </data>
+  <data name="RemoveSaleLine" xml:space="preserve">
+    <value>Treure aquesta línia de la venda</value>
   </data>
 </root>

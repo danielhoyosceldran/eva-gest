@@ -1,11 +1,17 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using EvaGest.Models;
 using EvaGest.Services;
 
 namespace EvaGest.ViewModels.Elements;
 
 /// <summary>Editable row inside the sale dialog. Its job is to allow modifying any
-/// line, whether it came from the catalogue or not (pantalles 3.2).</summary>
+/// line, whether it came from the catalogue or not (pantalles 3.2).
+///
+/// The row shows only what is changed every day — the concept, the quantity with its
+/// − / + buttons and the amount. Description, price and VAT are behind
+/// <see cref="IsExpanded"/>: they are rarely touched, and a VAT box always in view was
+/// both noise and an easy accidental edit.</summary>
 public partial class SaleLineViewModel : ObservableObject
 {
     // Catalogue origin, kept only for reporting. Never the source of price or VAT.
@@ -25,6 +31,9 @@ public partial class SaleLineViewModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string _quantityText = "1";
     [ObservableProperty] private string _vatText = "0";
+
+    /// <summary>Whether the description, price and VAT boxes are open under the row.</summary>
+    [ObservableProperty] private bool _isExpanded;
 
     /// <summary>Guards the sync between the typed text and the parsed value.</summary>
     private bool _syncingText;
@@ -67,8 +76,37 @@ public partial class SaleLineViewModel : ObservableObject
     partial void OnQuantityChanged(int value)
     {
         Sync(() => QuantityText = value.ToString());
+        DecreaseCommand.NotifyCanExecuteChanged();
         Notify();
     }
+
+    /// <summary>The + button, and adding the same catalogue item again.</summary>
+    [RelayCommand]
+    public void Increase() => Quantity++;
+
+    /// <summary>The − button. Stops at one: taking the line out is the ✕ button's job,
+    /// so a stray click never removes a line.</summary>
+    [RelayCommand(CanExecute = nameof(CanDecrease))]
+    private void Decrease() => Quantity--;
+
+    private bool CanDecrease() => Quantity > 1;
+
+    /// <summary>The pencil button: opens or closes the description, price and VAT boxes.</summary>
+    [RelayCommand]
+    private void ToggleEdit() => IsExpanded = !IsExpanded;
+
+    /// <summary>
+    /// Whether <paramref name="other"/> is the same thing at the same terms: same
+    /// catalogue item, description, price and VAT. Only then does adding it again just
+    /// raise this line's quantity. A line whose price was changed by hand (a discount)
+    /// stays apart, so the discount is not handed to the next unit without asking.
+    /// </summary>
+    public bool IsSameItemAs(SaleLineViewModel other)
+        => (ServiceId is not null || ProductId is not null)
+           && ServiceId == other.ServiceId && ProductId == other.ProductId
+           && Description == other.Description && VatBp == other.VatBp
+           && Money.TryParse(PriceText, out int mine) && Money.TryParse(other.PriceText, out int theirs)
+           && mine == theirs;
 
     partial void OnVatBpChanged(int value)
     {
@@ -134,10 +172,12 @@ public partial class SaleLineViewModel : ObservableObject
 
     /// <summary>A custom concept, starting on the shop's default VAT rate. It used to
     /// start on 0 %, so unless the user retyped the rate the whole amount was booked as
-    /// base with no quota, and the VAT owed on it never reached the export.</summary>
-    public static SaleLineViewModel Free(int defaultVatBp) => new()
+    /// base with no quota, and the VAT owed on it never reached the export.
+    /// <para>It opens expanded, since its description and price have to be typed.</para></summary>
+    public static SaleLineViewModel Free(int defaultVatBp, string description = "") => new()
     {
-        Description = string.Empty,
-        VatBp = defaultVatBp
+        Description = description,
+        VatBp = defaultVatBp,
+        IsExpanded = true
     };
 }

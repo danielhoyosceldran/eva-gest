@@ -78,6 +78,29 @@ public class CatalogService(IDbContextFactory<ShopDbContext> factory) : ICatalog
         return DeleteResult.Deleted;
     }
 
+    public async Task<List<Service>> GetBestSellingServices(int count)
+    {
+        await using var db = await factory.CreateDbContextAsync();
+
+        // Units sold per service, counting only sales that still stand: a voided sale
+        // never happened as far as every other figure in the app is concerned.
+        var unitsByService = await db.SaleLines.AsNoTracking()
+            .Where(l => l.ServiceId != null && l.Sale.Status == SaleStatus.Active)
+            .GroupBy(l => l.ServiceId!.Value)
+            .Select(g => new { ServiceId = g.Key, Units = g.Sum(l => l.Quantity) })
+            .ToDictionaryAsync(x => x.ServiceId, x => x.Units);
+
+        // Ranked in memory: the active catalogue is a few dozen rows at most. Services
+        // never sold rank 0 and keep their alphabetical order, so they fill whatever
+        // places the history leaves empty.
+        var active = await db.Services.AsNoTracking().Where(s => s.Active).ToListAsync();
+        return active
+            .OrderByDescending(s => unitsByService.GetValueOrDefault(s.Id))
+            .ThenBy(s => s.Name)
+            .Take(count)
+            .ToList();
+    }
+
     public async Task<List<Product>> GetProducts(bool onlyActive = false)
     {
         await using var db = await factory.CreateDbContextAsync();

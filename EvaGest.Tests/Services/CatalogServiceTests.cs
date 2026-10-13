@@ -127,4 +127,41 @@ public class CatalogServiceTests
         var remaining = await catalog.GetCategories();
         remaining.Should().ContainSingle(c => c.Id == categoryId && !c.Active);
     }
+
+    [Fact]
+    public async Task The_best_selling_services_rank_by_units_on_active_sales_and_fill_up_by_name()
+    {
+        // The sale dialog's quick buttons. A voided sale never happened, so it must not
+        // push a service up; an inactive service is no longer offered at all.
+        await using var testDb = new TestDatabase();
+        var catalog = CreatesService(testDb);
+        int cut = await catalog.CreateService(Make.Service("Tall", 1500));
+        int beard = await catalog.CreateService(Make.Service("Barba", 800));
+        int kids = await catalog.CreateService(Make.Service("Infantil", 1000));
+        await catalog.CreateService(Make.Service("Afaitat", 1200));
+        int old = await catalog.CreateService(Make.Service("Antic", 900));
+        int methodId = await catalog.CreateMethod("Efectiu");
+
+        await using (var db = testDb.Context())
+        {
+            var day = new DateOnly(2026, 9, 7);
+            db.Sales.Add(Make.Sale(day, methodId, SaleStatus.Active, Line(beard, 800, quantity: 3)));
+            db.Sales.Add(Make.Sale(day, methodId, SaleStatus.Active, Line(kids, 1000, quantity: 1)));
+            db.Sales.Add(Make.Sale(day, methodId, SaleStatus.Voided, Line(cut, 1500, quantity: 9)));
+            db.Sales.Add(Make.Sale(day, methodId, SaleStatus.Active, Line(old, 900, quantity: 20)));
+            await db.SaveChangesAsync();
+        }
+        await catalog.ChangeServiceStatus(old, false);
+
+        var top = await catalog.GetBestSellingServices(4);
+
+        top.Select(s => s.Name).Should().Equal("Barba", "Infantil", "Afaitat", "Tall");
+    }
+
+    private static SaleLine Line(int serviceId, int unitCents, int quantity)
+    {
+        var line = Make.Line(unitCents * quantity, quantity: quantity);
+        line.ServiceId = serviceId;
+        return line;
+    }
 }

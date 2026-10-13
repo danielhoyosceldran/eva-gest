@@ -17,6 +17,21 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   count. Underneath are the totals of what is on screen: income, outgoings, net, and
   the base and VAT of the sales. The table is read-only; "Exportar la taula" saves
   exactly the rows on screen as a CSV.
+- The sale window adds lines in one step. A row of quick buttons offers the six most
+  sold services (by units on active sales; a new shop sees its services by name), one
+  click each. Below it, a single search box covers services and products together;
+  picking a match adds the line at once and empties the box for the next one, so the
+  "+ Servei" and "+ Producte" buttons are gone. Text that is not in the catalogue is
+  offered as a custom concept with that description. Adding the same item again raises
+  its quantity instead of adding a second line, unless that line's price was changed
+  by hand.
+- Each sale line now shows only its concept, its quantity with − / + buttons and its
+  amount. Description, price and VAT open under the line with the pencil button, by
+  themselves for a custom concept, and on any line Cobrar refuses. With no lines yet,
+  the window says how to add one instead of showing empty column headers.
+- The sale window is laid out to fit an everyday sale (four lines) without scrolling on
+  a 1920x1080 screen at 125 %: client and worker share a row, so do payment method and
+  notes, and the totals sit next to Cobrar, always in view however long the sale grows.
 - In the sale window the payment method is chosen with a row of buttons, one per
   method and each as wide as its name, instead of a drop-down list. The chosen one is
   filled in; only one can be chosen at a time.
