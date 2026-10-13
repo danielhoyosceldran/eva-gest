@@ -278,4 +278,17 @@ public class GridHelperTests
     [InlineData(1440, 30)]
     public void IsValidSlotMinutes_accepts_only_fifteen_thirty_or_sixty(int cashIn, int expected)
         => GridHelper.IsValidSlotMinutes(cashIn).Should().Be(expected);
+
+    // A new appointment for today starts at the next quarter hour from now, not 10:00
+    [Theory]
+    [InlineData(14, 41, 0, 14, 45)]
+    [InlineData(14, 45, 0, 14, 45)]
+    [InlineData(14, 45, 20, 15, 0)]
+    [InlineData(9, 0, 0, 9, 0)]
+    [InlineData(10, 59, 0, 11, 0)]
+    [InlineData(23, 50, 0, 23, 45)]   // never wraps round to midnight
+    public void NextQuarterHour_rounds_up_to_a_quarter_and_stays_within_the_day(
+        int hour, int minute, int second, int expectedHour, int expectedMinute)
+        => GridHelper.NextQuarterHour(new DateTime(2026, 10, 13, hour, minute, second))
+            .Should().Be(new TimeOnly(expectedHour, expectedMinute));
 }

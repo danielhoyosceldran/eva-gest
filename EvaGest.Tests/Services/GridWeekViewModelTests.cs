@@ -455,4 +455,47 @@ public class GridWeekViewModelTests
         // One padding hour either side of wednesday's 10:00-14:00, saturday ignored
         (grid.GridStartMinute, grid.GridEndMinute).Should().Be((9 * 60, 15 * 60));
     }
+
+    /// <summary>
+    /// Manual test B4: the ghost was drawn across the whole column, on top of the
+    /// appointment already booked at that time, and neither label could be read. It now
+    /// takes a lane of its own beside it.
+    /// </summary>
+    [Fact]
+    public async Task The_ghost_sits_beside_an_appointment_it_overlaps_instead_of_on_top()
+    {
+        await using var testDb = new TestDatabase();
+        await AddSchedule(testDb, Weekday.Mon, 9, 20);
+        int booked = await AddAppointment(testDb, Monday, 10, 0);
+        var (grid, _) = await Build(testDb, ModeGrid.Selector);
+        await grid.LoadRange(Monday);
+
+        grid.ShowGhost(Monday, new TimeOnly(10, 0), 30);
+
+        var ghost = grid.Days[0].Appointments.Single(c => c.IsGhost);
+        var existing = grid.Days[0].Appointments.Single(c => c.Id == booked);
+        (ghost.LaneCount, existing.LaneCount).Should().Be((2, 2));
+        ghost.LaneIndex.Should().NotBe(existing.LaneIndex);
+
+        // Moved clear of it, each takes the whole width again
+        grid.ShowGhost(Monday, new TimeOnly(11, 0), 30);
+        (ghost.LaneCount, existing.LaneCount).Should().Be((1, 1));
+    }
+
+    [Fact]
+    public async Task The_appointment_being_edited_is_shown_only_as_the_ghost()
+    {
+        await using var testDb = new TestDatabase();
+        await AddSchedule(testDb, Weekday.Mon, 9, 20);
+        int editing = await AddAppointment(testDb, Monday, 10, 0);
+        var (grid, _) = await Build(testDb, ModeGrid.Selector);
+        grid.SelectedAppointmentId = editing;
+        await grid.LoadRange(Monday);
+
+        grid.ShowGhost(Monday, new TimeOnly(10, 0), 30);
+
+        // Not two blocks side by side for the one appointment
+        grid.Days[0].Appointments.Should().NotContain(c => c.Id == editing && !c.IsGhost);
+        grid.Days[0].Appointments.Single(c => c.IsGhost).LaneCount.Should().Be(1);
+    }
 }

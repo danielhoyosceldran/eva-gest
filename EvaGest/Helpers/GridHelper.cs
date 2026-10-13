@@ -37,6 +37,18 @@ public static class GridHelper
             ? new TimeOnly(23, 59, 59)
             : time.AddMinutes(durationMin);
 
+    /// <summary>
+    /// The time a new appointment for today starts at: now, rounded up to the next
+    /// quarter hour (14:41 → 14:45; 14:45 sharp stays). Never past 23:45, so a late
+    /// evening does not wrap round to midnight.
+    /// </summary>
+    public static TimeOnly NextQuarterHour(DateTime now)
+    {
+        int minutes = now.Hour * 60 + now.Minute + (now.Second > 0 || now.Millisecond > 0 ? 1 : 0);
+        int rounded = (minutes + 14) / 15 * 15;
+        return ATime(Math.Min(rounded, MinutesPerDay - 15));
+    }
+
     public static TimeOnly ATime(int minutes)
     {
         int m = Math.Clamp(minutes, 0, MinutesPerDay - 1);

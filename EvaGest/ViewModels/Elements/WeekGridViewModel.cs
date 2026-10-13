@@ -339,20 +339,51 @@ public partial class WeekGridViewModel : ObservableObject
     private int GhostStartMinute { get; set; }
     private int GhostDuration { get; set; } = 30;
 
+    /// <summary>
+    /// Places the ghost in its column as one more appointment: it shares the width with
+    /// the appointments it overlaps, side by side, the way the agenda lays out two
+    /// appointments at the same time. Drawn across the whole column instead, it covered
+    /// the appointment already there and neither label could be read.
+    ///
+    /// The appointment being edited (<see cref="SelectedAppointmentId"/>) is left out of
+    /// the picker while the ghost is shown: the ghost is that same appointment, where it
+    /// will be once saved, and the two would otherwise sit side by side as if they were
+    /// two bookings.
+    /// </summary>
     private void ApplyGhost()
     {
         if (_ghost is not { } ghost || _dateGhost is not { } date) return;
 
-        foreach (var day in Days) day.Appointments.Remove(ghost);
+        foreach (var day in Days)
+        {
+            day.Appointments.Remove(ghost);
+            if (SelectedAppointmentId is int editing)
+                foreach (var original in day.Appointments.Where(b => b.Id == editing).ToList())
+                    day.Appointments.Remove(original);
+        }
 
         var column = Days.FirstOrDefault(d => d.Date == date);
         if (column is null) return;
 
         ghost.Top = GridHelper.Top(GhostStartMinute, GridStartMinute, PixelsPerMinute);
         ghost.Height = GridHelper.Height(GhostDuration, PixelsPerMinute, MinAppointmentHeightPx);
-        ghost.LaneIndex = 0;
-        ghost.LaneCount = 1;
         column.Appointments.Add(ghost);
+
+        // Lanes again for the whole column, ghost included. Cancelled and no-show blocks
+        // keep their slot free and stay in lane 0, as FillAppointments leaves them.
+        var laned = column.Appointments.Where(b => b.IsGhost || (b.Model is not null && !b.IsCancelled)).ToList();
+        var blocks = laned
+            .Select(b => b.IsGhost
+                ? new TimeBlock(GhostStartMinute, GhostStartMinute + GhostDuration)
+                : new TimeBlock(GridHelper.DayMinutes(b.Model!.Time),
+                                GridHelper.DayMinutes(b.Model.Time) + b.Model.DurationMin))
+            .ToList();
+        var lanes = GridHelper.DistributeLanes(blocks);
+        for (int i = 0; i < laned.Count; i++)
+        {
+            laned[i].LaneIndex = lanes[i].Index;
+            laned[i].LaneCount = Math.Max(1, lanes[i].Total);
+        }
     }
 
     /// <summary>Moves the red "now" marker. Called once a minute by the view.</summary>

@@ -131,15 +131,18 @@ public partial class AgendaViewModel : PageViewModelBase
     }
 
     /// <summary>Toolbar button: books on the day being examined if there is one, else on
-    /// today when today is in view, else on the first day shown — and always at that day's
-    /// first opening slot rather than a fixed hour.</summary>
+    /// today when today is in view, else on the first day shown. Today starts at the next
+    /// quarter hour from now; any other day at its first opening slot, never a fixed hour.</summary>
     [RelayCommand]
     private async Task NewAppointment()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var date = SelectedDay
                    ?? (Grid.Days.Any(d => d.Date == today) ? today : RangeStart);
-        await NewAppointmentAt(date, GridHelper.ATime(Grid.FirstSlotOf(date)));
+        // Today starts from now; another day from its opening time
+        await NewAppointmentAt(date, date == today
+            ? GridHelper.NextQuarterHour(DateTime.Now)
+            : GridHelper.ATime(Grid.FirstSlotOf(date)));
     }
 
     private async Task NewAppointmentAt(DateOnly date, TimeOnly time)

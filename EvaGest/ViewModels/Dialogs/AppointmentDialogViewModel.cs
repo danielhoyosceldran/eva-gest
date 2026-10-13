@@ -144,7 +144,11 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         WorkerPicker = new(ActiveWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle);
 
         Date = dateInitial;
-        Time = initialTime ?? new TimeOnly(10, 0);
+        // With no time given (Inici's "Nova cita"), today starts from now rather than a
+        // fixed 10:00 that is usually long past or already booked; another day keeps it.
+        Time = initialTime ?? (dateInitial == DateOnly.FromDateTime(DateTime.Today)
+            ? GridHelper.NextQuarterHour(DateTime.Now)
+            : new TimeOnly(10, 0));
         // DurationMin is a field initialiser, which does not raise OnDurationMinChanged,
         // so the box would open empty without this.
         Sync(() => DurationText = DurationMin.ToString());

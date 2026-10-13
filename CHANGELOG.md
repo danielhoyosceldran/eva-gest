@@ -117,6 +117,12 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - "Fa temps que no vénen" on Informes lists only clients who have not come for at least
   30 days. It used to list every client by last visit, so with few clients it showed
   someone who had come that same day ("0 dies").
+- A new appointment for today starts at the next quarter hour from now (14:41 opens at
+  14:45) instead of always at 10:00, from Inici and from the Agenda's "+ Nova cita";
+  another day still starts at its opening time.
+- In the new-appointment window's grid, "Aquesta cita" sits beside an appointment it
+  overlaps instead of on top of it, so both can be read and the clash is plain. While
+  editing, the appointment is shown only as "Aquesta cita", not twice.
 
 ## 1.3.0 (closes version 1)
 
