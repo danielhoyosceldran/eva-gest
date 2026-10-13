@@ -512,15 +512,42 @@ public class GridWeekViewModelTests
         var (grid, _) = await Build(testDb, ModeGrid.Selector);
         await grid.LoadRange(Monday);
         grid.ShowGhost(Monday, new TimeOnly(10, 0), 30);
-        grid.GhostFitsGrid.Should().BeTrue();
+        grid.RangeFitsGhost.Should().BeTrue();
 
         grid.ShowGhost(Monday, new TimeOnly(23, 30), 90);
-        grid.GhostFitsGrid.Should().BeFalse("the grid ends at {0} minutes", grid.GridEndMinute);
+        grid.RangeFitsGhost.Should().BeFalse("the grid ends at {0} minutes", grid.GridEndMinute);
 
         await grid.LoadRange(grid.RangeStart);
 
-        grid.GhostFitsGrid.Should().BeTrue();
+        grid.RangeFitsGhost.Should().BeTrue();
         grid.GridEndMinute.Should().Be(24 * 60, "a late appointment is clamped to the end of the day");
         grid.Days[0].Appointments.Should().ContainSingle(c => c.IsGhost);
+    }
+
+    /// <summary>
+    /// B-33: typing 13:00 passes through 01:00 on its first digit. The grid widened to
+    /// start at 01:00 to show the ghost there and stayed that way, with the working day
+    /// squeezed at the bottom, once the ghost had moved back into it.
+    /// </summary>
+    [Fact]
+    public async Task The_hours_narrow_again_when_the_ghost_moves_back_into_the_working_day()
+    {
+        await using var testDb = new TestDatabase();
+        await AddSchedule(testDb, Weekday.Mon, 9, 20);
+        var (grid, _) = await Build(testDb, ModeGrid.Selector);
+        grid.ShowGhost(Monday, new TimeOnly(10, 0), 30);
+        await grid.LoadRange(Monday);
+        int workingStart = grid.GridStartMinute;
+
+        grid.ShowGhost(Monday, new TimeOnly(1, 0), 30);
+        await grid.LoadRange(grid.RangeStart);
+        grid.GridStartMinute.Should().Be(60, "precondition: the grid widened to show 01:00");
+
+        grid.ShowGhost(Monday, new TimeOnly(13, 0), 30);
+
+        grid.RangeFitsGhost.Should().BeFalse("the grid is wider than 13:00 calls for");
+        await grid.LoadRange(grid.RangeStart);
+        grid.GridStartMinute.Should().Be(workingStart);
+        grid.RangeFitsGhost.Should().BeTrue();
     }
 }

@@ -405,19 +405,20 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         // visible column must not shift the three-day view under the user's cursor.
         if (!grid.Days.Any(d => d.Date == date)) await grid.LoadRange(date);
         grid.ShowGhost(date, Time, Math.Max(1, DurationMin));
-        if (!grid.GhostFitsGrid) await grid.LoadRange(grid.RangeStart);
+        if (!grid.RangeFitsGhost) await grid.LoadRange(grid.RangeStart);
     }
 
     /// <summary>
-    /// Puts the ghost at the new time or duration and, when that falls outside the hours
-    /// the picker shows (an appointment at 23:30 on a grid that ends at 20:00), reloads it
-    /// so the range takes the ghost in: otherwise it sat below the last row, out of sight.
+    /// Puts the ghost at the new time or duration and, when the hours the picker shows no
+    /// longer suit it, reloads it: wider for an appointment at 23:30 on a grid that ends
+    /// at 20:00, which otherwise sat below the last row out of sight, and back to the
+    /// working day once the time moves inside it again.
     /// </summary>
     private void MoveGhost()
     {
         if (Grid is not { } grid) return;
         grid.ShowGhost(Date, Time, Math.Max(1, DurationMin));
-        if (!grid.GhostFitsGrid)
+        if (!grid.RangeFitsGhost)
             RefreshInBackground(() => grid.LoadRange(grid.RangeStart), "the week picker");
     }
 

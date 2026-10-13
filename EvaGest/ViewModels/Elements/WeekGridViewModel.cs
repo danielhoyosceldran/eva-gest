@@ -262,11 +262,11 @@ public partial class WeekGridViewModel : ObservableObject
                 if (intervalsPerDay.TryGetValue(day, out var intervals)) rangeIntervals.AddRange(intervals);
             }
 
-            var visible = all.Select(c => (c.Time, c.DurationMin));
-            if (_ghost is { } f && _dateGhost is not null)
-                visible = visible.Append((GridHelper.ATime(GhostStartMinute), GhostDuration));
-
-            (GridStartMinute, GridEndMinute) = GridHelper.VisibleRange(rangeIntervals, visible.ToList());
+            // Kept so RangeFitsGhost can tell, without a query, which hours the ghost's
+            // next place calls for.
+            _rangeIntervals = rangeIntervals;
+            _rangeAppointments = all.Select(c => (c.Time, c.DurationMin)).ToList();
+            (GridStartMinute, GridEndMinute) = RangeFor(_dateGhost is not null);
             _firstOpenMinute = rangeIntervals.Count == 0
                 ? GridStartMinute
                 : rangeIntervals.Min(f => GridHelper.DayMinutes(f.start));
@@ -339,15 +339,28 @@ public partial class WeekGridViewModel : ObservableObject
     private int GhostStartMinute { get; set; }
     private int GhostDuration { get; set; } = 30;
 
+    // The opening hours and appointments of the days on screen, from the last load.
+    private List<(TimeOnly start, TimeOnly fi)> _rangeIntervals = [];
+    private List<(TimeOnly time, int durationMin)> _rangeAppointments = [];
+
+    /// <summary>The hours the days on screen call for, with or without the ghost.</summary>
+    private (int start, int end) RangeFor(bool withGhost)
+        => GridHelper.VisibleRange(_rangeIntervals, withGhost
+            ? _rangeAppointments.Append((GridHelper.ATime(GhostStartMinute), GhostDuration)).ToList()
+            : _rangeAppointments);
+
     /// <summary>
-    /// The ghost lies within the hours the grid shows. The range is worked out when the
-    /// days are loaded, so a time typed afterwards (23:30 on a grid that ends at 20:00)
-    /// put the ghost below the last row, out of sight; the dialog reloads when this is
-    /// false, and the reload widens the range to take the ghost in.
+    /// The grid shows the hours the ghost's current place calls for. The range is worked
+    /// out when the days are loaded, so the dialog reloads when this is false:
+    /// <list type="bullet">
+    /// <item>a time typed afterwards (23:30 on a grid that ends at 20:00) put the ghost
+    /// below the last row, out of sight (B-28);</item>
+    /// <item>and once it had widened, the range stayed wide when the ghost moved back.
+    /// Typing 13:00 passes through 01:00 on its first digit, which left the grid starting
+    /// at 01:00 with the working day squeezed at the bottom (B-33).</item>
+    /// </list>
     /// </summary>
-    public bool GhostFitsGrid =>
-        GhostStartMinute >= GridStartMinute
-        && Math.Min(GhostStartMinute + GhostDuration, GridHelper.MinutesPerDay) <= GridEndMinute;
+    public bool RangeFitsGhost => RangeFor(withGhost: true) == (GridStartMinute, GridEndMinute);
 
     /// <summary>
     /// Places the ghost in its column as one more appointment: it shares the width with
