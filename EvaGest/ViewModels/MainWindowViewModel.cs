@@ -220,13 +220,11 @@ public partial class MainWindowViewModel : ObservableObject
 
     /// <summary>
     /// Closing owner mode while a private page is open sends the user back to Home,
-    /// so the figures do not stay on screen after the lock. Home is told too, because
-    /// it hides its money cards when owner mode is closed.
+    /// so the figures do not stay on screen after the lock.
     /// </summary>
     private void OnOwnerModeChanged()
     {
         OnPropertyChanged(nameof(IsOwnerUnlocked));
-        _start.OwnerModeChanged();
 
         if (!_owner.IsUnlocked && _privatePages.Contains(CurrentPage))
             CurrentPage = _start;

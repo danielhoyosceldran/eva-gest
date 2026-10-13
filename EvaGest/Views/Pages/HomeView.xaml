@@ -23,10 +23,9 @@
                 <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" Style="{StaticResource DataLabel}" />
             </Border>
 
-            <!-- Summary cards. One row on a wide screen; on a narrower one the cards wrap
-                 onto more rows rather than clip their figures. The grid only counts
-                 visible cards, so the row still closes up when the four money cards are
-                 hidden (owner mode closed) instead of leaving gaps. -->
+            <!-- Summary cards: counts only. Home never shows money, in owner mode or
+                 not, so the day's figures cannot be seen by accident at the counter;
+                 they are on Till and Reports. On a narrow screen the cards wrap. -->
             <el:WrappingUniformGrid MinItemWidth="{StaticResource StatCardMinWidth}" Margin="0,0,0,8">
                 <Border Style="{StaticResource DataCard}" Margin="0,0,8,8">
                     <StackPanel>
@@ -34,38 +33,10 @@
                         <TextBlock Text="{Binding TodayAppointments}" Style="{StaticResource Figure}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,8">
+                <Border Style="{StaticResource DataCard}" Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock Text="{x:Static t:Texts.SalesToday}" Style="{StaticResource DataLabel}" />
                         <TextBlock Text="{Binding TodaySales}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,8"
-                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static t:Texts.ChargedToday}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding ChargedTodayText}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,8"
-                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static t:Texts.CashInPlural}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding CashInText}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource DataCard}" Margin="0,0,8,8"
-                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static t:Texts.CashOutPlural}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding CashOutText}" Style="{StaticResource Figure}" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource HeroCard}" Margin="0,0,0,8"
-                        Visibility="{Binding ShowMoney, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel>
-                        <TextBlock Text="{x:Static t:Texts.DayBalance}" Style="{StaticResource DataLabel}" />
-                        <TextBlock Text="{Binding BalanceText}" Style="{StaticResource HeroFigure}" />
                     </StackPanel>
                 </Border>
             </el:WrappingUniformGrid>

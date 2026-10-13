@@ -8,6 +8,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 
 ## 2.0.0
 
+- The Home screen never shows money any more, not even in owner mode: it looks the
+  same locked or unlocked, with only the number of appointments and sales today. The
+  day's takings, cash-ins, cash-outs and balance are on Caixa and Informes, so they
+  cannot be seen by accident on the screen left open at the counter.
 - A sale can be charged to nobody. Next to "Client existent" and "Client nou", the
   sale window has a third option, "Sense client", which saves the sale without any
   client; lists and exports show it as "Sense client". It has to be chosen: an empty

@@ -93,7 +93,7 @@ public sealed class AutomaticBackupNoticeTests : IDisposable
         var shell = new MainWindowViewModel(
             new HomeViewModel(appointments, sales, new TillService(factory), new ClientService(factory),
                 new AvailabilityService(factory), new CatalogService(factory), new WorkerService(factory),
-                config, new TestSoundService(), dialogs, owner),
+                config, new TestSoundService(), dialogs),
             new CatalogViewModel(new CatalogService(factory), config, dialogs),
             new ClientsViewModel(new ClientService(factory), new ReportsService(factory), dialogs, owner),
             new WorkersViewModel(new WorkerService(factory), dialogs),

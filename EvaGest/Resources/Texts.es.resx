@@ -526,12 +526,6 @@
   <data name="SalesToday" xml:space="preserve">
     <value>Ventas hoy</value>
   </data>
-  <data name="ChargedToday" xml:space="preserve">
-    <value>Cobrado hoy</value>
-  </data>
-  <data name="DayBalance" xml:space="preserve">
-    <value>Balance del día</value>
-  </data>
   <data name="Balance" xml:space="preserve">
     <value>Balance</value>
   </data>

@@ -414,8 +414,8 @@ Els comptadors que la usuària mira cada dia. Si es descuadren, s'ho creurà.
 |---|---|---|
 | M-01 | Comptador de cites d'avui | Compta totes les del dia, sigui quin sigui l'estat |
 | M-02 | Comptador de vendes d'avui | Només les actives, no les anul·lades |
-| M-03 | Cobrat avui == suma dels totals de les vendes actives | Coincideix |
-| M-04 | Balanç del dia == vendes + entrades − sortides | Coincideix amb `CaixaService.Resum` del mateix dia |
+| M-03 | ~~Cobrat avui == suma dels totals de les vendes actives~~ | Retirada: Inici ja no mostra diners (2.0.0); ara es comprova que cap text d'Inici porti un import |
+| M-04 | ~~Balanç del dia == vendes + entrades − sortides~~ | Retirada amb M-03; el balanç és a Caixa |
 | M-05 | Dia sense activitat | Tot a 0, cap excepció |
 | M-06 | Avís d'aniversari amb un client que fa anys avui | El mostra amb el nom |
 | M-07 | Avís d'aniversari sense cap aniversari | No es mostra |

@@ -317,7 +317,7 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
             var settings = new SettingsService(f);
             var vm = new HomeViewModel(new AppointmentService(f), new SaleService(f, settings), new TillService(f),
                 new ClientService(f), new AvailabilityService(f), new CatalogService(f), new WorkerService(f),
-                settings, new TestSoundService(), new TestDialogService(), new UnlockedOwner());
+                settings, new TestSoundService(), new TestDialogService());
             await vm.Load();
             return new(vm, () => new HomeView());
         },

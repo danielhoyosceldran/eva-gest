@@ -526,12 +526,6 @@
   <data name="SalesToday" xml:space="preserve">
     <value>Vendes avui</value>
   </data>
-  <data name="ChargedToday" xml:space="preserve">
-    <value>Cobrat avui</value>
-  </data>
-  <data name="DayBalance" xml:space="preserve">
-    <value>Balanç del dia</value>
-  </data>
   <data name="Balance" xml:space="preserve">
     <value>Balanç</value>
   </data>

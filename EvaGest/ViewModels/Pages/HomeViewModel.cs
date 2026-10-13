@@ -16,30 +16,19 @@ namespace EvaGest.ViewModels.Pages;
 public partial class HomeViewModel(
     IAppointmentService appointments, ISaleService sales, ITillService till, IClientService clients,
     IAvailabilityService availability, ICatalogService catalog, IWorkerService workers,
-    ISettingsService settings, ISoundService so, IDialogService dialogs,
-    IOwnerAccessService owner) : PageViewModelBase
+    ISettingsService settings, ISoundService so, IDialogService dialogs) : PageViewModelBase
 {
     public override string Title => Texts.NavHome;
 
-    /// <summary>
-    /// The day's money (charged, cash in, cash out, balance) is the owner's to see.
-    /// Home is public, so those four cards only show while owner mode is open; the
-    /// counts of appointments and sales stay for everyone.
-    /// </summary>
-    public bool ShowMoney => owner.IsUnlocked;
-
-    /// <summary>Called by the shell when owner mode opens or closes.</summary>
-    public void OwnerModeChanged() => OnPropertyChanged(nameof(ShowMoney));
+    // Home never shows money, not even in owner mode: it is the screen left open
+    // at the counter, so the day's figures could be read over the owner's shoulder
+    // by accident. They live on the private Till and Reports pages only.
 
     [ObservableProperty] private string _dateText = string.Empty;
     [ObservableProperty] private string? _birthdayNoticeText;
 
     [ObservableProperty] private int _todayAppointments;
     [ObservableProperty] private int _todaySales;
-    [ObservableProperty] private string _chargedTodayText = "—";
-    [ObservableProperty] private string _cashInText = "—";
-    [ObservableProperty] private string _cashOutText = "—";
-    [ObservableProperty] private string _balanceText = "—";
 
     public ObservableCollection<Appointment> DayAppointments { get; } = [];
 
@@ -61,15 +50,7 @@ public partial class HomeViewModel(
             foreach (var c in await appointments.GetByDay(today)) DayAppointments.Add(c);
             TodayAppointments = DayAppointments.Count;
 
-            var summary = await till.Summary(today, today);
             TodaySales = (await sales.Search(new SalesFilter(today, today, Status: SaleStatus.Active))).Count;
-            // No (int) cast on the way in: TillSummary sums as long precisely so a
-            // period total never depends on turnover staying below int.MaxValue, and
-            // Money.Format takes long. Casting here put that clamp straight back.
-            ChargedTodayText = Money.Format(summary.SalesCents);
-            CashInText = Money.Format(summary.CashInCents);
-            CashOutText = Money.Format(summary.CashOutCents);
-            BalanceText = Money.Format(summary.BalanceCents);
         }
         finally { Loading = false; }
     }

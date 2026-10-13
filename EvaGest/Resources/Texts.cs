@@ -193,8 +193,6 @@ public static class Texts
         nameof(TodayAppointments),
         nameof(AppointmentsToday),
         nameof(SalesToday),
-        nameof(ChargedToday),
-        nameof(DayBalance),
         nameof(Balance),
         nameof(Movements),
         nameof(PeriodVatBreakdown),
@@ -1074,12 +1072,6 @@ public static class Texts
 
     /// <summary>Vendes avui</summary>
     public static string SalesToday => Get(nameof(SalesToday));
-
-    /// <summary>Cobrat avui</summary>
-    public static string ChargedToday => Get(nameof(ChargedToday));
-
-    /// <summary>Balanç del dia</summary>
-    public static string DayBalance => Get(nameof(DayBalance));
 
     /// <summary>Balanç</summary>
     public static string Balance => Get(nameof(Balance));

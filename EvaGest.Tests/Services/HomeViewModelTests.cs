@@ -12,14 +12,14 @@ public class StartViewModelTests
 {
     private static readonly DateOnly Today = DateOnly.FromDateTime(DateTime.Today);
 
-    private static HomeViewModel CreatesViewModel(TestDatabase testDb, IOwnerAccessService? owner = null)
+    private static HomeViewModel CreatesViewModel(TestDatabase testDb)
     {
         var factory = new TestFactory(testDb.Options);
         return new HomeViewModel(
             new AppointmentService(factory), new SaleService(factory, new SettingsService(factory)), new TillService(factory),
             new ClientService(factory), new AvailabilityService(factory), new CatalogService(factory),
             new WorkerService(factory), new SettingsService(factory),
-            new TestSoundService(), new TestDialogService(), owner ?? TestOwner.New());
+            new TestSoundService(), new TestDialogService());
     }
 
     private static async Task<int> AddsMethod(TestDatabase testDb)
@@ -66,29 +66,6 @@ public class StartViewModelTests
         vm.TodaySales.Should().Be(1);
     }
 
-    [Fact] // M-03 / M-04
-    public async Task Charged_today_and_the_balance_match_TillService()
-    {
-        await using var testDb = new TestDatabase();
-        int methodId = await AddsMethod(testDb);
-        await using (var db = testDb.Context())
-        {
-            db.Sales.Add(Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(1500, 2100)));
-            db.CashMovements.Add(new CashMovement
-            { Date = Today, Type = MovementType.In, AmountCents = 500, PaymentMethodId = methodId, Concept = "E" });
-            await db.SaveChangesAsync();
-        }
-
-        var till = new TillService(new TestFactory(testDb.Options));
-        var summary = await till.Summary(Today, Today);
-
-        var vm = CreatesViewModel(testDb);
-        await vm.Load();
-
-        vm.ChargedTodayText.Should().Be(Money.Format((int)summary.SalesCents));
-        vm.BalanceText.Should().Be(Money.Format((int)summary.BalanceCents));
-    }
-
     [Fact] // M-05
     public async Task A_day_without_activity_is_all_zeros_and_no_exception()
     {
@@ -99,7 +76,6 @@ public class StartViewModelTests
 
         vm.TodayAppointments.Should().Be(0);
         vm.TodaySales.Should().Be(0);
-        vm.ChargedTodayText.Should().Be(Money.Format(0));
     }
 
     [Fact] // M-06
@@ -164,20 +140,25 @@ public class StartViewModelTests
     }
 
     [Fact]
-    public async Task The_days_money_shows_only_while_owner_mode_is_open()
+    public async Task Home_shows_no_money_even_with_sales_today()
     {
+        // Home is the screen left open at the counter, so it never shows the day's
+        // figures, not even in owner mode: no public text on it may carry an amount.
         await using var testDb = new TestDatabase();
-        var owner = await TestOwner.Unlocked();
-        var vm = CreatesViewModel(testDb, owner);
-        var raised = new List<string?>();
-        vm.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
+        int methodId = await AddsMethod(testDb);
+        await using (var db = testDb.Context())
+        {
+            db.Sales.Add(Make.Sale(Today, methodId, SaleStatus.Active, Make.Line(1500, 2100)));
+            await db.SaveChangesAsync();
+        }
 
-        vm.ShowMoney.Should().BeTrue();
+        var vm = CreatesViewModel(testDb);
+        await vm.Load();
 
-        owner.Lock();
-        vm.OwnerModeChanged();
-
-        vm.ShowMoney.Should().BeFalse();
-        raised.Should().Contain(nameof(HomeViewModel.ShowMoney));
+        var texts = typeof(HomeViewModel).GetProperties()
+            .Where(p => p.PropertyType == typeof(string) && p.GetIndexParameters().Length == 0)
+            .Select(p => (string?)p.GetValue(vm));
+        texts.Should().NotContain(t => t != null && t.Contains(Money.Format(1500)));
+        vm.TodaySales.Should().Be(1);
     }
 }

@@ -34,7 +34,7 @@ public class FluxAppointmentSaleTests
         var start = new HomeViewModel(
             appointments, sales, new TillService(factory), new ClientService(factory),
             new AvailabilityService(factory), new CatalogService(factory),
-            new WorkerService(factory), config, new TestSoundService(), dialogs, TestOwner.New());
+            new WorkerService(factory), config, new TestSoundService(), dialogs);
 
         return new Assembly(start, dialogs, appointments, sales);
     }
