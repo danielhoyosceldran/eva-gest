@@ -52,7 +52,15 @@ dotnet build (Join-Path $repo 'EvaGest\EvaGest.csproj') -c Debug --nologo -v q
 if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
 
 # A clean folder each time: a session never starts on the previous session's leftovers.
-if (Test-Path $testFolder) { Remove-Item $testFolder -Recurse -Force }
+if (Test-Path $testFolder) {
+    Remove-Item $testFolder -Recurse -Force
+    # Windows can finish deleting a folder a moment after Remove-Item returns (an open
+    # Explorer window or the indexer still holds it); creating it again too soon fails
+    # with "already exists", and the folder then vanishes. Wait until it is really gone.
+    $deadline = (Get-Date).AddSeconds(10)
+    while ((Test-Path $testFolder) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 200 }
+    if (Test-Path $testFolder) { throw "Could not delete $testFolder. Close any window showing it and run again." }
+}
 New-Item -ItemType Directory -Path $testFolder | Out-Null
 
 switch ($Mode) {
