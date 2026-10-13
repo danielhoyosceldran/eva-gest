@@ -66,7 +66,7 @@
     <sys:Double x:Key="SaleLinesMinHeight">130</sys:Double>
 
     <!-- Table columns that must never collapse to nothing -->
-    <sys:Double x:Key="TextColumnMinWidth">80</sys:Double>
+    <sys:Double x:Key="TextColumnMinWidth">90</sys:Double>
     <!-- dd/MM/yyyy plus the cell padding -->
     <DataGridLength x:Key="DateColumnWidth">104</DataGridLength>
 

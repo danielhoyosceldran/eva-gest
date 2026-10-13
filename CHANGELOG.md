@@ -128,6 +128,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   Spanish "Mañana" no longer spills over the time beside it in the weekly schedules.
 - In the Agenda's day panel, a long client, service or worker name shortens with "…"
   and shows in full on hover, instead of running off the edge of the panel.
+- On a narrow window the toolbars of Agenda and Caixa no longer lose their buttons off
+  the right edge: "+ Nova cita", and "+ Entrada" / "+ Sortida", move to a second row
+  when they do not fit beside the rest. On a 1280x800 laptop Caixa cut "+ Sortida",
+  and at the window's minimum width the Agenda cut "+ Nova cita".
 
 ## 1.3.0 (closes version 1)
 

@@ -26,47 +26,51 @@
         <!-- Range header. ‹ › move one day in the three-day view (one week in the week
              view); « » jump three days and only exist in the three-day view.
              The range text sits between the arrows; when the buttons leave it no room
-             (a laptop screen) ToolbarTitle moves it to the second row instead. -->
-        <Grid Grid.Row="1" Margin="0,0,0,16" h:ToolbarTitle.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="210" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="«" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
-                    ToolTip="{x:Static t:Texts.ThreeDaysBack}" Command="{Binding Grid.JumpBackCommand}"
-                    Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
-            <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
-                    ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
-            <TextBlock Grid.Column="2"
-                       Text="{Binding Grid.RangeText, NotifyOnTargetUpdated=True}" Style="{StaticResource Subtitle}"
-                       Margin="16,0" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            <Button Grid.Column="3" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
-                    ToolTip="{Binding Grid.StepForwardTooltip}" Command="{Binding Grid.StepForwardCommand}" />
-            <Button Grid.Column="4" Content="»" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,12,0"
-                    ToolTip="{x:Static t:Texts.ThreeDaysForward}" Command="{Binding Grid.JumpForwardCommand}"
-                    Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
-            <Button Grid.Column="5" Content="{x:Static t:Texts.Today}" Style="{StaticResource SecondaryButton}"
-                    Command="{Binding Grid.GoToTodayCommand}" Margin="0,0,12,0" />
-            <Button Grid.Column="6" Content="{Binding Grid.ToggleViewText}" Style="{StaticResource SecondaryButton}"
-                    Command="{Binding Grid.ToggleViewCommand}" Margin="0,0,12,0" />
-            <!-- "All" and "Not defined" sit alongside the real workers in the same list;
-                 an empty box shows everyone too. -->
-            <el:SearchPickerView Grid.Column="7" VerticalAlignment="Center" Margin="0,0,12,0" Compact="True"
-                                 DataContext="{Binding WorkerFilterPicker}" ToolTip="{x:Static t:Texts.Worker}" />
-            <Button Grid.Column="8" Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
-                    Command="{Binding NewAppointmentCommand}" />
-        </Grid>
+             (a laptop screen) ToolbarTitle moves it to the second row instead.
+             FoldingToolbar keeps the actions on the right and, when the window is too
+             narrow for both parts, moves them to a row of their own instead of cutting
+             "+ Nova cita" off the edge. -->
+        <el:FoldingToolbar Grid.Row="1" Margin="0,0,0,16">
+            <Grid h:ToolbarTitle.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="«" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                        ToolTip="{x:Static t:Texts.ThreeDaysBack}" Command="{Binding Grid.JumpBackCommand}"
+                        Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Button Grid.Column="1" Content="‹" Style="{StaticResource SecondaryButton}" MinWidth="44"
+                        ToolTip="{Binding Grid.StepBackTooltip}" Command="{Binding Grid.StepBackCommand}" />
+                <TextBlock Grid.Column="2"
+                           Text="{Binding Grid.RangeText, NotifyOnTargetUpdated=True}" Style="{StaticResource Subtitle}"
+                           Margin="16,0" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <Button Grid.Column="3" Content="›" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,8,0"
+                        ToolTip="{Binding Grid.StepForwardTooltip}" Command="{Binding Grid.StepForwardCommand}" />
+                <Button Grid.Column="4" Content="»" Style="{StaticResource SecondaryButton}" MinWidth="44" Margin="0,0,12,0"
+                        ToolTip="{x:Static t:Texts.ThreeDaysForward}" Command="{Binding Grid.JumpForwardCommand}"
+                        Visibility="{Binding Grid.IsThreeDayView, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </Grid>
+
+            <StackPanel Orientation="Horizontal">
+                <Button Content="{x:Static t:Texts.Today}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding Grid.GoToTodayCommand}" Margin="0,0,12,0" />
+                <Button Content="{Binding Grid.ToggleViewText}" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding Grid.ToggleViewCommand}" Margin="0,0,12,0" />
+                <!-- "All" and "Not defined" sit alongside the real workers in the same list;
+                     an empty box shows everyone too. -->
+                <el:SearchPickerView Width="210" VerticalAlignment="Center" Margin="0,0,12,0" Compact="True"
+                                     DataContext="{Binding WorkerFilterPicker}" ToolTip="{x:Static t:Texts.Worker}" />
+                <Button Content="{x:Static t:Texts.NewAppointmentButton}" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding NewAppointmentCommand}" />
+            </StackPanel>
+        </el:FoldingToolbar>
 
         <!-- The week itself is the shared time grid: full size here, embedded in the
              cita dialog as the hour picker. Click an empty slot to book there, click an

@@ -383,6 +383,8 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         },
         ["Agenda"] = async s => new(await Agenda(s, openDay: false), () => new AgendaView()),
         ["Agenda, week and day panel"] = async s => new(await Agenda(s, openDay: true), () => new AgendaView()),
+        // The app's default view, whose toolbar is the widest: « and » show only here
+        ["Agenda, three days"] = async s => new(await Agenda(s, openDay: false, threeDays: true), () => new AgendaView()),
         ["Clients"] = async s =>
         {
             var vm = new ClientsViewModel(new ClientService(s.Factory), new ReportsService(s.Factory),
@@ -436,9 +438,10 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         },
     };
 
-    /// <summary>The agenda in the week view (its widest), optionally with today's
-    /// detail panel open beside it — the narrowest the week grid ever gets.</summary>
-    private static async Task<AgendaViewModel> Agenda(WorstCaseShop s, bool openDay)
+    /// <summary>The agenda in the week view (its widest grid), optionally with today's
+    /// detail panel open beside it — the narrowest the week grid ever gets — or in the
+    /// three-day view, whose toolbar is the widest.</summary>
+    private static async Task<AgendaViewModel> Agenda(WorstCaseShop s, bool openDay, bool threeDays = false)
     {
         var f = s.Factory;
         var settings = new SettingsService(f);
@@ -446,7 +449,7 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
             new ClientService(f), new CatalogService(f), new WorkerService(f), settings, new TestSoundService(),
             new TestDialogService());
         await vm.Load();
-        if (vm.Grid.IsThreeDayView) await vm.Grid.ToggleViewCommand.ExecuteAsync(null);
+        if (vm.Grid.IsThreeDayView != threeDays) await vm.Grid.ToggleViewCommand.ExecuteAsync(null);
         if (openDay)
         {
             vm.Grid.HeaderClickCommand.Execute(vm.Grid.Days.First(d => d.Date == WorstCaseShop.Today));
@@ -467,7 +470,7 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         app.Runs(() =>
         {
             using var __ = new Language(language);
-            foreach (var screen in Screens)
+            foreach (var screen in PageScreens())
             {
                 // The maximised main window, minus the navigation column
                 var size = new Size(screen.width - (double)Application.Current.FindResource("NavWidth"),
@@ -483,6 +486,18 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         problems.Should().BeEmpty("the {0} page must fit every screen in {1}:{2}",
             page, language, Lines(problems));
     }
+
+    /// <summary>
+    /// The screens plus "M": the main window restored and shrunk to its minimum size
+    /// (MainMinWidth x MainMinHeight, frame included), the narrowest a page ever gets.
+    /// Written like a screen so the page loop takes off the navigation column and the
+    /// caption the same way. Manual test B found the Agenda and Caixa toolbars cut off
+    /// at that size, which no screen here was narrow enough to show. Call on the UI thread.
+    /// </summary>
+    private static IEnumerable<(string name, double width, double height)> PageScreens()
+        => Screens.Append(("M",
+            (double)Application.Current.FindResource("MainMinWidth") - DialogFrameWidth,
+            (double)Application.Current.FindResource("MainMinHeight") - DialogFrameHeight + MainCaption));
 
     /// <summary>
     /// The page is first shown empty (a new install) and the first worker arrives while it
@@ -722,6 +737,22 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                 if (bounds.Right > root.ActualWidth + Tolerance || bounds.Bottom > root.ActualHeight + Tolerance)
                     found.Add($"{Describe(element)} pushed off screen to {bounds.Right:0},{bounds.Bottom:0} " +
                               $"(room {root.ActualWidth:0}x{root.ActualHeight:0})");
+            }
+            // A scrolling page only scrolls up and down: what runs off its right edge is
+            // cut off for good (the Caixa toolbar's + Sortida at the window's minimum width).
+            // Text built to shorten itself with "…" is left to the trimming check below.
+            // Only content counts: a scroll bar sits beside the viewport by design, and a
+            // table scrolls sideways on its own.
+            else if (element is not TextBlock { TextTrimming: not TextTrimming.None }
+                     && !Ancestors(element, root).Any(a => a is DataGrid)
+                     && Ancestors(element, root).FirstOrDefault(a => a is ScrollContentPresenter or ScrollBar)
+                         is ScrollContentPresenter { ScrollOwner: { HorizontalScrollBarVisibility: ScrollBarVisibility.Disabled } page })
+            {
+                var bounds = element.TransformToAncestor(page)
+                    .TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+                if (bounds.Right > page.ViewportWidth + Tolerance)
+                    found.Add($"{Describe(element)} cut off on the right at {bounds.Right:0} " +
+                              $"(room {page.ViewportWidth:0}, and it cannot scroll sideways)");
             }
 
             if (element is TextBlock text && IsTrimmed(text) && !HasToolTip(text, root))
