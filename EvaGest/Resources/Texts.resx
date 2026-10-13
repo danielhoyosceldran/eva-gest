@@ -1785,4 +1785,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="NoSalesYet" xml:space="preserve">
     <value>Encara no hi ha cap venda. Quan cobris la primera, amb «+ Nova venda» o en marcar una cita com a feta, sortirà aquí.</value>
   </data>
+  <data name="OptionBrowserNothingYet" xml:space="preserve">
+    <value>Aquesta llista encara és buida. Primer cal donar-ne d'alta algun a Treballadores o a Catàleg.</value>
+  </data>
+  <data name="CatalogBrowserNothingYet" xml:space="preserve">
+    <value>Encara no hi ha cap servei ni producte. Els pots crear a Catàleg; mentrestant, tanca aquesta finestra i afegeix la línia amb «+ Concepte lliure».</value>
+  </data>
 </root>

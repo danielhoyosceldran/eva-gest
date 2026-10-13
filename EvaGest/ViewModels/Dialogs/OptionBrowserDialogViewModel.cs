@@ -18,6 +18,7 @@ public partial class OptionBrowserDialogViewModel : DialogViewModelBase
 {
     private readonly IReadOnlyList<PickerOption> _options;
     private readonly string _title;
+    private readonly string _nothingYetText;
 
     [ObservableProperty] private string _searchText;
 
@@ -27,8 +28,15 @@ public partial class OptionBrowserDialogViewModel : DialogViewModelBase
 
     public ObservableCollection<PickerOption> Results { get; } = [];
 
-    /// <summary>Nothing matches the search: the view shows a hint instead of an empty list.</summary>
+    /// <summary>Nothing to list: the view shows <see cref="EmptyText"/> instead of an empty list.</summary>
     public bool IsEmpty => Results.Count == 0;
+
+    /// <summary>
+    /// Why the list is empty, which decides what to suggest: a list with no options at
+    /// all (nothing created yet) has nothing to do with the search, so it must not say
+    /// "try another word" — it says where the options are created.
+    /// </summary>
+    public string EmptyText => _options.Count == 0 ? _nothingYetText : Texts.OptionBrowserEmpty;
 
     public override string Title => _title;
 
@@ -36,10 +44,14 @@ public partial class OptionBrowserDialogViewModel : DialogViewModelBase
     /// <param name="options">The options to list, in the box's own order.</param>
     /// <param name="initialSearch">What was already typed in the box, so the list opens
     /// where the user was looking.</param>
-    public OptionBrowserDialogViewModel(string title, IEnumerable<PickerOption> options, string initialSearch = "")
+    /// <param name="nothingYetText">What to say when there are no options at all; by
+    /// default, that the list is still empty and where its items are created.</param>
+    public OptionBrowserDialogViewModel(string title, IEnumerable<PickerOption> options, string initialSearch = "",
+        string? nothingYetText = null)
     {
         _title = title;
         _options = options.ToList();
+        _nothingYetText = nothingYetText ?? Texts.OptionBrowserNothingYet;
         _searchText = initialSearch;
         Refresh();
     }

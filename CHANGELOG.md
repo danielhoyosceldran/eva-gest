@@ -102,6 +102,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - Vendes with no sale at all says so and offers "+ Nova venda", instead of "Cap venda
   coincideix amb aquests filtres" and "Netejar filtres" when no filter was set. That
   message is kept for a table emptied by the filters.
+- "Veure la llista" on an empty list no longer says "Res no coincideix amb la cerca"
+  when nothing was searched. In the sale window it says the catalogue has no services
+  or products yet, where to create them, and that "+ Concepte lliure" works meanwhile;
+  other lists say they are still empty.
 
 ## 1.3.0 (closes version 1)
 

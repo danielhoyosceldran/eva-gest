@@ -76,6 +76,10 @@ public abstract partial class SearchPickerViewModel : ObservableObject
     /// None by default.</summary>
     protected virtual IEnumerable<PickerOption> Extras(string query) => [];
 
+    /// <summary>What "Veure la llista" says when there are no options at all; null for
+    /// the browser's own general wording.</summary>
+    protected virtual string? NothingYetText => null;
+
     /// <summary>
     /// Shows <paramref name="value"/> as the pick without reporting it back: how the owner
     /// mirrors its own property into the box. Null clears a pick, but leaves alone text
@@ -220,7 +224,8 @@ public abstract partial class SearchPickerViewModel : ObservableObject
         if (_dialogs is null) return;
         IsDropdownOpen = false;
 
-        var browser = new OptionBrowserDialogViewModel(_browseTitle, Options(), Current is null ? Text : string.Empty);
+        var browser = new OptionBrowserDialogViewModel(_browseTitle, Options(), Current is null ? Text : string.Empty,
+            NothingYetText);
         if (await _dialogs.ShowDialog(browser) && browser.SelectedOption is { } chosen)
             Pick(chosen);
     }

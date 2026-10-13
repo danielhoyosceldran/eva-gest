@@ -59,6 +59,10 @@ public sealed class CatalogAdderViewModel : SearchPickerViewModel
         yield return new PickerOption(new FreeConcept(text), string.Format(Texts.AddAsCustomConcept, text));
     }
 
+    /// <summary>An empty catalogue still leaves the custom concept: say so, and where
+    /// services and products are created.</summary>
+    protected override string? NothingYetText => Texts.CatalogBrowserNothingYet;
+
     /// <summary>A pick is added straight away and the box emptied for the next one.
     /// Emptying it reports null back here, which is ignored.</summary>
     protected override void Report(object? value)

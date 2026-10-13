@@ -1,7 +1,11 @@
 using AwesomeAssertions;
+using EvaGest.Helpers;
+using EvaGest.Models;
 using EvaGest.Resources;
 using EvaGest.Services;
 using EvaGest.Tests.Infra;
+using EvaGest.ViewModels.Dialogs;
+using EvaGest.ViewModels.Elements;
 using EvaGest.ViewModels.Pages;
 using Xunit;
 
@@ -66,5 +70,37 @@ public class EmptyStateTests
         await vm.Load();
 
         vm.EmptyText.Should().Be(string.Format(Texts.NoClientMatchesSearch, "Pere"));
+    }
+
+    [Fact]
+    public async Task The_list_of_an_empty_catalogue_says_where_to_create_services_not_to_search_again()
+    {
+        var dialogs = new RecordingDialogService();
+        var adder = new CatalogAdderViewModel(Array.Empty<Service>(), Array.Empty<Product>(), _ => { }, dialogs);
+
+        await adder.BrowseCommand.ExecuteAsync(null);
+
+        var browser = dialogs.DialogsShown.OfType<OptionBrowserDialogViewModel>().Single();
+        browser.IsEmpty.Should().BeTrue();
+        browser.EmptyText.Should().Be(Texts.CatalogBrowserNothingYet,
+            "nothing was typed, so \"nothing matches the search\" would send the user hunting for a typo");
+    }
+
+    [Fact]
+    public void A_search_that_matches_no_option_still_says_so()
+    {
+        var browser = new OptionBrowserDialogViewModel("Triar treballadora",
+            [new PickerOption(new object(), "Laia")], initialSearch: "Pere");
+
+        browser.IsEmpty.Should().BeTrue();
+        browser.EmptyText.Should().Be(Texts.OptionBrowserEmpty);
+    }
+
+    [Fact]
+    public void A_list_with_no_options_at_all_says_it_is_still_empty()
+    {
+        var browser = new OptionBrowserDialogViewModel("Triar treballadora", []);
+
+        browser.EmptyText.Should().Be(Texts.OptionBrowserNothingYet);
     }
 }

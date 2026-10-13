@@ -35,7 +35,7 @@
                              MouseDoubleClick="OnListDoubleClick" />
 
                     <!-- Empty state: say what to do instead of showing a blank box -->
-                    <TextBlock Text="{x:Static t:Texts.OptionBrowserEmpty}" TextWrapping="Wrap"
+                    <TextBlock Text="{Binding EmptyText}" TextWrapping="Wrap"
                                Foreground="{StaticResource InkMutedBrush}" Margin="20"
                                HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
                                Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />

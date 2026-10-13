@@ -608,6 +608,8 @@ public static class Texts
         nameof(NoActiveClients),
         nameof(NoClientMatchesSearch),
         nameof(NoSalesYet),
+        nameof(OptionBrowserNothingYet),
+        nameof(CatalogBrowserNothingYet),
     ];
 
     /// <summary>Pendent</summary>
@@ -2326,4 +2328,10 @@ public static class Texts
 
     /// <summary>Encara no hi ha cap venda. Quan cobris la primera, amb «+ Nova venda» o en marcar una cita com a feta, sortirà aquí.</summary>
     public static string NoSalesYet => Get(nameof(NoSalesYet));
+
+    /// <summary>Aquesta llista encara és buida. Primer cal donar-ne d'alta algun a Treballadores o a Catàleg.</summary>
+    public static string OptionBrowserNothingYet => Get(nameof(OptionBrowserNothingYet));
+
+    /// <summary>Encara no hi ha cap servei ni producte. Els pots crear a Catàleg; mentrestant, tanca aquesta finestra i afegeix la línia amb «+ Concepte lliure».</summary>
+    public static string CatalogBrowserNothingYet => Get(nameof(CatalogBrowserNothingYet));
 }

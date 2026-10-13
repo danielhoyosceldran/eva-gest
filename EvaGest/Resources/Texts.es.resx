@@ -1785,4 +1785,10 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="NoSalesYet" xml:space="preserve">
     <value>Todavía no hay ninguna venta. Cuando cobres la primera, con «+ Nueva venta» o al marcar una cita como hecha, saldrá aquí.</value>
   </data>
+  <data name="OptionBrowserNothingYet" xml:space="preserve">
+    <value>Esta lista todavía está vacía. Primero hay que dar alguno de alta en Trabajadoras o en Catálogo.</value>
+  </data>
+  <data name="CatalogBrowserNothingYet" xml:space="preserve">
+    <value>Todavía no hay ningún servicio ni producto. Puedes crearlos en Catálogo; mientras tanto, cierra esta ventana y añade la línea con «+ Concepto libre».</value>
+  </data>
 </root>
