@@ -220,7 +220,7 @@ public partial class AgendaViewModel : PageViewModelBase
             string.Format(Texts.DeleteAppointmentOfMessage, appointment.DisplayName,
                           appointment.Date.ToString("dd/MM/yyyy"),
                           appointment.Time.ToString("HH\\:mm")),
-            Texts.Delete);
+            Texts.Delete, destructive: true);
 
         if (!confirmed) return;
 

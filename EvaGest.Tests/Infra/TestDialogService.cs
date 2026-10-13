@@ -38,9 +38,13 @@ public class TestDialogService : IDialogService
         return ResultDialog;
     }
 
-    public Task<bool> Confirm(string title, string message, string textConfirm, string? textCancel = null)
+    /// <summary>The titles of the questions asked as destructive, in order.</summary>
+    public List<string> DestructiveConfirmations { get; } = [];
+
+    public Task<bool> Confirm(string title, string message, string textConfirm, string? textCancel = null, bool destructive = false)
     {
         ConfirmacionsRequested.Add(title);
+        if (destructive) DestructiveConfirmations.Add(title);
         return Task.FromResult(ResultConfirm);
     }
 

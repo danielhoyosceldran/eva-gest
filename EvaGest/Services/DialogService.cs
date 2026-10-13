@@ -12,7 +12,7 @@ public class DialogService(IOwnerAccessService owner) : IDialogService
     {
         // Before the owner has created a PIN there is nothing to type; the plain question
         // still stands between the click and the delete.
-        if (!await owner.HasPin()) return await Confirm(title, message, textConfirm);
+        if (!await owner.HasPin()) return await Confirm(title, message, textConfirm, destructive: true);
 
         return await ShowDialog(new OwnerPinConfirmDialogViewModel(owner, title, message, textConfirm));
     }
@@ -31,8 +31,8 @@ public class DialogService(IOwnerAccessService owner) : IDialogService
     /// <summary>The app's own question window, with the caller's verbs on its buttons. A
     /// MessageBox showed "Yes" / "No" in the language of Windows and dropped them.</summary>
     public Task<bool> Confirm(string title, string message,
-                              string textConfirm, string? textCancel = null)
-        => ShowDialog(new ConfirmDialogViewModel(title, message, textConfirm, textCancel));
+                              string textConfirm, string? textCancel = null, bool destructive = false)
+        => ShowDialog(new ConfirmDialogViewModel(title, message, textConfirm, textCancel, destructive));
 
     public Task Inform(string title, string message)
     {

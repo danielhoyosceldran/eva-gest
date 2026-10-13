@@ -8,8 +8,11 @@ public interface IDialogService
     Task<bool> ShowDialog<TViewModel>(TViewModel viewModel) where TViewModel : class;
 
     /// <summary>Yes/no confirmation. Used for every destructive action (RF-21).</summary>
+    /// <param name="destructive">The answer that goes ahead loses something (deletes,
+    /// discards, overwrites): it is shown in red and the focus starts on the way back, so
+    /// Enter does not take it (B-34).</param>
     Task<bool> Confirm(string title, string message,
-                         string textConfirm, string? textCancel = null);
+                         string textConfirm, string? textCancel = null, bool destructive = false);
 
     /// <summary>
     /// The confirmation for every delete and void (F-05): the same question as

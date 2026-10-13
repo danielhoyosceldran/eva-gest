@@ -7,10 +7,17 @@
     <el:DialogShell Width="440" Margin="8">
         <el:DialogShell.Actions>
             <WrapPanel HorizontalAlignment="Right">
-                <Button Content="{Binding CancelText}" Style="{StaticResource SecondaryButton}"
+                <Button x:Name="CancelButton" Content="{Binding CancelText}" Style="{StaticResource SecondaryButton}"
                         Command="{Binding CancelCommand}" IsCancel="True" />
+                <!-- One of the two, the same verb: blue when going ahead is the expected
+                     answer, red when it loses something (a delete, a discard, a restore),
+                     which is not the one to take without reading (B-34) -->
                 <Button x:Name="ConfirmButton" Content="{Binding ConfirmText}" Style="{StaticResource PrimaryButton}"
-                        Command="{Binding ConfirmCommand}" Margin="8,0,0,0" />
+                        Command="{Binding ConfirmCommand}" Margin="8,0,0,0"
+                        Visibility="{Binding IsDestructive, Converter={StaticResource InverseVisibilityConverter}}" />
+                <Button x:Name="DestructiveConfirmButton" Content="{Binding ConfirmText}" Style="{StaticResource DestructiveButton}"
+                        Command="{Binding ConfirmCommand}"
+                        Visibility="{Binding IsDestructive, Converter={StaticResource BoolToVisibilityConverter}}" />
             </WrapPanel>
         </el:DialogShell.Actions>
 

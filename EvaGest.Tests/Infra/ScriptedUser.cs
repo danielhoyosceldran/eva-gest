@@ -84,7 +84,7 @@ public sealed class ScriptedUser : IDialogService
         return closedWith ?? false;
     }
 
-    public Task<bool> Confirm(string title, string message, string textConfirm, string? textCancel = null)
+    public Task<bool> Confirm(string title, string message, string textConfirm, string? textCancel = null, bool destructive = false)
     {
         Asked.Add(title);
         return Task.FromResult(_confirmAnswers.Count > 0 && _confirmAnswers.Dequeue());

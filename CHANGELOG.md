@@ -159,6 +159,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - Typing a time in the appointment window no longer leaves the picker's hours stretched
   from 01:00: the first digit of 13:00 is 01:00, and the grid widened to show it and
   never narrowed back to the working day.
+- A question whose answer loses something (delete an appointment, discard changes,
+  restore a backup) shows that answer in red and starts with the focus on the way back,
+  so Enter pressed out of habit no longer deletes or discards.
 
 ## 1.3.0 (closes version 1)
 

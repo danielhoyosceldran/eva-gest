@@ -84,7 +84,7 @@ public class VatModeSelectorTests(ApplicationWpf app)
     {
         public int Questions { get; private set; }
 
-        Task<bool> IDialogService.Confirm(string title, string message, string textConfirm, string? textCancel)
+        Task<bool> IDialogService.Confirm(string title, string message, string textConfirm, string? textCancel, bool destructive)
         {
             Questions++;
             PumpOnce();

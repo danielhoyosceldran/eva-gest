@@ -539,7 +539,7 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
         bool confirmed = await _dialogs.Confirm(
             Texts.DeleteAppointmentTitle,
             Texts.DeleteAppointmentMessage,
-            Texts.Delete);
+            Texts.Delete, destructive: true);
 
         if (!confirmed) return;
 

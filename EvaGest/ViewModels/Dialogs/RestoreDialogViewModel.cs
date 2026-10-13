@@ -44,7 +44,7 @@ public partial class RestoreDialogViewModel : DialogViewModelBase
         bool confirmed = await _dialogs.Confirm(
             Texts.ConfirmRestoreTitle,
             Texts.ConfirmRestoreMessage,
-            Texts.Restore);
+            Texts.Restore, destructive: true);
 
         if (!confirmed) return;
 

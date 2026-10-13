@@ -167,7 +167,7 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         ["Confirm"] = _ => Task.FromResult(new Built(
             new ConfirmDialogViewModel(Texts.DiscardChangesTitle,
                 $"La venda de {WorstCaseShop.LongName} ja té un «Tall de cabell i arranjament de barba complet 0».",
-                Texts.DiscardChanges, Texts.KeepEditing),
+                Texts.DiscardChanges, Texts.KeepEditing, destructive: true),
             () => new ConfirmDialogView())),
         ["Owner PIN confirm"] = s => Task.FromResult(new Built(
             new OwnerPinConfirmDialogViewModel(new OwnerAccessService(new SettingsService(s.Factory)),

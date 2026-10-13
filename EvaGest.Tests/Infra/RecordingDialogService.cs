@@ -36,7 +36,7 @@ public sealed class RecordingDialogService : IDialogService
         return Task.FromResult(false);
     }
 
-    public Task<bool> Confirm(string title, string message, string textConfirm, string? textCancel = null)
+    public Task<bool> Confirm(string title, string message, string textConfirm, string? textCancel = null, bool destructive = false)
     {
         if (FailWith is { } failure) return Task.FromException<bool>(failure);
         Confirmations.Add(new Question(title, message));

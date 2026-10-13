@@ -103,6 +103,6 @@ public abstract partial class DialogViewModelBase : ObservableObject
         if (!HasUnsavedChanges || DiscardDialogs is not { } dialogs) return true;
 
         return await dialogs.Confirm(Texts.DiscardChangesTitle, Texts.DiscardChangesMessage,
-            Texts.DiscardChanges, Texts.KeepEditing);
+            Texts.DiscardChanges, Texts.KeepEditing, destructive: true);
     }
 }
