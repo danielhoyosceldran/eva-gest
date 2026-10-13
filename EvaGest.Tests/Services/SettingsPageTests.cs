@@ -88,6 +88,7 @@ public class SettingsPageTests
         await vm.Load();
 
         vm.ModeVat = VatMode.NotIncluded;
+        await vm.VatModeChange;   // asked once the picker has committed (B-26)
 
         dialogs.ConfirmacionsRequested.Should().ContainSingle();
         var other = Build(testDb);
@@ -104,6 +105,7 @@ public class SettingsPageTests
         await vm.Load();
 
         vm.ModeVat = VatMode.NotIncluded;
+        await vm.VatModeChange;   // asked once the picker has committed (B-26)
 
         vm.ModeVat.Should().Be(VatMode.Included, "the picker cannot show a value that was never saved");
         var other = Build(testDb);

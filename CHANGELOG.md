@@ -137,6 +137,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   appointment) is its own window with concrete answers in the app's language, such as
   "Afegir-ne un altre" / "No afegir" or "Descartar" / "Seguir editant". They were
   Windows message boxes with "Yes" / "No" in the language of Windows.
+- Answering "Cancel·lar" to the VAT mode change puts the picker back on the mode in
+  force at once; it used to keep showing the mode just turned down until the page was
+  left.
 
 ## 1.3.0 (closes version 1)
 

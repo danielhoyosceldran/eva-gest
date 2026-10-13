@@ -245,6 +245,12 @@ public partial class SettingsViewModel(
 
     private async Task ConfirmVatModeChange(VatMode newValue)
     {
+        // Ask only once the picker has finished applying the user's choice. Asked (and
+        // answered "no") in the middle of it, the mode went back here but the picker kept
+        // showing the new one until the page was left: a ComboBox ignores a change made
+        // while it is still committing its own selection.
+        await Task.Yield();
+
         string heading = newValue == VatMode.NotIncluded
             ? Texts.VatModeSwitchToExcluded
             : Texts.VatModeSwitchToIncluded;
