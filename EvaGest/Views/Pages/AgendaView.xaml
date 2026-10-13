@@ -126,23 +126,33 @@
                                                            VerticalAlignment="Center" />
                                             </StackPanel>
 
-                                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                                <TextBlock Text="{Binding ClientText}"
-                                                           FontFamily="{StaticResource FontUi}"
-                                                           FontSize="{StaticResource FontSizeBody}"
-                                                           Foreground="{StaticResource InkBrush}" />
-                                                <TextBlock Text="{x:Static t:Texts.NotRegistered}" Margin="6,0,0,0"
+                                            <!-- The panel is narrow: long names shorten with "…" and show
+                                                 in full on hover, instead of running off its edge -->
+                                            <DockPanel Margin="0,4,0,0">
+                                                <TextBlock DockPanel.Dock="Right" Text="{x:Static t:Texts.NotRegistered}" Margin="6,0,0,0"
                                                            Style="{StaticResource DataLabel}"
                                                            VerticalAlignment="Center"
                                                            Visibility="{Binding IsGuest, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            </StackPanel>
+                                                <TextBlock Text="{Binding ClientText}" ToolTip="{Binding ClientText}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           FontFamily="{StaticResource FontUi}"
+                                                           FontSize="{StaticResource FontSizeBody}"
+                                                           Foreground="{StaticResource InkBrush}" />
+                                            </DockPanel>
 
-                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                                <TextBlock Text="{Binding ServiceText}" Style="{StaticResource DataLabel}" />
-                                                <Ellipse Width="8" Height="8" Margin="12,0,6,0"
+                                            <Grid Margin="0,2,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding ServiceText}" ToolTip="{Binding ServiceText}"
+                                                           TextTrimming="CharacterEllipsis" Style="{StaticResource DataLabel}" />
+                                                <Ellipse Grid.Column="1" Width="8" Height="8" Margin="12,0,6,0"
                                                          VerticalAlignment="Center" Fill="{Binding ColorHex}" />
-                                                <TextBlock Text="{Binding WorkerText}" Style="{StaticResource DataLabel}" />
-                                            </StackPanel>
+                                                <TextBlock Grid.Column="2" Text="{Binding WorkerText}" ToolTip="{Binding WorkerText}"
+                                                           TextTrimming="CharacterEllipsis" Style="{StaticResource DataLabel}" />
+                                            </Grid>
 
                                             <!-- Only a pending appointment still has a state to move to -->
                                             <WrapPanel Margin="0,8,0,0"
