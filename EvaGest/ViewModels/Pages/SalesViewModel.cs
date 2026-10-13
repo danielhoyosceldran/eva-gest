@@ -70,7 +70,12 @@ public partial class SalesViewModel(
     [ObservableProperty] private string _totalBaseText = "—";
     [ObservableProperty] private string _totalVatText = "—";
     [ObservableProperty] private string _totalTotalText = "—";
-    [ObservableProperty] private int _activeCount;
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(ActiveCountText))] private int _activeCount;
+
+    /// <summary>The footer's count, "1 venda activa" or "3 vendes actives".</summary>
+    public string ActiveCountText => ActiveCount == 1
+        ? Texts.OneActiveSale
+        : string.Format(Texts.ActiveSalesCount, ActiveCount);
 
     public bool HasNoResults => Sales.Count == 0;
 

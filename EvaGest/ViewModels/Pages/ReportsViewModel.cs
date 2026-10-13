@@ -115,8 +115,11 @@ public partial class ReportsViewModel(
             if (generation != _generation) return;
 
             ClientOfTheMonthText = clientOfTheMonth is { } cdm
-                ? string.Format(Texts.ClientOfTheMonthLine, cdm.client.Name, cdm.visits,
-                                Money.Format(cdm.totalCents))
+                ? cdm.visits == 1
+                    ? string.Format(Texts.ClientOfTheMonthLineOneVisit, cdm.client.Name,
+                                    Money.Format(cdm.totalCents))
+                    : string.Format(Texts.ClientOfTheMonthLine, cdm.client.Name, cdm.visits,
+                                    Money.Format(cdm.totalCents))
                 : Texts.NoSalesThisMonth;
 
             long max = Math.Max(1, monthly.Max(m => m.totalCents));

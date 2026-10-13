@@ -373,6 +373,7 @@ public static class Texts
         nameof(OverdueAppointmentsNotice),
         nameof(NoSalesThisMonth),
         nameof(ClientOfTheMonthLine),
+        nameof(ClientOfTheMonthLineOneVisit),
         nameof(MoreLinesSuffix),
         nameof(ConfirmVoidSaleTitle),
         nameof(ConfirmVoidSaleMessage),
@@ -398,6 +399,7 @@ public static class Texts
         nameof(ConfirmDeleteBackupsMessage),
         nameof(DeleteBackups),
         nameof(ActiveSalesCount),
+        nameof(OneActiveSale),
         nameof(SlotMinutesOption),
         nameof(DefaultDurationInvalid),
         nameof(ScheduleSavedAllClosed),
@@ -567,6 +569,7 @@ public static class Texts
         nameof(ShowVoided),
         nameof(NoTransactionMatchesFilters),
         nameof(TransactionsCount),
+        nameof(OneTransaction),
         nameof(IncomeWithColon),
         nameof(OutgoingsWithColon),
         nameof(NetWithColon),
@@ -1615,6 +1618,9 @@ public static class Texts
     /// <summary>{0} · {1} visites · {2}</summary>
     public static string ClientOfTheMonthLine => Get(nameof(ClientOfTheMonthLine));
 
+    /// <summary>{0} · 1 visita · {1}</summary>
+    public static string ClientOfTheMonthLineOneVisit => Get(nameof(ClientOfTheMonthLineOneVisit));
+
     /// <summary> + {0} més</summary>
     public static string MoreLinesSuffix => Get(nameof(MoreLinesSuffix));
 
@@ -1689,6 +1695,9 @@ public static class Texts
 
     /// <summary>{0} vendes actives</summary>
     public static string ActiveSalesCount => Get(nameof(ActiveSalesCount));
+
+    /// <summary>1 venda activa</summary>
+    public static string OneActiveSale => Get(nameof(OneActiveSale));
 
     /// <summary>{0} minuts</summary>
     public static string SlotMinutesOption => Get(nameof(SlotMinutesOption));
@@ -2196,6 +2205,9 @@ public static class Texts
 
     /// <summary>{0} transaccions</summary>
     public static string TransactionsCount => Get(nameof(TransactionsCount));
+
+    /// <summary>1 transacció</summary>
+    public static string OneTransaction => Get(nameof(OneTransaction));
 
     /// <summary>Ingressos:</summary>
     public static string IncomeWithColon => Get(nameof(IncomeWithColon));

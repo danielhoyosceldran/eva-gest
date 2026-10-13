@@ -87,6 +87,25 @@ public class SalesPageTests
         vm.TotalTotalText.Should().Be(Money.Format(3000));
     }
 
+    [Fact]
+    public async Task The_footer_counts_one_active_sale_in_the_singular()
+    {
+        await using var testDb = new TestDatabase();
+        var d = await Seed(testDb);
+        await AddsSale(testDb, d, 1000);
+        await AddsSale(testDb, d, 5000, SaleStatus.Voided);
+
+        var vm = await Build(testDb);
+        await vm.Load();
+
+        vm.ActiveCountText.Should().Be(Texts.OneActiveSale, "\"1 vendes actives\" is not Catalan");
+
+        await AddsSale(testDb, d, 2000);
+        await vm.Load();
+
+        vm.ActiveCountText.Should().Be(string.Format(Texts.ActiveSalesCount, 2));
+    }
+
     [Fact] // T-02
     public async Task Amounts_are_shown_in_euros_not_in_cents()
     {

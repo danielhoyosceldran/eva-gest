@@ -92,6 +92,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 - The weekly schedule overview on Treballadores names the days in the session's
   language (Dl, Dt, Dc… / Lu, Ma, Mi…), as the schedule column already did; it read
   Mon, Tue, Wed… in both languages.
+- Counts of one read in the singular: "1 venda activa" under the sales list,
+  "1 transacció" in the transactions window and "1 visita" for the client of the
+  month, instead of "1 vendes actives", "1 transaccions" and "1 visites".
 
 ## 1.3.0 (closes version 1)
 

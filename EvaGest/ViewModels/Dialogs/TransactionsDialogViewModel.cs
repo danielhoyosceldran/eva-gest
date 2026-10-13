@@ -220,7 +220,9 @@ public partial class TransactionsDialogViewModel : DialogViewModelBase
             foreach (var entry in found) Rows.Add(ToRow(entry));
 
             var totals = TransactionTotals.From(found);
-            CountText = string.Format(Texts.TransactionsCount, totals.Count);
+            CountText = totals.Count == 1
+                ? Texts.OneTransaction
+                : string.Format(Texts.TransactionsCount, totals.Count);
             IncomeText = Money.Format(totals.IncomeCents);
             OutgoingsText = Money.Format(totals.CashOutCents);
             NetText = Money.Format(totals.NetCents);

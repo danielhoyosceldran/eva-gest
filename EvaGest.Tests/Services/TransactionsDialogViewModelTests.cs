@@ -58,6 +58,21 @@ public class TransactionsDialogViewModelTests
     }
 
     [Fact]
+    public async Task A_single_transaction_is_counted_in_the_singular()
+    {
+        var (db, _, _) = await ShopWithAWeek();
+        await using var _ = db;
+        var vm = Dialog(db);
+        await vm.Load();
+
+        vm.KindOptions.Single(o => o.Kind == TransactionKind.CashOut).IsSelected = true;
+        await vm.Search();
+
+        vm.Rows.Should().HaveCount(1);
+        vm.CountText.Should().Be(Texts.OneTransaction, "\"1 transaccions\" is not Catalan");
+    }
+
+    [Fact]
     public async Task A_cash_out_row_reads_negative_and_is_marked_as_money_out()
     {
         var (db, _, _) = await ShopWithAWeek();

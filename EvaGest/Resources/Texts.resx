@@ -1077,6 +1077,9 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
   <data name="ClientOfTheMonthLine" xml:space="preserve">
     <value>{0} · {1} visites · {2}</value>
   </data>
+  <data name="ClientOfTheMonthLineOneVisit" xml:space="preserve">
+    <value>{0} · 1 visita · {1}</value>
+  </data>
   <data name="MoreLinesSuffix" xml:space="preserve">
     <value> + {0} més</value>
   </data>
@@ -1151,6 +1154,9 @@ Si ja s'ha fet servir, es desactivarà en lloc d'esborrar-se, per no tocar l'his
   </data>
   <data name="ActiveSalesCount" xml:space="preserve">
     <value>{0} vendes actives</value>
+  </data>
+  <data name="OneActiveSale" xml:space="preserve">
+    <value>1 venda activa</value>
   </data>
   <data name="SlotMinutesOption" xml:space="preserve">
     <value>{0} minuts</value>
@@ -1660,6 +1666,9 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   </data>
   <data name="TransactionsCount" xml:space="preserve">
     <value>{0} transaccions</value>
+  </data>
+  <data name="OneTransaction" xml:space="preserve">
+    <value>1 transacció</value>
   </data>
   <data name="IncomeWithColon" xml:space="preserve">
     <value>Ingressos:</value>
