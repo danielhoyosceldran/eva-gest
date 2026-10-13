@@ -164,6 +164,11 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         ["Owner unlock"] = s => Task.FromResult(new Built(
             new OwnerUnlockDialogViewModel(new OwnerAccessService(new SettingsService(s.Factory))),
             () => new OwnerUnlockDialogView())),
+        ["Confirm"] = _ => Task.FromResult(new Built(
+            new ConfirmDialogViewModel(Texts.DiscardChangesTitle,
+                $"La venda de {WorstCaseShop.LongName} ja té un «Tall de cabell i arranjament de barba complet 0».",
+                Texts.DiscardChanges, Texts.KeepEditing),
+            () => new ConfirmDialogView())),
         ["Owner PIN confirm"] = s => Task.FromResult(new Built(
             new OwnerPinConfirmDialogViewModel(new OwnerAccessService(new SettingsService(s.Factory)),
                 "Eliminar la venda",

@@ -172,4 +172,40 @@ public class LanguageTests
             "text the user reads belongs in both resx tables, not in a view "
             + "(CLAUDE.md: never a literal in code)");
     }
+
+    /// <summary>
+    /// Manual test C4: the confirmations were Windows MessageBoxes, whose buttons read
+    /// "Yes" / "No" in the language of Windows (English on the test machine) and threw
+    /// away the verbs the app passed ("Afegir-ne un altre", "Seguir editant").
+    /// </summary>
+    [Fact]
+    public void No_question_is_asked_with_the_yes_and_no_of_Windows()
+    {
+        var offenders = Directory
+            .GetFiles(Path.Combine(RepositoryRoot().FullName, "EvaGest"), "*.cs", SearchOption.AllDirectories)
+            .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"))
+            .Where(f => Regex.IsMatch(File.ReadAllText(f), @"MessageBoxButton\.(YesNo|OKCancel|YesNoCancel)"))
+            .Select(Path.GetFileName)
+            .ToList();
+
+        offenders.Should().BeEmpty("a question uses the app's own confirm dialog, with its own verbs");
+    }
+
+    [Fact]
+    public void The_confirm_dialog_shows_the_callers_verbs_and_falls_back_to_cancel()
+    {
+        var vm = new EvaGest.ViewModels.Dialogs.ConfirmDialogViewModel(
+            Texts.DuplicateServiceTitle, "La venda ja té un «Tall».", Texts.AddAnotherOne, Texts.DontAdd);
+        bool? closedWith = null;
+        vm.Close += ok => closedWith = ok;
+
+        (vm.ConfirmText, vm.CancelText).Should().Be((Texts.AddAnotherOne, Texts.DontAdd));
+        new EvaGest.ViewModels.Dialogs.ConfirmDialogViewModel("t", "m", Texts.Delete)
+            .CancelText.Should().Be(Texts.Cancel);
+
+        vm.ConfirmCommand.Execute(null);
+        closedWith.Should().BeTrue();
+        vm.CancelCommand.Execute(null);
+        closedWith.Should().BeFalse();
+    }
 }

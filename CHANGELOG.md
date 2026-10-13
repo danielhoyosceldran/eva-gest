@@ -132,6 +132,11 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   the right edge: "+ Nova cita", and "+ Entrada" / "+ Sortida", move to a second row
   when they do not fit beside the rest. On a 1280x800 laptop Caixa cut "+ Sortida",
   and at the window's minimum width the Agenda cut "+ Nova cita".
+- Every question the app asks (add the same service again, discard what you typed,
+  save over another appointment, change the VAT mode, restore a copy, delete an
+  appointment) is its own window with concrete answers in the app's language, such as
+  "Afegir-ne un altre" / "No afegir" or "Descartar" / "Seguir editant". They were
+  Windows message boxes with "Yes" / "No" in the language of Windows.
 
 ## 1.3.0 (closes version 1)
 

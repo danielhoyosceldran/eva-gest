@@ -28,13 +28,11 @@ public class DialogService(IOwnerAccessService owner) : IDialogService
         return Task.FromResult(confirmed);
     }
 
+    /// <summary>The app's own question window, with the caller's verbs on its buttons. A
+    /// MessageBox showed "Yes" / "No" in the language of Windows and dropped them.</summary>
     public Task<bool> Confirm(string title, string message,
                               string textConfirm, string? textCancel = null)
-    {
-        var result = MessageBox.Show(message, title,
-            MessageBoxButton.YesNo, MessageBoxImage.Warning);
-        return Task.FromResult(result == MessageBoxResult.Yes);
-    }
+        => ShowDialog(new ConfirmDialogViewModel(title, message, textConfirm, textCancel));
 
     public Task Inform(string title, string message)
     {
