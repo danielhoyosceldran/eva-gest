@@ -14,6 +14,18 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   client box is still refused, so a forgotten client is not saved by accident. Only
   sales offer it, never appointments. In the sale window the client column is now
   wider than the worker's, so the three options fit in one row.
+- The sale window is split into its three parts (who, what is sold, how it is paid)
+  by thin lines, with a vertical line between client and worker and between payment
+  method and notes. The worker's "Veure la llista" button now sits under its search
+  box, so the box keeps a usable width in the narrower column.
+- The sale window always opens as tall as the screen. The list of services and
+  products takes the free height and, when the sale has more lines than fit, scrolls
+  on its own: the client, the search box, the payment method and Cobrar stay in view.
+  A line just added is scrolled into view.
+- Adding a service the sale already has asks first: "Aquest servei ja és a la venda",
+  with "Afegir-ne un altre" or "No afegir". A client rarely has two haircuts, so a
+  second one is usually a double click. Products are not asked about, and the + on a
+  line still adds one more without asking.
 - Informes has a new button, "Veure totes les transaccions", that opens a large window
   with every sale and till movement in one table. It filters by period (with Avui,
   Aquesta setmana, Aquest mes and Aquest any shortcuts), type (sales, cash-ins,

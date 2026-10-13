@@ -203,7 +203,8 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                 // A dialog that fills the screen is not sized to its content: DialogWindow
                 // gives it the whole cap, so it is laid out at exactly that size.
                 bool fills = built.ViewModel is DialogViewModelBase { FillsScreen: true };
-                Layout(host, cap, sizeToContent: !fills);
+                bool fillsHeight = built.ViewModel is DialogViewModelBase { FillsHeight: true };
+                Layout(host, cap, sizeToContent: !fills, fillsHeight);
 
                 foreach (var p in Problems(host)) problems.Add($"{screen.name}: {p}");
 
@@ -250,14 +251,60 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
                 Margin = (Thickness)Application.Current.FindResource("PadCard")
             };
             ((FrameworkElement)host.Content).DataContext = vm;
-            Layout(host, new Size(maxWidth - DialogFrameWidth, maxHeight - DialogFrameHeight), sizeToContent: true);
+            Layout(host, new Size(maxWidth - DialogFrameWidth, maxHeight - DialogFrameHeight), sizeToContent: true,
+                fillsHeight: vm.FillsHeight);
 
             var body = Descendants<ScrollViewer>(host).First(sv => sv.TemplatedParent is DialogShell);
+            var lines = Descendants<ScrollViewer>(host).First(sv => sv.Name == "LinesScroll");
             if (body.ExtentHeight > body.ViewportHeight + Tolerance)
                 problem = $"the form needs {body.ExtentHeight:0} DIP but has {body.ViewportHeight:0}";
+            // The lines list scrolls by itself, but four lines should not need to
+            else if (lines.ExtentHeight > lines.ViewportHeight + Tolerance)
+                problem = $"the lines need {lines.ExtentHeight:0} DIP but have {lines.ViewportHeight:0}";
         });
 
         problem.Should().BeNull("an everyday sale must fit the shop's screen in {0}", language);
+    }
+
+    [Fact]
+    public async Task A_long_sale_fills_the_screen_and_scrolls_only_its_lines()
+    {
+        // Twenty lines on the shop's screen: the dialog takes the whole height, the form
+        // around the lines stays still, and only the lines list scrolls.
+        var f = shop.Factory;
+        var settings = new SettingsService(f);
+        var vm = await SaleDialogViewModel.New(new SaleService(f, settings), new ClientService(f),
+            new CatalogService(f), new WorkerService(f), new TestSoundService(), settings, new TestDialogService());
+        for (int i = 0; i < 20; i++) vm.AddCustomConceptCommand.Execute(null);
+
+        // Read on the WPF thread, asserted after it
+        double hostHeight = 0, capHeight = 0, minLines = 0;
+        (double extent, double viewport) body = default, lines = default;
+        app.Runs(() =>
+        {
+            var (maxWidth, maxHeight) = LayoutFit.MaxWindowSize(ShopScreen.width, ShopScreen.height,
+                (double)Application.Current.FindResource("DialogScreenMargin"));
+            var host = new ContentControl
+            {
+                Content = new SaleDialogView(), DataContext = vm, MinWidth = 380,
+                Margin = (Thickness)Application.Current.FindResource("PadCard")
+            };
+            capHeight = maxHeight - DialogFrameHeight;
+            Layout(host, new Size(maxWidth - DialogFrameWidth, capHeight), sizeToContent: true, fillsHeight: true);
+            // RenderSize leaves out the host's own margin (the window's padding)
+            hostHeight = host.RenderSize.Height + host.Margin.Top + host.Margin.Bottom;
+            minLines = (double)Application.Current.FindResource("SaleLinesMinHeight");
+            var bodyScroll = Descendants<ScrollViewer>(host).First(sv => sv.TemplatedParent is DialogShell);
+            var linesScroll = Descendants<ScrollViewer>(host).First(sv => sv.Name == "LinesScroll");
+            body = (bodyScroll.ExtentHeight, bodyScroll.ViewportHeight);
+            lines = (linesScroll.ExtentHeight, linesScroll.ViewportHeight);
+        });
+
+        vm.FillsHeight.Should().BeTrue();
+        hostHeight.Should().BeApproximately(capHeight, Tolerance);
+        body.extent.Should().BeLessThanOrEqualTo(body.viewport + Tolerance, "the form itself must not scroll");
+        lines.extent.Should().BeGreaterThan(lines.viewport, "twenty lines scroll inside their own list");
+        lines.viewport.Should().BeGreaterThanOrEqualTo(minLines);
     }
 
     // ───────────────────────────── pages ─────────────────────────────
@@ -440,13 +487,16 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
     /// three times with the dispatcher pumped in between, so ElementName bindings to
     /// ActualHeight and the SizeChanged handlers in the code-behind settle.
     /// </summary>
-    private static void Layout(FrameworkElement element, Size size, bool sizeToContent)
+    /// <param name="fillsHeight">Mirrors DialogWindow for a FillsHeight dialog: sized to
+    /// its content across, but always the full height on offer.</param>
+    private static void Layout(FrameworkElement element, Size size, bool sizeToContent, bool fillsHeight = false)
     {
         for (int i = 0; i < 3; i++)
         {
             element.Measure(size);
             var final = sizeToContent
-                ? new Size(Math.Min(element.DesiredSize.Width, size.Width), Math.Min(element.DesiredSize.Height, size.Height))
+                ? new Size(Math.Min(element.DesiredSize.Width, size.Width),
+                    fillsHeight ? size.Height : Math.Min(element.DesiredSize.Height, size.Height))
                 : size;
             element.Arrange(new Rect(final));
             element.UpdateLayout();

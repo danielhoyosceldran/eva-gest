@@ -124,6 +124,10 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         _ => Texts.NewSaleTitle
     };
 
+    /// <summary>Always as tall as the screen: the lines list takes the free height and
+    /// scrolls by itself, so the totals and Cobrar never move.</summary>
+    public override bool FillsHeight => true;
+
     private SaleDialogViewModel(
         ISaleService sales, ISoundService so, IClientService clients, IDialogService dialogs)
     {
@@ -328,19 +332,40 @@ public partial class SaleDialogViewModel : DialogViewModelBase
 
     /// <summary>A quick button: adds that service as a line.</summary>
     [RelayCommand]
-    private void AddQuickService(QuickService quick) => AddCatalogLine(SaleLineViewModel.FromService(quick.Service));
+    private Task AddQuickService(QuickService quick) => AddServiceLine(quick.Service);
 
-    /// <summary>What the search box hands over when something in it is picked.</summary>
-    private void AddPicked(object picked)
+    /// <summary>
+    /// What the search box hands over when something in it is picked. async void because
+    /// the search box reports a pick synchronously, like an event; an exception still
+    /// reaches the global handler in App.xaml.cs, which logs it and tells the user.
+    /// </summary>
+    private async void AddPicked(object picked)
     {
         switch (picked)
         {
-            case Service service: AddCatalogLine(SaleLineViewModel.FromService(service)); break;
+            case Service service: await AddServiceLine(service); break;
             case Product product: AddCatalogLine(SaleLineViewModel.FromProduct(product)); break;
             case CatalogAdderViewModel.FreeConcept free:
                 AddExistingLine(SaleLineViewModel.Free(_defaultVatBp, free.Description));
                 break;
         }
+    }
+
+    /// <summary>
+    /// Adds a service, asking first when the sale already has it: a client does not
+    /// usually have two haircuts, so a second one is more often a double click or a
+    /// mis-tap than a real sale. Products are not asked about — two bottles of the same
+    /// shampoo are normal. The line's own + button never asks: that is deliberate.
+    /// </summary>
+    private async Task AddServiceLine(Service service)
+    {
+        if (Lines.Any(l => l.ServiceId == service.Id)
+            && !await _dialogs.Confirm(Texts.DuplicateServiceTitle,
+                   string.Format(Texts.DuplicateServiceMessage, service.Name),
+                   Texts.AddAnotherOne, Texts.DontAdd))
+            return;
+
+        AddCatalogLine(SaleLineViewModel.FromService(service));
     }
 
     /// <summary>

@@ -32,6 +32,15 @@ public class LayoutFitTests
         => LayoutFit.Flexible(available, 440, 700).Should().Be(expected);
 
     [Theory]
+    [InlineData(700, 400, 130, 50, 300)]                     // room to spare: takes all of it
+    [InlineData(500, 400, 130, 50, 130)]                     // too little: never below the floor
+    [InlineData(0, 400, 130, 50, 50)]                        // viewport not known yet: natural height
+    [InlineData(double.PositiveInfinity, 400, 130, 50, 50)]  // window still sizing itself
+    public void A_stretching_list_takes_the_height_left_free_but_never_less_than_its_floor(
+        double viewport, double fixedHeight, double minFill, double natural, double expected)
+        => LayoutFit.FillHeight(viewport, fixedHeight, minFill, natural).Should().Be(expected);
+
+    [Theory]
     [InlineData(1656, 260, 6, 6)]   // a wide screen: one row
     [InlineData(1102, 260, 6, 4)]   // 4 + 2
     [InlineData(760, 260, 6, 2)]    // 2 + 2 + 2

@@ -61,6 +61,10 @@
          toggle wraps rather than cut the labels. -->
     <sys:Double x:Key="ClientModeMinWidth">150</sys:Double>
 
+    <!-- The least height the sale dialog's lines list keeps on a short screen: about
+         two lines. Below it the list stops shrinking and the whole form scrolls. -->
+    <sys:Double x:Key="SaleLinesMinHeight">130</sys:Double>
+
     <!-- Table columns that must never collapse to nothing -->
     <sys:Double x:Key="TextColumnMinWidth">80</sys:Double>
     <!-- dd/MM/yyyy plus the cell padding -->

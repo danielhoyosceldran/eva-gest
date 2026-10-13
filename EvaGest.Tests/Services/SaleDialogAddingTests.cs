@@ -33,10 +33,12 @@ public class SaleDialogAddingTests
         return new(factory, settings, catalog, (await db.PaymentMethods.FirstAsync()).Id);
     }
 
-    private static Task<SaleDialogViewModel> ANewSale(Shop shop)
+    /// <param name="dialogs">Answers the "already in the sale" question; left out, it
+    /// says yes, so the tests about merging add the second cut.</param>
+    private static Task<SaleDialogViewModel> ANewSale(Shop shop, TestDialogService? dialogs = null)
         => SaleDialogViewModel.New(new SaleService(shop.Factory, shop.Settings), new ClientService(shop.Factory),
             shop.Catalog, new WorkerService(shop.Factory), new TestSoundService(), shop.Settings,
-            new TestDialogService());
+            dialogs ?? new TestDialogService { ResultConfirm = true });
 
     /// <summary>Types in the search box and presses Enter, as the user would.</summary>
     private static void SearchAndPick(SaleDialogViewModel vm, string typed)
@@ -136,6 +138,58 @@ public class SaleDialogAddingTests
         var line = vm.Lines.Should().ContainSingle().Subject;
         line.Quantity.Should().Be(3);
         vm.TotalCents.Should().Be(4500);
+    }
+
+    [Fact]
+    public async Task Adding_a_service_already_in_the_sale_asks_first_and_a_no_leaves_the_sale_alone()
+    {
+        // Two haircuts for one client is far more often a double click than a sale
+        await using var testDb = new TestDatabase();
+        var dialogs = new TestDialogService { ResultConfirm = false };
+        var vm = await ANewSale(await AShop(testDb), dialogs);
+
+        SearchAndPick(vm, "tall");
+        dialogs.ConfirmacionsRequested.Should().BeEmpty("the first cut is not a repeat");
+
+        vm.AddQuickServiceCommand.Execute(vm.QuickServices.First(q => q.Name == "Tall"));
+        SearchAndPick(vm, "tall");
+
+        dialogs.ConfirmacionsRequested.Should().Equal(
+            EvaGest.Resources.Texts.DuplicateServiceTitle, EvaGest.Resources.Texts.DuplicateServiceTitle);
+        vm.Lines.Should().ContainSingle().Which.Quantity.Should().Be(1);
+        vm.TotalCents.Should().Be(1500);
+    }
+
+    [Fact]
+    public async Task A_service_whose_price_was_changed_by_hand_still_counts_as_already_in_the_sale()
+    {
+        await using var testDb = new TestDatabase();
+        var dialogs = new TestDialogService { ResultConfirm = false };
+        var vm = await ANewSale(await AShop(testDb), dialogs);
+
+        SearchAndPick(vm, "tall");
+        vm.Lines[0].PriceText = "12,00";
+        SearchAndPick(vm, "tall");
+
+        dialogs.ConfirmacionsRequested.Should().ContainSingle();
+        vm.Lines.Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task Repeating_a_product_or_pressing_plus_on_a_line_never_asks()
+    {
+        // Two bottles of the same wax are normal, and + is a deliberate "one more"
+        await using var testDb = new TestDatabase();
+        var dialogs = new TestDialogService { ResultConfirm = false };
+        var vm = await ANewSale(await AShop(testDb), dialogs);
+
+        SearchAndPick(vm, "cera");
+        SearchAndPick(vm, "cera");
+        SearchAndPick(vm, "barba");
+        vm.Lines.Single(l => l.Description == "Barba").IncreaseCommand.Execute(null);
+
+        dialogs.ConfirmacionsRequested.Should().BeEmpty();
+        vm.Lines.Select(l => l.Quantity).Should().Equal(2, 2);
     }
 
     [Fact]

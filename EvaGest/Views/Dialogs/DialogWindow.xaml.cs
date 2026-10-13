@@ -61,6 +61,12 @@ public partial class DialogWindow : Window
             Width = Math.Min(width, (double)FindResource("LargeDialogMaxWidth"));
             Height = Math.Min(height, (double)FindResource("LargeDialogMaxHeight"));
         }
+        // A form that fills the height (the sale) still sizes its width to the content
+        else if (_viewModel.FillsHeight)
+        {
+            SizeToContent = SizeToContent.Width;
+            Height = height;
+        }
     }
 
     /// <summary>

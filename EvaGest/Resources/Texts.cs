@@ -526,6 +526,10 @@ public static class Texts
         nameof(ConfirmOverlapMessage),
         nameof(SaveAnyway),
         nameof(ChangeTheTime),
+        nameof(DuplicateServiceTitle),
+        nameof(DuplicateServiceMessage),
+        nameof(AddAnotherOne),
+        nameof(DontAdd),
         nameof(ConfirmOverlapWorkerMessage),
         nameof(AutomaticBackupFailedNotice),
         nameof(StartupFailedTitle),
@@ -2055,6 +2059,18 @@ public static class Texts
 
     /// <summary>EvaGest ja està obert en aquest ordinador. Busca'l a la barra de tasques, a la part de baix de la pantalla.</summary>
     public static string AlreadyRunningMessage => Get(nameof(AlreadyRunningMessage));
+
+    /// <summary>Aquest servei ja és a la venda</summary>
+    public static string DuplicateServiceTitle => Get(nameof(DuplicateServiceTitle));
+
+    /// <summary>La venda ja té un «{0}».</summary>
+    public static string DuplicateServiceMessage => Get(nameof(DuplicateServiceMessage));
+
+    /// <summary>Afegir-ne un altre</summary>
+    public static string AddAnotherOne => Get(nameof(AddAnotherOne));
+
+    /// <summary>No afegir</summary>
+    public static string DontAdd => Get(nameof(DontAdd));
 
     /// <summary>Aquesta franja ja està plena</summary>
     public static string ConfirmOverlapTitle => Get(nameof(ConfirmOverlapTitle));

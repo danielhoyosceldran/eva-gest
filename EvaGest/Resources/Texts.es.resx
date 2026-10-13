@@ -1538,6 +1538,18 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="ChangeTheTime" xml:space="preserve">
     <value>Cambiar la hora</value>
   </data>
+  <data name="DuplicateServiceTitle" xml:space="preserve">
+    <value>Este servicio ya está en la venta</value>
+  </data>
+  <data name="DuplicateServiceMessage" xml:space="preserve">
+    <value>La venta ya tiene un «{0}».</value>
+  </data>
+  <data name="AddAnotherOne" xml:space="preserve">
+    <value>Añadir otro</value>
+  </data>
+  <data name="DontAdd" xml:space="preserve">
+    <value>No añadir</value>
+  </data>
   <data name="ConfirmOverlapWorkerMessage" xml:space="preserve">
     <value>{0} ya tiene otra cita que se solapa con esta. Puedes guardarla igualmente o cambiarle la hora.</value>
   </data>

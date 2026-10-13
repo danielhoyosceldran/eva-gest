@@ -21,6 +21,13 @@ public abstract partial class DialogViewModelBase : ObservableObject
     /// </summary>
     public virtual bool FillsScreen => false;
 
+    /// <summary>
+    /// True for a form that opens as tall as the screen allows, keeping its width sized
+    /// to its content: the sale dialog, whose lines list takes the free height and
+    /// scrolls by itself.
+    /// </summary>
+    public virtual bool FillsHeight => false;
+
     public event Action<bool>? Close;
 
     protected void RequestClose(bool confirmed) => Close?.Invoke(confirmed);

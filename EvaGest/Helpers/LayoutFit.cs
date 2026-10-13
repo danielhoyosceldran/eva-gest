@@ -39,6 +39,17 @@ public static class LayoutFit
             : Math.Clamp(available, min, Math.Max(min, max));
 
     /// <summary>
+    /// The height a stretching part of a form gets (the sale dialog's lines list): what
+    /// <paramref name="fixedHeight"/> leaves free of <paramref name="viewport"/>, never
+    /// less than <paramref name="minFill"/>. With no viewport known yet (0, or infinity
+    /// from a window still sizing itself) it keeps its <paramref name="natural"/> height.
+    /// </summary>
+    public static double FillHeight(double viewport, double fixedHeight, double minFill, double natural)
+        => double.IsNaN(viewport) || double.IsInfinity(viewport) || viewport <= 0
+            ? natural
+            : Math.Max(viewport - fixedHeight, minFill);
+
+    /// <summary>
     /// How many equal cells of at least <paramref name="minItemWidth"/> fit across
     /// <paramref name="width"/>, never more than there are <paramref name="items"/> and
     /// never fewer than one. Drives the card rows that wrap on a narrow screen.

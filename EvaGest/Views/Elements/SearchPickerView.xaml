@@ -9,6 +9,11 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <!-- The second row is only used when Stacked puts the list button under the box -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <TextBox x:Name="Box" Grid.Column="0" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"
                  Tag="{Binding Placeholder}" Binding.TargetUpdated="OnTextWrittenByCode">
             <!-- Enter and Escape are only taken while the list is open (their commands are
@@ -22,7 +27,8 @@
             </TextBox.InputBindings>
         </TextBox>
         <!-- "Veure la llista" in a form; just "…" (same tooltip) where the box sits in a
-             narrow filter cell or toolbar. The code-behind switches it on Compact. -->
+             narrow filter cell or toolbar. The code-behind switches it on Compact, and
+             moves it under the box on Stacked. -->
         <Button x:Name="BrowseButton" Grid.Column="1" Content="{x:Static t:Texts.BrowseList}"
                 Style="{StaticResource SecondaryButton}" Command="{Binding BrowseCommand}"
                 Margin="8,0,0,0" MinHeight="{StaticResource FieldHeight}" />
