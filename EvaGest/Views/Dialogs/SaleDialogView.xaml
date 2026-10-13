@@ -99,17 +99,23 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Non-blocking guest reminder (RF-05bis): offers to register, never requires it -->
+            <!-- Non-blocking guest reminder (RF-05bis): offers to register, never requires it.
+                 Text and button side by side: stacked, the notice took a row more and, on the
+                 shop's screen, pushed the payment methods under the pinned buttons. -->
             <Border Background="{StaticResource NoticeBgBrush}" BorderBrush="{StaticResource NoticeBorderBrush}"
-                    BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10" Margin="0,0,0,12"
+                    BorderThickness="1" CornerRadius="{StaticResource ControlRadius}" Padding="10,6" Margin="0,0,0,12"
                     Visibility="{Binding UnregisteredClientNotice, Converter={StaticResource BoolToVisibilityConverter}}">
-                <StackPanel>
-                    <TextBlock TextWrapping="Wrap"
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Center"
                                Text="{x:Static t:Texts.UnregisteredClientSale}" />
-                    <Button Content="{x:Static t:Texts.RegisterNow}" Style="{StaticResource SecondaryButton}"
-                            HorizontalAlignment="Left" Margin="0,8,0,0"
+                    <Button Grid.Column="1" Content="{x:Static t:Texts.RegisterNow}" Style="{StaticResource SecondaryButton}"
+                            VerticalAlignment="Center" Margin="12,0,0,0"
                             Command="{Binding RegisterClientNowCommand}" />
-                </StackPanel>
+                </Grid>
             </Border>
 
             <Border Style="{StaticResource SectionRule}" />

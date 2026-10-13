@@ -110,6 +110,10 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   services, products, payment methods and expense categories on Catàleg, the
   movements on Caixa, and the worker ranking on Informes. The client rankings on
   Informes say why they are empty instead of showing blank cards.
+- The "client not registered" notice in the sale window is one row, with "Registrar-lo
+  ara" beside the text instead of under it. Charging an appointment for someone not
+  registered pushed the payment methods under the buttons on the shop's screen, and
+  the form had to be scrolled to choose how to pay.
 
 ## 1.3.0 (closes version 1)
 

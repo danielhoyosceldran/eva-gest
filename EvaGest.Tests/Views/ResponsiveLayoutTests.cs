@@ -267,6 +267,65 @@ public class ResponsiveLayoutTests(ApplicationWpf app, WorstCaseShop shop) : ICl
         problem.Should().BeNull("an everyday sale must fit the shop's screen in {0}", language);
     }
 
+    /// <summary>
+    /// The heaviest everyday case for the top of the form: charged from an appointment
+    /// (the "Des de la cita…" line), for someone not registered (the guest notice with its
+    /// button), with the quick-service buttons showing. Found in manual test B7: the
+    /// payment methods ended up half under the pinned buttons and the form had to scroll.
+    /// </summary>
+    [Theory, MemberData(nameof(Languages))]
+    public async Task A_guest_sale_from_an_appointment_fits_the_shops_screen_without_scrolling(string language)
+    {
+        using var _ = new Language(language);
+        await using var db = new TestDatabase();
+        var f = new TestFactory(db.Options);
+        var settings = new SettingsService(f);
+        await new SeedService(f, settings).Seed();
+        Appointment appointment;
+        await using (var ctx = db.Context())
+        {
+            ctx.Services.AddRange(Make.Service("Tall", 1500), Make.Service("Barba", 800));
+            var worker = Make.Worker("Laia");
+            ctx.Workers.Add(worker);
+            await ctx.SaveChangesAsync();
+            appointment = new Appointment
+            {
+                Date = WorstCaseShop.Today, Time = new TimeOnly(11, 0), DurationMin = 15,
+                GuestName = "Pere Vidal", ServiceId = ctx.Services.First(s => s.Name == "Barba").Id,
+                WorkerId = worker.Id
+            };
+            ctx.Appointments.Add(appointment);
+            await ctx.SaveChangesAsync();
+        }
+        var vm = await SaleDialogViewModel.FromAppointment(new SaleService(f, settings), new ClientService(f),
+            new CatalogService(f), new WorkerService(f), new TestSoundService(), settings, new TestDialogService(),
+            appointment);
+        vm.UnregisteredClientNotice.Should().BeTrue("this case is about the guest notice");
+        vm.QuickServices.Should().NotBeEmpty();
+
+        string? problem = null;
+        app.Runs(() =>
+        {
+            using var __ = new Language(language);
+            var (maxWidth, maxHeight) = LayoutFit.MaxWindowSize(ShopScreen.width, ShopScreen.height,
+                (double)Application.Current.FindResource("DialogScreenMargin"));
+            var host = new ContentControl
+            {
+                Content = new SaleDialogView(), DataContext = vm, MinWidth = 380,
+                Margin = (Thickness)Application.Current.FindResource("PadCard")
+            };
+            ((FrameworkElement)host.Content).DataContext = vm;
+            Layout(host, new Size(maxWidth - DialogFrameWidth, maxHeight - DialogFrameHeight), sizeToContent: true,
+                fillsHeight: vm.FillsHeight);
+
+            var body = Descendants<ScrollViewer>(host).First(sv => sv.TemplatedParent is DialogShell);
+            if (body.ExtentHeight > body.ViewportHeight + Tolerance)
+                problem = $"the form needs {body.ExtentHeight:0} DIP but has {body.ViewportHeight:0}";
+        });
+
+        problem.Should().BeNull("a guest sale from an appointment must fit the shop's screen in {0}", language);
+    }
+
     [Fact]
     public async Task A_long_sale_fills_the_screen_and_scrolls_only_its_lines()
     {
