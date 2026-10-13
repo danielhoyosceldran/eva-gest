@@ -82,7 +82,7 @@ public class SaleWithoutClientTests
         vm.ClientPicker.IsNewClient = true;
         await vm.ChargeCommand.ExecuteAsync(null);
 
-        vm.ErrorValidation.Should().Be(Texts.GuestNameOrClientRequired);
+        vm.ErrorValidation.Should().Be(Texts.SaleGuestNameOrClientRequired);
         await using var db = testDb.Context();
         (await db.Sales.CountAsync()).Should().Be(0);
     }

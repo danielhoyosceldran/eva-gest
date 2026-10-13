@@ -326,11 +326,15 @@ public class SalesPageTests
         vm.TextClient = string.Empty;
         vm.ClientPicker.IsExistingClient = true;
         await vm.ChargeCommand.ExecuteAsync(null);
-        vm.ErrorValidation.Should().Be(Texts.ClientNotPicked);
+        vm.ErrorValidation.Should().Be(Texts.SaleClientNotPicked);
 
         vm.ClientPicker.IsNewClient = true;
         await vm.ChargeCommand.ExecuteAsync(null);
-        vm.ErrorValidation.Should().Be(Texts.GuestNameOrClientRequired);
+        vm.ErrorValidation.Should().Be(Texts.SaleGuestNameOrClientRequired);
+
+        // B-38: both point at "Sense client", the way to charge a counter sale
+        Texts.SaleClientNotPicked.Should().Contain(Texts.NoClient);
+        Texts.SaleGuestNameOrClientRequired.Should().Contain(Texts.NoClient);
     }
 
     private static void AddLine(SaleDialogViewModel vm, string price)

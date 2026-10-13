@@ -1821,4 +1821,10 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="SaveSale" xml:space="preserve">
     <value>Guardar la venda</value>
   </data>
+  <data name="SaleClientNotPicked" xml:space="preserve">
+    <value>Tria un client de la llista, canvia a Client nou per escriure'n el nom, o tria Sense client si és una venda de taulell.</value>
+  </data>
+  <data name="SaleGuestNameOrClientRequired" xml:space="preserve">
+    <value>Escriu el nom del convidat, tria un client registrat, o tria Sense client si és una venda de taulell.</value>
+  </data>
 </root>

@@ -442,9 +442,12 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         {
             // Checked in the same order as CanCharge. The client used to be missing
             // here, so a sale with no client was refused as missing a payment method.
+            // The sale's own wording names "Sense client" too: a counter sale is the
+            // commonest reason to have no client, and the appointment's message left
+            // that way out (B-38).
             ErrorValidation = Lines.Count == 0 ? Texts.AtLeastOneLineRequired
                 : SelectedClient is null && !ClientPicker.IsNoClient && string.IsNullOrWhiteSpace(TextClient)
-                    ? (ClientPicker.IsNewClient ? Texts.GuestNameOrClientRequired : Texts.ClientNotPicked)
+                    ? (ClientPicker.IsNewClient ? Texts.SaleGuestNameOrClientRequired : Texts.SaleClientNotPicked)
                 : Texts.PaymentMethodRequired;
             return;
         }

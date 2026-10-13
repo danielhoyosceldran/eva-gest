@@ -168,6 +168,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   of "Cobrar", which read as charging it again.
 - Esc, Cancel·lar or the X on a client window with something typed asks before throwing
   it away, like the sale and appointment windows; it used to close at once.
+- A sale charged with no client chosen says it can also be charged as "Sense client", the
+  way to ring up a counter sale; the message only offered a client or a new name.
 
 ## 1.3.0 (closes version 1)
 

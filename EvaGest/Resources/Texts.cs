@@ -620,6 +620,8 @@ public static class Texts
         nameof(NoWorkerRankingInPeriod),
         nameof(NoSleepingClients),
         nameof(SaveSale),
+        nameof(SaleClientNotPicked),
+        nameof(SaleGuestNameOrClientRequired),
     ];
 
     /// <summary>Pendent</summary>
@@ -2374,4 +2376,10 @@ public static class Texts
 
     /// <summary>Guardar la venda</summary>
     public static string SaveSale => Get(nameof(SaveSale));
+
+    /// <summary>Tria un client de la llista, canvia a Client nou per escriure'n el nom, o tria Sense client si és una venda de taulell.</summary>
+    public static string SaleClientNotPicked => Get(nameof(SaleClientNotPicked));
+
+    /// <summary>Escriu el nom del convidat, tria un client registrat, o tria Sense client si és una venda de taulell.</summary>
+    public static string SaleGuestNameOrClientRequired => Get(nameof(SaleGuestNameOrClientRequired));
 }

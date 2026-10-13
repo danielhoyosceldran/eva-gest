@@ -203,7 +203,7 @@ public class MistakeFlowTests
 
         messages.Should().Equal(
             Texts.AtLeastOneLineRequired,
-            Texts.ClientNotPicked,
+            Texts.SaleClientNotPicked,
             Texts.PaymentMethodRequired,
             Texts.LineDescriptionRequired,
             Texts.PriceRequired,

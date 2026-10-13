@@ -1821,4 +1821,10 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="SaveSale" xml:space="preserve">
     <value>Guardar la venta</value>
   </data>
+  <data name="SaleClientNotPicked" xml:space="preserve">
+    <value>Elige un cliente de la lista, cambia a Cliente nuevo para escribir su nombre, o elige Sin cliente si es una venta de mostrador.</value>
+  </data>
+  <data name="SaleGuestNameOrClientRequired" xml:space="preserve">
+    <value>Escribe el nombre del invitado, elige un cliente registrado, o elige Sin cliente si es una venta de mostrador.</value>
+  </data>
 </root>
