@@ -178,6 +178,11 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   ones raised from an appointment used to leave a line.
 - In Catalan the Agenda reads "14 – 16 d'octubre 2026" and its day panel "Dimecres 14
   d'octubre"; they used to say "de octubre" and "de d'octubre". Spanish is unchanged.
+- With one or two workers, the sale window shows one button per worker instead of the
+  search box and its "Veure la llista" button; only one can be chosen, and clicking the
+  chosen one again leaves the sale without a worker. Buttons that do not fit side by
+  side go one under the other, and a long name wraps inside its button rather than
+  being cut. With three workers or more the search box comes back.
 
 ## 1.3.0 (closes version 1)
 

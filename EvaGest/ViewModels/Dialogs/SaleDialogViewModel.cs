@@ -100,6 +100,18 @@ public partial class SaleDialogViewModel : DialogViewModelBase
 
     public SearchPickerViewModel<Worker> WorkerPicker { get; }
 
+    /// <summary>Up to this many workers, the sale shows one button per worker instead of
+    /// the search box and its list: with one or two there is nothing to search.</summary>
+    public const int WorkerButtonLimit = 2;
+
+    /// <summary>
+    /// True while the shop has one or two workers to choose from: the view then shows
+    /// them as buttons, only one chosen at a time. A third worker brings the search box
+    /// back. Counted on the list the sale offers, so editing a sale whose worker has
+    /// since left counts that worker too.
+    /// </summary>
+    public bool ShowsWorkerButtons => ActiveWorkers.Count is > 0 and <= WorkerButtonLimit;
+
     /// <summary>The one search box over services and products; a pick becomes a line.</summary>
     public CatalogAdderViewModel CatalogAdder { get; }
 
@@ -147,6 +159,7 @@ public partial class SaleDialogViewModel : DialogViewModelBase
         WorkerPicker = new(ActiveWorkers, w => w.Name, w => Worker = w, dialogs, Texts.WorkerBrowserTitle);
         CatalogAdder = new(ActiveServices, ActiveProducts, AddPicked, dialogs);
         Lines.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasLines));
+        ActiveWorkers.CollectionChanged += (_, _) => OnPropertyChanged(nameof(ShowsWorkerButtons));
 
         // Sales, unlike appointments, may be charged to nobody at all
         ClientPicker = new ClientPickerViewModel(dialogs, allowsNoClient: true);

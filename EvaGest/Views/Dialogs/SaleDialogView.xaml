@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:t="clr-namespace:EvaGest.Resources"
-             xmlns:el="clr-namespace:EvaGest.Views.Elements">
+             xmlns:el="clr-namespace:EvaGest.Views.Elements"
+             xmlns:h="clr-namespace:EvaGest.Helpers">
     <!-- Laid out to fit a typical sale (four lines) without scrolling on a 1920x1080
          screen at 125 % — the shop's own — which leaves about 1536x816 DIP. Hence the
          paired rows (client | worker, payment | notes) and the totals pinned beside the
@@ -80,7 +81,10 @@
             <!-- Who: the client and the worker side by side, a rule between them. The
                  client takes two thirds: its toggle has three options (existing / new /
                  no client) to fit in a row. The worker's narrow column puts its list
-                 button under the box (Stacked) so the box keeps a usable width. -->
+                 button under the box (Stacked) so the box keeps a usable width.
+                 With only one or two workers there is nothing to search: one button
+                 each instead, side by side or one under the other when they do not fit,
+                 and a long name wraps inside its button rather than being cut. -->
             <Grid Margin="0,0,0,4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
@@ -95,7 +99,20 @@
                 <Border Grid.Column="1" Style="{StaticResource ColumnRule}" />
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="{x:Static t:Texts.WorkerOptional}" Style="{StaticResource DataLabel}" />
-                    <el:SearchPickerView DataContext="{Binding WorkerPicker}" Stacked="True" />
+                    <!-- Hidden through a wrapper: the picker's own DataContext is WorkerPicker -->
+                    <Border Visibility="{Binding ShowsWorkerButtons, Converter={StaticResource InverseVisibilityConverter}}">
+                        <el:SearchPickerView DataContext="{Binding WorkerPicker}" Stacked="True" />
+                    </Border>
+                    <!-- Clicking the chosen worker again leaves the sale without one: the worker is optional -->
+                    <ListBox x:Name="WorkerButtons" Style="{StaticResource SegmentList}" ItemsSource="{Binding ActiveWorkers}"
+                             SelectedItem="{Binding Worker}" h:SegmentToggle.Deselectable="True"
+                             Visibility="{Binding ShowsWorkerButtons, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" TextAlignment="Center" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
             </Grid>
 
