@@ -14,6 +14,25 @@ public abstract partial class DialogViewModelBase : ObservableObject
 
     public abstract string Title { get; }
 
+    /// <summary>What the form held when <see cref="ErrorValidation"/> was last set.</summary>
+    private string? _errorState;
+
+    partial void OnErrorValidationChanged(string? value)
+        => _errorState = value is null ? null : EditableState();
+
+    /// <summary>
+    /// The error line says what to fix, so once the user changes the form it is out of
+    /// date: it goes away as soon as what they can edit differs from what it judged,
+    /// instead of staying red until the next Guardar. Dialogs without an
+    /// <see cref="EditableState"/> keep their message until the next attempt.
+    /// </summary>
+    protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        if (e.PropertyName == nameof(ErrorValidation) || ErrorValidation is null) return;
+        if (_errorState is not null && EditableState() != _errorState) ErrorValidation = null;
+    }
+
     /// <summary>
     /// True for a dialog that is a workspace rather than a form — a table to browse —
     /// and opens as large as the screen allows instead of sizing to its content. Its

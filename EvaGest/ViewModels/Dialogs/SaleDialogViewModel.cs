@@ -565,6 +565,14 @@ public partial class SaleDialogViewModel : DialogViewModelBase
     protected override string EditableState()
         => string.Join("|",
             SelectedClient?.Id, ClientPicker.Mode, TextClient, GuestPhone, Worker?.Id, PaymentMethod?.Id, Notes,
-            string.Join(";", Lines.Select(l =>
+            string.Join(";", Lines.Where(l => !IsUntouchedFreeLine(l)).Select(l =>
                 $"{l.ServiceId}/{l.ProductId}/{l.Description}/{l.QuantityText}/{l.PriceText}/{l.VatText}")));
+
+    /// <summary>A free-concept line the user added but has not written anything in yet. It
+    /// is not something typed, so it must not make Esc ask whether to discard.</summary>
+    private static bool IsUntouchedFreeLine(SaleLineViewModel line)
+        => line.ServiceId is null && line.ProductId is null
+           && string.IsNullOrWhiteSpace(line.Description)
+           && (string.IsNullOrWhiteSpace(line.PriceText)
+               || (Money.TryParse(line.PriceText, out int cents) && cents == 0));
 }

@@ -65,7 +65,8 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="{x:Static t:Texts.Date}" Style="{StaticResource DataLabel}" />
-                        <el:DateBox SelectedDate="{Binding Date, Converter={StaticResource DateOnlyConverter}}" />
+                        <el:DateBox SelectedDate="{Binding Date, Converter={StaticResource DateOnlyConverter}}"
+                                    IsInvalid="{Binding IsDateInvalid, Mode=OneWayToSource}" />
                     </StackPanel>
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="{x:Static t:Texts.Time}" Style="{StaticResource DataLabel}" />

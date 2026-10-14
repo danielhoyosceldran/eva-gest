@@ -8,6 +8,15 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
 
 ## 2.0.0
 
+- A date that does not exist (31/02) in the appointment, cash movement or client
+  birthday window is no longer saved as another day: the window says the date is not
+  real and waits for it to be corrected.
+- An error line in a window (for example "pick a client") goes away as soon as the
+  form is changed, instead of staying until the next Guardar; and the notice on Inici
+  and Agenda about an appointment that cannot be reopened or cancelled is cleared when
+  the next action is tried.
+- A "Concepte lliure" line added to a sale and left empty no longer counts as something
+  typed, so Esc closes the window without asking whether to discard.
 - The Home screen never shows money any more, not even in owner mode: it looks the
   same locked or unlocked, with only the number of appointments and sales today. The
   day's takings, cash-ins, cash-outs and balance are on Caixa and Informes, so they

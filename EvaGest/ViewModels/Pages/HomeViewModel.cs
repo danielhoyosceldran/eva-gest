@@ -92,6 +92,8 @@ public partial class HomeViewModel(
     [RelayCommand]
     private async Task MarkPending(Appointment appointment)
     {
+        // A refusal from the click before must not outlive an action that now works
+        ClearNotice();
         bool changed = await appointments.ChangeStatus(appointment.Id, AppointmentStatus.Pending);
         await Load();
 
@@ -101,6 +103,7 @@ public partial class HomeViewModel(
 
     private async Task ChangeAppointmentStatus(Appointment appointment, AppointmentStatus newStatus)
     {
+        ClearNotice();
         bool changed = await appointments.ChangeStatus(appointment.Id, newStatus);
         await Load();
 

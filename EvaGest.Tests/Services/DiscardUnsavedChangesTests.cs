@@ -92,6 +92,22 @@ public class DiscardUnsavedChangesTests
     }
 
     [Fact]
+    public async Task A_free_concept_line_nobody_has_written_in_does_not_make_cancel_ask()
+    {
+        await using var testDb = new TestDatabase();
+        var shop = await Build(testDb);
+        var dialogs = new TestDialogService();
+        var vm = await NewSale(shop, dialogs);
+        var watcher = new CloseWatcher(vm);
+        vm.AddCustomConceptCommand.Execute(null);
+
+        await Press(vm.CancelCommand);
+
+        dialogs.ConfirmacionsRequested.Should().BeEmpty("an empty line is not something typed");
+        watcher.Closed.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task Answering_keep_editing_leaves_the_sale_dialog_open()
     {
         await using var testDb = new TestDatabase();
@@ -100,6 +116,7 @@ public class DiscardUnsavedChangesTests
         var vm = await NewSale(shop, dialogs);
         var watcher = new CloseWatcher(vm);
         vm.AddCustomConceptCommand.Execute(null);
+        vm.Lines[0].Description = "Tall";
 
         await Press(vm.CancelCommand);
 

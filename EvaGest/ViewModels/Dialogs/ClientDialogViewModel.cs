@@ -16,6 +16,9 @@ public partial class ClientDialogViewModel : DialogViewModelBase
     [ObservableProperty] private string _mobile = string.Empty;
     [ObservableProperty] private string? _email;
     [ObservableProperty] private DateOnly? _birthDate;
+    /// <summary>The birthday box reads something that is not a date (31/02); <see cref="BirthDate"/>
+    /// keeps the last real one, so Save refuses instead of storing it.</summary>
+    [ObservableProperty] private bool _isDateInvalid;
     [ObservableProperty] private string? _notes;
 
     public override string Title => _id is null ? Texts.NewClientTitle : Texts.EditClientTitle;
@@ -50,6 +53,11 @@ public partial class ClientDialogViewModel : DialogViewModelBase
         if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Mobile))
         {
             ErrorValidation = Texts.NameAndMobileRequired;
+            return;
+        }
+        if (IsDateInvalid)
+        {
+            ErrorValidation = Texts.DateInvalid;
             return;
         }
         if (!ContactValidator.IsValidPhone(Mobile))

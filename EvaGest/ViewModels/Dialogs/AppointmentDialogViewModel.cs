@@ -38,6 +38,9 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
     private readonly (DateOnly Date, TimeOnly Time, int DurationMin)? _originalSlot;
 
     [ObservableProperty] private DateOnly _date;
+    /// <summary>The date box reads something that is not a date (31/02). <see cref="Date"/>
+    /// then still holds the last real one, so Save has to refuse instead of using it.</summary>
+    [ObservableProperty] private bool _isDateInvalid;
     [ObservableProperty] private TimeOnly _time;
     [ObservableProperty] private int _durationMin = 30;
 
@@ -449,6 +452,11 @@ public partial class AppointmentDialogViewModel : DialogViewModelBase
             // Say what is missing in the mode the user is in: a name to type, or a
             // client still to be picked from the search.
             ErrorValidation = ClientPicker.IsNewClient ? Texts.GuestNameOrClientRequired : Texts.ClientNotPicked;
+            return;
+        }
+        if (IsDateInvalid)
+        {
+            ErrorValidation = Texts.DateInvalid;
             return;
         }
         // The text is what the user is looking at, so it is what gets judged: checking

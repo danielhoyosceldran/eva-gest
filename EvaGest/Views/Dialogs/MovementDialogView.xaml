@@ -22,7 +22,8 @@
             <TextBlock Text="{Binding Title}" Style="{StaticResource Subtitle}" Margin="0,0,0,16" />
 
             <TextBlock Text="{x:Static t:Texts.Date}" Style="{StaticResource DataLabel}" />
-            <el:DateBox SelectedDate="{Binding Date, Converter={StaticResource DateOnlyConverter}}" Margin="0,0,0,12" />
+            <el:DateBox SelectedDate="{Binding Date, Converter={StaticResource DateOnlyConverter}}"
+                       IsInvalid="{Binding IsDateInvalid, Mode=OneWayToSource}" Margin="0,0,0,12" />
 
             <TextBlock Text="{x:Static t:Texts.AmountEuros}" Style="{StaticResource DataLabel}" />
             <TextBox Text="{Binding PriceText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MoneyBox}" Margin="0,0,0,12" />

@@ -25,6 +25,9 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     /// belongs to the day it happened, not to the moment the dialog was saved).
     /// </summary>
     [ObservableProperty] private DateOnly _date;
+    /// <summary>The date box reads something that is not a date (31/02); <see cref="Date"/>
+    /// keeps the last real one, so Save refuses instead of using it.</summary>
+    [ObservableProperty] private bool _isDateInvalid;
     /// <summary>Starts empty: "0,00" is the box's placeholder, not its text, so an amount
     /// is typed without first deleting a zero. Empty is refused on Save.</summary>
     [ObservableProperty] private string _priceText = string.Empty;
@@ -144,6 +147,11 @@ public partial class MovementDialogViewModel : DialogViewModelBase
     [RelayCommand]
     private async Task Save()
     {
+        if (IsDateInvalid)
+        {
+            ErrorValidation = Texts.DateInvalid;
+            return;
+        }
         if (string.IsNullOrWhiteSpace(PriceText))
         {
             ErrorValidation = Texts.AmountRequired;

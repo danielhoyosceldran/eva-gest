@@ -35,18 +35,18 @@ public partial class DateBox : UserControl
         set => SetValue(SelectedDateProperty, value);
     }
 
-    private static readonly DependencyPropertyKey IsInvalidKey = DependencyProperty.RegisterReadOnly(
-        nameof(IsInvalid), typeof(bool), typeof(DateBox), new PropertyMetadata(false));
-
-    public static readonly DependencyProperty IsInvalidProperty = IsInvalidKey.DependencyProperty;
+    public static readonly DependencyProperty IsInvalidProperty = DependencyProperty.Register(
+        nameof(IsInvalid), typeof(bool), typeof(DateBox),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     /// <summary>What the boxes hold is not a date: an impossible day (31/02), or parts
     /// left out when focus moved on. Draws the outline red; <see cref="SelectedDate"/>
-    /// keeps its last real value until it is put right.</summary>
+    /// keeps its last real value until it is put right, so a dialog that saves binds this
+    /// (OneWayToSource) to refuse to save while the box is red. Only the control writes it.</summary>
     public bool IsInvalid
     {
         get => (bool)GetValue(IsInvalidProperty);
-        private set => SetValue(IsInvalidKey, value);
+        set => SetValue(IsInvalidProperty, value);
     }
 
     /// <summary>Day, month, year: the order the keys move through.</summary>
