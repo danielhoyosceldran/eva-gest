@@ -1230,7 +1230,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
     <value>{0} · Nova cita</value>
   </data>
   <data name="WeekRangeSameMonth" xml:space="preserve">
-    <value>{0} – {1} de {2}</value>
+    <value>{0} – {1} {2}</value>
   </data>
   <data name="WeekRangeAcrossMonths" xml:space="preserve">
     <value>{0} – {1}</value>
@@ -1239,7 +1239,7 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
     <value>dddd, d MMMM 'de' yyyy</value>
   </data>
   <data name="DayMonthFormat" xml:space="preserve">
-    <value>dddd d 'de' MMMM</value>
+    <value>dddd d MMMM</value>
   </data>
   <data name="UnexpectedErrorTitle" xml:space="preserve">
     <value>No s'ha pogut completar l'operació</value>

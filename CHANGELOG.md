@@ -176,6 +176,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   bar that only said who it was in its tooltip.
 - Every sale is written to the log when it is charged, counter sales included; only the
   ones raised from an appointment used to leave a line.
+- In Catalan the Agenda reads "14 – 16 d'octubre 2026" and its day panel "Dimecres 14
+  d'octubre"; they used to say "de octubre" and "de d'octubre". Spanish is unchanged.
 
 ## 1.3.0 (closes version 1)
 

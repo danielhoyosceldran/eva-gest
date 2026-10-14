@@ -568,4 +568,43 @@ public class GridWeekViewModelTests
         block.ShowTitle.Should().BeTrue("the name is the one thing the block is for");
         block.Title.Should().Be("Pere");
     }
+
+    /// <summary>
+    /// The Agenda's range read "14 – 16 de octubre 2026" and its day panel "Dimecres 14
+    /// de d'octubre": in Catalan the month after a day number carries its own
+    /// preposition, which the texts added again or left in the wrong form. Spanish keeps
+    /// its "de octubre". AppLanguage.Culture, which formats the dates, is Catalan in the
+    /// tests; the texts follow the thread's UI culture, set here.
+    /// </summary>
+    [Fact]
+    public async Task Catalan_dates_elide_de_before_a_vowel_and_spanish_keeps_de()
+    {
+        var uiCulture = System.Globalization.CultureInfo.CurrentUICulture;
+        System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("ca-ES");
+        try
+        {
+            await using var testDb = new TestDatabase();
+            var (grid, _) = await Build(testDb, ModeGrid.Agenda, WeekGridViewModel.ThreeDays);
+            await grid.LoadRange(new DateOnly(2026, 10, 14));
+
+            grid.RangeText.Should().Be("14 – 16 d’octubre 2026");
+            grid.Days[0].FullHeader.Should().Be("dimecres 14 d’octubre");
+
+            await grid.LoadRange(new DateOnly(2026, 1, 12));
+            grid.RangeText.Should().Be("12 – 14 de gener 2026", "a month starting with a consonant keeps \"de\"");
+
+            // The Spanish text with Spanish month names, as the app pairs them
+            System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("es-ES");
+            var es = System.Globalization.CultureInfo.GetCultureInfo("es-ES");
+            string.Format(EvaGest.Resources.Texts.WeekRangeSameMonth, 14, 16,
+                    $"{es.DateTimeFormat.MonthGenitiveNames[9]} 2026")
+                .Should().Be("14 – 16 de octubre 2026");
+            new DateOnly(2026, 10, 14).ToString(EvaGest.Resources.Texts.DayMonthFormat, es)
+                .Should().Be("miércoles 14 de octubre");
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentUICulture = uiCulture;
+        }
+    }
 }

@@ -422,9 +422,13 @@ public partial class WeekGridViewModel : ObservableObject
     private static string FormatRange(DateOnly start, DateOnly end)
     {
         var culture = AppLanguage.Culture;
+        // The month as it reads after a day number: Catalan's carries its own
+        // preposition ("d'octubre", "de gener"), so its text has no "de" of its own and
+        // the range reads "14 – 16 d'octubre 2026", not "de octubre". Spanish's is the
+        // plain name, after the "de" its text keeps.
+        string month = culture.DateTimeFormat.MonthGenitiveNames[end.Month - 1];
         return start.Month == end.Month
-            ? string.Format(Texts.WeekRangeSameMonth, start.Day, end.Day,
-                            end.ToString("MMMM yyyy", culture))
+            ? string.Format(Texts.WeekRangeSameMonth, start.Day, end.Day, $"{month} {end.Year}")
             : string.Format(Texts.WeekRangeAcrossMonths,
                             start.ToString("d MMM", culture),
                             end.ToString("d MMM yyyy", culture));

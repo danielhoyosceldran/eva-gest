@@ -1786,7 +1786,7 @@ public static class Texts
     /// <summary>{0} · Nova cita</summary>
     public static string NewAppointmentAtTime => Get(nameof(NewAppointmentAtTime));
 
-    /// <summary>{0} – {1} de {2}</summary>
+    /// <summary>{0} – {1} {2}</summary>
     public static string WeekRangeSameMonth => Get(nameof(WeekRangeSameMonth));
 
     /// <summary>{0} – {1}</summary>
@@ -1795,7 +1795,7 @@ public static class Texts
     /// <summary>dddd, d MMMM 'de' yyyy</summary>
     public static string LongDateFormat => Get(nameof(LongDateFormat));
 
-    /// <summary>dddd d 'de' MMMM</summary>
+    /// <summary>dddd d MMMM</summary>
     public static string DayMonthFormat => Get(nameof(DayMonthFormat));
 
     /// <summary>No s'ha pogut completar l'operació</summary>
