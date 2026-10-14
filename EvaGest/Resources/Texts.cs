@@ -622,6 +622,10 @@ public static class Texts
         nameof(SaveSale),
         nameof(SaleClientNotPicked),
         nameof(SaleGuestNameOrClientRequired),
+        nameof(ColorPink),
+        nameof(ColorViolet),
+        nameof(ColorOrange),
+        nameof(ColorBrown),
     ];
 
     /// <summary>Pendent</summary>
@@ -2382,4 +2386,16 @@ public static class Texts
 
     /// <summary>Escriu el nom del convidat, tria un client registrat, o tria Sense client si és una venda de taulell.</summary>
     public static string SaleGuestNameOrClientRequired => Get(nameof(SaleGuestNameOrClientRequired));
+
+    /// <summary>Rosa</summary>
+    public static string ColorPink => Get(nameof(ColorPink));
+
+    /// <summary>Violeta</summary>
+    public static string ColorViolet => Get(nameof(ColorViolet));
+
+    /// <summary>Taronja</summary>
+    public static string ColorOrange => Get(nameof(ColorOrange));
+
+    /// <summary>Marró</summary>
+    public static string ColorBrown => Get(nameof(ColorBrown));
 }

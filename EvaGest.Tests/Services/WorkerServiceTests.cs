@@ -210,4 +210,35 @@ public class WorkerServiceTests
         new WorkerDialogViewModel([]).Color.Hex.Should().Be(first);
         new WorkerDialogViewModel([first]).Color.Hex.Should().Be(second);
     }
+
+    /// <summary>
+    /// The palette grew from six colours to ten, so a seventh worker no longer repeats
+    /// the first one's colour. Every colour stays readable as a dot or side bar on white
+    /// (WCAG AA, 4.5:1), and none is a repeat.
+    /// </summary>
+    [Fact]
+    public void A_seventh_worker_still_gets_a_colour_of_their_own()
+    {
+        WorkerPalette.Colors.Should().HaveCount(10);
+        WorkerPalette.Colors.Select(c => c.Hex.ToUpperInvariant()).Should().OnlyHaveUniqueItems();
+        WorkerPalette.Colors.Select(c => c.Name).Should().OnlyHaveUniqueItems();
+
+        var sixTaken = WorkerPalette.Colors.Take(6).Select(c => c.Hex).ToList();
+        sixTaken.Should().NotContain(new WorkerDialogViewModel(sixTaken).Color.Hex);
+
+        foreach (var color in WorkerPalette.Colors)
+            ContrastOnWhite(color.Hex).Should().BeGreaterThanOrEqualTo(4.5, "{0} must read on white", color.Name);
+    }
+
+    /// <summary>WCAG contrast ratio of a colour against white.</summary>
+    private static double ContrastOnWhite(string hex)
+    {
+        double Channel(int at)
+        {
+            double c = Convert.ToInt32(hex.Substring(at, 2), 16) / 255.0;
+            return c <= 0.03928 ? c / 12.92 : Math.Pow((c + 0.055) / 1.055, 2.4);
+        }
+        double luminance = 0.2126 * Channel(1) + 0.7152 * Channel(3) + 0.0722 * Channel(5);
+        return 1.05 / (luminance + 0.05);
+    }
 }

@@ -507,7 +507,7 @@ Tres bandes netes, sense degradat suau i sense animació de gir. Un pal de barbe
 
 ## 5. Colors de treballadora
 
-Els assigna l'aplicació en crear la treballadora, i es poden canviar. Sis valors, **triats per no col·lidir amb els colors semàntics d'estat** (verd = realitzada, vermell = cancel·lada, ambre = pendent):
+Els assigna l'aplicació en crear la treballadora, i es poden canviar. Deu valors (els sis originals i quatre afegits a la 2.0.0), **triats per no col·lidir amb els colors semàntics d'estat** (verd = realitzada, vermell = cancel·lada, ambre = pendent):
 
 | Nom | Hex | Contrast sobre blanc |
 |---|---|---|
@@ -517,6 +517,10 @@ Els assigna l'aplicació en crear la treballadora, i es poden canviar. Sis valor
 | Oliva | `#4D7C0F` | 4,99 |
 | Ocre | `#92400E` | 7,09 |
 | Grafit | `#374151` | 10,31 |
+| Rosa | `#BE185D` | 6,04 |
+| Violeta | `#6D28D9` | 7,10 |
+| Taronja | `#C2410C` | 5,18 |
+| Marró | `#6B4F3A` | 7,49 |
 
 **Cap d'aquests colors és blau.** Ara que el blau és l'accent de l'aplicació (botons, focus, element actiu), un punt blau al costat d'un nom es llegiria com un element interactiu en lloc d'una identitat. Per això la paleta de treballadores evita del tot la família del blau.
 

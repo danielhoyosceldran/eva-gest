@@ -3,7 +3,7 @@ using EvaGest.Resources;
 namespace EvaGest.Helpers;
 
 /// <summary>
-/// The six worker colours from disseny-ui.md section 5. None of them is blue: blue is
+/// The ten worker colours from disseny-ui.md section 5. None of them is blue: blue is
 /// the application's accent, so a blue dot next to a name would read as something
 /// clickable rather than as an identity. They also avoid the status hues (green =
 /// completed, red = cancelled, amber = pending).
@@ -25,11 +25,18 @@ public static class WorkerPalette
         new(nameof(Texts.ColorOlive),   "#4D7C0F"),
         new(nameof(Texts.ColorOchre),   "#92400E"),
         new(nameof(Texts.ColorGraphite), "#374151"),
+        // Added later, so a bigger team need not repeat a colour. Appended, never
+        // inserted: a new worker takes the first free colour in this order, and the
+        // first six keep suggesting themselves as before.
+        new(nameof(Texts.ColorPink),    "#BE185D"),
+        new(nameof(Texts.ColorViolet),  "#6D28D9"),
+        new(nameof(Texts.ColorOrange),  "#C2410C"),
+        new(nameof(Texts.ColorBrown),   "#6B4F3A"),
     ];
 
     /// <summary>
     /// Suggests the first colour nobody is using yet, so two workers do not end up with
-    /// the same dot by default. Once all six are taken it cycles from the start again —
+    /// the same dot by default. Once all of them are taken it cycles from the start again —
     /// a duplicate is better than refusing to create the worker.
     /// </summary>
     public static string FreeColor(IEnumerable<string> alreadyUsed)

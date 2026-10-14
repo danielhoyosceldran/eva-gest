@@ -1827,4 +1827,16 @@ Si ja té cites o vendes, es marcarà com a inactiva en lloc d'esborrar-se, per 
   <data name="SaleGuestNameOrClientRequired" xml:space="preserve">
     <value>Escriu el nom del convidat, tria un client registrat, o tria Sense client si és una venda de taulell.</value>
   </data>
+  <data name="ColorPink" xml:space="preserve">
+    <value>Rosa</value>
+  </data>
+  <data name="ColorViolet" xml:space="preserve">
+    <value>Violeta</value>
+  </data>
+  <data name="ColorOrange" xml:space="preserve">
+    <value>Taronja</value>
+  </data>
+  <data name="ColorBrown" xml:space="preserve">
+    <value>Marró</value>
+  </data>
 </root>

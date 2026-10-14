@@ -183,6 +183,9 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   chosen one again leaves the sale without a worker. Buttons that do not fit side by
   side go one under the other, and a long name wraps inside its button rather than
   being cut. With three workers or more the search box comes back.
+- Four more worker colours: Rosa, Violeta, Taronja and Marró, ten in all, so a team of
+  more than six no longer has to repeat a colour in the Agenda. A new worker still
+  takes the first colour nobody uses; existing workers keep theirs.
 
 ## 1.3.0 (closes version 1)
 

@@ -1827,4 +1827,16 @@ Si ya tiene citas o ventas, se marcará como inactiva en lugar de borrarse, para
   <data name="SaleGuestNameOrClientRequired" xml:space="preserve">
     <value>Escribe el nombre del invitado, elige un cliente registrado, o elige Sin cliente si es una venta de mostrador.</value>
   </data>
+  <data name="ColorPink" xml:space="preserve">
+    <value>Rosa</value>
+  </data>
+  <data name="ColorViolet" xml:space="preserve">
+    <value>Violeta</value>
+  </data>
+  <data name="ColorOrange" xml:space="preserve">
+    <value>Naranja</value>
+  </data>
+  <data name="ColorBrown" xml:space="preserve">
+    <value>Marrón</value>
+  </data>
 </root>
