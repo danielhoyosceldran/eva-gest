@@ -76,6 +76,11 @@ public class SaleService(
 
         await db.SaveChangesAsync();
 
+        // Every sale, not only the ones raised from an appointment: a counter sale used
+        // to leave no line at all, so the log could not account for every sale the
+        // edits and voids below it refer to (B-42, CU-04).
+        Log.Information("Sale {SaleId} created: total {TotalCents} cents", sale.Id, sale.TotalCents);
+
         if (sale.AppointmentId is int completedId)
         {
             Log.Information("Appointment {AppointmentId} completed by sale {SaleId}", completedId, sale.Id);
