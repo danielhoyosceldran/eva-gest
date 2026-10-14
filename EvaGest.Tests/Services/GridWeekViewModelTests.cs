@@ -550,4 +550,22 @@ public class GridWeekViewModelTests
         grid.GridStartMinute.Should().Be(workingStart);
         grid.RangeFitsGhost.Should().BeTrue();
     }
+
+    /// <summary>
+    /// B-40: a 15-minute appointment was drawn in the Agenda as an empty bar; only its
+    /// tooltip said who it was. Its block is the shortest the Agenda draws, and it was
+    /// one pixel too short for the title.
+    /// </summary>
+    [Fact]
+    public async Task A_fifteen_minute_appointment_shows_its_time_and_name_in_the_agenda()
+    {
+        await using var testDb = new TestDatabase();
+        await AddAppointment(testDb, Monday, 11, 0, duration: 15, name: "Pere");
+        var (grid, _) = await Build(testDb, ModeGrid.Agenda);
+        await grid.LoadRange(Monday);
+
+        var block = grid.Days[0].Appointments.Single();
+        block.ShowTitle.Should().BeTrue("the name is the one thing the block is for");
+        block.Title.Should().Be("Pere");
+    }
 }

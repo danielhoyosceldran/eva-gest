@@ -172,6 +172,8 @@ fixes within version 1 and were renumbered 1.2.0 and 1.3.0. The next version is 
   way to ring up a counter sale; the message only offered a client or a new name.
 - Esc, Cancel·lar or the X on a cash-in or cash-out window with something typed asks
   before throwing it away; a half-entered movement used to be lost with no question.
+- A 15-minute appointment shows its time and name in the Agenda; it used to be an empty
+  bar that only said who it was in its tooltip.
 
 ## 1.3.0 (closes version 1)
 

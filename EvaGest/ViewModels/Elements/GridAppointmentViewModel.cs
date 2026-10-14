@@ -11,8 +11,14 @@ namespace EvaGest.ViewModels.Elements;
 /// </summary>
 public partial class GridAppointmentViewModel : ObservableObject
 {
-    /// <summary>Below this height the block cannot fit a legible title.</summary>
-    private const double MinTitleHeight = 22;
+    /// <summary>
+    /// Below this height the block cannot fit a legible title. It has to let the
+    /// Agenda's shortest block through: a 15-minute appointment is drawn 22 px tall
+    /// minus the 1 px gap between blocks, and at 22 that block showed no text at all,
+    /// so a beard trim could only be told apart by its tooltip (B-40). One line of the
+    /// small font still reads at 20 px; the picker's 13 px blocks stay blank.
+    /// </summary>
+    private const double MinTitleHeight = 20;
     private const double MinSubtitleHeight = 40;
 
     public Appointment? Model { get; init; }
